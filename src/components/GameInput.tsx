@@ -22,7 +22,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
   const [team1Goals, setTeam1Goals] = useState(0);
   const [team2Goals, setTeam2Goals] = useState(0);
   const [mvpPlayer, setMvpPlayer] = useState('');
-  const [goalScorers, setGoalScorers] = useState<{ playerId: string; goals: number }[]>([]);
+  
   
 
   const availablePlayersForTeam1 = players.filter(p => !team2Players.includes(p.id));
@@ -45,20 +45,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
     }
   };
 
-  const addGoalScorer = () => {
-    setGoalScorers([...goalScorers, { playerId: '', goals: 1 }]);
-  };
-
-  const updateGoalScorer = (index: number, field: 'playerId' | 'goals', value: string | number) => {
-    const updated = goalScorers.map((scorer, i) => 
-      i === index ? { ...scorer, [field]: value } : scorer
-    );
-    setGoalScorers(updated);
-  };
-
-  const removeGoalScorer = (index: number) => {
-    setGoalScorers(goalScorers.filter((_, i) => i !== index));
-  };
 
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -88,7 +74,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
       team1Goals,
       team2Goals,
       mvpPlayer,
-      goalScorers: goalScorers.filter(scorer => scorer.playerId && scorer.goals > 0),
     };
 
     onGameSubmit(gameData);
@@ -99,7 +84,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
     setTeam1Goals(0);
     setTeam2Goals(0);
     setMvpPlayer('');
-    setGoalScorers([]);
+    
 
     toast({
       title: "Game Recorded!",
@@ -240,52 +225,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          {/* Goal Scorers Section */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-lg font-semibold">Goal Scorers</Label>
-              <Button type="button" onClick={addGoalScorer} size="sm" className="flex items-center gap-1">
-                <Plus className="h-4 w-4" />
-                Add Scorer
-              </Button>
-            </div>
-            {goalScorers.map((scorer, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Select
-                  value={scorer.playerId}
-                  onValueChange={(value) => updateGoalScorer(index, 'playerId', value)}
-                >
-                  <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Select player" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {allGamePlayers.map((playerId) => (
-                      <SelectItem key={playerId} value={playerId}>
-                        {getPlayerName(playerId)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  type="number"
-                  min="1"
-                  value={scorer.goals}
-                  onChange={(e) => updateGoalScorer(index, 'goals', Number(e.target.value))}
-                  className="w-20"
-                  placeholder="Goals"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeGoalScorer(index)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
           </div>
 
 

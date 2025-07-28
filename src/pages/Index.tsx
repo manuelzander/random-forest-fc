@@ -35,11 +35,6 @@ const Index = () => {
       // Add MVP bonus
       if (gameData.mvpPlayer === player.id) gamePoints += 2;
 
-      // Add goal bonuses
-      const playerGoals = gameData.goalScorers.find(gs => gs.playerId === player.id)?.goals || 0;
-      
-      gamePoints += playerGoals; // 1 point per goal
-
       // Update player stats
       return {
         ...player,
@@ -47,7 +42,6 @@ const Index = () => {
         wins: isWinner ? player.wins + 1 : player.wins,
         draws: isDraw ? player.draws + 1 : player.draws,
         losses: (!isWinner && !isDraw) ? player.losses + 1 : player.losses,
-        goals: player.goals + playerGoals,
         mvpAwards: gameData.mvpPlayer === player.id ? player.mvpAwards + 1 : player.mvpAwards,
         points: Math.round((player.points + gamePoints) * 10) / 10, // Round to 1 decimal
         goalDifference: isInTeam1 ? 
@@ -112,9 +106,9 @@ const Index = () => {
               <Card>
                 <CardContent className="p-4 text-center">
                   <div className="text-2xl font-bold text-yellow-600">
-                    {players.reduce((sum, p) => sum + p.goals, 0)}
+                    {Math.round(players.reduce((sum, p) => sum + (p.gamesPlayed > 0 ? p.wins / p.gamesPlayed * 100 : 0), 0) / players.length)}%
                   </div>
-                  <div className="text-sm text-gray-600">Total Goals</div>
+                  <div className="text-sm text-gray-600">Avg Win Rate</div>
                 </CardContent>
               </Card>
               <Card>

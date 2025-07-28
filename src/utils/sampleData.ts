@@ -9,8 +9,6 @@ export const samplePlayers: Player[] = [
     wins: 6,
     draws: 1,
     losses: 1,
-    goals: 12,
-    
     mvpAwards: 3,
     points: 19,
     goalDifference: 8
@@ -22,8 +20,6 @@ export const samplePlayers: Player[] = [
     wins: 5,
     draws: 2,
     losses: 0,
-    goals: 9,
-    
     mvpAwards: 2,
     points: 17,
     goalDifference: 6
@@ -35,7 +31,7 @@ export const samplePlayers: Player[] = [
     wins: 4,
     draws: 2,
     losses: 2,
-    goals: 15,
+    
     mvpAwards: 4,
     points: 14,
     goalDifference: 10
@@ -47,8 +43,6 @@ export const samplePlayers: Player[] = [
     wins: 4,
     draws: 1,
     losses: 1,
-    goals: 7,
-    
     mvpAwards: 1,
     points: 13,
     goalDifference: 3
@@ -60,8 +54,6 @@ export const samplePlayers: Player[] = [
     wins: 3,
     draws: 3,
     losses: 1,
-    goals: 5,
-    
     mvpAwards: 1,
     points: 12,
     goalDifference: 1
@@ -73,8 +65,6 @@ export const samplePlayers: Player[] = [
     wins: 3,
     draws: 2,
     losses: 3,
-    goals: 8,
-    
     mvpAwards: 2,
     points: 11,
     goalDifference: -2
@@ -86,8 +76,6 @@ export const samplePlayers: Player[] = [
     wins: 3,
     draws: 1,
     losses: 1,
-    goals: 6,
-    
     mvpAwards: 0,
     points: 10,
     goalDifference: 2
@@ -99,8 +87,6 @@ export const samplePlayers: Player[] = [
     wins: 2,
     draws: 3,
     losses: 1,
-    goals: 4,
-    
     mvpAwards: 1,
     points: 9,
     goalDifference: 0
@@ -124,8 +110,6 @@ export const generateMorePlayers = (): Player[] => {
     wins: Math.floor(Math.random() * 6) + 1,
     draws: Math.floor(Math.random() * 3),
     losses: Math.floor(Math.random() * 4),
-    goals: Math.floor(Math.random() * 10) + 1,
-    
     mvpAwards: Math.floor(Math.random() * 3),
     points: Math.floor(Math.random() * 15) + 3,
     goalDifference: Math.floor(Math.random() * 15) - 5

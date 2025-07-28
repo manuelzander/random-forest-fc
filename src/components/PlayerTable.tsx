@@ -10,15 +10,26 @@ interface PlayerTableProps {
   players: Player[];
 }
 
-type SortField = 'points' | 'goals' | 'mvpAwards' | 'goalDifference' | 'gamesPlayed';
+type SortField = 'points' | 'mvpAwards' | 'goalDifference' | 'gamesPlayed' | 'pointsPerGame' | 'winPercentage';
 
 const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   const [sortField, setSortField] = useState<SortField>('points');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   const sortedPlayers = [...players].sort((a, b) => {
-    const aValue = a[sortField];
-    const bValue = b[sortField];
+    let aValue: number;
+    let bValue: number;
+    
+    if (sortField === 'pointsPerGame') {
+      aValue = a.gamesPlayed > 0 ? a.points / a.gamesPlayed : 0;
+      bValue = b.gamesPlayed > 0 ? b.points / b.gamesPlayed : 0;
+    } else if (sortField === 'winPercentage') {
+      aValue = a.gamesPlayed > 0 ? (a.wins / a.gamesPlayed) * 100 : 0;
+      bValue = b.gamesPlayed > 0 ? (b.wins / b.gamesPlayed) * 100 : 0;
+    } else {
+      aValue = a[sortField as keyof Player] as number;
+      bValue = b[sortField as keyof Player] as number;
+    }
     
     if (sortDirection === 'desc') {
       return bValue - aValue;
@@ -85,10 +96,13 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                   </SortButton>
                 </th>
                 <th className="px-4 py-3 text-center">
-                  <SortButton field="goals">
+                  <SortButton field="pointsPerGame">
                     <Target className="h-4 w-4 mr-1" />
-                    Goals
+                    PPG
                   </SortButton>
+                </th>
+                <th className="px-4 py-3 text-center">
+                  <SortButton field="winPercentage">Win %</SortButton>
                 </th>
                 <th className="px-4 py-3 text-center">
                   <SortButton field="mvpAwards">MVP</SortButton>
@@ -125,7 +139,12 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                     <td className="px-4 py-4 text-center font-medium">{player.gamesPlayed}</td>
                     <td className="px-4 py-4 text-center">
                       <Badge variant="outline" className="font-semibold text-green-700">
-                        {player.goals}
+                        {player.gamesPlayed > 0 ? (player.points / player.gamesPlayed).toFixed(1) : '0.0'}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      <Badge variant="outline" className="font-semibold text-blue-700">
+                        {player.gamesPlayed > 0 ? Math.round((player.wins / player.gamesPlayed) * 100) : 0}%
                       </Badge>
                     </td>
                     <td className="px-4 py-4 text-center">

@@ -6,7 +6,6 @@ export interface Player {
   wins: number;
   draws: number;
   losses: number;
-  goals: number;
   mvpAwards: number;
   points: number;
   goalDifference: number;
@@ -20,7 +19,6 @@ export interface GameResult {
   team1Goals: number;
   team2Goals: number;
   mvpPlayer: string;
-  goalScorers: { playerId: string; goals: number }[];
 }
 
 export interface GameInput {
@@ -29,5 +27,4 @@ export interface GameInput {
   team1Goals: number;
   team2Goals: number;
   mvpPlayer: string;
-  goalScorers: { playerId: string; goals: number }[];
 }
