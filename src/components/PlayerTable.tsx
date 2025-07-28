@@ -10,7 +10,7 @@ interface PlayerTableProps {
   players: Player[];
 }
 
-type SortField = 'points' | 'goals' | 'assists' | 'mvpAwards' | 'goalDifference' | 'gamesPlayed';
+type SortField = 'points' | 'goals' | 'mvpAwards' | 'goalDifference' | 'gamesPlayed';
 
 const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   const [sortField, setSortField] = useState<SortField>('points');
@@ -91,9 +91,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                   </SortButton>
                 </th>
                 <th className="px-4 py-3 text-center">
-                  <SortButton field="assists">Assists</SortButton>
-                </th>
-                <th className="px-4 py-3 text-center">
                   <SortButton field="mvpAwards">MVP</SortButton>
                 </th>
                 <th className="px-4 py-3 text-center">
@@ -129,11 +126,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                     <td className="px-4 py-4 text-center">
                       <Badge variant="outline" className="font-semibold text-green-700">
                         {player.goals}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      <Badge variant="outline" className="font-semibold text-blue-700">
-                        {player.assists}
                       </Badge>
                     </td>
                     <td className="px-4 py-4 text-center">

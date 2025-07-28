@@ -35,12 +35,10 @@ const Index = () => {
       // Add MVP bonus
       if (gameData.mvpPlayer === player.id) gamePoints += 2;
 
-      // Add goal and assist bonuses
+      // Add goal bonuses
       const playerGoals = gameData.goalScorers.find(gs => gs.playerId === player.id)?.goals || 0;
-      const playerAssists = gameData.assists.find(a => a.playerId === player.id)?.assists || 0;
       
       gamePoints += playerGoals; // 1 point per goal
-      gamePoints += playerAssists * 0.5; // 0.5 points per assist
 
       // Update player stats
       return {
@@ -50,7 +48,6 @@ const Index = () => {
         draws: isDraw ? player.draws + 1 : player.draws,
         losses: (!isWinner && !isDraw) ? player.losses + 1 : player.losses,
         goals: player.goals + playerGoals,
-        assists: player.assists + playerAssists,
         mvpAwards: gameData.mvpPlayer === player.id ? player.mvpAwards + 1 : player.mvpAwards,
         points: Math.round((player.points + gamePoints) * 10) / 10, // Round to 1 decimal
         goalDifference: isInTeam1 ? 

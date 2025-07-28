@@ -23,7 +23,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
   const [team2Goals, setTeam2Goals] = useState(0);
   const [mvpPlayer, setMvpPlayer] = useState('');
   const [goalScorers, setGoalScorers] = useState<{ playerId: string; goals: number }[]>([]);
-  const [assists, setAssists] = useState<{ playerId: string; assists: number }[]>([]);
+  
 
   const availablePlayersForTeam1 = players.filter(p => !team2Players.includes(p.id));
   const availablePlayersForTeam2 = players.filter(p => !team1Players.includes(p.id));
@@ -60,20 +60,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
     setGoalScorers(goalScorers.filter((_, i) => i !== index));
   };
 
-  const addAssist = () => {
-    setAssists([...assists, { playerId: '', assists: 1 }]);
-  };
-
-  const updateAssist = (index: number, field: 'playerId' | 'assists', value: string | number) => {
-    const updated = assists.map((assist, i) => 
-      i === index ? { ...assist, [field]: value } : assist
-    );
-    setAssists(updated);
-  };
-
-  const removeAssist = (index: number) => {
-    setAssists(assists.filter((_, i) => i !== index));
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,7 +89,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
       team2Goals,
       mvpPlayer,
       goalScorers: goalScorers.filter(scorer => scorer.playerId && scorer.goals > 0),
-      assists: assists.filter(assist => assist.playerId && assist.assists > 0),
     };
 
     onGameSubmit(gameData);
@@ -115,7 +100,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
     setTeam2Goals(0);
     setMvpPlayer('');
     setGoalScorers([]);
-    setAssists([]);
 
     toast({
       title: "Game Recorded!",
@@ -304,51 +288,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
             ))}
           </div>
 
-          {/* Assists Section */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-lg font-semibold">Assists</Label>
-              <Button type="button" onClick={addAssist} size="sm" className="flex items-center gap-1">
-                <Plus className="h-4 w-4" />
-                Add Assist
-              </Button>
-            </div>
-            {assists.map((assist, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Select
-                  value={assist.playerId}
-                  onValueChange={(value) => updateAssist(index, 'playerId', value)}
-                >
-                  <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Select player" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {allGamePlayers.map((playerId) => (
-                      <SelectItem key={playerId} value={playerId}>
-                        {getPlayerName(playerId)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  type="number"
-                  min="1"
-                  value={assist.assists}
-                  onChange={(e) => updateAssist(index, 'assists', Number(e.target.value))}
-                  className="w-20"
-                  placeholder="Assists"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeAssist(index)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
 
           <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-3">
             Record Match Result
