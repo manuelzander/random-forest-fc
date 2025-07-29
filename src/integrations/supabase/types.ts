@@ -14,16 +14,156 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      games: {
+        Row: {
+          created_at: string
+          id: string
+          mvp_player: string | null
+          team1_goals: number
+          team1_players: string[]
+          team2_goals: number
+          team2_players: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mvp_player?: string | null
+          team1_goals: number
+          team1_players: string[]
+          team2_goals: number
+          team2_players: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mvp_player?: string | null
+          team1_goals?: number
+          team1_players?: string[]
+          team2_goals?: number
+          team2_players?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "games_mvp_player_fkey"
+            columns: ["mvp_player"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          created_at: string
+          draws: number
+          games_played: number
+          goal_difference: number
+          id: string
+          losses: number
+          mvp_awards: number
+          name: string
+          points: number
+          updated_at: string
+          wins: number
+        }
+        Insert: {
+          created_at?: string
+          draws?: number
+          games_played?: number
+          goal_difference?: number
+          id?: string
+          losses?: number
+          mvp_awards?: number
+          name: string
+          points?: number
+          updated_at?: string
+          wins?: number
+        }
+        Update: {
+          created_at?: string
+          draws?: number
+          games_played?: number
+          goal_difference?: number
+          id?: string
+          losses?: number
+          mvp_awards?: number
+          name?: string
+          points?: number
+          updated_at?: string
+          wins?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +290,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
