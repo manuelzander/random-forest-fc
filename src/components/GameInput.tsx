@@ -13,15 +13,23 @@ import { useToast } from '@/hooks/use-toast';
 interface GameInputProps {
   players: Player[];
   onGameSubmit: (game: GameInputType) => void;
+  initialData?: {
+    team1Goals: number;
+    team2Goals: number;
+    team1Players: string[];
+    team2Players: string[];
+    mvpPlayer: string;
+  };
+  isEditing?: boolean;
 }
 
-const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
+const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialData, isEditing = false }) => {
   const { toast } = useToast();
-  const [team1Players, setTeam1Players] = useState<string[]>([]);
-  const [team2Players, setTeam2Players] = useState<string[]>([]);
-  const [team1Goals, setTeam1Goals] = useState(0);
-  const [team2Goals, setTeam2Goals] = useState(0);
-  const [mvpPlayer, setMvpPlayer] = useState('');
+  const [team1Players, setTeam1Players] = useState<string[]>(initialData?.team1Players || []);
+  const [team2Players, setTeam2Players] = useState<string[]>(initialData?.team2Players || []);
+  const [team1Goals, setTeam1Goals] = useState(initialData?.team1Goals || 0);
+  const [team2Goals, setTeam2Goals] = useState(initialData?.team2Goals || 0);
+  const [mvpPlayer, setMvpPlayer] = useState(initialData?.mvpPlayer || '');
   
   
 
@@ -78,18 +86,24 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
 
     onGameSubmit(gameData);
     
-    // Reset form
-    setTeam1Players([]);
-    setTeam2Players([]);
-    setTeam1Goals(0);
-    setTeam2Goals(0);
-    setMvpPlayer('');
-    
-
-    toast({
-      title: "Game Recorded!",
-      description: "The match result has been successfully recorded.",
-    });
+    // Reset form only if not editing
+    if (!isEditing) {
+      setTeam1Players([]);
+      setTeam2Players([]);
+      setTeam1Goals(0);
+      setTeam2Goals(0);
+      setMvpPlayer('');
+      
+      toast({
+        title: "Game Recorded!",
+        description: "The match result has been successfully recorded.",
+      });
+    } else {
+      toast({
+        title: "Game Updated!",
+        description: "The match result has been successfully updated.",
+      });
+    }
   };
 
   const getPlayerName = (playerId: string) => {
@@ -101,7 +115,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
       <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <Target className="h-6 w-6" />
-          Record Match Result
+          {isEditing ? 'Edit Match Result' : 'Record Match Result'}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
@@ -229,7 +243,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit }) => {
 
 
           <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-3">
-            Record Match Result
+            {isEditing ? 'Update Match Result' : 'Record Match Result'}
           </Button>
         </form>
       </CardContent>
