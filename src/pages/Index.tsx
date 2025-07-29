@@ -88,7 +88,7 @@ const Index = () => {
 
           <TabsContent value="rankings" className="space-y-6">
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card>
                 <CardContent className="p-4 text-center">
                   <div className="text-2xl font-bold text-green-600">{players.length}</div>
@@ -101,22 +101,6 @@ const Index = () => {
                     {players.reduce((sum, p) => sum + p.gamesPlayed, 0)}
                   </div>
                   <div className="text-sm text-gray-600">Games Played</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {Math.round(players.reduce((sum, p) => sum + (p.gamesPlayed > 0 ? p.wins / p.gamesPlayed * 100 : 0), 0) / players.length)}%
-                  </div>
-                  <div className="text-sm text-gray-600">Avg Win Rate</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-purple-600">
-                    {players.reduce((sum, p) => sum + p.mvpAwards, 0)}
-                  </div>
-                  <div className="text-sm text-gray-600">MVP Awards</div>
                 </CardContent>
               </Card>
             </div>
