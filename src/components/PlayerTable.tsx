@@ -4,6 +4,7 @@ import { Player } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUp, ArrowDown, Trophy, Target, Users, Award } from 'lucide-react';
 
 interface PlayerTableProps {
@@ -129,7 +130,22 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                       </Badge>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="font-semibold text-gray-900">{player.name}</div>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={(player as any).avatar_url || undefined} />
+                          <AvatarFallback>
+                            {player.name.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-semibold text-gray-900">{player.name}</div>
+                          {(player as any).user_id && (
+                            <Badge variant="outline" className="text-xs mt-1">
+                              Claimed
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-4 text-center">
                       <Badge variant="secondary" className="font-bold text-lg">

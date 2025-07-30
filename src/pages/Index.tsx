@@ -6,16 +6,18 @@ import { useAuth } from '@/hooks/useAuth';
 import { Player, GameInput as GameInputType } from '@/types';
 import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
+import { PlayerClaim } from '@/components/PlayerClaim';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Plus, BarChart, Shield, LogIn, LogOut, Settings } from 'lucide-react';
+import { Trophy, Plus, BarChart, Shield, LogIn, LogOut, Settings, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const { user, userRole, signOut } = useAuth();
   const { toast } = useToast();
   const [players, setPlayers] = useState<Player[]>([]);
+  const [currentUserPlayer, setCurrentUserPlayer] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('rankings');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,7 +34,7 @@ const Index = () => {
 
       if (error) throw error;
       
-      // Convert database format to component format
+      // Convert database format to component format with avatar support
       const formattedPlayers: Player[] = (data || []).map(player => ({
         id: player.id,
         name: player.name,
@@ -43,9 +45,17 @@ const Index = () => {
         losses: player.losses,
         mvpAwards: player.mvp_awards,
         goalDifference: player.goal_difference,
+        user_id: player.user_id,
+        avatar_url: player.avatar_url,
       }));
       
       setPlayers(formattedPlayers);
+
+      // Find current user's claimed player
+      if (user) {
+        const userPlayer = formattedPlayers.find(player => player.user_id === user.id);
+        setCurrentUserPlayer(userPlayer || null);
+      }
     } catch (error) {
       console.error('Error fetching players:', error);
       toast({
@@ -219,11 +229,17 @@ const Index = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
             <TabsTrigger value="rankings" className="flex items-center gap-2">
               <BarChart className="h-4 w-4" />
               Rankings
             </TabsTrigger>
+            {user && (
+              <TabsTrigger value="profile" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Profile
+              </TabsTrigger>
+            )}
             <TabsTrigger value="add-game" className="flex items-center gap-2" disabled={!user}>
               <Plus className="h-4 w-4" />
               Add Game
@@ -252,6 +268,16 @@ const Index = () => {
             {/* Player Table */}
             <PlayerTable players={players} />
           </TabsContent>
+
+          {user && (
+            <TabsContent value="profile">
+              <PlayerClaim 
+                players={players}
+                currentUserPlayer={currentUserPlayer}
+                onPlayerClaimed={fetchPlayers}
+              />
+            </TabsContent>
+          )}
 
           <TabsContent value="add-game">
             {user ? (

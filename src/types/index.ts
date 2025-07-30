@@ -9,6 +9,8 @@ export interface Player {
   mvpAwards: number;
   points: number;
   goalDifference: number;
+  user_id?: string | null;
+  avatar_url?: string | null;
 }
 
 export interface GameResult {

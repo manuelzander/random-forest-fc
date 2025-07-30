@@ -57,6 +57,7 @@ export type Database = {
       }
       players: {
         Row: {
+          avatar_url: string | null
           created_at: string
           draws: number
           games_played: number
@@ -67,9 +68,11 @@ export type Database = {
           name: string
           points: number
           updated_at: string
+          user_id: string | null
           wins: number
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           draws?: number
           games_played?: number
@@ -80,9 +83,11 @@ export type Database = {
           name: string
           points?: number
           updated_at?: string
+          user_id?: string | null
           wins?: number
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           draws?: number
           games_played?: number
@@ -93,6 +98,7 @@ export type Database = {
           name?: string
           points?: number
           updated_at?: string
+          user_id?: string | null
           wins?: number
         }
         Relationships: []
