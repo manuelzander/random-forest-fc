@@ -192,7 +192,7 @@ const Index = () => {
               <div className="p-2 bg-green-600 rounded-lg">
                 <Trophy className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Football League</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Random Forest FC</h1>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-600">
