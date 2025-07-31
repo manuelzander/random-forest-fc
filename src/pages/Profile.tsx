@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Home, Loader2 } from 'lucide-react';
+import { User, Home, Loader2, LogOut } from 'lucide-react';
 import { PlayerClaim } from '@/components/PlayerClaim';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,11 +11,22 @@ import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 
 const Profile = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, signOut } = useAuth();
   const { toast } = useToast();
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentUserPlayer, setCurrentUserPlayer] = useState<any>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -101,6 +112,10 @@ const Profile = () => {
                   Main Page
                 </Button>
               </Link>
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
             </div>
           </div>
         </div>
