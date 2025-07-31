@@ -1,9 +1,9 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Shield, Users, History, Settings, LogOut, Loader2 } from 'lucide-react';
+import { Shield, Users, History, Settings, LogOut, Loader2, Home } from 'lucide-react';
 import AdminPlayerManagement from '@/components/AdminPlayerManagement';
 import AdminGameManagement from '@/components/AdminGameManagement';
 import { useToast } from '@/hooks/use-toast';
@@ -57,6 +57,12 @@ const Admin = () => {
               <div className="text-sm text-gray-600">
                 Welcome, {user?.email}
               </div>
+              <Link to="/">
+                <Button variant="outline" size="sm">
+                  <Home className="h-4 w-4 mr-2" />
+                  Main Page
+                </Button>
+              </Link>
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
