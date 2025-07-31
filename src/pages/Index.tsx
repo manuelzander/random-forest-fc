@@ -198,96 +198,63 @@ const Index = () => {
               <div className="text-sm text-gray-600">
                 {players.length} Players • Weekly Matches
               </div>
-              {user ? (
-                <div className="flex items-center gap-2">
-                  {userRole === 'admin' && (
-                    <Link to="/admin">
-                      <Button variant="outline" size="sm">
-                        <Shield className="h-4 w-4 mr-2" />
-                        Admin
-                      </Button>
-                    </Link>
-                  )}
-                  <Button variant="outline" size="sm" onClick={handleSignOut}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </Button>
-                </div>
-              ) : (
-                <Link to="/auth">
-                  <Button variant="outline" size="sm">
-                    <LogIn className="h-4 w-4 mr-2" />
-                    Sign In
-                  </Button>
-                </Link>
-              )}
+               {user ? (
+                 <div className="flex items-center gap-2">
+                    <Link to="/profile">
+                     <Button variant="outline" size="sm">
+                       <User className="h-4 w-4 mr-2" />
+                       Profile
+                     </Button>
+                   </Link>
+                   {userRole === 'admin' && (
+                     <Link to="/admin">
+                       <Button variant="outline" size="sm">
+                         <Shield className="h-4 w-4 mr-2" />
+                         Admin
+                       </Button>
+                     </Link>
+                   )}
+                   <Button variant="outline" size="sm" onClick={handleSignOut}>
+                     <LogOut className="h-4 w-4 mr-2" />
+                     Sign Out
+                   </Button>
+                 </div>
+               ) : (
+                 <Link to="/auth">
+                   <Button variant="outline" size="sm">
+                     <LogIn className="h-4 w-4 mr-2" />
+                     Sign In
+                   </Button>
+                 </Link>
+               )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className={`grid w-full max-w-lg mx-auto ${userRole === 'admin' ? 'grid-cols-3' : user ? 'grid-cols-2' : 'grid-cols-1'}`}>
-            <TabsTrigger value="rankings" className="flex items-center gap-2">
-              <BarChart className="h-4 w-4" />
-              Rankings
-            </TabsTrigger>
-            {user && (
-              <TabsTrigger value="profile" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Profile
-              </TabsTrigger>
-            )}
-            {userRole === 'admin' && (
-              <TabsTrigger value="add-game" className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Add Game
-              </TabsTrigger>
-            )}
-          </TabsList>
+       {/* Main Content */}
+       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+         {/* Stats Cards */}
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+           <Card>
+             <CardContent className="p-4 text-center">
+               <div className="text-2xl font-bold text-green-600">{players.length}</div>
+               <div className="text-sm text-gray-600">Total Players</div>
+             </CardContent>
+           </Card>
+           <Card>
+             <CardContent className="p-4 text-center">
+               <div className="text-2xl font-bold text-blue-600">
+                 {players.reduce((sum, p) => sum + p.gamesPlayed, 0)}
+               </div>
+               <div className="text-sm text-gray-600">Games Played</div>
+             </CardContent>
+           </Card>
+         </div>
 
-          <TabsContent value="rankings" className="space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-green-600">{players.length}</div>
-                  <div className="text-sm text-gray-600">Total Players</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {players.reduce((sum, p) => sum + p.gamesPlayed, 0)}
-                  </div>
-                  <div className="text-sm text-gray-600">Games Played</div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Player Table */}
-            <PlayerTable players={players} />
-          </TabsContent>
-
-          {user && (
-            <TabsContent value="profile">
-              <PlayerClaim 
-                players={players}
-                currentUserPlayer={currentUserPlayer}
-                onPlayerClaimed={fetchPlayers}
-              />
-            </TabsContent>
-          )}
-
-          {userRole === 'admin' && (
-            <TabsContent value="add-game">
-              <GameInput players={players} onGameSubmit={handleGameSubmit} />
-            </TabsContent>
-          )}
-        </Tabs>
-      </div>
+         {/* Player Table */}
+         <PlayerTable players={players} />
+       </div>
     </div>
   );
 };

@@ -94,7 +94,7 @@ const Auth = () => {
             <div className="p-2 bg-green-600 rounded-lg">
               <Trophy className="h-6 w-6 text-white" />
             </div>
-            <CardTitle className="text-2xl">Football League</CardTitle>
+            <CardTitle className="text-2xl">Random Forest FC</CardTitle>
           </div>
           <p className="text-gray-600">Sign in to manage your league</p>
         </CardHeader>
