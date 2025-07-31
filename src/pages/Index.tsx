@@ -229,7 +229,7 @@ const Index = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
+          <TabsList className={`grid w-full max-w-lg mx-auto ${userRole === 'admin' ? 'grid-cols-3' : user ? 'grid-cols-2' : 'grid-cols-1'}`}>
             <TabsTrigger value="rankings" className="flex items-center gap-2">
               <BarChart className="h-4 w-4" />
               Rankings
@@ -240,10 +240,12 @@ const Index = () => {
                 Profile
               </TabsTrigger>
             )}
-            <TabsTrigger value="add-game" className="flex items-center gap-2" disabled={!user}>
-              <Plus className="h-4 w-4" />
-              Add Game
-            </TabsTrigger>
+            {userRole === 'admin' && (
+              <TabsTrigger value="add-game" className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Add Game
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="rankings" className="space-y-6">
@@ -279,24 +281,11 @@ const Index = () => {
             </TabsContent>
           )}
 
-          <TabsContent value="add-game">
-            {user ? (
+          {userRole === 'admin' && (
+            <TabsContent value="add-game">
               <GameInput players={players} onGameSubmit={handleGameSubmit} />
-            ) : (
-              <Card className="w-full max-w-md mx-auto">
-                <CardContent className="p-6 text-center">
-                  <h3 className="text-lg font-semibold mb-2">Authentication Required</h3>
-                  <p className="text-gray-600 mb-4">You need to sign in to add games.</p>
-                  <Link to="/auth">
-                    <Button>
-                      <LogIn className="h-4 w-4 mr-2" />
-                      Sign In
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>
