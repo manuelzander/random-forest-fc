@@ -137,11 +137,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                             {player.name.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
+                        <div className="flex items-center gap-2">
                           <div className="font-semibold text-gray-900">{player.name}</div>
                           {(player as any).user_id && (
-                            <Badge variant="outline" className="text-xs mt-1">
-                              Claimed
+                            <Badge variant="secondary" className="text-xs h-4 px-1.5 bg-green-100 text-green-700 border-green-200">
+                              ✓
                             </Badge>
                           )}
                         </div>

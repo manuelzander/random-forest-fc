@@ -195,9 +195,6 @@ const Index = () => {
               <h1 className="text-2xl font-bold text-gray-900">Random Forest FC</h1>
             </div>
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600">
-                {players.length} Players • Weekly Matches
-              </div>
                {user ? (
                  <div className="flex items-center gap-2">
                     <Link to="/profile">
