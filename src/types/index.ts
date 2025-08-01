@@ -30,3 +30,13 @@ export interface GameInput {
   team2Goals: number;
   mvpPlayer: string;
 }
+
+export interface NewsItem {
+  id: string;
+  title: string;
+  content: string;
+  author_id: string;
+  created_at: string;
+  updated_at: string;
+  published: boolean;
+}

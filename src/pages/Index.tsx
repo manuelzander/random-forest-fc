@@ -249,8 +249,21 @@ const Index = () => {
            </Card>
          </div>
 
-         {/* Player Table */}
-         <PlayerTable players={players} />
+         {/* Tabs */}
+         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+           <TabsList className="grid w-full grid-cols-2">
+             <TabsTrigger value="rankings">Rankings</TabsTrigger>
+             <TabsTrigger value="news">News</TabsTrigger>
+           </TabsList>
+           <TabsContent value="rankings">
+             <PlayerTable players={players} />
+           </TabsContent>
+           <TabsContent value="news">
+             <div className="text-center py-8">
+               <p className="text-gray-600">Visit the <Link to="/news" className="text-blue-600 hover:underline">News page</Link> to view all articles.</p>
+             </div>
+           </TabsContent>
+         </Tabs>
        </div>
     </div>
   );

@@ -3,9 +3,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Shield, Users, History, Settings, LogOut, Loader2, Home } from 'lucide-react';
+import { Shield, Users, History, Settings, LogOut, Loader2, Home, Newspaper } from 'lucide-react';
 import AdminPlayerManagement from '@/components/AdminPlayerManagement';
 import AdminGameManagement from '@/components/AdminGameManagement';
+import AdminNewsManagement from '@/components/AdminNewsManagement';
 import { useToast } from '@/hooks/use-toast';
 
 const Admin = () => {
@@ -75,7 +76,7 @@ const Admin = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="players" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
             <TabsTrigger value="players" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Players
@@ -83,6 +84,10 @@ const Admin = () => {
             <TabsTrigger value="games" className="flex items-center gap-2">
               <History className="h-4 w-4" />
               Games
+            </TabsTrigger>
+            <TabsTrigger value="news" className="flex items-center gap-2">
+              <Newspaper className="h-4 w-4" />
+              News
             </TabsTrigger>
           </TabsList>
 
@@ -92,6 +97,10 @@ const Admin = () => {
 
           <TabsContent value="games">
             <AdminGameManagement />
+          </TabsContent>
+
+          <TabsContent value="news">
+            <AdminNewsManagement />
           </TabsContent>
         </Tabs>
       </div>
