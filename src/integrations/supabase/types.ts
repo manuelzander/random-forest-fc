@@ -55,9 +55,40 @@ export type Database = {
           },
         ]
       }
+      news: {
+        Row: {
+          author_id: string
+          content: string | null
+          created_at: string
+          id: string
+          published: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          published?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          published?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       players: {
         Row: {
           avatar_url: string | null
+          badges: Json | null
           created_at: string
           draws: number
           games_played: number
@@ -73,6 +104,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          badges?: Json | null
           created_at?: string
           draws?: number
           games_played?: number
@@ -88,6 +120,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          badges?: Json | null
           created_at?: string
           draws?: number
           games_played?: number
@@ -105,28 +138,40 @@ export type Database = {
       }
       profiles: {
         Row: {
+          bio: string | null
           created_at: string
           display_name: string | null
           email: string
+          favorite_position: string | null
+          football_skills: Json | null
           id: string
           updated_at: string
           user_id: string
+          years_playing: number | null
         }
         Insert: {
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           email: string
+          favorite_position?: string | null
+          football_skills?: Json | null
           id?: string
           updated_at?: string
           user_id: string
+          years_playing?: number | null
         }
         Update: {
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           email?: string
+          favorite_position?: string | null
+          football_skills?: Json | null
           id?: string
           updated_at?: string
           user_id?: string
+          years_playing?: number | null
         }
         Relationships: []
       }
