@@ -194,17 +194,18 @@ const AdminNewsManagement = () => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-2xl">
-            <Newspaper className="h-6 w-6" />
-            News Management
-          </CardTitle>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Newspaper className="h-5 w-5" />
+          News Management
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">News Articles ({news.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button 
-                variant="outline" 
-                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+              <Button
                 onClick={() => {
                   setEditingItem(null);
                   setFormData({ title: '', content: '', published: true });
@@ -264,13 +265,13 @@ const AdminNewsManagement = () => {
             </DialogContent>
           </Dialog>
         </div>
-      </CardHeader>
-      <CardContent className="p-6">
+
         {news.length === 0 ? (
-          <div className="text-center py-8">
-            <Newspaper className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600">No news articles yet. Create your first article!</p>
-          </div>
+          <Alert>
+            <AlertDescription>
+              No news articles yet. Create your first article!
+            </AlertDescription>
+          </Alert>
         ) : (
           <div className="space-y-4">
             {news.map((item) => (
@@ -314,7 +315,7 @@ const AdminNewsManagement = () => {
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant="destructive"
+                      variant="outline"
                       size="sm"
                       onClick={() => handleDelete(item.id)}
                     >
