@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Home, Loader2, LogOut } from 'lucide-react';
 import { PlayerClaim } from '@/components/PlayerClaim';
+import ProfileSkillsEditor from '@/components/ProfileSkillsEditor';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Player } from '@/types';
@@ -122,12 +123,27 @@ const Profile = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <PlayerClaim 
           players={players}
           currentUserPlayer={currentUserPlayer}
           onPlayerClaimed={fetchPlayers}
         />
+        
+        {currentUserPlayer && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Edit Your Profile</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProfileSkillsEditor 
+                userId={user!.id}
+                playerData={currentUserPlayer}
+                onProfileUpdate={fetchPlayers}
+              />
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

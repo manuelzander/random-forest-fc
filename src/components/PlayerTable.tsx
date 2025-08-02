@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Player } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -67,6 +68,26 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800';
     if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600';
     return 'bg-gradient-to-r from-blue-500 to-blue-600';
+  };
+
+  const getBadges = (player: Player) => {
+    const badges = [];
+    
+    if (player.mvpAwards >= 5) {
+      badges.push({ icon: '👑', name: 'MVP Champion' });
+    }
+    if (player.goalDifference >= 10) {
+      badges.push({ icon: '⚽', name: 'Goal Machine' });
+    }
+    const winRate = player.gamesPlayed > 0 ? Math.round((player.wins / player.gamesPlayed) * 100) : 0;
+    if (winRate >= 70) {
+      badges.push({ icon: '🏆', name: 'Winner' });
+    }
+    if (player.gamesPlayed >= 20) {
+      badges.push({ icon: '🎯', name: 'Veteran' });
+    }
+
+    return badges;
   };
 
   return (
@@ -138,12 +159,21 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex items-center gap-2">
-                          <div className="font-semibold text-gray-900">{player.name}</div>
+                          <Link to={`/player/${player.id}`}>
+                            <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-blue-600">
+                              {player.name}
+                            </Button>
+                          </Link>
                           {(player as any).user_id && (
                             <Badge variant="secondary" className="text-xs h-4 px-1.5 bg-green-100 text-green-700 border-green-200">
                               ✓
                             </Badge>
                           )}
+                          {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
+                            <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs">
+                              <span>{badge.icon}</span>
+                            </Badge>
+                          ))}
                         </div>
                       </div>
                     </td>
