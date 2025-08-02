@@ -194,7 +194,7 @@ const AdminNewsManagement = () => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-2xl">
             <Newspaper className="h-6 w-6" />

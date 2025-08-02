@@ -3,27 +3,61 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Player, GameInput as GameInputType } from '@/types';
+import { Player, GameInput as GameInputType, NewsItem } from '@/types';
 import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
 import { PlayerClaim } from '@/components/PlayerClaim';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Plus, BarChart, Shield, LogIn, LogOut, Settings, User } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Trophy, Plus, BarChart, Shield, LogIn, LogOut, Settings, User, Calendar, Newspaper } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 
 const Index = () => {
   const { user, userRole, signOut } = useAuth();
   const { toast } = useToast();
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentUserPlayer, setCurrentUserPlayer] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState('rankings');
+  const [activeTab, setActiveTab] = useState('ranking');
   const [isLoading, setIsLoading] = useState(true);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [newsLoading, setNewsLoading] = useState(false);
 
   useEffect(() => {
     fetchPlayers();
   }, []);
+
+  const fetchNews = async () => {
+    try {
+      setNewsLoading(true);
+      const { data, error } = await (supabase as any)
+        .from('news')
+        .select('*')
+        .eq('published', true)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      setNews(data || []);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch news",
+        variant: "destructive",
+      });
+    } finally {
+      setNewsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'news') {
+      fetchNews();
+    }
+  }, [activeTab]);
 
   const fetchPlayers = async () => {
     try {
@@ -249,21 +283,55 @@ const Index = () => {
            </Card>
          </div>
 
-         {/* Tabs */}
-         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-           <TabsList className="grid w-full grid-cols-2">
-             <TabsTrigger value="rankings">Rankings</TabsTrigger>
-             <TabsTrigger value="news">News</TabsTrigger>
-           </TabsList>
-           <TabsContent value="rankings">
-             <PlayerTable players={players} />
-           </TabsContent>
-           <TabsContent value="news">
-             <div className="text-center py-8">
-               <p className="text-gray-600">Visit the <Link to="/news" className="text-blue-600 hover:underline">News page</Link> to view all articles.</p>
-             </div>
-           </TabsContent>
-         </Tabs>
+          {/* Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="ranking">Ranking</TabsTrigger>
+              <TabsTrigger value="news">News</TabsTrigger>
+            </TabsList>
+            <TabsContent value="ranking">
+              <PlayerTable players={players} />
+            </TabsContent>
+            <TabsContent value="news">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Newspaper className="h-5 w-5" />
+                    Latest News
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {newsLoading ? (
+                    <div className="text-center py-8">
+                      <div>Loading news...</div>
+                    </div>
+                  ) : news.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Newspaper className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                      <p className="text-gray-600">No news articles yet.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {news.map((article) => (
+                        <div key={article.id} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 className="text-lg font-semibold text-gray-900">{article.title}</h3>
+                            <Badge variant="secondary" className="ml-2">
+                              <Calendar className="h-3 w-3 mr-1" />
+                              {format(new Date(article.created_at), 'MMM d, yyyy')}
+                            </Badge>
+                          </div>
+                          {article.content && (
+                            <p className="text-gray-700 leading-relaxed">{article.content}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
        </div>
     </div>
   );
