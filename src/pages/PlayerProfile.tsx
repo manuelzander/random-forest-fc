@@ -194,16 +194,16 @@ const PlayerProfile = () => {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Link to="/auth">
-                    <Button variant="outline" size="sm">
-                      <LogIn className="h-4 w-4 mr-2" />
-                      Sign In
-                    </Button>
-                  </Link>
                   <Link to="/">
                     <Button variant="outline" size="sm">
                       <Home className="h-4 w-4 mr-2" />
                       Home
+                    </Button>
+                  </Link>
+                  <Link to="/auth">
+                    <Button variant="outline" size="sm">
+                      <LogIn className="h-4 w-4 mr-2" />
+                      Sign In
                     </Button>
                   </Link>
                 </div>
