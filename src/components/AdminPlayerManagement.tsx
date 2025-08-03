@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Edit2, Trash2, Users } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Player {
@@ -19,17 +20,30 @@ interface Player {
   losses: number;
   mvp_awards: number;
   goal_difference: number;
+  user_id?: string | null;
+  avatar_url?: string | null;
+}
+
+interface Profile {
+  id: string;
+  user_id: string;
+  email: string;
+  display_name: string | null;
 }
 
 const AdminPlayerManagement = () => {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchPlayers();
+    fetchProfiles();
   }, []);
 
   const fetchPlayers = async () => {
@@ -50,6 +64,20 @@ const AdminPlayerManagement = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchProfiles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('display_name');
+
+      if (error) throw error;
+      setProfiles(data || []);
+    } catch (error) {
+      console.error('Error fetching profiles:', error);
     }
   };
 
@@ -134,6 +162,70 @@ const AdminPlayerManagement = () => {
   const openDialog = (player?: Player) => {
     setEditingPlayer(player || null);
     setIsDialogOpen(true);
+  };
+
+  const openClaimDialog = (player: Player) => {
+    setSelectedPlayer(player);
+    setIsClaimDialogOpen(true);
+  };
+
+  const handleClaimPlayer = async (userId: string) => {
+    if (!selectedPlayer) return;
+
+    try {
+      const { error } = await supabase
+        .from('players')
+        .update({ user_id: userId })
+        .eq('id', selectedPlayer.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Player connected to user successfully",
+      });
+
+      setIsClaimDialogOpen(false);
+      setSelectedPlayer(null);
+      fetchPlayers();
+    } catch (error) {
+      console.error('Error connecting player:', error);
+      toast({
+        title: "Error",
+        description: "Failed to connect player to user",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUnclaimPlayer = async (playerId: string) => {
+    try {
+      const { error } = await supabase
+        .from('players')
+        .update({ user_id: null, avatar_url: null })
+        .eq('id', playerId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Player disconnected from user successfully",
+      });
+
+      fetchPlayers();
+    } catch (error) {
+      console.error('Error disconnecting player:', error);
+      toast({
+        title: "Error",
+        description: "Failed to disconnect player from user",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getProfileByUserId = (userId: string | null | undefined) => {
+    if (!userId) return null;
+    return profiles.find(profile => profile.user_id === userId);
   };
 
   if (isLoading) {
@@ -258,24 +350,46 @@ const AdminPlayerManagement = () => {
         </div>
 
         <div className="space-y-2">
-          {players.map((player) => (
-            <div key={player.id} className="flex items-center justify-between p-4 border rounded-lg">
-              <div>
-                <h4 className="font-semibold">{player.name}</h4>
-                <p className="text-sm text-gray-600">
-                  {player.points} pts • {player.games_played} games • {player.wins}W-{player.draws}D-{player.losses}L
-                </p>
+          {players.map((player) => {
+            const profile = getProfileByUserId(player.user_id);
+            return (
+              <div key={player.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex-1">
+                  <h4 className="font-semibold">{player.name}</h4>
+                  <p className="text-sm text-gray-600">
+                    {player.points} pts • {player.games_played} games • {player.wins}W-{player.draws}D-{player.losses}L
+                  </p>
+                  {profile && (
+                    <p className="text-xs text-blue-600 mt-1">
+                      Connected to: {profile.display_name || profile.email}
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  {player.user_id ? (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleUnclaimPlayer(player.id)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <UserX className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="outline" onClick={() => openClaimDialog(player)}>
+                      <UserCheck className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" onClick={() => handleDelete(player.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => handleDelete(player.id)}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
           {players.length === 0 && (
             <Alert>
               <AlertDescription>
@@ -284,6 +398,39 @@ const AdminPlayerManagement = () => {
             </Alert>
           )}
         </div>
+
+        {/* Player-User Connection Dialog */}
+        <Dialog open={isClaimDialogOpen} onOpenChange={setIsClaimDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Connect Player to User</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Connect "{selectedPlayer?.name}" to a user account:
+              </p>
+              <Select onValueChange={handleClaimPlayer}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a user" />
+                </SelectTrigger>
+                <SelectContent>
+                  {profiles
+                    .filter(profile => !players.some(p => p.user_id === profile.user_id))
+                    .map((profile) => (
+                      <SelectItem key={profile.user_id} value={profile.user_id}>
+                        {profile.display_name || profile.email}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setIsClaimDialogOpen(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
