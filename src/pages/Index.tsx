@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Player, GameInput as GameInputType, NewsItem } from '@/types';
 import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
+import GamesList from '@/components/GamesList';
 import { PlayerClaim } from '@/components/PlayerClaim';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -285,12 +286,16 @@ const Index = () => {
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="ranking">Ranking</TabsTrigger>
+              <TabsTrigger value="games">Games</TabsTrigger>
               <TabsTrigger value="news">News</TabsTrigger>
             </TabsList>
             <TabsContent value="ranking">
               <PlayerTable players={players} />
+            </TabsContent>
+            <TabsContent value="games">
+              <GamesList />
             </TabsContent>
             <TabsContent value="news">
               <Card>
