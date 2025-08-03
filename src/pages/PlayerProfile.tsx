@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield } from 'lucide-react';
+import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -193,12 +193,20 @@ const PlayerProfile = () => {
                   </Button>
                 </div>
               ) : (
-                <Link to="/">
-                  <Button variant="outline" size="sm">
-                    <Home className="h-4 w-4 mr-2" />
-                    Home
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link to="/auth">
+                    <Button variant="outline" size="sm">
+                      <LogIn className="h-4 w-4 mr-2" />
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/">
+                    <Button variant="outline" size="sm">
+                      <Home className="h-4 w-4 mr-2" />
+                      Home
+                    </Button>
+                  </Link>
+                </div>
               )}
             </div>
           </div>
