@@ -35,6 +35,7 @@ const GamesList = () => {
 
   const fetchData = async () => {
     try {
+      console.log('GamesList: Starting fetch...');
       const [gamesResponse, playersResponse] = await Promise.all([
         supabase
           .from('games')
@@ -45,6 +46,13 @@ const GamesList = () => {
           .select('id, name')
           .order('name')
       ]);
+
+      console.log('GamesList: Fetch results:', { 
+        gamesError: gamesResponse.error, 
+        playersError: playersResponse.error,
+        gamesCount: gamesResponse.data?.length,
+        playersCount: playersResponse.data?.length
+      });
 
       if (gamesResponse.error) throw gamesResponse.error;
       if (playersResponse.error) throw playersResponse.error;

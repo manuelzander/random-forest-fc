@@ -62,12 +62,21 @@ const Index = () => {
 
   const fetchPlayers = async () => {
     try {
+      console.log('Starting player fetch...');
+      
+      // Clear any invalid session first
+      await supabase.auth.getSession();
+      
       const { data, error } = await supabase
         .from('players')
         .select('*')
         .order('points', { ascending: false });
 
-      if (error) throw error;
+      console.log('Players fetch result:', { data, error, count: data?.length });
+      if (error) {
+        console.error('Supabase error details:', error);
+        throw error;
+      }
       
       // Convert database format to component format with avatar support
       const formattedPlayers: Player[] = (data || []).map(player => ({
