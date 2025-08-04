@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { History, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { History, Calendar, Crown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
@@ -126,13 +127,16 @@ const GamesList = () => {
                     <div className="font-medium text-muted-foreground mb-2">Team 1 Players:</div>
                       <div className="space-y-1">
                         {game.team1_players.map(playerId => (
-                          <div key={playerId} className="flex items-center justify-between">
-                            <span>
-                              {getPlayerName(playerId)}
-                              {game.team1_captain === playerId && (
-                                <span className="ml-1 text-primary font-medium">(C)</span>
-                              )}
-                            </span>
+                           <div key={playerId} className="flex items-center justify-between">
+                             <div className="flex items-center gap-2">
+                               <span>{getPlayerName(playerId)}</span>
+                               {game.team1_captain === playerId && (
+                                 <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
+                                   <Crown className="h-3 w-3 mr-1" />
+                                   Captain
+                                 </Badge>
+                               )}
+                             </div>
                             {game.mvp_player === playerId && (
                               <span className="text-yellow-600 font-medium">👑 MVP</span>
                             )}
@@ -144,13 +148,16 @@ const GamesList = () => {
                     <div className="font-medium text-muted-foreground mb-2">Team 2 Players:</div>
                       <div className="space-y-1">
                         {game.team2_players.map(playerId => (
-                          <div key={playerId} className="flex items-center justify-between">
-                            <span>
-                              {getPlayerName(playerId)}
-                              {game.team2_captain === playerId && (
-                                <span className="ml-1 text-primary font-medium">(C)</span>
-                              )}
-                            </span>
+                           <div key={playerId} className="flex items-center justify-between">
+                             <div className="flex items-center gap-2">
+                               <span>{getPlayerName(playerId)}</span>
+                               {game.team2_captain === playerId && (
+                                 <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
+                                   <Crown className="h-3 w-3 mr-1" />
+                                   Captain
+                                 </Badge>
+                               )}
+                             </div>
                             {game.mvp_player === playerId && (
                               <span className="text-yellow-600 font-medium">👑 MVP</span>
                             )}
