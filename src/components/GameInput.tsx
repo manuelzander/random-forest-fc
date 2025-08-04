@@ -18,6 +18,8 @@ interface GameInputProps {
     team2Goals: number;
     team1Players: string[];
     team2Players: string[];
+    team1Captain: string;
+    team2Captain: string;
     mvpPlayer: string;
   };
   isEditing?: boolean;
@@ -29,6 +31,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   const [team2Players, setTeam2Players] = useState<string[]>(initialData?.team2Players || []);
   const [team1Goals, setTeam1Goals] = useState(initialData?.team1Goals || 0);
   const [team2Goals, setTeam2Goals] = useState(initialData?.team2Goals || 0);
+  const [team1Captain, setTeam1Captain] = useState(initialData?.team1Captain || '');
+  const [team2Captain, setTeam2Captain] = useState(initialData?.team2Captain || '');
   const [mvpPlayer, setMvpPlayer] = useState(initialData?.mvpPlayer || '');
   
   
@@ -48,8 +52,16 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   const removePlayerFromTeam = (teamNumber: 1 | 2, playerId: string) => {
     if (teamNumber === 1) {
       setTeam1Players(team1Players.filter(id => id !== playerId));
+      // Reset captain if removed player was captain
+      if (team1Captain === playerId) {
+        setTeam1Captain('');
+      }
     } else {
       setTeam2Players(team2Players.filter(id => id !== playerId));
+      // Reset captain if removed player was captain
+      if (team2Captain === playerId) {
+        setTeam2Captain('');
+      }
     }
   };
 
@@ -62,6 +74,24 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
       toast({
         title: "Error",
         description: "Both teams must have at least one player",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!team1Captain || !team1Players.includes(team1Captain)) {
+      toast({
+        title: "Error",
+        description: "Please select a valid captain for Team 1",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!team2Captain || !team2Players.includes(team2Captain)) {
+      toast({
+        title: "Error",
+        description: "Please select a valid captain for Team 2",
         variant: "destructive",
       });
       return;
@@ -81,6 +111,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
       team2Players,
       team1Goals,
       team2Goals,
+      team1Captain,
+      team2Captain,
       mvpPlayer,
     };
 
@@ -92,6 +124,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
       setTeam2Players([]);
       setTeam1Goals(0);
       setTeam2Goals(0);
+      setTeam1Captain('');
+      setTeam2Captain('');
       setMvpPlayer('');
       
       toast({
@@ -112,9 +146,9 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-        <CardTitle className="flex items-center gap-2 text-2xl">
-          <Target className="h-6 w-6" />
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Target className="h-5 w-5" />
           {isEditing ? 'Edit Match Result' : 'Record Match Result'}
         </CardTitle>
       </CardHeader>
@@ -192,6 +226,43 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
                   </Badge>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Captains Section */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Team 1 Captain */}
+            <div className="space-y-2">
+              <Label className="text-lg font-semibold">Team 1 Captain</Label>
+              <Select value={team1Captain} onValueChange={setTeam1Captain}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Team 1 Captain" />
+                </SelectTrigger>
+                <SelectContent>
+                  {team1Players.map((playerId) => (
+                    <SelectItem key={playerId} value={playerId}>
+                      {getPlayerName(playerId)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Team 2 Captain */}
+            <div className="space-y-2">
+              <Label className="text-lg font-semibold">Team 2 Captain</Label>
+              <Select value={team2Captain} onValueChange={setTeam2Captain}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Team 2 Captain" />
+                </SelectTrigger>
+                <SelectContent>
+                  {team2Players.map((playerId) => (
+                    <SelectItem key={playerId} value={playerId}>
+                      {getPlayerName(playerId)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

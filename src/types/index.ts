@@ -28,6 +28,8 @@ export interface GameInput {
   team2Players: string[];
   team1Goals: number;
   team2Goals: number;
+  team1Captain: string;
+  team2Captain: string;
   mvpPlayer: string;
 }
 

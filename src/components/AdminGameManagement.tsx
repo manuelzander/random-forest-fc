@@ -14,6 +14,8 @@ interface Game {
   team2_goals: number;
   team1_players: string[];
   team2_players: string[];
+  team1_captain: string | null;
+  team2_captain: string | null;
   mvp_player: string | null;
   created_at: string;
 }
@@ -106,6 +108,8 @@ const AdminGameManagement = () => {
             team2_goals: gameData.team2Goals,
             team1_players: gameData.team1Players,
             team2_players: gameData.team2Players,
+            team1_captain: gameData.team1Captain,
+            team2_captain: gameData.team2Captain,
             mvp_player: gameData.mvpPlayer,
           })
           .eq('id', editingGame.id);
@@ -123,6 +127,8 @@ const AdminGameManagement = () => {
             team2_goals: gameData.team2Goals,
             team1_players: gameData.team1Players,
             team2_players: gameData.team2Players,
+            team1_captain: gameData.team1Captain,
+            team2_captain: gameData.team2Captain,
             mvp_player: gameData.mvpPlayer,
           }]);
 
@@ -187,6 +193,8 @@ const AdminGameManagement = () => {
                   team2Goals: editingGame.team2_goals,
                   team1Players: editingGame.team1_players,
                   team2Players: editingGame.team2_players,
+                  team1Captain: editingGame.team1_captain || '',
+                  team2Captain: editingGame.team2_captain || '',
                   mvpPlayer: editingGame.mvp_player || '',
                 } : undefined}
                 isEditing={!!editingGame}
@@ -219,6 +227,9 @@ const AdminGameManagement = () => {
                         {game.team1_players.map(playerId => (
                           <div key={playerId} className="text-gray-700">
                             {getPlayerName(playerId)}
+                            {game.team1_captain === playerId && (
+                              <span className="ml-1 text-primary font-medium">(C)</span>
+                            )}
                             {game.mvp_player === playerId && (
                               <span className="ml-2 text-yellow-600 font-medium">👑 MVP</span>
                             )}
@@ -232,6 +243,9 @@ const AdminGameManagement = () => {
                         {game.team2_players.map(playerId => (
                           <div key={playerId} className="text-gray-700">
                             {getPlayerName(playerId)}
+                            {game.team2_captain === playerId && (
+                              <span className="ml-1 text-primary font-medium">(C)</span>
+                            )}
                             {game.mvp_player === playerId && (
                               <span className="ml-2 text-yellow-600 font-medium">👑 MVP</span>
                             )}

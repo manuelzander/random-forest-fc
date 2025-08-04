@@ -19,8 +19,10 @@ export type Database = {
           created_at: string
           id: string
           mvp_player: string | null
+          team1_captain: string | null
           team1_goals: number
           team1_players: string[]
+          team2_captain: string | null
           team2_goals: number
           team2_players: string[]
           updated_at: string
@@ -29,8 +31,10 @@ export type Database = {
           created_at?: string
           id?: string
           mvp_player?: string | null
+          team1_captain?: string | null
           team1_goals: number
           team1_players: string[]
+          team2_captain?: string | null
           team2_goals: number
           team2_players: string[]
           updated_at?: string
@@ -39,8 +43,10 @@ export type Database = {
           created_at?: string
           id?: string
           mvp_player?: string | null
+          team1_captain?: string | null
           team1_goals?: number
           team1_players?: string[]
+          team2_captain?: string | null
           team2_goals?: number
           team2_players?: string[]
           updated_at?: string

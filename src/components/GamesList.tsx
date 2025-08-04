@@ -12,6 +12,8 @@ interface Game {
   team2_goals: number;
   team1_players: string[];
   team2_players: string[];
+  team1_captain: string | null;
+  team2_captain: string | null;
   mvp_player: string | null;
   created_at: string;
 }
@@ -114,29 +116,39 @@ const GamesList = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <div className="font-medium text-muted-foreground mb-2">Team 1 Players:</div>
-                    <div className="space-y-1">
-                      {game.team1_players.map(playerId => (
-                        <div key={playerId} className="flex items-center justify-between">
-                          <span>{getPlayerName(playerId)}</span>
-                          {game.mvp_player === playerId && (
-                            <span className="text-yellow-600 font-medium">👑 MVP</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                      <div className="space-y-1">
+                        {game.team1_players.map(playerId => (
+                          <div key={playerId} className="flex items-center justify-between">
+                            <span>
+                              {getPlayerName(playerId)}
+                              {game.team1_captain === playerId && (
+                                <span className="ml-1 text-primary font-medium">(C)</span>
+                              )}
+                            </span>
+                            {game.mvp_player === playerId && (
+                              <span className="text-yellow-600 font-medium">👑 MVP</span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                   </div>
                   <div>
                     <div className="font-medium text-muted-foreground mb-2">Team 2 Players:</div>
-                    <div className="space-y-1">
-                      {game.team2_players.map(playerId => (
-                        <div key={playerId} className="flex items-center justify-between">
-                          <span>{getPlayerName(playerId)}</span>
-                          {game.mvp_player === playerId && (
-                            <span className="text-yellow-600 font-medium">👑 MVP</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                      <div className="space-y-1">
+                        {game.team2_players.map(playerId => (
+                          <div key={playerId} className="flex items-center justify-between">
+                            <span>
+                              {getPlayerName(playerId)}
+                              {game.team2_captain === playerId && (
+                                <span className="ml-1 text-primary font-medium">(C)</span>
+                              )}
+                            </span>
+                            {game.mvp_player === playerId && (
+                              <span className="text-yellow-600 font-medium">👑 MVP</span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                   </div>
                 </div>
               </div>
