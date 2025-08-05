@@ -325,18 +325,18 @@ const Index = () => {
                       <p className="text-gray-600">No news articles yet.</p>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                       {news.map((article) => (
-                        <div key={article.id} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
-                          <div className="flex items-start justify-between mb-2">
-                            <h3 className="text-lg font-semibold text-gray-900">{article.title}</h3>
-                            <Badge variant="secondary" className="ml-2">
-                              <Calendar className="h-3 w-3 mr-1" />
+                        <div key={article.id} className="p-4 border rounded-lg bg-card">
+                          <div className="flex items-start justify-between mb-3">
+                            <h3 className="text-lg font-semibold text-foreground flex-1 pr-4">{article.title}</h3>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <Calendar className="h-3 w-3" />
                               {format(new Date(article.created_at), 'MMM d, yyyy')}
-                            </Badge>
+                            </div>
                           </div>
                           {article.content && (
-                            <p className="text-gray-700 leading-relaxed">{article.content}</p>
+                            <p className="text-muted-foreground leading-relaxed">{article.content}</p>
                           )}
                         </div>
                       ))}
