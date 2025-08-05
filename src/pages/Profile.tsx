@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Home, Loader2, LogOut } from 'lucide-react';
 import { PlayerClaim } from '@/components/PlayerClaim';
+import AccountDetailsEditor from '@/components/AccountDetailsEditor';
 import ProfileSkillsEditor from '@/components/ProfileSkillsEditor';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -130,6 +131,10 @@ const Profile = () => {
           onPlayerClaimed={fetchPlayers}
         />
         
+        {!currentUserPlayer && (
+          <AccountDetailsEditor userEmail={user!.email || ''} />
+        )}
+        
         {currentUserPlayer && (
           <Card>
             <CardHeader>
@@ -143,6 +148,10 @@ const Profile = () => {
               />
             </CardContent>
           </Card>
+        )}
+
+        {currentUserPlayer && (
+          <AccountDetailsEditor userEmail={user!.email || ''} />
         )}
       </div>
     </div>
