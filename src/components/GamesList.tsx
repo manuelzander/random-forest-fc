@@ -131,10 +131,7 @@ const GamesList = () => {
                              <div className="flex items-center gap-2">
                                <span>{getPlayerName(playerId)}</span>
                                {game.team1_captain === playerId && (
-                                 <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
-                                   <Crown className="h-3 w-3 mr-1" />
-                                   Captain
-                                 </Badge>
+                                 <span className="text-primary font-medium">👑 C</span>
                                )}
                              </div>
                             {game.mvp_player === playerId && (
@@ -152,10 +149,7 @@ const GamesList = () => {
                              <div className="flex items-center gap-2">
                                <span>{getPlayerName(playerId)}</span>
                                {game.team2_captain === playerId && (
-                                 <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
-                                   <Crown className="h-3 w-3 mr-1" />
-                                   Captain
-                                 </Badge>
+                                 <span className="text-primary font-medium">👑 C</span>
                                )}
                              </div>
                             {game.mvp_player === playerId && (
