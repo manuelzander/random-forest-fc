@@ -287,6 +287,20 @@ const PlayerProfile = () => {
                   <div className="text-sm text-gray-600">MVP Awards</div>
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-3 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-700">
+                    {player.games_played > 0 ? (Number(player.points) / player.games_played).toFixed(1) : '0.0'}
+                  </div>
+                  <div className="text-sm text-gray-600">PPG</div>
+                </div>
+                <div className="text-center p-3 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-700">
+                    {player.games_played > 0 ? ((player.wins / player.games_played) * 100).toFixed(1) : '0.0'}%
+                  </div>
+                  <div className="text-sm text-gray-600">Win Rate</div>
+                </div>
+              </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center p-3 bg-green-50 rounded-lg">
                   <div className="text-xl font-bold text-green-700">{player.wins}</div>
