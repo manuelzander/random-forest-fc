@@ -255,7 +255,7 @@ const PlayerProfile = () => {
                 {badges.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {badges.map((badge, index) => (
-                      <Badge key={index} className="flex items-center gap-1">
+                      <Badge key={index} className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs">
                         <span>{badge.icon}</span>
                         {badge.name}
                       </Badge>
