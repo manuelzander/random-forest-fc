@@ -146,12 +146,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Target className="h-5 w-5" />
-          {isEditing ? 'Edit Match Result' : 'Record Match Result'}
-        </CardTitle>
-      </CardHeader>
       <CardContent className="p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Teams Section */}
