@@ -279,11 +279,11 @@ const PlayerProfile = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">{player.games_played}</div>
+                  <div className="text-2xl font-bold text-gray-700">{player.games_played}</div>
                   <div className="text-sm text-gray-600">Games Played</div>
                 </div>
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{player.mvp_awards}</div>
+                  <div className="text-2xl font-bold text-yellow-700">{player.mvp_awards}</div>
                   <div className="text-sm text-gray-600">MVP Awards</div>
                 </div>
               </div>
@@ -316,7 +316,10 @@ const PlayerProfile = () => {
                 </div>
               </div>
               <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <div className="text-2xl font-bold text-gray-900">
+                <div className={`text-2xl font-bold ${
+                  player.goal_difference > 0 ? 'text-green-600' : 
+                  player.goal_difference < 0 ? 'text-red-600' : 'text-gray-600'
+                }`}>
                   {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
                 </div>
                 <div className="text-sm text-gray-600">Goal Difference</div>
