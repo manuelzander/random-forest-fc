@@ -145,7 +145,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                   >
                     <td className="px-4 py-4">
                        <Badge 
-                         className={`${getRankBadgeColor(rank)} text-white font-bold border-0`}
+                         className={`${getRankBadgeColor(rank)} text-white font-bold !border-0 border-transparent`}
                        >
                          {rank}
                        </Badge>
