@@ -87,13 +87,13 @@ const GamesList = () => {
 
   return (
     <Card>
-      <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+      <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <History className="h-6 w-6" />
           Game History
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         {games.length === 0 ? (
           <Alert>
             <AlertDescription>

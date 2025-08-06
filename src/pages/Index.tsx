@@ -308,13 +308,13 @@ const Index = () => {
             </TabsContent>
             <TabsContent value="news">
               <Card>
-                <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+                <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
                   <CardTitle className="flex items-center gap-2 text-2xl">
                     <Newspaper className="h-6 w-6" />
                     Latest News
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   {newsLoading ? (
                     <div className="text-center py-8">
                       <div>Loading news...</div>
