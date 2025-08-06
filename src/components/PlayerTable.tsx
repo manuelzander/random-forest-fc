@@ -63,11 +63,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   );
 
   const getRankBadgeColor = (rank: number) => {
-    if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600';
-    if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500';
-    if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800';
-    if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600';
-    return 'bg-gradient-to-r from-blue-500 to-blue-600';
+    if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-600';
+    if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500 border-gray-500';
+    if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800 border-amber-800';
+    if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600 border-green-600';
+    return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
   };
 
   const getBadges = (player: Player) => {
@@ -144,11 +144,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-4 py-4">
-                      <Badge 
-                        className={`${getRankBadgeColor(rank)} text-white font-bold`}
-                      >
-                        {rank}
-                      </Badge>
+                       <Badge 
+                         className={`${getRankBadgeColor(rank)} text-white font-bold border-0`}
+                       >
+                         {rank}
+                       </Badge>
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
@@ -183,16 +183,16 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                       </Badge>
                     </td>
                     <td className="px-4 py-4 text-center font-medium">{player.gamesPlayed}</td>
-                    <td className="px-4 py-4 text-center">
-                      <Badge variant="outline" className="font-semibold text-green-700">
-                        {player.gamesPlayed > 0 ? (player.points / player.gamesPlayed).toFixed(1) : '0.0'}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      <Badge variant="outline" className="font-semibold text-blue-700">
-                        {player.gamesPlayed > 0 ? Math.round((player.wins / player.gamesPlayed) * 100) : 0}%
-                      </Badge>
-                    </td>
+                     <td className="px-4 py-4 text-center">
+                       <Badge variant="outline" className="font-semibold text-purple-700">
+                         {player.gamesPlayed > 0 ? (player.points / player.gamesPlayed).toFixed(1) : '0.0'}
+                       </Badge>
+                     </td>
+                     <td className="px-4 py-4 text-center">
+                       <Badge variant="outline" className="font-semibold text-blue-700">
+                         {player.gamesPlayed > 0 ? Math.round((player.wins / player.gamesPlayed) * 100) : 0}%
+                       </Badge>
+                     </td>
                     <td className="px-4 py-4 text-center">
                       <Badge variant="outline" className="font-semibold text-yellow-700">
                         {player.mvpAwards}
