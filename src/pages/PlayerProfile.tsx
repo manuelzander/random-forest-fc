@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn } from 'lucide-react';
+import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -98,6 +98,11 @@ const PlayerProfile = () => {
 
   const getBadges = () => {
     const badges = [];
+    
+    // Add claimed badge if player has a user_id
+    if (player?.user_id) {
+      badges.push({ icon: <CheckCircle className="h-3 w-3" />, name: 'Verified Player', description: 'Claimed by user' });
+    }
     
     if (player?.mvp_awards >= 5) {
       badges.push({ icon: '👑', name: 'MVP Champion', description: '5+ MVP Awards' });
@@ -254,12 +259,16 @@ const PlayerProfile = () => {
                 )}
                 {badges.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {badges.map((badge, index) => (
-                      <Badge key={index} className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs">
-                        <span>{badge.icon}</span>
-                        {badge.name}
-                      </Badge>
-                    ))}
+                     {badges.map((badge, index) => (
+                       <Badge key={index} className={`${
+                         badge.name === 'Verified Player' 
+                           ? 'bg-green-100 text-green-800 border-green-200' 
+                           : 'bg-yellow-100 text-yellow-800'
+                       } flex items-center gap-1 px-1.5 py-0.5 text-xs`}>
+                         {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
+                         {badge.name}
+                       </Badge>
+                     ))}
                   </div>
                 )}
               </div>
