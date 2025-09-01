@@ -61,7 +61,7 @@ const Admin = () => {
               <Link to="/">
                 <Button variant="outline" size="sm">
                   <Home className="h-4 w-4 mr-2" />
-                  Main Page
+                  Ranking
                 </Button>
               </Link>
               <Button variant="outline" size="sm" onClick={handleSignOut}>
