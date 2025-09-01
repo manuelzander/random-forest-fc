@@ -108,7 +108,7 @@ const PlayerProfile = () => {
       badges.push({ icon: '👑', name: 'MVP Champion', description: '5+ MVP Awards' });
     }
     if (player?.goal_difference >= 10) {
-      badges.push({ icon: '⚽', name: 'Goal Machine', description: '10+ Goal Difference' });
+      badges.push({ icon: '🚀', name: 'Goal Machine', description: '10+ Goal Difference' });
     }
     if (player && getWinRate() >= 70) {
       badges.push({ icon: '🏆', name: 'Winner', description: '70%+ Win Rate' });

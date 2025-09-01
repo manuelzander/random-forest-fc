@@ -77,7 +77,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       badges.push({ icon: '👑', name: 'MVP Champion' });
     }
     if (player.goalDifference >= 10) {
-      badges.push({ icon: '⚽', name: 'Goal Machine' });
+      badges.push({ icon: '🚀', name: 'Goal Machine' });
     }
     const winRate = player.gamesPlayed > 0 ? Math.round((player.wins / player.gamesPlayed) * 100) : 0;
     if (winRate >= 70) {
