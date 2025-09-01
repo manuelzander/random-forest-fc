@@ -237,7 +237,7 @@ const AdminGameManagement = () => {
                               )}
                             </div>
                             {game.mvp_player === playerId && (
-                              <Badge className="bg-yellow-500 text-white flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
+                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
                                 <span>👑</span>
                                 MVP
                               </Badge>
@@ -261,7 +261,7 @@ const AdminGameManagement = () => {
                               )}
                             </div>
                             {game.mvp_player === playerId && (
-                              <Badge className="bg-yellow-500 text-white flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
+                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
                                 <span>👑</span>
                                 MVP
                               </Badge>

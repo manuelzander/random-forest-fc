@@ -79,13 +79,13 @@ const News = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <Card className="w-full">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
           <CardTitle className="flex items-center gap-2 text-2xl">
             <Newspaper className="h-6 w-6" />
             Latest News
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="pt-6">
           {news.length === 0 ? (
             <div className="text-center py-8">
               <Newspaper className="h-12 w-12 mx-auto text-gray-400 mb-4" />
