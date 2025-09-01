@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowUp, ArrowDown, Trophy, Target, Users, Award } from 'lucide-react';
+import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle } from 'lucide-react';
 
 interface PlayerTableProps {
   players: Player[];
@@ -165,10 +165,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                             </Button>
                           </Link>
                            {(player as any).user_id && (
-                             <Badge variant="secondary" className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
-                               ✓
-                             </Badge>
-                           )}
+                              <Badge variant="secondary" className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Verified
+                              </Badge>
+                            )}
                            {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
                              <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                                <span>{badge.icon}</span>
