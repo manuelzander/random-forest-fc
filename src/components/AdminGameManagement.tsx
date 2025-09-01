@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Edit2, Trash2, History, Plus } from 'lucide-react';
+import { Edit2, Trash2, History, Plus, Crown } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import GameInput from '@/components/GameInput';
 
@@ -225,13 +226,21 @@ const AdminGameManagement = () => {
                       <div className="font-medium text-gray-600 mb-1">Team 1 Players:</div>
                       <div className="space-y-1">
                         {game.team1_players.map(playerId => (
-                          <div key={playerId} className="text-gray-700">
-                            {getPlayerName(playerId)}
-                            {game.team1_captain === playerId && (
-                              <span className="ml-1 text-primary font-medium">(C)</span>
-                            )}
+                          <div key={playerId} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span>{getPlayerName(playerId)}</span>
+                              {game.team1_captain === playerId && (
+                                <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
+                                  <Crown className="h-3 w-3 mr-1" />
+                                  Captain
+                                </Badge>
+                              )}
+                            </div>
                             {game.mvp_player === playerId && (
-                              <span className="ml-2 text-yellow-600 font-medium">👑 MVP</span>
+                              <Badge className="bg-yellow-500 text-white flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
+                                <span>👑</span>
+                                MVP
+                              </Badge>
                             )}
                           </div>
                         ))}
@@ -241,13 +250,21 @@ const AdminGameManagement = () => {
                       <div className="font-medium text-gray-600 mb-1">Team 2 Players:</div>
                       <div className="space-y-1">
                         {game.team2_players.map(playerId => (
-                          <div key={playerId} className="text-gray-700">
-                            {getPlayerName(playerId)}
-                            {game.team2_captain === playerId && (
-                              <span className="ml-1 text-primary font-medium">(C)</span>
-                            )}
+                          <div key={playerId} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span>{getPlayerName(playerId)}</span>
+                              {game.team2_captain === playerId && (
+                                <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
+                                  <Crown className="h-3 w-3 mr-1" />
+                                  Captain
+                                </Badge>
+                              )}
+                            </div>
                             {game.mvp_player === playerId && (
-                              <span className="ml-2 text-yellow-600 font-medium">👑 MVP</span>
+                              <Badge className="bg-yellow-500 text-white flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
+                                <span>👑</span>
+                                MVP
+                              </Badge>
                             )}
                           </div>
                         ))}
