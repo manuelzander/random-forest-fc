@@ -147,7 +147,7 @@ const PlayerProfile = () => {
           <Link to="/">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Ranking
+              Back to Home
             </Button>
           </Link>
         </div>

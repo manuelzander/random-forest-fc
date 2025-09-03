@@ -299,7 +299,7 @@ const Index = () => {
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="ranking">Ranking</TabsTrigger>
+              <TabsTrigger value="ranking">Home</TabsTrigger>
               <TabsTrigger value="games">Games</TabsTrigger>
               <TabsTrigger value="news">News</TabsTrigger>
             </TabsList>
