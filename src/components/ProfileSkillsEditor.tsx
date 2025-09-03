@@ -50,7 +50,24 @@ const COMMON_SKILLS = [
   'Long Shots',
   'Pace',
   'Physical',
-  'Tactical Awareness'
+  'Tactical Awareness',
+  // Funny skills
+  'Ball Watching',
+  'Complaining to Ref',
+  'Dramatic Diving',
+  'Celebration Choreography',
+  'Trash Talking',
+  'Shirt Pulling',
+  'Time Wasting',
+  'Fake Injury Recovery',
+  'Boot Tying at Crucial Moments',
+  'Missing Open Goals',
+  'Blaming the Pitch',
+  'Over-Celebrating Tap-ins',
+  'Arguing with VAR',
+  'Phantom Fouls',
+  'Professional Fouling',
+  'Wind Assistance Claims'
 ];
 
 const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpdate }) => {
