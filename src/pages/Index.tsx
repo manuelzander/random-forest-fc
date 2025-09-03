@@ -122,7 +122,10 @@ const Index = () => {
           team2_goals: gameData.team2Goals,
           team1_players: gameData.team1Players,
           team2_players: gameData.team2Players,
+          team1_captain: gameData.team1Captain,
+          team2_captain: gameData.team2Captain,
           mvp_player: gameData.mvpPlayer,
+          youtube_url: gameData.youtubeUrl || null,
         }]);
 
       if (gameError) throw gameError;

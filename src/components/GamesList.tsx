@@ -3,9 +3,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { History, Calendar, Crown } from 'lucide-react';
+import { History, Calendar, Crown, Video, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { getYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '@/utils/youtube';
 
 interface Game {
   id: string;
@@ -17,6 +18,7 @@ interface Game {
   team2_captain: string | null;
   mvp_player: string | null;
   created_at: string;
+  youtube_url?: string | null;
 }
 
 interface Player {
@@ -171,7 +173,42 @@ const GamesList = () => {
                         ))}
                       </div>
                   </div>
-                </div>
+                 </div>
+                
+                {/* YouTube Video Section */}
+                {game.youtube_url && (
+                  <div className="mt-4 border-t pt-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Video className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm">Game Highlights</span>
+                      <a 
+                        href={game.youtube_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="ml-auto text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        Watch on YouTube
+                      </a>
+                    </div>
+                    <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
+                      {getYouTubeEmbedUrl(game.youtube_url) ? (
+                        <iframe
+                          src={getYouTubeEmbedUrl(game.youtube_url)!}
+                          title={`Game highlights from ${format(new Date(game.created_at), 'MMM d, yyyy')}`}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full h-full"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-muted-foreground">Unable to load video</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

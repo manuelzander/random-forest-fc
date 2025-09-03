@@ -26,6 +26,7 @@ export type Database = {
           team2_goals: number
           team2_players: string[]
           updated_at: string
+          youtube_url: string | null
         }
         Insert: {
           created_at?: string
@@ -38,6 +39,7 @@ export type Database = {
           team2_goals: number
           team2_players: string[]
           updated_at?: string
+          youtube_url?: string | null
         }
         Update: {
           created_at?: string
@@ -50,6 +52,7 @@ export type Database = {
           team2_goals?: number
           team2_players?: string[]
           updated_at?: string
+          youtube_url?: string | null
         }
         Relationships: [
           {

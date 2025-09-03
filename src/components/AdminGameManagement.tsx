@@ -19,6 +19,7 @@ interface Game {
   team2_captain: string | null;
   mvp_player: string | null;
   created_at: string;
+  youtube_url?: string | null;
 }
 
 interface Player {
@@ -112,6 +113,7 @@ const AdminGameManagement = () => {
             team1_captain: gameData.team1Captain,
             team2_captain: gameData.team2Captain,
             mvp_player: gameData.mvpPlayer,
+            youtube_url: gameData.youtubeUrl || null,
           })
           .eq('id', editingGame.id);
 
@@ -131,6 +133,7 @@ const AdminGameManagement = () => {
             team1_captain: gameData.team1Captain,
             team2_captain: gameData.team2Captain,
             mvp_player: gameData.mvpPlayer,
+            youtube_url: gameData.youtubeUrl || null,
           }]);
 
         if (error) throw error;
@@ -197,6 +200,7 @@ const AdminGameManagement = () => {
                   team1Captain: editingGame.team1_captain || '',
                   team2Captain: editingGame.team2_captain || '',
                   mvpPlayer: editingGame.mvp_player || '',
+                  youtubeUrl: editingGame.youtube_url || '',
                 } : undefined}
                 isEditing={!!editingGame}
               />

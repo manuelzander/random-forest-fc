@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Users, Target, Award } from 'lucide-react';
+import { Plus, Trash2, Users, Target, Award, Video } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { isValidYouTubeUrl } from '@/utils/youtube';
 
 interface GameInputProps {
   players: Player[];
@@ -21,6 +22,7 @@ interface GameInputProps {
     team1Captain: string;
     team2Captain: string;
     mvpPlayer: string;
+    youtubeUrl?: string;
   };
   isEditing?: boolean;
 }
@@ -34,6 +36,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   const [team1Captain, setTeam1Captain] = useState(initialData?.team1Captain || '');
   const [team2Captain, setTeam2Captain] = useState(initialData?.team2Captain || '');
   const [mvpPlayer, setMvpPlayer] = useState(initialData?.mvpPlayer || '');
+  const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl || '');
   
   
 
@@ -106,6 +109,16 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
       return;
     }
 
+    // Validate YouTube URL if provided
+    if (youtubeUrl && !isValidYouTubeUrl(youtubeUrl)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid YouTube URL",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const gameData: GameInputType = {
       team1Players,
       team2Players,
@@ -114,6 +127,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
       team1Captain,
       team2Captain,
       mvpPlayer,
+      youtubeUrl: youtubeUrl || undefined,
     };
 
     onGameSubmit(gameData);
@@ -127,6 +141,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
       setTeam1Captain('');
       setTeam2Captain('');
       setMvpPlayer('');
+      setYoutubeUrl('');
       
       toast({
         title: "Game Recorded!",
@@ -306,6 +321,23 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
             </Select>
           </div>
 
+          {/* YouTube Video Section */}
+          <div className="space-y-2">
+            <Label htmlFor="youtubeUrl" className="text-lg font-semibold flex items-center gap-2">
+              <Video className="h-5 w-5" />
+              YouTube Video (Optional)
+            </Label>
+            <Input
+              id="youtubeUrl"
+              type="url"
+              placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+            />
+            <div className="text-sm text-muted-foreground">
+              Add a YouTube link to showcase highlights from this game
+            </div>
+          </div>
 
           <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-3">
             {isEditing ? 'Update Match Result' : 'Record Match Result'}

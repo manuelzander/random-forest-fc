@@ -21,6 +21,7 @@ export interface GameResult {
   team1Goals: number;
   team2Goals: number;
   mvpPlayer: string;
+  youtubeUrl?: string;
 }
 
 export interface GameInput {
@@ -31,6 +32,7 @@ export interface GameInput {
   team1Captain: string;
   team2Captain: string;
   mvpPlayer: string;
+  youtubeUrl?: string;
 }
 
 export interface NewsItem {
