@@ -5,15 +5,22 @@
 export const extractYouTubeVideoId = (url: string): string | null => {
   if (!url) return null;
   
+  // Sanitize URL and validate format
+  const sanitizedUrl = url.trim();
+  
   const patterns = [
     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
     /youtube\.com\/v\/([^&\n?#]+)/,
   ];
   
   for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) {
-      return match[1];
+    const match = sanitizedUrl.match(pattern);
+    if (match && match[1]) {
+      const videoId = match[1];
+      // Validate YouTube video ID format (11 characters, alphanumeric + underscore/hyphen)
+      if (/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+        return videoId;
+      }
     }
   }
   

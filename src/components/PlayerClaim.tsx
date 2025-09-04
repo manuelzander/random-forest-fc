@@ -100,11 +100,12 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
       return;
     }
     
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
+    // Validate file type - be more specific about allowed formats
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type.toLowerCase())) {
       toast({
         title: "Invalid file type",
-        description: "Please select an image file.",
+        description: "Please select a JPEG, PNG, WebP, or GIF image.",
         variant: "destructive",
       });
       return;
@@ -113,7 +114,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
     setUploading(true);
 
     try {
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
       const filename = `avatar.${fileExt}`;
       const filePath = `${user.id}/${filename}`;
 
