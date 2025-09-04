@@ -89,6 +89,27 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
     if (!event.target.files || !event.target.files[0] || !currentUserPlayer || !user) return;
 
     const file = event.target.files[0];
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setUploading(true);
 
     try {
