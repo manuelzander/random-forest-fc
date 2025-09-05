@@ -454,19 +454,21 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={avatarPreview || playerData.avatar_url || undefined} />
-                <AvatarFallback className="text-xl">
-                  {playerData.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  <Label htmlFor="avatar-upload" className="cursor-pointer flex-1">
-                  <Button variant="outline" asChild className="w-full" disabled={isSaving}>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex justify-center sm:justify-start">
+                <Avatar className="h-16 w-16 sm:h-20 sm:w-20">
+                  <AvatarImage src={avatarPreview || playerData.avatar_url || undefined} />
+                  <AvatarFallback className="text-lg sm:text-xl">
+                    {playerData.name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="space-y-3 flex-1">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <Label htmlFor="avatar-upload" className="cursor-pointer">
+                  <Button variant="outline" asChild className="w-full" disabled={isSaving} size="sm">
                     <span>
-                      <Upload className="h-4 w-4 mr-2" />
+                      <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                       <span className="hidden sm:inline">
                         {isSaving ? 'Uploading...' : 'Upload Image'}
                       </span>
@@ -481,9 +483,9 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                     variant="outline" 
                     onClick={generateRandomAvatar}
                     disabled={isGeneratingAvatar}
-                    className="flex-1"
+                    size="sm"
                   >
-                    <Shuffle className="h-4 w-4 mr-2" />
+                    <Shuffle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     {isGeneratingAvatar ? 'Generating...' : <><span className="hidden sm:inline">Random Avatar</span><span className="sm:hidden">Random</span></>}
                   </Button>
                   
@@ -491,9 +493,9 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                     variant="outline" 
                     onClick={generateImageToImageAvatar}
                     disabled={isGeneratingAvatar || !canTransformAvatar()}
-                    className="flex-1"
+                    size="sm"
                   >
-                    <Wand2 className="h-4 w-4 mr-2" />
+                    <Wand2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     {isGeneratingAvatar ? 'Generating...' : <><span className="hidden sm:inline">AI Transform</span><span className="sm:hidden">AI</span></>}
                   </Button>
                 </div>
@@ -507,7 +509,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                   className="hidden"
                 />
                 
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
                   Upload your photo, generate random avatar, or transform uploaded images into cartoons
                 </p>
               </div>
