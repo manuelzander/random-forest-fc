@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,6 +21,8 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentUserPlayer, setCurrentUserPlayer] = useState<Player | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const profileEditorRef = useRef<{ handleSave: () => void }>(null);
 
   // Use default avatar for current user's player
   const { avatarUrl } = useDefaultAvatar({
@@ -147,6 +149,15 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
     }
   };
 
+  const handleSaveProfile = () => {
+    setIsSaving(true);
+    profileEditorRef.current?.handleSave();
+  };
+
+  const handleSaveComplete = () => {
+    setIsSaving(false);
+  };
+
   if (isLoading) {
     return <div className="loading-container">Loading your profile...</div>;
   }
@@ -166,14 +177,24 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Player Overview */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between gap-4">
               <div className="flex-1">
                 <h3 className="text-xl font-semibold">{currentUserPlayer.name}</h3>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSaveProfile}
+                  disabled={isSaving}
+                  className="bg-blue-600 text-white hover:bg-blue-700"
+                  size="sm"
+                >
+                  {isSaving ? 'Saving...' : 'Save Profile'}
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleUnclaimPlayer}
-                  className="mt-2 border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
+                  className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
                 >
                   Unclaim Player
                 </Button>
@@ -182,9 +203,11 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
 
             {/* Profile Skills Editor - includes avatar upload */}
             <ProfileSkillsEditor 
+              ref={profileEditorRef}
               userId={user.id}
               playerData={currentUserPlayer}
               onProfileUpdate={fetchPlayers}
+              onSave={handleSaveComplete}
             />
           </CardContent>
         </Card>

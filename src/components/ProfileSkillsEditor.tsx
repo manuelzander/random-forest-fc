@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ interface Props {
   userId: string;
   playerData?: any;
   onProfileUpdate?: () => void;
+  onSave?: () => void;
 }
 
 const FOOTBALL_POSITIONS = [
@@ -115,7 +116,7 @@ const COMMON_SKILLS = [
   'Lucky Number Obsession'
 ];
 
-const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpdate }) => {
+const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ userId, playerData, onProfileUpdate, onSave }, ref) => {
   const { toast } = useToast();
   const [profile, setProfile] = useState<ProfileData>({
     bio: '',
@@ -139,6 +140,11 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
     // User uploads go to userId/ path, AI generated go to default/ path
     return playerData.avatar_url.includes(`/${userId}/`);
   };
+
+  // Expose handleSave to parent component
+  useImperativeHandle(ref, () => ({
+    handleSave
+  }));
 
   useEffect(() => {
     fetchProfile();
@@ -235,6 +241,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
       setFileInputKey(prev => prev + 1); // Force file input reset
 
       onProfileUpdate?.();
+      onSave?.(); // Notify parent that save completed
     } catch (error) {
       console.error('Error uploading avatar:', error);
       toast({
@@ -617,12 +624,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           </div>
         </CardContent>
       </Card>
-
-      <Button onClick={handleSave} disabled={isSaving} className="w-full">
-        {isSaving ? 'Saving...' : 'Save Profile'}
-      </Button>
     </div>
   );
-};
+});
+
+ProfileSkillsEditor.displayName = 'ProfileSkillsEditor';
 
 export default ProfileSkillsEditor;
