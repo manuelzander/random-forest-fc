@@ -65,16 +65,17 @@ serve(async (req) => {
 
     if (imageToImage && baseImageData) {
       // Image-to-image generation
-      prompt = `Transform this image into a soccer (European football) comic-style portrait for player "${playerName}".
+      prompt = `Transform this image into a hilarious soccer (European football) comic-style portrait for player "${playerName}".
       
       Keep the facial features and general appearance from the original image but:
-      - Transform into comic book illustration style with realistic proportions
+      - Transform into funny cartoon/comic book illustration style with exaggerated comedic features
+      - Make the face amusing with comedic expressions (goofy smile, crossed eyes, big nose, funny eyebrows, etc.)
       - Show the person in soccer gear with jersey back visible
       - Jersey should have "${playerName}" printed on the back with a random number (1-99)
-      - Person should be looking over their shoulder at the camera with a confident expression
-      - Background should be simple and clean
-      - Maintain the person's unique characteristics while making it football-themed
-      - Make it slightly humorous but respectful`
+      - Person should be looking over their shoulder at the camera with a hilarious expression
+      - Background MUST be pure white (#FFFFFF) - absolutely no other colors or patterns
+      - Maintain the person's unique characteristics while making it football-themed and genuinely funny
+      - Make it entertaining and amusing while being respectful`
       
       requestBody.contents[0].parts = [
         { text: prompt },
@@ -89,26 +90,31 @@ serve(async (req) => {
       // Random generation (existing logic)
       prompt = `Create a realistic soccer (European football) comic-style portrait for a player named "${playerName}".
     
-    POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a confident/funny expression.
+    POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a HILARIOUS and funny expression.
     
     JERSEY BACK: Show the back of the soccer jersey clearly with:
     - Player name "${playerName}" printed on the back in capital letters
     - Random jersey number (1-99) below the name
     - Make the text clearly readable and professional looking
     
-    UNIQUE FEATURES - Make this character look COMPLETELY DIFFERENT:
-    - Face shape: round, oval, square, rectangular, or diamond-shaped
+    FUNNY FEATURES - Make this character look COMPLETELY DIFFERENT and AMUSING:
+    - Face shape: exaggerated and comedic (round, oval, square, rectangular, or diamond-shaped)
     - Ethnicity: diverse representation (European, African, Asian, Latin American, Middle Eastern, mixed heritage)
     - Age appearance: young (18-22), mid-career (23-28), or veteran (29-35)
-    - Hair: completely different styles and colors (buzz cut, curly, straight, wavy, bald, long, short, afro, etc.)
-    - Facial hair: clean shaven, mustache, beard, goatee, stubble, or unique styles
-    - Eye shape and color: vary dramatically
-    - Facial expressions: confident smile, determined look, cheeky grin, serious focus, etc.
+    - Hair: completely different and funny styles (wild curly, ridiculous haircuts, funny colors, bald with funny patterns, etc.)
+    - Facial hair: comedic styles (massive mustache, tiny beard, uneven stubble, funny goatee shapes)
+    - Eyes: make them funny (crossed eyes, one bigger than the other, googly eyes, squinting, winking, etc.)
+    - Nose: exaggerated and amusing (big nose, tiny nose, crooked nose, button nose)
+    - Mouth: funny expressions (goofy grin, buck teeth, gap teeth, lopsided smile, tongue sticking out)
+    - Ears: can be big, small, or sticking out for comedic effect
+    - Facial expressions: hilarious and entertaining (goofy smile, determined squint, cheeky wink, surprised look, etc.)
     - Skin tone: natural variety across all ethnicities
     - Jersey colors: randomize team colors and styles
     
-    Style: Comic book illustration but realistic proportions with subtle humor.
-    Background: Simple, clean muted color.
+    Style: Funny cartoon/comic book illustration with exaggerated features for maximum humor.
+    Background: PURE WHITE background (#FFFFFF) - absolutely no other colors or patterns.
+    
+    Make this avatar genuinely funny and entertaining while being respectful!
     
     Generate a UNIQUE individual looking back over shoulder with jersey back visible!`
       
