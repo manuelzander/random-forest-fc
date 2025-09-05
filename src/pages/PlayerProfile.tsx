@@ -327,66 +327,76 @@ const PlayerProfile = () => {
         {/* Player Header */}
         <Card>
           <CardContent className="p-6">
-            <div className="flex items-center gap-6">
-              <Avatar className="h-24 w-24">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0">
                 <AvatarImage src={player.avatar_url} />
-                <AvatarFallback className="text-2xl">
+                <AvatarFallback className="text-lg sm:text-2xl">
                   {player.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-               <div className="flex-1">
-                 <h1 className="text-3xl font-bold text-foreground mb-2">{player.name}</h1>
-                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+               <div className="flex-1 w-full">
+                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{player.name}</h1>
+                 
+                 {/* Basic stats row - always visible */}
+                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
                   <div className="flex items-center gap-1">
                     <Trophy className="h-4 w-4" />
-                    {player.points} Points
+                    <span>{player.points} Points</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Target className="h-4 w-4" />
-                    {getWinRate()}% Win Rate
+                    <span>{getWinRate()}% Win Rate</span>
                   </div>
-                   {profile?.favorite_position && (
-                     <div className="flex items-center gap-1">
-                       <MapPin className="h-4 w-4" />
-                       {profile.favorite_position}
-                     </div>
-                   )}
-                   {profile?.favorite_club && (
-                     <div className="flex items-center gap-1">
-                       <Heart className="h-4 w-4" />
-                       {profile.favorite_club}
-                     </div>
-                   )}
-                   {profile?.years_playing && (
-                     <div className="flex items-center gap-1">
-                       <Clock className="h-4 w-4" />
-                       {profile.years_playing} years playing
-                     </div>
-                   )}
                  </div>
-                 {profile?.bio && (
-                   <p className="text-muted-foreground mb-3">{profile.bio}</p>
+                 
+                 {/* Profile details - responsive layout */}
+                 {(profile?.favorite_position || profile?.favorite_club || profile?.years_playing) && (
+                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
+                     {profile?.favorite_position && (
+                       <div className="flex items-center gap-1">
+                         <MapPin className="h-4 w-4 flex-shrink-0" />
+                         <span>{profile.favorite_position}</span>
+                       </div>
+                     )}
+                     {profile?.favorite_club && (
+                       <div className="flex items-center gap-1">
+                         <Heart className="h-4 w-4 flex-shrink-0" />
+                         <span>{profile.favorite_club}</span>
+                       </div>
+                     )}
+                     {profile?.years_playing && (
+                       <div className="flex items-center gap-1">
+                         <Clock className="h-4 w-4 flex-shrink-0" />
+                         <span>{profile.years_playing} years playing</span>
+                       </div>
+                     )}
+                   </div>
                  )}
-                {badges.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                     {badges.map((badge, index) => (
-                       <Badge key={index} className={`${
-                         badge.name === 'Verified Player' 
-                           ? 'bg-green-100 text-green-800 border-green-200' 
-                           : 'bg-yellow-100 text-yellow-800'
-                       } flex items-center gap-1 px-1.5 py-0.5 text-xs`}>
-                         {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
-                         {badge.name}
-                       </Badge>
-                     ))}
-                  </div>
-                )}
+                 
+                 {profile?.bio && (
+                   <p className="text-muted-foreground mb-3 text-sm sm:text-base">{profile.bio}</p>
+                 )}
+                 {badges.length > 0 && (
+                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                      {badges.map((badge, index) => (
+                        <Badge key={index} className={`${
+                          badge.name === 'Verified Player' 
+                            ? 'bg-green-100 text-green-800 border-green-200' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap`}>
+                          {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
+                          <span className="hidden sm:inline">{badge.name}</span>
+                          <span className="sm:hidden" title={badge.name}>{typeof badge.icon === 'string' ? badge.icon : '✓'}</span>
+                        </Badge>
+                      ))}
+                   </div>
+                 )}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Stats */}
           <Card>
             <CardHeader>
