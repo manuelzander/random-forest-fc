@@ -128,7 +128,13 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
-  const [userUploadedImageUrl, setUserUploadedImageUrl] = useState<string | null>(null);
+
+  // Check if current avatar is user-uploaded (not AI-generated)
+  const isCurrentAvatarUserUploaded = () => {
+    if (!playerData?.avatar_url) return false;
+    // User uploads go to userId/filename, AI generated go to default/avatar-playerId-timestamp
+    return playerData.avatar_url.includes(`/${userId}/`) && !playerData.avatar_url.includes('/default/');
+  };
 
   useEffect(() => {
     fetchProfile();
@@ -211,8 +217,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
             description: "Your avatar has been updated successfully.",
           });
 
-          // Store the uploaded image URL and clear the file
-          setUserUploadedImageUrl(avatarUrlWithCacheBust);
+          // Clear the file and preview after upload
           setAvatarFile(null);
           setAvatarPreview(null);
 
@@ -313,9 +318,6 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           description: "Your new random avatar has been created.",
         });
 
-        // Clear user uploaded image since we generated a new one
-        setUserUploadedImageUrl(null);
-
         onProfileUpdate?.();
       }
     } catch (error) {
@@ -333,8 +335,8 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   const generateImageToImageAvatar = async () => {
     if (!playerData) return;
     
-    // Check if we have either a file or a previously uploaded image
-    if (!avatarFile && !userUploadedImageUrl) {
+    // Check if we have either a file or a user-uploaded avatar
+    if (!avatarFile && !isCurrentAvatarUserUploaded()) {
       toast({
         title: "Upload Required",
         description: "Please upload an image first to use image-to-image generation.",
@@ -359,9 +361,9 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           reader.onerror = reject;
           reader.readAsDataURL(avatarFile);
         });
-      } else if (userUploadedImageUrl) {
-        // Fetch the uploaded image and convert to base64
-        const response = await fetch(userUploadedImageUrl);
+      } else if (playerData?.avatar_url && isCurrentAvatarUserUploaded()) {
+        // Fetch the current user-uploaded avatar and convert to base64
+        const response = await fetch(playerData.avatar_url);
         const blob = await response.blob();
         baseImageData = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
@@ -374,7 +376,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           reader.readAsDataURL(blob);
         });
       } else {
-        throw new Error('No image available for transformation');
+        throw new Error('No user-uploaded image available for transformation');
       }
 
       const { data, error } = await supabase.functions.invoke('generate-avatar', {
@@ -406,7 +408,6 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
         // Clear states after AI transformation
         setAvatarFile(null);
         setAvatarPreview(null);
-        setUserUploadedImageUrl(null);
 
         onProfileUpdate?.();
       }
@@ -469,7 +470,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                   <Button 
                     variant="outline" 
                     onClick={generateImageToImageAvatar}
-                    disabled={isGeneratingAvatar || (!avatarFile && !userUploadedImageUrl)}
+                    disabled={isGeneratingAvatar || (!avatarFile && !isCurrentAvatarUserUploaded())}
                     className="flex-1"
                   >
                     <Wand2 className="h-4 w-4 mr-2" />
