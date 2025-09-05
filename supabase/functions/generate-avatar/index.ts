@@ -73,7 +73,7 @@ serve(async (req) => {
       - Person looking directly at camera with hilarious facial expression
       - Make the face amusing (goofy smile, funny eyes, big nose, comedic eyebrows, etc.)
       - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
-      - ${clubInfo}
+      - ${clubInfo} but NO NAME or NUMBER visible on the front of the jersey
       - Background MUST be pure white (#FFFFFF) with no other colors or patterns
       - Maintain the person's unique characteristics while making it soccer/football-themed and genuinely funny
       - Make it entertaining and amusing while being respectful
