@@ -30,6 +30,7 @@ interface Profile {
   user_id: string;
   email: string;
   display_name: string | null;
+  favorite_club?: string;
 }
 
 const AdminPlayerManagement = () => {
@@ -88,7 +89,7 @@ const AdminPlayerManagement = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, user_id, email, display_name, favorite_club')
         .order('display_name');
 
       if (error) throw error;
@@ -258,10 +259,18 @@ const AdminPlayerManagement = () => {
     try {
       setGeneratingAvatarFor(player.id);
       
+      // Get the player's profile to include favorite club
+      let favoriteClub = '';
+      if (player.user_id) {
+        const profile = getProfileByUserId(player.user_id);
+        favoriteClub = profile?.favorite_club || '';
+      }
+      
       const { data, error } = await supabase.functions.invoke('generate-avatar', {
         body: { 
           playerName: player.name,
-          playerId: player.id 
+          playerId: player.id,
+          favoriteClub
         }
       });
 
