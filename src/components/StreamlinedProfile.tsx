@@ -170,7 +170,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                   variant="outline"
                   size="sm"
                   onClick={handleUnclaimPlayer}
-                  className="mt-2"
+                  className="mt-2 border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
                 >
                   Unclaim Player
                 </Button>
@@ -217,6 +217,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                     <Button
                       size="sm"
                       onClick={() => handleClaimPlayer(player.id)}
+                      className="bg-green-600 text-white hover:bg-green-700"
                     >
                       Claim
                     </Button>
