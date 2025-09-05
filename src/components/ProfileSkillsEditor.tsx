@@ -39,6 +39,7 @@ const FOOTBALL_POSITIONS = [
 ];
 
 const COMMON_SKILLS = [
+  // Actual skills
   'Dribbling',
   'Passing',
   'Shooting',
@@ -51,7 +52,8 @@ const COMMON_SKILLS = [
   'Pace',
   'Physical',
   'Tactical Awareness',
-  // Funny skills
+  
+  // Hilarious skills
   'Ball Watching',
   'Complaining to Ref',
   'Dramatic Diving',
@@ -67,7 +69,68 @@ const COMMON_SKILLS = [
   'Arguing with VAR',
   'Phantom Fouls',
   'Professional Fouling',
-  'Wind Assistance Claims'
+  'Wind Assistance Claims',
+  
+  // New hilarious additions
+  'Slide Tackling the Air',
+  'Championship Manager Expert',
+  'Shouting Instructions Nobody Follows',
+  'Blaming Teammates Telepathically',
+  'Invisible Wall Free Kicks',
+  'Goalkeeper Intimidation Stare',
+  'Tactical Fouling at Kickoff',
+  'Imaginary Card Appeals',
+  'Weather Condition Excuses',
+  'Shin Pad Adjustment Mastery',
+  'Grass Length Complaints',
+  'Armband Leadership (No Authority)',
+  'Penalty Area Kung Fu',
+  'Offside Trap Confusion',
+  'Corner Flag Dancing',
+  'Crossbar Challenge Champion',
+  'Warm-up Showboating',
+  'Water Break Negotiations',
+  'Kit Color Psychology',
+  'Half-time Orange Specialist',
+  'Substitution Delay Tactics',
+  'Throw-in Trajectory Science',
+  'Goal Post Kissing',
+  'Mascot Intimidation',
+  'Crowd Interaction Drama',
+  'Stadium Echo Utilization',
+  'Referee Mind Reading',
+  'Pitch Invasion Prevention',
+  'Ball Boy Psychology',
+  'Camera Awareness Acting',
+  'Sponsors Logo Hiding',
+  'Victory Lap Pacing',
+  'Defeat Sulking Artistry',
+  'Pre-Game Ritual Superstition',
+  'Lucky Charm Dependency',
+  'Tunnel Vision Excellence',
+  'Banana Peel Slip Recovery',
+  'Gravity Defying Headers',
+  'Invisible Ball Juggling',
+  'Time Zone Confusion',
+  'Photobomb Positioning',
+  'Selfie Angle Optimization',
+  'Social Media Goal Alerts',
+  'Fantasy Football Self-Picking',
+  'FIFA Rating Complaints',
+  'Commentator Impression',
+  'Slow Motion Replays',
+  'Victory Dance Rehearsal',
+  'Defeat Speech Preparation',
+  'Press Conference Evasion',
+  'Interview Cliché Master',
+  'Transfer Rumor Creation',
+  'Contract Negotiation Dramatics',
+  'Boot Sponsor Loyalty',
+  'Haircut Timing Strategy',
+  'Goal Celebration Copyright',
+  'Referee Gift Giving',
+  'Lucky Number Obsession',
+  'Pre-Match Meal Superstition'
 ];
 
 const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpdate }) => {
