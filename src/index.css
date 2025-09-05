@@ -4,44 +4,44 @@
 
 :root {
   /* Vice City Color Palette */
-  --vice-pink: 336 96% 60%;
-  --vice-cyan: 180 100% 50%;
-  --vice-purple: 270 100% 70%;
-  --vice-orange: 33 100% 60%;
-  --vice-blue: 220 100% 60%;
-  --vice-dark: 240 20% 8%;
-  --vice-darker: 240 25% 5%;
-  --vice-light: 300 20% 95%;
+  --vice-pink: 336 96% 45%;
+  --vice-cyan: 180 100% 35%;
+  --vice-purple: 270 100% 50%;
+  --vice-orange: 33 100% 45%;
+  --vice-blue: 220 100% 45%;
+  --vice-dark: 240 20% 15%;
+  --vice-darker: 240 25% 10%;
+  --vice-light: 300 20% 98%;
   
-  /* Main Theme Colors */
-  --background: var(--vice-dark);
-  --foreground: var(--vice-light);
-  --card: 240 20% 12%;
-  --card-foreground: var(--vice-light);
-  --popover: 240 20% 10%;
-  --popover-foreground: var(--vice-light);
+  /* Main Theme Colors - Light Mode */
+  --background: var(--vice-light);
+  --foreground: var(--vice-dark);
+  --card: 300 20% 96%;
+  --card-foreground: var(--vice-dark);
+  --popover: 300 20% 98%;
+  --popover-foreground: var(--vice-dark);
   
   --primary: var(--vice-pink);
-  --primary-foreground: 240 25% 5%;
+  --primary-foreground: 300 20% 98%;
   --secondary: var(--vice-cyan);
-  --secondary-foreground: 240 25% 5%;
+  --secondary-foreground: 300 20% 98%;
   --accent: var(--vice-purple);
-  --accent-foreground: 240 25% 5%;
+  --accent-foreground: 300 20% 98%;
   
-  --muted: 240 20% 15%;
-  --muted-foreground: 300 10% 70%;
-  --border: 240 30% 20%;
-  --input: 240 30% 15%;
+  --muted: 300 10% 90%;
+  --muted-foreground: 240 10% 40%;
+  --border: 240 20% 85%;
+  --input: 300 10% 94%;
   --ring: var(--vice-pink);
   
-  --destructive: 0 100% 60%;
+  --destructive: 0 100% 50%;
   --destructive-foreground: var(--vice-light);
   
-  /* Vice City Gradients */
+  /* Vice City Gradients - Light Mode */
   --gradient-primary: linear-gradient(135deg, hsl(var(--vice-pink)), hsl(var(--vice-purple)));
   --gradient-secondary: linear-gradient(135deg, hsl(var(--vice-cyan)), hsl(var(--vice-blue)));
   --gradient-accent: linear-gradient(135deg, hsl(var(--vice-orange)), hsl(var(--vice-pink)));
-  --gradient-background: linear-gradient(180deg, hsl(var(--vice-darker)), hsl(var(--vice-dark)));
+  --gradient-background: linear-gradient(180deg, hsl(var(--vice-light)), hsl(300 15% 96%));
   
   /* Neon Glows */
   --glow-pink: 0 0 20px hsl(var(--vice-pink) / 0.5);
@@ -138,7 +138,7 @@ body {
 }
 
 .page-header {
-  background: linear-gradient(135deg, hsl(var(--vice-dark)) 0%, hsl(var(--vice-darker)) 100%);
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
   border-bottom: 2px solid hsl(var(--vice-pink) / 0.3);
   box-shadow: 0 4px 20px hsl(var(--vice-pink) / 0.1);
 }
