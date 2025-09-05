@@ -113,6 +113,23 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       badges.push({ icon: '🆕', name: 'Fresh Meat' });
     }
     
+    // More funny badges
+    if (player.wins === player.draws && player.draws === player.losses && player.wins >= 2) {
+      badges.push({ icon: '🎲', name: 'Chaos Agent' });
+    }
+    if (player.games_played >= 15 && player.points === 0) {
+      badges.push({ icon: '🍕', name: 'Participation Trophy' });
+    }
+    if (player.draws > (player.wins + player.losses) && player.draws >= 3) {
+      badges.push({ icon: '🎭', name: 'Drama Queen' });
+    }
+    if (player.games_played >= 5 && player.points === 1) {
+      badges.push({ icon: '🐢', name: 'Slow Starter' });
+    }
+    if (player.games_played >= 10 && Math.abs(player.goal_difference) <= 2) {
+      badges.push({ icon: '🎪', name: 'Wildcard' });
+    }
+    
     return badges;
   };
 

@@ -152,6 +152,23 @@ const PlayerProfile = () => {
     if (player?.games_played === 1) {
       badges.push({ icon: '🆕', name: 'Fresh Meat', description: 'Just getting started' });
     }
+    
+    // More funny badges
+    if (player?.wins === player?.draws && player?.draws === player?.losses && player?.wins >= 2) {
+      badges.push({ icon: '🎲', name: 'Chaos Agent', description: 'Equal wins, draws, and losses' });
+    }
+    if (player?.games_played >= 15 && player?.points === 0) {
+      badges.push({ icon: '🍕', name: 'Participation Trophy', description: '15+ games with 0 points' });
+    }
+    if (player?.draws > (player?.wins + player?.losses) && player?.draws >= 3) {
+      badges.push({ icon: '🎭', name: 'Drama Queen', description: 'More draws than wins and losses combined' });
+    }
+    if (player?.games_played >= 5 && player?.points === 1) {
+      badges.push({ icon: '🐢', name: 'Slow Starter', description: 'Exactly 1 point after 5+ games' });
+    }
+    if (player?.games_played >= 10 && Math.abs(player?.goal_difference) <= 2) {
+      badges.push({ icon: '🎪', name: 'Wildcard', description: 'Unpredictable goal difference' });
+    }
 
     return badges;
   };
