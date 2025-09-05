@@ -25,10 +25,25 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsLoading, setNewsLoading] = useState(false);
+  const [totalGames, setTotalGames] = useState(0);
 
   useEffect(() => {
     fetchPlayers();
+    fetchGamesCount();
   }, []);
+
+  const fetchGamesCount = async () => {
+    try {
+      const { count, error } = await supabase
+        .from('games')
+        .select('*', { count: 'exact', head: true });
+
+      if (error) throw error;
+      setTotalGames(count || 0);
+    } catch (error) {
+      console.error('Error fetching games count:', error);
+    }
+  };
 
   const fetchNews = async () => {
     try {
@@ -223,14 +238,14 @@ const Index = () => {
                <div className="text-sm text-gray-600">Total Players</div>
              </CardContent>
            </Card>
-           <Card>
-             <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-blue-600">
-                  {players.reduce((sum, p) => sum + p.games_played, 0)}
-                </div>
-               <div className="text-sm text-gray-600">Games Played</div>
-             </CardContent>
-           </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                 <div className="text-2xl font-bold text-blue-600">
+                   {totalGames}
+                 </div>
+                <div className="text-sm text-gray-600">Games Played</div>
+              </CardContent>
+            </Card>
          </div>
 
           {/* Tabs */}
