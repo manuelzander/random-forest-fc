@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { playerName, playerId } = await req.json()
+    const { playerName, playerId, imageToImage, baseImageData } = await req.json()
     
     if (!playerName || !playerId) {
       throw new Error('Player name and ID are required')
@@ -29,10 +29,65 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    console.log(`Generating avatar for player: ${playerName}`)
+    console.log(`Generating avatar for player: ${playerName}`, imageToImage ? 'with base image' : 'random')
 
-    // Create a realistic but funny soccer comic-style avatar prompt with unique variations
-    const prompt = `Create a realistic soccer (European football) comic-style portrait for a player named "${playerName}". 
+    // Create prompt based on whether it's image-to-image or random generation
+    let prompt
+    let requestBody: any = {
+      contents: [{
+        parts: []
+      }],
+      generationConfig: {
+        temperature: 0.4,
+        topK: 32,
+        topP: 1,
+        maxOutputTokens: 4096,
+      },
+      safetySettings: [
+        {
+          category: "HARM_CATEGORY_HARASSMENT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        },
+        {
+          category: "HARM_CATEGORY_HATE_SPEECH",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        },
+        {
+          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        },
+        {
+          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        }
+      ]
+    }
+
+    if (imageToImage && baseImageData) {
+      // Image-to-image generation
+      prompt = `Transform this image into a soccer (European football) comic-style portrait for player "${playerName}".
+      
+      Keep the facial features and general appearance from the original image but:
+      - Transform into comic book illustration style with realistic proportions
+      - Show the person in soccer gear with jersey back visible
+      - Jersey should have "${playerName}" printed on the back with a random number (1-99)
+      - Person should be looking over their shoulder at the camera with a confident expression
+      - Background should be simple and clean
+      - Maintain the person's unique characteristics while making it football-themed
+      - Make it slightly humorous but respectful`
+      
+      requestBody.contents[0].parts = [
+        { text: prompt },
+        {
+          inlineData: {
+            mimeType: "image/jpeg",
+            data: baseImageData
+          }
+        }
+      ]
+    } else {
+      // Random generation (existing logic)
+      prompt = `Create a realistic soccer (European football) comic-style portrait for a player named "${playerName}".
     
     POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a confident/funny expression.
     
@@ -56,6 +111,9 @@ serve(async (req) => {
     Background: Simple, clean muted color.
     
     Generate a UNIQUE individual looking back over shoulder with jersey back visible!`
+      
+      requestBody.contents[0].parts = [{ text: prompt }]
+    }
 
     // Use Gemini API for realistic image generation
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`, {
@@ -63,37 +121,7 @@ serve(async (req) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.4,
-          topK: 32,
-          topP: 1,
-          maxOutputTokens: 4096,
-        },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          }
-        ]
-      }),
+      body: JSON.stringify(requestBody),
     })
 
     if (!response.ok) {

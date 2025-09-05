@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Upload, X, Plus } from 'lucide-react';
+import { User, Upload, X, Plus, Shuffle, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProfileData {
@@ -127,6 +127,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   const [isSaving, setIsSaving] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -278,6 +279,113 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
     }));
   };
 
+  const generateRandomAvatar = async () => {
+    if (!playerData) return;
+    
+    setIsGeneratingAvatar(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-avatar', {
+        body: { 
+          playerName: playerData.name, 
+          playerId: playerData.id 
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.avatarUrl) {
+        // Update player avatar in database
+        await supabase
+          .from('players')
+          .update({ avatar_url: data.avatarUrl })
+          .eq('id', playerData.id);
+
+        toast({
+          title: "Avatar Generated!",
+          description: "Your new random avatar has been created.",
+        });
+
+        onProfileUpdate?.();
+      }
+    } catch (error) {
+      console.error('Error generating avatar:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate avatar. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingAvatar(false);
+    }
+  };
+
+  const generateImageToImageAvatar = async () => {
+    if (!playerData || !avatarFile) {
+      toast({
+        title: "Upload Required",
+        description: "Please upload an image first to use image-to-image generation.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsGeneratingAvatar(true);
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          const base64 = result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+          resolve(base64);
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(avatarFile);
+      
+      const baseImageData = await base64Promise;
+
+      const { data, error } = await supabase.functions.invoke('generate-avatar', {
+        body: { 
+          playerName: playerData.name, 
+          playerId: playerData.id,
+          imageToImage: true,
+          baseImageData
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.avatarUrl) {
+        // Update player avatar in database
+        await supabase
+          .from('players')
+          .update({ avatar_url: data.avatarUrl })
+          .eq('id', playerData.id);
+
+        toast({
+          title: "Avatar Generated!",
+          description: "Your new personalized avatar has been created.",
+        });
+
+        // Clear the uploaded file since we've used it
+        setAvatarFile(null);
+        setAvatarPreview(null);
+
+        onProfileUpdate?.();
+      }
+    } catch (error) {
+      console.error('Error generating avatar:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate avatar. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingAvatar(false);
+    }
+  };
+
   if (isLoading) {
     return <div>Loading profile...</div>;
   }
@@ -301,12 +409,12 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                   {playerData.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div>
+              <div className="space-y-3">
                 <Label htmlFor="avatar-upload" className="cursor-pointer">
                   <Button variant="outline" asChild>
                     <span>
                       <Upload className="h-4 w-4 mr-2" />
-                      Change Avatar
+                      Upload Image
                     </span>
                   </Button>
                 </Label>
@@ -317,7 +425,32 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                   onChange={handleAvatarChange}
                   className="hidden"
                 />
-                <p className="text-sm text-gray-500 mt-1">JPG, PNG or GIF (max 5MB)</p>
+                
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={generateRandomAvatar}
+                    disabled={isGeneratingAvatar}
+                    className="flex-1"
+                  >
+                    <Shuffle className="h-4 w-4 mr-2" />
+                    {isGeneratingAvatar ? 'Generating...' : 'Random Avatar'}
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    onClick={generateImageToImageAvatar}
+                    disabled={isGeneratingAvatar || !avatarFile}
+                    className="flex-1"
+                  >
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    {isGeneratingAvatar ? 'Generating...' : 'AI Transform'}
+                  </Button>
+                </div>
+                
+                <p className="text-sm text-gray-500">
+                  Upload your photo and use AI Transform, or generate a Random Avatar
+                </p>
               </div>
             </div>
           </CardContent>
