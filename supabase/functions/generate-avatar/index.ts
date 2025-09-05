@@ -31,21 +31,24 @@ serve(async (req) => {
 
     console.log(`Generating avatar for player: ${playerName}`)
 
-    // Create a funny, colorful footballer face prompt
-    const prompt = `Create a funny, cartoonish footballer face for a player named "${playerName}". 
-    Make it colorful and vibrant with exaggerated, humorous features:
-    - Big expressive smile or goofy expression
-    - Bright, unusual hair colors (rainbow, neon, etc.)
-    - Exaggerated facial features (big eyes, funny mustache, quirky expressions)
-    - Vibrant skin tones and colorful details
-    - Solid bright background color that complements the character
-    - Fun cartoon illustration style, not realistic
-    - Each avatar should look completely unique and different
-    - Think animated sports character with lots of personality
-    - Vary hair styles, facial expressions, colors dramatically between characters
-    - Ultra colorful, fun, and engaging design
+    // Create a realistic but funny football comic-style avatar prompt
+    const prompt = `Create a realistic football comic-style portrait for a player named "${playerName}". 
+    Style: Comic book illustration with realistic proportions but funny characteristics.
     
-    Make this look like a fun cartoon character, not a realistic person - bright colors and lots of personality!`
+    Details:
+    - Realistic human facial features and proportions (not overly cartoonish)
+    - Football comic book art style, like sports manga or graphic novels
+    - Funny facial expressions (cheeky smile, determined look, or humorous expression)
+    - Natural skin tones and realistic hair colors (brown, black, blonde, etc.)
+    - Subtle humor in facial features (slightly exaggerated eyebrows, funny mustache, etc.)
+    - Simple, clean background in muted colors (light gray, soft blue, or white)
+    - Each avatar should have distinct facial features and expressions
+    - Wearing a simple football jersey or sports clothing
+    - Professional comic book illustration quality
+    - Less saturated colors, more natural palette
+    - Think "funny football player caricature" but still recognizably human
+    
+    Make it look like a professional sports comic book character - realistic but with humorous personality showing through!`
 
     // Use Gemini API for realistic image generation
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`, {
