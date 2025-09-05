@@ -31,6 +31,20 @@ serve(async (req) => {
 
     console.log(`Generating avatar for player: ${playerName}`, imageToImage ? 'with base image' : 'random', favoriteClub ? `for ${favoriteClub}` : '')
 
+    // Add randomization elements for unique avatars
+    const randomSeed = Math.floor(Math.random() * 1000000);
+    const ethnicities = ['European', 'African', 'Asian', 'Latin American', 'Middle Eastern', 'Mixed heritage', 'Scandinavian', 'Mediterranean', 'Caribbean'];
+    const randomEthnicity = ethnicities[Math.floor(Math.random() * ethnicities.length)];
+    
+    const hairStyles = ['buzz cut', 'curly afro', 'straight hair', 'wavy hair', 'completely bald', 'long flowing hair', 'short spiky hair', 'dreadlocks', 'mohawk', 'crew cut', 'shaggy hair', 'receding hairline'];
+    const randomHair = hairStyles[Math.floor(Math.random() * hairStyles.length)];
+    
+    const facialHairOptions = ['clean shaven', 'thick mustache', 'full beard', 'goatee', 'stubble', 'soul patch', 'handlebar mustache', 'chinstrap beard'];
+    const randomFacialHair = facialHairOptions[Math.floor(Math.random() * facialHairOptions.length)];
+    
+    const ageGroups = ['young (18-22)', 'mid-career (23-28)', 'veteran (29-35)'];
+    const randomAge = ageGroups[Math.floor(Math.random() * ageGroups.length)];
+
     // Create club-specific jersey information
     const clubInfo = favoriteClub ? `wearing a ${favoriteClub} jersey with team colors and style` : 'wearing a soccer jersey with random team colors'
     let prompt
@@ -39,9 +53,9 @@ serve(async (req) => {
         parts: []
       }],
       generationConfig: {
-        temperature: 0.4,
-        topK: 32,
-        topP: 1,
+        temperature: 0.9, // Increase randomness
+        topK: 40,
+        topP: 0.95,
         maxOutputTokens: 4096,
       },
       safetySettings: [
@@ -101,24 +115,26 @@ serve(async (req) => {
     - ${clubInfo} with retro styling (thick collar, classic cut, vintage color schemes)
     - Make the text clearly readable and professional looking with retro font style
     
-    FUNNY FEATURES - Make this character look COMPLETELY DIFFERENT and AMUSING:
-    - Face shape: exaggerated and comedic (round, oval, square, rectangular, or diamond-shaped)
-    - Ethnicity: diverse representation (European, African, Asian, Latin American, Middle Eastern, mixed heritage)
-    - Age appearance: young (18-22), mid-career (23-28), or veteran (29-35)
-    - Hair: completely different and funny styles (wild curly, ridiculous haircuts, funny colors, bald with funny patterns, etc.)
-    - Facial hair: comedic styles (massive mustache, tiny beard, uneven stubble, funny goatee shapes)
-    - Eyes: make them funny (crossed eyes, one bigger than the other, googly eyes, squinting, winking, etc.)
-    - Nose: exaggerated and amusing (big nose, tiny nose, crooked nose, button nose)
-    - Mouth: funny expressions (goofy grin, buck teeth, gap teeth, lopsided smile, tongue sticking out)
-    - Ears: can be big, small, or sticking out for comedic effect
-    - Facial expressions: hilarious and entertaining (goofy smile, determined squint, cheeky wink, surprised look, etc.)
-    - Skin tone: natural variety across all ethnicities
+    UNIQUE FEATURES - Make this character look COMPLETELY DIFFERENT from any previous generation (Seed: ${randomSeed}):
+    - Ethnicity: ${randomEthnicity} - make this very distinct
+    - Age appearance: ${randomAge} - reflect this clearly in facial features
+    - Hair: ${randomHair} - make this the dominant hair characteristic
+    - Facial hair: ${randomFacialHair} - make this prominent and defining
+    - Face shape: randomly choose between round, oval, square, rectangular, diamond-shaped, heart-shaped, or triangular
+    - Eyes: vary dramatically (small/large, close/wide-set, different colors, different shapes, squinting, wide-open, etc.)
+    - Nose: vary significantly (button, roman, aquiline, flat, wide, narrow, crooked, straight)
+    - Mouth: vary greatly (thin/thick lips, wide/narrow mouth, different smile styles, teeth gaps, etc.)
+    - Facial expressions: randomly choose hilarious expressions (goofy grin, shocked face, winking, tongue out, surprised, etc.)
+    - Skin tone: natural variety matching the chosen ethnicity
     - Jersey: ${clubInfo} with vintage retro 70s/80s soccer styling
+    - Body build: vary between slim, athletic, stocky, tall, short proportions
+    
+    CRITICAL: This must be a COMPLETELY NEW and UNIQUE character. Do not repeat any previous designs or characteristics.
     
     Style: Funny cartoon/comic book illustration with exaggerated features for maximum humor and retro 70s/80s soccer vibe.
     Background: PURE WHITE background (#FFFFFF) - absolutely no other colors or patterns.
     
-    Make this avatar genuinely funny and entertaining while being respectful with a classic vintage soccer aesthetic!
+    Generate a totally unique individual that has never been created before! Use the seed ${randomSeed} to ensure complete uniqueness.
     
     Generate a UNIQUE individual looking back over shoulder with jersey back visible!`
       
