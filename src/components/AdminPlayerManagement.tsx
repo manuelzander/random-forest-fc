@@ -376,6 +376,9 @@ const AdminPlayerManagement = () => {
                   </div>
                 </div>
                 <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"
@@ -388,9 +391,6 @@ const AdminPlayerManagement = () => {
                     ) : (
                       <Wand2 className="h-4 w-4" />
                     )}
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
-                    <Edit2 className="h-4 w-4" />
                   </Button>
                   {player.user_id ? (
                     <Button 
