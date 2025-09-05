@@ -168,7 +168,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
     }
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setAvatarFile(file);
@@ -177,61 +177,57 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
         setAvatarPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
+      
+      // Immediately upload the file
+      if (playerData) {
+        setIsSaving(true);
+        try {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `avatar.${fileExt}`;
+          const filePath = `${userId}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(filePath, file, { upsert: true });
+
+          if (uploadError) throw uploadError;
+
+          const { data } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(filePath);
+
+          // Update player avatar immediately
+          await supabase
+            .from('players')
+            .update({ avatar_url: data.publicUrl })
+            .eq('id', playerData.id);
+
+          toast({
+            title: "Avatar uploaded!",
+            description: "Your avatar has been updated successfully.",
+          });
+
+          onProfileUpdate?.();
+        } catch (error) {
+          console.error('Error uploading avatar:', error);
+          toast({
+            title: "Error",
+            description: "Failed to upload avatar",
+            variant: "destructive",
+          });
+        } finally {
+          setIsSaving(false);
+        }
+      }
     }
   };
 
-  const uploadAvatar = async (): Promise<string | null> => {
-    if (!avatarFile || !playerData) return null;
-
-    try {
-      const fileExt = avatarFile.name.split('.').pop();
-      const fileName = `avatar.${fileExt}`;
-      const filePath = `${userId}/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, avatarFile, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Error uploading avatar:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload avatar",
-        variant: "destructive",
-      });
-      return null;
-    }
-  };
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
 
-      // Upload avatar if changed
-      let avatarUrl = playerData?.avatar_url;
-      if (avatarFile) {
-        const newAvatarUrl = await uploadAvatar();
-        if (newAvatarUrl) {
-          avatarUrl = newAvatarUrl;
-          
-          // Update player avatar
-          if (playerData) {
-            await supabase
-              .from('players')
-              .update({ avatar_url: avatarUrl })
-              .eq('id', playerData.id);
-          }
-        }
-      }
-
-      // Update profile
+      // Update profile (avatar is handled separately now)
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -403,8 +399,8 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
-              <Avatar key={`editor-${playerData.id}-${playerData.avatar_url}`} className="h-20 w-20">
-                <AvatarImage src={playerData.avatar_url || undefined} />
+              <Avatar key={`editor-${playerData.id}-${Date.now()}`} className="h-20 w-20">
+                <AvatarImage src={avatarPreview || playerData.avatar_url || undefined} />
                 <AvatarFallback className="text-xl">
                   {playerData.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
@@ -412,10 +408,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <Label htmlFor="avatar-upload" className="cursor-pointer flex-1">
-                    <Button variant="outline" asChild className="w-full">
-                      <span>
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload Image
+                  <Button variant="outline" asChild className="w-full" disabled={isSaving}>
+                    <span>
+                      <Upload className="h-4 w-4 mr-2" />
+                      {isSaving ? 'Uploading...' : 'Upload Image'}
                       </span>
                     </Button>
                   </Label>
@@ -450,7 +446,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                 />
                 
                 <p className="text-sm text-gray-500">
-                  Upload your photo and use AI Transform, or generate a Random Avatar
+                  Images upload immediately when selected. Use AI Transform or Random Avatar for generated options.
                 </p>
               </div>
             </div>
