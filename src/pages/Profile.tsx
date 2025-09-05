@@ -52,9 +52,9 @@ const Profile = () => {
               <h1 className="text-xl sm:text-2xl font-bold text-foreground">Profile</h1>
             </div>
              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-               <div className="text-xs sm:text-sm text-muted-foreground">
-                 Welcome, {user?.email}
-               </div>
+                <div className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
+                  Welcome, {user?.email}
+                </div>
                <div className="flex items-center gap-1 sm:gap-2">
                  <Link to="/">
                    <Button variant="outline" size="sm">
