@@ -390,7 +390,6 @@ const PlayerProfile = () => {
                         } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap`}>
                           {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
                           <span className="hidden sm:inline">{badge.name}</span>
-                          <span className="sm:hidden" title={badge.name}>{typeof badge.icon === 'string' ? badge.icon : '✓'}</span>
                         </Badge>
                       ))}
                    </div>
