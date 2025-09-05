@@ -83,9 +83,9 @@ const Index = () => {
       await supabase.auth.getSession();
       
       const { data, error } = await supabase
-        .from('player_stats')
+        .from('players')
         .select('*')
-        .order('points', { ascending: false });
+        .order('name', { ascending: true });
 
       console.log('Players fetch result:', { data, error, count: data?.length });
       if (error) {
@@ -97,13 +97,13 @@ const Index = () => {
       const formattedPlayers: Player[] = (data || []).map(player => ({
         id: player.id,
         name: player.name,
-        points: Number(player.points),
-        games_played: Number(player.games_played),
-        wins: Number(player.wins),
-        draws: Number(player.draws),
-        losses: Number(player.losses),
-        mvp_awards: Number(player.mvp_awards),
-        goal_difference: Number(player.goal_difference),
+        points: 0, // Set default values since players table doesn't have these stats
+        games_played: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        mvp_awards: 0,
+        goal_difference: 0,
         user_id: player.user_id,
         avatar_url: player.avatar_url,
       }));
