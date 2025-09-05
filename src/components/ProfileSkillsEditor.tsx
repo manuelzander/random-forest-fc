@@ -314,8 +314,8 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={avatarPreview || playerData.avatar_url} />
+              <Avatar key={`editor-${playerData.id}-${playerData.avatar_url}`} className="h-20 w-20">
+                <AvatarImage src={playerData.avatar_url || undefined} />
                 <AvatarFallback className="text-xl">
                   {playerData.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
