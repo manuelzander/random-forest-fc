@@ -195,29 +195,32 @@ const AdminNewsManagement = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Newspaper className="h-5 w-5" />
-          News Management
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Newspaper className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="hidden sm:inline">News Management</span>
+          <span className="sm:hidden">News</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">News Articles ({news.length})</h3>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+          <h3 className="text-base sm:text-lg font-semibold">News Articles ({news.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button
+                size="sm"
                 onClick={() => {
                   setEditingItem(null);
                   setFormData({ title: '', content: '', published: true });
                 }}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Add News
+                <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">Add News</span>
+                <span className="sm:hidden">Add</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl mx-2 sm:mx-auto max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="text-base sm:text-lg">
                   {editingItem ? 'Edit News Article' : 'Add New Article'}
                 </DialogTitle>
               </DialogHeader>
@@ -273,23 +276,23 @@ const AdminNewsManagement = () => {
             </AlertDescription>
           </Alert>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {news.map((item) => (
-              <div key={item.id} className="border rounded-lg p-4 space-y-3">
-                <div className="flex items-start justify-between">
+              <div key={item.id} className="border rounded-lg p-3 sm:p-4 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-semibold">{item.title}</h3>
-                      <Badge variant={item.published ? "default" : "secondary"}>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                      <h3 className="text-base sm:text-lg font-semibold">{item.title}</h3>
+                      <Badge variant={item.published ? "default" : "secondary"} className="w-fit">
                         {item.published ? 'Published' : 'Draft'}
                       </Badge>
                     </div>
                     {item.content && (
-                      <p className="text-gray-700 mb-2 line-clamp-2">{item.content}</p>
+                      <p className="text-muted-foreground mb-2 line-clamp-2 text-sm sm:text-base">{item.content}</p>
                     )}
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
+                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                         Created: {format(new Date(item.created_at), 'PPp')}
                       </div>
                       {item.updated_at !== item.created_at && (
@@ -299,27 +302,27 @@ const AdminNewsManagement = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex sm:flex-col gap-2 justify-center sm:ml-4">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => togglePublished(item)}
                     >
-                      {item.published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {item.published ? <EyeOff className="h-3 w-3 sm:h-4 sm:w-4" /> : <Eye className="h-3 w-3 sm:h-4 sm:w-4" />}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleEdit(item)}
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleDelete(item.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   </div>
                 </div>
