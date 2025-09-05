@@ -66,18 +66,19 @@ serve(async (req) => {
 
     if (imageToImage && baseImageData) {
       // Image-to-image generation - face forward portrait
-      prompt = `Transform this image into a hilarious European football (soccer) player portrait for "${playerName}".
+      prompt = `Transform this image into a hilarious retro European football (soccer) player portrait.
       
       Create a front-facing cartoon portrait with:
       - Transform into funny cartoon/comic style with exaggerated comedic features
       - Person looking directly at camera with hilarious facial expression
       - Make the face amusing (goofy smile, funny eyes, big nose, comedic eyebrows, etc.)
       - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
-      - ${clubInfo} but NO NAME or NUMBER visible on the front of the jersey
+      - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
+      - NO NAME or NUMBER visible anywhere on the jersey or image
       - Background MUST be pure white (#FFFFFF) with no other colors or patterns
       - Maintain the person's unique characteristics while making it soccer/football-themed and genuinely funny
       - Make it entertaining and amusing while being respectful
-      - Focus on the face and expression, soccer/football player style`
+      - Focus on the face and expression with vintage soccer aesthetic`
       
       requestBody.contents[0].parts = [
         { text: prompt },
@@ -90,15 +91,15 @@ serve(async (req) => {
       ]
     } else {
       // Random generation (existing logic)
-      prompt = `Create a realistic soccer (European football) comic-style portrait for a player named "${playerName}".
+      prompt = `Create a hilarious retro European football (soccer) comic-style portrait for a player named "${playerName}".
     
     POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a HILARIOUS and funny expression.
     
-    JERSEY BACK: Show the back of the soccer jersey clearly with:
+    RETRO JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey clearly with:
     - Player name "${playerName}" printed on the back in capital letters
-    - Random jersey number (1-99) below the name
-    - ${clubInfo}
-    - Make the text clearly readable and professional looking
+    - Random jersey number (1-99) below the name  
+    - ${clubInfo} with retro styling (thick collar, classic cut, vintage color schemes)
+    - Make the text clearly readable and professional looking with retro font style
     
     FUNNY FEATURES - Make this character look COMPLETELY DIFFERENT and AMUSING:
     - Face shape: exaggerated and comedic (round, oval, square, rectangular, or diamond-shaped)
@@ -112,12 +113,12 @@ serve(async (req) => {
     - Ears: can be big, small, or sticking out for comedic effect
     - Facial expressions: hilarious and entertaining (goofy smile, determined squint, cheeky wink, surprised look, etc.)
     - Skin tone: natural variety across all ethnicities
-    - Jersey: ${clubInfo}
+    - Jersey: ${clubInfo} with vintage retro 70s/80s soccer styling
     
-    Style: Funny cartoon/comic book illustration with exaggerated features for maximum humor.
+    Style: Funny cartoon/comic book illustration with exaggerated features for maximum humor and retro 70s/80s soccer vibe.
     Background: PURE WHITE background (#FFFFFF) - absolutely no other colors or patterns.
     
-    Make this avatar genuinely funny and entertaining while being respectful!
+    Make this avatar genuinely funny and entertaining while being respectful with a classic vintage soccer aesthetic!
     
     Generate a UNIQUE individual looking back over shoulder with jersey back visible!`
       
