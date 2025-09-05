@@ -279,8 +279,17 @@ const AdminPlayerManagement = () => {
           description: `Generated hilarious avatar for ${player.name}`,
         });
         
-        // Force immediate UI refresh
-        fetchPlayers();
+        // Force complete refresh of player data
+        await fetchPlayers();
+        
+        // Force image cache refresh by updating the state immediately
+        setPlayers(prevPlayers => 
+          prevPlayers.map(p => 
+            p.id === player.id 
+              ? { ...p, avatar_url: data.avatarUrl }
+              : p
+          )
+        );
       } else {
         throw new Error('Failed to generate avatar');
       }
@@ -359,7 +368,7 @@ const AdminPlayerManagement = () => {
               <div key={player.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-12 w-12">
+                    <Avatar key={`${player.id}-${player.avatar_url}`} className="h-12 w-12">
                       <AvatarImage src={player.avatar_url || undefined} />
                       <AvatarFallback>
                         {player.name.substring(0, 2).toUpperCase()}
