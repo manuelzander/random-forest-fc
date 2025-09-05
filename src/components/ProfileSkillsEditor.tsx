@@ -128,7 +128,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
-  const [hasUploadedImage, setHasUploadedImage] = useState(false);
+  const [userUploadedImageUrl, setUserUploadedImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProfile();
@@ -211,9 +211,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
             description: "Your avatar has been updated successfully.",
           });
 
-          // Keep the file for AI Transform but clear preview
+          // Store the uploaded image URL and clear the file
+          setUserUploadedImageUrl(avatarUrlWithCacheBust);
+          setAvatarFile(null);
           setAvatarPreview(null);
-          setHasUploadedImage(true);
 
           onProfileUpdate?.();
         } catch (error) {
@@ -312,6 +313,9 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           description: "Your new random avatar has been created.",
         });
 
+        // Clear user uploaded image since we generated a new one
+        setUserUploadedImageUrl(null);
+
         onProfileUpdate?.();
       }
     } catch (error) {
@@ -327,7 +331,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   };
 
   const generateImageToImageAvatar = async () => {
-    if (!playerData || (!avatarFile && !hasUploadedImage)) {
+    if (!playerData) return;
+    
+    // Check if we have either a file or a previously uploaded image
+    if (!avatarFile && !userUploadedImageUrl) {
       toast({
         title: "Upload Required",
         description: "Please upload an image first to use image-to-image generation.",
@@ -338,19 +345,37 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
     
     setIsGeneratingAvatar(true);
     try {
-      // Convert file to base64
-      const reader = new FileReader();
-      const base64Promise = new Promise<string>((resolve, reject) => {
-        reader.onload = () => {
-          const result = reader.result as string;
-          const base64 = result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
-          resolve(base64);
-        };
-        reader.onerror = reject;
-      });
-      reader.readAsDataURL(avatarFile);
+      let baseImageData: string;
       
-      const baseImageData = await base64Promise;
+      if (avatarFile) {
+        // Use the current file
+        const reader = new FileReader();
+        baseImageData = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => {
+            const result = reader.result as string;
+            const base64 = result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+            resolve(base64);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(avatarFile);
+        });
+      } else if (userUploadedImageUrl) {
+        // Fetch the uploaded image and convert to base64
+        const response = await fetch(userUploadedImageUrl);
+        const blob = await response.blob();
+        baseImageData = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            const base64 = result.split(',')[1];
+            resolve(base64);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      } else {
+        throw new Error('No image available for transformation');
+      }
 
       const { data, error } = await supabase.functions.invoke('generate-avatar', {
         body: { 
@@ -378,10 +403,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           description: "Your new personalized avatar has been created.",
         });
 
-        // Clear the uploaded file and reset state after AI transformation
+        // Clear states after AI transformation
         setAvatarFile(null);
         setAvatarPreview(null);
-        setHasUploadedImage(false);
+        setUserUploadedImageUrl(null);
 
         onProfileUpdate?.();
       }
@@ -444,7 +469,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                   <Button 
                     variant="outline" 
                     onClick={generateImageToImageAvatar}
-                    disabled={isGeneratingAvatar || (!avatarFile && !hasUploadedImage)}
+                    disabled={isGeneratingAvatar || (!avatarFile && !userUploadedImageUrl)}
                     className="flex-1"
                   >
                     <Wand2 className="h-4 w-4 mr-2" />
