@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { playerName, playerId, imageToImage, baseImageData } = await req.json()
+    const { playerName, playerId, imageToImage, baseImageData, favoriteClub } = await req.json()
     
     if (!playerName || !playerId) {
       throw new Error('Player name and ID are required')
@@ -29,9 +29,10 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    console.log(`Generating avatar for player: ${playerName}`, imageToImage ? 'with base image' : 'random')
+    console.log(`Generating avatar for player: ${playerName}`, imageToImage ? 'with base image' : 'random', favoriteClub ? `for ${favoriteClub}` : '')
 
-    // Create prompt based on whether it's image-to-image or random generation
+    // Create club-specific jersey information
+    const clubInfo = favoriteClub ? `wearing a ${favoriteClub} jersey with team colors and style` : 'wearing a soccer jersey with random team colors'
     let prompt
     let requestBody: any = {
       contents: [{
@@ -72,6 +73,7 @@ serve(async (req) => {
       - Person looking directly at camera with hilarious facial expression
       - Make the face amusing (goofy smile, funny eyes, big nose, comedic eyebrows, etc.)
       - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
+      - ${clubInfo}
       - Background MUST be pure white (#FFFFFF) with no other colors or patterns
       - Maintain the person's unique characteristics while making it soccer/football-themed and genuinely funny
       - Make it entertaining and amusing while being respectful
@@ -95,6 +97,7 @@ serve(async (req) => {
     JERSEY BACK: Show the back of the soccer jersey clearly with:
     - Player name "${playerName}" printed on the back in capital letters
     - Random jersey number (1-99) below the name
+    - ${clubInfo}
     - Make the text clearly readable and professional looking
     
     FUNNY FEATURES - Make this character look COMPLETELY DIFFERENT and AMUSING:
@@ -109,7 +112,7 @@ serve(async (req) => {
     - Ears: can be big, small, or sticking out for comedic effect
     - Facial expressions: hilarious and entertaining (goofy smile, determined squint, cheeky wink, surprised look, etc.)
     - Skin tone: natural variety across all ethnicities
-    - Jersey colors: randomize team colors and styles
+    - Jersey: ${clubInfo}
     
     Style: Funny cartoon/comic book illustration with exaggerated features for maximum humor.
     Background: PURE WHITE background (#FFFFFF) - absolutely no other colors or patterns.

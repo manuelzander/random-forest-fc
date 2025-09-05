@@ -16,6 +16,7 @@ interface ProfileData {
   football_skills?: string[];
   favorite_position?: string;
   years_playing?: number;
+  favorite_club?: string;
 }
 
 interface Props {
@@ -148,7 +149,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
       console.log('ProfileSkillsEditor: Fetching profile for userId:', userId);
       const { data, error } = await supabase
         .from('profiles')
-        .select('bio, football_skills, favorite_position, years_playing')
+        .select('bio, football_skills, favorite_position, years_playing, favorite_club')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -163,7 +164,8 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           bio: data.bio || '',
           football_skills: Array.isArray(data.football_skills) ? data.football_skills as string[] : [],
           favorite_position: data.favorite_position || '',
-          years_playing: data.years_playing || undefined
+          years_playing: data.years_playing || undefined,
+          favorite_club: data.favorite_club || ''
         });
       }
     } catch (error) {
@@ -257,7 +259,8 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           bio: profile.bio,
           football_skills: profile.football_skills as any,
           favorite_position: profile.favorite_position,
-          years_playing: profile.years_playing
+          years_playing: profile.years_playing,
+          favorite_club: profile.favorite_club
         })
         .eq('user_id', userId);
 
@@ -306,7 +309,8 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
       const { data, error } = await supabase.functions.invoke('generate-avatar', {
         body: { 
           playerName: playerData.name, 
-          playerId: playerData.id 
+          playerId: playerData.id,
+          favoriteClub: profile.favorite_club
         }
       });
 
@@ -389,7 +393,8 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           playerName: playerData.name, 
           playerId: playerData.id,
           imageToImage: true,
-          baseImageData
+          baseImageData,
+          favoriteClub: profile.favorite_club
         }
       });
 
@@ -516,7 +521,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="position">Favorite Position</Label>
               <Select
@@ -547,6 +552,16 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                   ...prev, 
                   years_playing: e.target.value ? parseInt(e.target.value) : undefined 
                 }))}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="club">Favorite Club</Label>
+              <Input
+                id="club"
+                placeholder="e.g. Real Madrid, Barcelona, Man United"
+                value={profile.favorite_club || ''}
+                onChange={(e) => setProfile(prev => ({ ...prev, favorite_club: e.target.value }))}
               />
             </div>
           </div>
