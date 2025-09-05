@@ -185,7 +185,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                 <Button
                   onClick={handleSaveProfile}
                   disabled={isSaving}
-                  className="bg-blue-600 text-white hover:bg-blue-700"
+                  className="bg-green-600 text-white hover:bg-green-700"
                   size="sm"
                 >
                   {isSaving ? 'Saving...' : 'Save Profile'}
