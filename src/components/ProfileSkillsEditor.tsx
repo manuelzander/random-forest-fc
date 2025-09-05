@@ -410,23 +410,16 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-3">
-                <Label htmlFor="avatar-upload" className="cursor-pointer">
-                  <Button variant="outline" asChild>
-                    <span>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Image
-                    </span>
-                  </Button>
-                </Label>
-                <Input
-                  id="avatar-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  className="hidden"
-                />
-                
                 <div className="flex gap-2">
+                  <Label htmlFor="avatar-upload" className="cursor-pointer flex-1">
+                    <Button variant="outline" asChild className="w-full">
+                      <span>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload Image
+                      </span>
+                    </Button>
+                  </Label>
+                  
                   <Button 
                     variant="outline" 
                     onClick={generateRandomAvatar}
@@ -447,6 +440,14 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                     {isGeneratingAvatar ? 'Generating...' : 'AI Transform'}
                   </Button>
                 </div>
+                
+                <Input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="hidden"
+                />
                 
                 <p className="text-sm text-gray-500">
                   Upload your photo and use AI Transform, or generate a Random Avatar
