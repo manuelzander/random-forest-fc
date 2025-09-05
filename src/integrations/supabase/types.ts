@@ -59,13 +59,6 @@ export type Database = {
             foreignKeyName: "games_mvp_player_fkey"
             columns: ["mvp_player"]
             isOneToOne: false
-            referencedRelation: "player_stats"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "games_mvp_player_fkey"
-            columns: ["mvp_player"]
-            isOneToOne: false
             referencedRelation: "players"
             referencedColumns: ["id"]
           },
@@ -196,49 +189,12 @@ export type Database = {
       }
     }
     Views: {
-      player_stats: {
-        Row: {
-          avatar_url: string | null
-          badges: Json | null
-          created_at: string | null
-          draws: number | null
-          games_played: number | null
-          goal_difference: number | null
-          id: string | null
-          losses: number | null
-          mvp_awards: number | null
-          name: string | null
-          points: number | null
-          updated_at: string | null
-          user_id: string | null
-          wins: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
-      }
-      get_player_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          avatar_url: string
-          badges: Json
-          created_at: string
-          draws: number
-          games_played: number
-          goal_difference: number
-          id: string
-          losses: number
-          mvp_awards: number
-          name: string
-          points: number
-          updated_at: string
-          user_id: string
-          wins: number
-        }[]
       }
       has_role: {
         Args: {
