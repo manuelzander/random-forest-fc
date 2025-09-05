@@ -31,8 +31,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   const { toast } = useToast();
   const [team1Players, setTeam1Players] = useState<string[]>(initialData?.team1Players || []);
   const [team2Players, setTeam2Players] = useState<string[]>(initialData?.team2Players || []);
-  const [team1Goals, setTeam1Goals] = useState(initialData?.team1Goals || 0);
-  const [team2Goals, setTeam2Goals] = useState(initialData?.team2Goals || 0);
+  const [team1Goals, setTeam1Goals] = useState<string>(initialData?.team1Goals?.toString() || '');
+  const [team2Goals, setTeam2Goals] = useState<string>(initialData?.team2Goals?.toString() || '');
   const [team1Captain, setTeam1Captain] = useState(initialData?.team1Captain || '');
   const [team2Captain, setTeam2Captain] = useState(initialData?.team2Captain || '');
   const [mvpPlayer, setMvpPlayer] = useState(initialData?.mvpPlayer || '');
@@ -122,8 +122,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
     const gameData: GameInputType = {
       team1Players,
       team2Players,
-      team1Goals,
-      team2Goals,
+      team1Goals: parseInt(team1Goals) || 0,
+      team2Goals: parseInt(team2Goals) || 0,
       team1Captain,
       team2Captain,
       mvpPlayer,
@@ -136,8 +136,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
     if (!isEditing) {
       setTeam1Players([]);
       setTeam2Players([]);
-      setTeam1Goals(0);
-      setTeam2Goals(0);
+      setTeam1Goals('');
+      setTeam2Goals('');
       setTeam1Captain('');
       setTeam2Captain('');
       setMvpPlayer('');
@@ -284,7 +284,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
                 type="number"
                 min="0"
                 value={team1Goals}
-                onChange={(e) => setTeam1Goals(Number(e.target.value))}
+                onChange={(e) => setTeam1Goals(e.target.value)}
                 className="text-center text-xl font-bold"
               />
             </div>
@@ -295,7 +295,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
                 type="number"
                 min="0"
                 value={team2Goals}
-                onChange={(e) => setTeam2Goals(Number(e.target.value))}
+                onChange={(e) => setTeam2Goals(e.target.value)}
                 className="text-center text-xl font-bold"
               />
             </div>
