@@ -129,11 +129,13 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
 
-  // Check if current avatar is user-uploaded (not AI-generated)
-  const isCurrentAvatarUserUploaded = () => {
+  // Simple function to check if avatar can be transformed (user uploaded vs AI generated)
+  const canTransformAvatar = () => {
+    // Can transform if we have a file ready to upload or current avatar is user-uploaded
+    if (avatarFile) return true;
     if (!playerData?.avatar_url) return false;
-    // User uploads go to userId/filename, AI generated go to default/avatar-playerId-timestamp
-    return playerData.avatar_url.includes(`/${userId}/`) && !playerData.avatar_url.includes('/default/');
+    // User uploads go to userId/ path, AI generated go to default/ path
+    return playerData.avatar_url.includes(`/${userId}/`);
   };
 
   useEffect(() => {
@@ -179,60 +181,65 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
     const file = e.target.files?.[0];
     if (file) {
       setAvatarFile(file);
+      
+      // Show preview immediately
       const reader = new FileReader();
       reader.onload = (e) => {
         setAvatarPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
       
-      // Immediately upload the file
+      // Upload immediately
       if (playerData) {
-        setIsSaving(true);
-        try {
-          const fileExt = file.name.split('.').pop();
-          const fileName = `avatar.${fileExt}`;
-          const filePath = `${userId}/${fileName}`;
-
-          const { error: uploadError } = await supabase.storage
-            .from('avatars')
-            .upload(filePath, file, { upsert: true });
-
-          if (uploadError) throw uploadError;
-
-          const { data } = supabase.storage
-            .from('avatars')
-            .getPublicUrl(filePath);
-
-          // Add cache-busting parameter
-          const avatarUrlWithCacheBust = `${data.publicUrl}?t=${Date.now()}`;
-
-          // Update player avatar immediately
-          await supabase
-            .from('players')
-            .update({ avatar_url: avatarUrlWithCacheBust })
-            .eq('id', playerData.id);
-
-          toast({
-            title: "Avatar uploaded!",
-            description: "Your avatar has been updated successfully.",
-          });
-
-          // Clear the file and preview after upload
-          setAvatarFile(null);
-          setAvatarPreview(null);
-
-          onProfileUpdate?.();
-        } catch (error) {
-          console.error('Error uploading avatar:', error);
-          toast({
-            title: "Error",
-            description: "Failed to upload avatar",
-            variant: "destructive",
-          });
-        } finally {
-          setIsSaving(false);
-        }
+        await uploadAvatarFile(file);
       }
+    }
+  };
+
+  const uploadAvatarFile = async (file: File) => {
+    if (!playerData) return;
+    
+    setIsSaving(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `avatar-${Date.now()}.${fileExt}`;
+      const filePath = `${userId}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update player avatar with fresh URL
+      await supabase
+        .from('players')
+        .update({ avatar_url: data.publicUrl })
+        .eq('id', playerData.id);
+
+      toast({
+        title: "Avatar uploaded!",
+        description: "Your avatar has been updated successfully.",
+      });
+
+      // Clear states after successful upload
+      setAvatarFile(null);
+      setAvatarPreview(null);
+
+      onProfileUpdate?.();
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload avatar",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -304,13 +311,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
       if (error) throw error;
 
       if (data?.avatarUrl) {
-        // Add cache-busting parameter to force image refresh
-        const avatarUrlWithCacheBust = `${data.avatarUrl}?t=${Date.now()}`;
-        
         // Update player avatar in database
         await supabase
           .from('players')
-          .update({ avatar_url: avatarUrlWithCacheBust })
+          .update({ avatar_url: data.avatarUrl })
           .eq('id', playerData.id);
 
         toast({
@@ -335,11 +339,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   const generateImageToImageAvatar = async () => {
     if (!playerData) return;
     
-    // Check if we have either a file or a user-uploaded avatar
-    if (!avatarFile && !isCurrentAvatarUserUploaded()) {
+    if (!canTransformAvatar()) {
       toast({
         title: "Upload Required",
-        description: "Please upload an image first to use image-to-image generation.",
+        description: "Please upload an image first to use AI Transform.",
         variant: "destructive",
       });
       return;
@@ -351,18 +354,18 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
       
       if (avatarFile) {
         // Use the current file
-        const reader = new FileReader();
         baseImageData = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
           reader.onload = () => {
             const result = reader.result as string;
-            const base64 = result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+            const base64 = result.split(',')[1];
             resolve(base64);
           };
           reader.onerror = reject;
           reader.readAsDataURL(avatarFile);
         });
-      } else if (playerData?.avatar_url && isCurrentAvatarUserUploaded()) {
-        // Fetch the current user-uploaded avatar and convert to base64
+      } else if (playerData?.avatar_url) {
+        // Fetch the current avatar and convert to base64
         const response = await fetch(playerData.avatar_url);
         const blob = await response.blob();
         baseImageData = await new Promise<string>((resolve, reject) => {
@@ -376,7 +379,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           reader.readAsDataURL(blob);
         });
       } else {
-        throw new Error('No user-uploaded image available for transformation');
+        throw new Error('No image available for transformation');
       }
 
       const { data, error } = await supabase.functions.invoke('generate-avatar', {
@@ -391,21 +394,18 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
       if (error) throw error;
 
       if (data?.avatarUrl) {
-        // Add cache-busting parameter to force image refresh
-        const avatarUrlWithCacheBust = `${data.avatarUrl}?t=${Date.now()}`;
-        
         // Update player avatar in database
         await supabase
           .from('players')
-          .update({ avatar_url: avatarUrlWithCacheBust })
+          .update({ avatar_url: data.avatarUrl })
           .eq('id', playerData.id);
 
         toast({
-          title: "Avatar Generated!",
-          description: "Your new personalized avatar has been created.",
+          title: "Avatar Transformed!",
+          description: "Your personalized cartoon avatar has been created.",
         });
 
-        // Clear states after AI transformation
+        // Clear states after transformation
         setAvatarFile(null);
         setAvatarPreview(null);
 
@@ -440,7 +440,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
-              <Avatar key={`editor-${playerData.id}-${playerData.avatar_url}-${Date.now()}`} className="h-20 w-20">
+              <Avatar className="h-20 w-20">
                 <AvatarImage src={avatarPreview || playerData.avatar_url || undefined} />
                 <AvatarFallback className="text-xl">
                   {playerData.name.charAt(0).toUpperCase()}
@@ -470,7 +470,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                   <Button 
                     variant="outline" 
                     onClick={generateImageToImageAvatar}
-                    disabled={isGeneratingAvatar || (!avatarFile && !isCurrentAvatarUserUploaded())}
+                    disabled={isGeneratingAvatar || !canTransformAvatar()}
                     className="flex-1"
                   >
                     <Wand2 className="h-4 w-4 mr-2" />
