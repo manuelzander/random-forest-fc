@@ -137,6 +137,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           email: string
+          favorite_club: string | null
           favorite_position: string | null
           football_skills: Json | null
           id: string
@@ -149,6 +150,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email: string
+          favorite_club?: string | null
           favorite_position?: string | null
           football_skills?: Json | null
           id?: string
@@ -161,6 +163,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email?: string
+          favorite_club?: string | null
           favorite_position?: string | null
           football_skills?: Json | null
           id?: string
