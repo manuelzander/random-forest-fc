@@ -106,6 +106,13 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
   const handleUnclaimPlayer = async () => {
     if (!currentUserPlayer) return;
 
+    // Show security warning
+    const confirmed = window.confirm(
+      `⚠️ Security Warning ⚠️\n\nAre you sure you want to unclaim "${currentUserPlayer.name}"?\n\nThis will:\n• Remove your connection to this player\n• Delete your custom avatar and profile data\n• Make this player available for others to claim\n\nThis action cannot be undone!`
+    );
+
+    if (!confirmed) return;
+
     try {
       const { error } = await supabase
         .from('players')
@@ -162,10 +169,6 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <h3 className="text-xl font-semibold">{currentUserPlayer.name}</h3>
-                <p className="text-muted-foreground">
-                  {currentUserPlayer.points} pts • {currentUserPlayer.games_played} games • 
-                  {currentUserPlayer.wins}W-{currentUserPlayer.draws}D-{currentUserPlayer.losses}L
-                </p>
                 <Button
                   variant="outline"
                   size="sm"
@@ -209,9 +212,6 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                       </Avatar>
                       <div>
                         <span className="font-medium">{player.name}</span>
-                        <p className="text-sm text-muted-foreground">
-                          {player.points} pts • {player.games_played} games
-                        </p>
                       </div>
                     </div>
                     <Button
