@@ -51,26 +51,74 @@ const AdminPlayerManagement = () => {
 
   const fetchPlayers = async () => {
     try {
-    const { data, error } = await supabase
-      .from('player_stats')
+    const { data: playersData, error: playersError } = await supabase
+      .from('players')
       .select('*')
-      .order('points', { ascending: false });
+      .order('name');
 
-    if (error) throw error;
+    if (playersError) throw playersError;
     
-    const formattedPlayers = (data || []).map(player => ({
-      id: player.id,
-      name: player.name,
-      points: Number(player.points),
-      games_played: Number(player.games_played),
-      wins: Number(player.wins),
-      draws: Number(player.draws),
-      losses: Number(player.losses),
-      mvp_awards: Number(player.mvp_awards),
-      goal_difference: Number(player.goal_difference),
-      user_id: player.user_id,
-      avatar_url: player.avatar_url,
-    }));
+    // Fetch all games to calculate stats
+    const { data: gamesData, error: gamesError } = await supabase
+      .from('games')
+      .select('*');
+
+    if (gamesError) throw gamesError;
+    
+    const formattedPlayers = (playersData || []).map(player => {
+      // Calculate stats for this player
+      let points = 0;
+      let wins = 0;
+      let draws = 0;
+      let losses = 0;
+      let mvp_awards = 0;
+      let goal_difference = 0;
+      
+      if (gamesData) {
+        gamesData.forEach(game => {
+          const isTeam1 = game.team1_players.includes(player.id);
+          const isTeam2 = game.team2_players.includes(player.id);
+          
+          if (isTeam1 || isTeam2) {
+            const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
+            const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
+            
+            goal_difference += playerGoals - opponentGoals;
+            
+            if (playerGoals > opponentGoals) {
+              wins++;
+              points += 3;
+            } else if (playerGoals === opponentGoals) {
+              draws++;
+              points += 1;
+            } else {
+              losses++;
+            }
+            
+            if (game.mvp_player === player.id) {
+              mvp_awards++;
+            }
+          }
+        });
+      }
+      
+      return {
+        id: player.id,
+        name: player.name,
+        points,
+        games_played: wins + draws + losses,
+        wins,
+        draws,
+        losses,
+        mvp_awards,
+        goal_difference,
+        user_id: player.user_id,
+        avatar_url: player.avatar_url,
+      };
+    });
+    
+    // Sort by points (highest first)
+    formattedPlayers.sort((a, b) => b.points - a.points);
     
     setPlayers(formattedPlayers);
     } catch (error) {
