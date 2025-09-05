@@ -115,8 +115,9 @@ serve(async (req) => {
     // Convert base64 to buffer
     const imageBuffer = Uint8Array.from(atob(imageData), c => c.charCodeAt(0))
 
-    // Upload to Supabase Storage
-    const fileName = `default-avatar-${playerId}.png`
+    // Upload to Supabase Storage with unique filename to avoid caching issues
+    const timestamp = Date.now()
+    const fileName = `avatar-${playerId}-${timestamp}.png`
     const filePath = `default/${fileName}`
 
     const { error: uploadError } = await supabase.storage

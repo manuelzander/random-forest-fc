@@ -268,13 +268,10 @@ const AdminPlayerManagement = () => {
       if (error) throw error;
 
       if (data?.success && data?.avatarUrl) {
-        // Add cache-busting parameter to force image refresh
-        const cacheBustUrl = `${data.avatarUrl}?t=${Date.now()}`;
-        
         // Update player avatar in database
         await supabase
           .from('players')
-          .update({ avatar_url: cacheBustUrl })
+          .update({ avatar_url: data.avatarUrl })
           .eq('id', player.id);
 
         toast({
