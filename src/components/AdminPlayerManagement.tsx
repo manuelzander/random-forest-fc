@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Player {
@@ -39,6 +40,7 @@ const AdminPlayerManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [generatingAvatarFor, setGeneratingAvatarFor] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -252,6 +254,45 @@ const AdminPlayerManagement = () => {
     return profiles.find(profile => profile.user_id === userId);
   };
 
+  const generateAvatar = async (player: Player) => {
+    try {
+      setGeneratingAvatarFor(player.id);
+      
+      const { data, error } = await supabase.functions.invoke('generate-avatar', {
+        body: { 
+          playerName: player.name,
+          playerId: player.id 
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.success && data?.avatarUrl) {
+        // Update player avatar in database
+        await supabase
+          .from('players')
+          .update({ avatar_url: data.avatarUrl })
+          .eq('id', player.id);
+
+        toast({
+          title: "Avatar generated!",
+          description: `Generated hilarious avatar for ${player.name}`,
+        });
+        
+        fetchPlayers(); // Refresh the list
+      }
+    } catch (error) {
+      console.error('Error generating avatar:', error);
+      toast({
+        title: "Error",
+        description: `Failed to generate avatar for ${player.name}`,
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingAvatarFor(null);
+    }
+  };
+
   if (isLoading) {
     return <div>Loading players...</div>;
   }
@@ -313,18 +354,41 @@ const AdminPlayerManagement = () => {
             const profile = getProfileByUserId(player.user_id);
             return (
               <div key={player.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex-1">
-                  <h4 className="font-semibold">{player.name}</h4>
-                  <p className="text-sm text-gray-600">
-                    {player.points} pts • {player.games_played} games • {player.wins}W-{player.draws}D-{player.losses}L
-                  </p>
-                  {profile && (
-                    <p className="text-xs text-blue-600 mt-1">
-                      Connected to: {profile.display_name || profile.email}
-                    </p>
-                  )}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={player.avatar_url || undefined} />
+                      <AvatarFallback>
+                        {player.name.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h4 className="font-semibold">{player.name}</h4>
+                      <p className="text-sm text-gray-600">
+                        {player.points} pts • {player.games_played} games • {player.wins}W-{player.draws}D-{player.losses}L
+                      </p>
+                      {profile && (
+                        <p className="text-xs text-blue-600 mt-1">
+                          Connected to: {profile.display_name || profile.email}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => generateAvatar(player)}
+                    disabled={generatingAvatarFor === player.id}
+                    title="Generate Avatar"
+                  >
+                    {generatingAvatarFor === player.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Wand2 className="h-4 w-4" />
+                    )}
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
                     <Edit2 className="h-4 w-4" />
                   </Button>
