@@ -5,91 +5,90 @@ export const samplePlayers: Player[] = [
   {
     id: '1',
     name: 'Alex Johnson',
-    gamesPlayed: 8,
+    games_played: 8,
     wins: 6,
     draws: 1,
     losses: 1,
-    mvpAwards: 3,
+    mvp_awards: 3,
     points: 19,
-    goalDifference: 8
+    goal_difference: 8
   },
   {
     id: '2',
     name: 'Marcus Silva',
-    gamesPlayed: 7,
+    games_played: 7,
     wins: 5,
     draws: 2,
     losses: 0,
-    mvpAwards: 2,
+    mvp_awards: 2,
     points: 17,
-    goalDifference: 6
+    goal_difference: 6
   },
   {
     id: '3',
     name: 'David Thompson',
-    gamesPlayed: 8,
+    games_played: 8,
     wins: 4,
     draws: 2,
     losses: 2,
-    
-    mvpAwards: 4,
+    mvp_awards: 4,
     points: 14,
-    goalDifference: 10
+    goal_difference: 10
   },
   {
     id: '4',
     name: 'James Rodriguez',
-    gamesPlayed: 6,
+    games_played: 6,
     wins: 4,
     draws: 1,
     losses: 1,
-    mvpAwards: 1,
+    mvp_awards: 1,
     points: 13,
-    goalDifference: 3
+    goal_difference: 3
   },
   {
     id: '5',
     name: 'Michael Brown',
-    gamesPlayed: 7,
+    games_played: 7,
     wins: 3,
     draws: 3,
     losses: 1,
-    mvpAwards: 1,
+    mvp_awards: 1,
     points: 12,
-    goalDifference: 1
+    goal_difference: 1
   },
   {
     id: '6',
     name: 'Chris Wilson',
-    gamesPlayed: 8,
+    games_played: 8,
     wins: 3,
     draws: 2,
     losses: 3,
-    mvpAwards: 2,
+    mvp_awards: 2,
     points: 11,
-    goalDifference: -2
+    goal_difference: -2
   },
   {
     id: '7',
     name: 'Ryan Garcia',
-    gamesPlayed: 5,
+    games_played: 5,
     wins: 3,
     draws: 1,
     losses: 1,
-    mvpAwards: 0,
+    mvp_awards: 0,
     points: 10,
-    goalDifference: 2
+    goal_difference: 2
   },
   {
     id: '8',
     name: 'Luke Anderson',
-    gamesPlayed: 6,
+    games_played: 6,
     wins: 2,
     draws: 3,
     losses: 1,
-    mvpAwards: 1,
+    mvp_awards: 1,
     points: 9,
-    goalDifference: 0
+    goal_difference: 0
   }
 ];
 
@@ -106,13 +105,13 @@ export const generateMorePlayers = (): Player[] => {
   return names.map((name, index) => ({
     id: (index + 9).toString(),
     name,
-    gamesPlayed: Math.floor(Math.random() * 8) + 3,
+    games_played: Math.floor(Math.random() * 8) + 3,
     wins: Math.floor(Math.random() * 6) + 1,
     draws: Math.floor(Math.random() * 3),
     losses: Math.floor(Math.random() * 4),
-    mvpAwards: Math.floor(Math.random() * 3),
+    mvp_awards: Math.floor(Math.random() * 3),
     points: Math.floor(Math.random() * 15) + 3,
-    goalDifference: Math.floor(Math.random() * 15) - 5
+    goal_difference: Math.floor(Math.random() * 15) - 5
   }));
 };
 

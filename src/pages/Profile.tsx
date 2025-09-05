@@ -40,7 +40,7 @@ const Profile = () => {
     try {
       console.log('Profile: Starting to fetch players for user:', user?.id);
       const { data, error } = await supabase
-        .from('players')
+        .from('player_stats')
         .select('*')
         .order('points', { ascending: false });
 
@@ -52,12 +52,12 @@ const Profile = () => {
         id: player.id,
         name: player.name,
         points: Number(player.points),
-        gamesPlayed: player.games_played,
-        wins: player.wins,
-        draws: player.draws,
-        losses: player.losses,
-        mvpAwards: player.mvp_awards,
-        goalDifference: player.goal_difference,
+        games_played: Number(player.games_played),
+        wins: Number(player.wins),
+        draws: Number(player.draws),
+        losses: Number(player.losses),
+        mvp_awards: Number(player.mvp_awards),
+        goal_difference: Number(player.goal_difference),
         user_id: player.user_id,
         avatar_url: player.avatar_url,
       }));

@@ -190,7 +190,7 @@ const AdminGameManagement = () => {
                 </DialogTitle>
               </DialogHeader>
               <GameInput 
-                players={players.map(p => ({ id: p.id, name: p.name, points: 0, gamesPlayed: 0, wins: 0, draws: 0, losses: 0, mvpAwards: 0, goalDifference: 0 }))}
+                players={players.map(p => ({ id: p.id, name: p.name, points: 0, games_played: 0, wins: 0, draws: 0, losses: 0, mvp_awards: 0, goal_difference: 0 }))}
                 onGameSubmit={handleGameSubmit}
                 initialData={editingGame ? {
                   team1Goals: editingGame.team1_goals,

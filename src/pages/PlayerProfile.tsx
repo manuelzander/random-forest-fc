@@ -51,16 +51,26 @@ const PlayerProfile = () => {
       
       // Fetch player data
       const { data: playerData, error: playerError } = await supabase
-        .from('players')
+        .from('player_stats')
         .select('*')
         .eq('id', playerId)
-        .single();
+        .maybeSingle();
 
       if (playerError) throw playerError;
-      setPlayer({
-        ...playerData,
-        badges: Array.isArray(playerData.badges) ? playerData.badges : []
-      });
+      
+      if (playerData) {
+        setPlayer({
+          ...playerData,
+          points: Number(playerData.points),
+          games_played: Number(playerData.games_played),
+          wins: Number(playerData.wins),
+          draws: Number(playerData.draws),
+          losses: Number(playerData.losses),
+          mvp_awards: Number(playerData.mvp_awards),
+          goal_difference: Number(playerData.goal_difference),
+          badges: Array.isArray(playerData.badges) ? playerData.badges : []
+        });
+      }
 
       // Fetch profile data if player has a user_id
       if (playerData.user_id) {

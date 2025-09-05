@@ -12,7 +12,7 @@ interface PlayerTableProps {
   players: Player[];
 }
 
-type SortField = 'points' | 'mvpAwards' | 'goalDifference' | 'gamesPlayed' | 'pointsPerGame' | 'winPercentage';
+type SortField = 'points' | 'mvp_awards' | 'goal_difference' | 'games_played' | 'pointsPerGame' | 'winPercentage';
 
 const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   const [sortField, setSortField] = useState<SortField>('points');
@@ -23,11 +23,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     let bValue: number;
     
     if (sortField === 'pointsPerGame') {
-      aValue = a.gamesPlayed > 0 ? a.points / a.gamesPlayed : 0;
-      bValue = b.gamesPlayed > 0 ? b.points / b.gamesPlayed : 0;
+      aValue = a.games_played > 0 ? a.points / a.games_played : 0;
+      bValue = b.games_played > 0 ? b.points / b.games_played : 0;
     } else if (sortField === 'winPercentage') {
-      aValue = a.gamesPlayed > 0 ? (a.wins / a.gamesPlayed) * 100 : 0;
-      bValue = b.gamesPlayed > 0 ? (b.wins / b.gamesPlayed) * 100 : 0;
+      aValue = a.games_played > 0 ? (a.wins / a.games_played) * 100 : 0;
+      bValue = b.games_played > 0 ? (b.wins / b.games_played) * 100 : 0;
     } else {
       aValue = a[sortField as keyof Player] as number;
       bValue = b[sortField as keyof Player] as number;
@@ -73,17 +73,17 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   const getBadges = (player: Player) => {
     const badges = [];
     
-    if (player.mvpAwards >= 5) {
+    if (player.mvp_awards >= 5) {
       badges.push({ icon: '👑', name: 'MVP Champion' });
     }
-    if (player.goalDifference >= 10) {
+    if (player.goal_difference >= 10) {
       badges.push({ icon: '🚀', name: 'Goal Machine' });
     }
-    const winRate = player.gamesPlayed > 0 ? Math.round((player.wins / player.gamesPlayed) * 100) : 0;
+    const winRate = player.games_played > 0 ? Math.round((player.wins / player.games_played) * 100) : 0;
     if (winRate >= 70) {
       badges.push({ icon: '🏆', name: 'Winner' });
     }
-    if (player.gamesPlayed >= 20) {
+    if (player.games_played >= 20) {
       badges.push({ icon: '🎯', name: 'Veteran' });
     }
 
@@ -112,7 +112,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                   </SortButton>
                 </th>
                 <th className="px-4 py-3 text-center">
-                  <SortButton field="gamesPlayed">
+                  <SortButton field="games_played">
                     <Users className="h-4 w-4 mr-1" />
                     Games
                   </SortButton>
@@ -127,10 +127,10 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                   <SortButton field="winPercentage">Win %</SortButton>
                 </th>
                 <th className="px-4 py-3 text-center">
-                  <SortButton field="mvpAwards">MVP</SortButton>
+                  <SortButton field="mvp_awards">MVP</SortButton>
                 </th>
                 <th className="px-4 py-3 text-center">
-                  <SortButton field="goalDifference">Goal Diff</SortButton>
+                  <SortButton field="goal_difference">Goal Diff</SortButton>
                 </th>
                 <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Record</th>
               </tr>
@@ -183,28 +183,28 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                         {player.points}
                       </Badge>
                     </td>
-                    <td className="px-4 py-4 text-center font-medium">{player.gamesPlayed}</td>
+                    <td className="px-4 py-4 text-center font-medium">{player.games_played}</td>
                      <td className="px-4 py-4 text-center">
                        <Badge variant="outline" className="font-semibold text-purple-700">
-                         {player.gamesPlayed > 0 ? (player.points / player.gamesPlayed).toFixed(1) : '0.0'}
+                         {player.games_played > 0 ? (player.points / player.games_played).toFixed(1) : '0.0'}
                        </Badge>
                      </td>
                      <td className="px-4 py-4 text-center">
                        <Badge variant="outline" className="font-semibold text-blue-700">
-                         {player.gamesPlayed > 0 ? Math.round((player.wins / player.gamesPlayed) * 100) : 0}%
+                         {player.games_played > 0 ? Math.round((player.wins / player.games_played) * 100) : 0}%
                        </Badge>
                      </td>
                     <td className="px-4 py-4 text-center">
                       <Badge variant="outline" className="font-semibold text-yellow-700">
-                        {player.mvpAwards}
+                        {player.mvp_awards}
                       </Badge>
                     </td>
                     <td className="px-4 py-4 text-center">
                       <span className={`font-medium ${
-                        player.goalDifference > 0 ? 'text-green-600' : 
-                        player.goalDifference < 0 ? 'text-red-600' : 'text-gray-600'
+                        player.goal_difference > 0 ? 'text-green-600' : 
+                        player.goal_difference < 0 ? 'text-red-600' : 'text-gray-600'
                       }`}>
-                        {player.goalDifference > 0 ? '+' : ''}{player.goalDifference}
+                        {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
                       </span>
                     </td>
                     <td className="px-4 py-4 text-center text-sm">

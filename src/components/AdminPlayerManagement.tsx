@@ -48,13 +48,28 @@ const AdminPlayerManagement = () => {
 
   const fetchPlayers = async () => {
     try {
-      const { data, error } = await supabase
-        .from('players')
-        .select('*')
-        .order('points', { ascending: false });
+    const { data, error } = await supabase
+      .from('player_stats')
+      .select('*')
+      .order('points', { ascending: false });
 
-      if (error) throw error;
-      setPlayers(data || []);
+    if (error) throw error;
+    
+    const formattedPlayers = (data || []).map(player => ({
+      id: player.id,
+      name: player.name,
+      points: Number(player.points),
+      games_played: Number(player.games_played),
+      wins: Number(player.wins),
+      draws: Number(player.draws),
+      losses: Number(player.losses),
+      mvp_awards: Number(player.mvp_awards),
+      goal_difference: Number(player.goal_difference),
+      user_id: player.user_id,
+      avatar_url: player.avatar_url,
+    }));
+    
+    setPlayers(formattedPlayers);
     } catch (error) {
       console.error('Error fetching players:', error);
       toast({

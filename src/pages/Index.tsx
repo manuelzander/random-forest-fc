@@ -68,7 +68,7 @@ const Index = () => {
       await supabase.auth.getSession();
       
       const { data, error } = await supabase
-        .from('players')
+        .from('player_stats')
         .select('*')
         .order('points', { ascending: false });
 
@@ -83,12 +83,12 @@ const Index = () => {
         id: player.id,
         name: player.name,
         points: Number(player.points),
-        gamesPlayed: player.games_played,
-        wins: player.wins,
-        draws: player.draws,
-        losses: player.losses,
-        mvpAwards: player.mvp_awards,
-        goalDifference: player.goal_difference,
+        games_played: Number(player.games_played),
+        wins: Number(player.wins),
+        draws: Number(player.draws),
+        losses: Number(player.losses),
+        mvp_awards: Number(player.mvp_awards),
+        goal_difference: Number(player.goal_difference),
         user_id: player.user_id,
         avatar_url: player.avatar_url,
       }));
@@ -130,71 +130,8 @@ const Index = () => {
 
       if (gameError) throw gameError;
 
-      // Update player statistics
-      const updatedPlayers = players.map(player => {
-        const isInTeam1 = gameData.team1Players.includes(player.id);
-        const isInTeam2 = gameData.team2Players.includes(player.id);
-        
-        if (!isInTeam1 && !isInTeam2) return player;
-
-        // Calculate points for this game
-        let gamePoints = 0;
-        const isWinner = (isInTeam1 && gameData.team1Goals > gameData.team2Goals) || 
-                        (isInTeam2 && gameData.team2Goals > gameData.team1Goals);
-        const isDraw = gameData.team1Goals === gameData.team2Goals;
-        
-        if (isWinner) gamePoints += 3;
-        else if (isDraw) gamePoints += 1;
-
-        // Add MVP bonus
-        if (gameData.mvpPlayer === player.id) gamePoints += 2;
-
-        // Calculate new stats
-        const newGamesPlayed = player.gamesPlayed + 1;
-        const newWins = isWinner ? player.wins + 1 : player.wins;
-        const newDraws = isDraw ? player.draws + 1 : player.draws;
-        const newLosses = (!isWinner && !isDraw) ? player.losses + 1 : player.losses;
-        const newMvpAwards = gameData.mvpPlayer === player.id ? player.mvpAwards + 1 : player.mvpAwards;
-        const newPoints = Math.round((player.points + gamePoints) * 10) / 10;
-        const newGoalDifference = isInTeam1 ? 
-          player.goalDifference + (gameData.team1Goals - gameData.team2Goals) :
-          player.goalDifference + (gameData.team2Goals - gameData.team1Goals);
-
-        return {
-          ...player,
-          gamesPlayed: newGamesPlayed,
-          wins: newWins,
-          draws: newDraws,
-          losses: newLosses,
-          mvpAwards: newMvpAwards,
-          points: newPoints,
-          goalDifference: newGoalDifference,
-        };
-      });
-
-      // Update all players in the database
-      for (const player of updatedPlayers) {
-        if (gameData.team1Players.includes(player.id) || gameData.team2Players.includes(player.id)) {
-          const { error: updateError } = await supabase
-            .from('players')
-            .update({
-              points: player.points,
-              games_played: player.gamesPlayed,
-              wins: player.wins,
-              draws: player.draws,
-              losses: player.losses,
-              mvp_awards: player.mvpAwards,
-              goal_difference: player.goalDifference,
-            })
-            .eq('id', player.id);
-
-          if (updateError) {
-            console.error('Error updating player:', updateError);
-          }
-        }
-      }
-
-      setPlayers(updatedPlayers.sort((a, b) => b.points - a.points));
+      // Refresh player stats from the database after saving the game
+      fetchPlayers();
       
       toast({
         title: "Game Recorded!",
@@ -288,9 +225,9 @@ const Index = () => {
            </Card>
            <Card>
              <CardContent className="p-4 text-center">
-               <div className="text-2xl font-bold text-blue-600">
-                 {players.reduce((sum, p) => sum + p.gamesPlayed, 0)}
-               </div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {players.reduce((sum, p) => sum + p.games_played, 0)}
+                </div>
                <div className="text-sm text-gray-600">Games Played</div>
              </CardContent>
            </Card>

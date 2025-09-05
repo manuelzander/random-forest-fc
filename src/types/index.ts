@@ -2,13 +2,13 @@
 export interface Player {
   id: string;
   name: string;
-  gamesPlayed: number;
+  games_played: number;
   wins: number;
   draws: number;
   losses: number;
-  mvpAwards: number;
+  mvp_awards: number;
   points: number;
-  goalDifference: number;
+  goal_difference: number;
   user_id?: string | null;
   avatar_url?: string | null;
 }
