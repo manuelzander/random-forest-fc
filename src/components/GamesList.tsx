@@ -3,10 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { History, Calendar, Crown, Video, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { getYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '@/utils/youtube';
+import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 
 interface Game {
   id: string;
@@ -24,7 +26,25 @@ interface Game {
 interface Player {
   id: string;
   name: string;
+  avatar_url?: string | null;
 }
+
+const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
+  const { avatarUrl } = useDefaultAvatar({
+    playerId: player.id,
+    playerName: player.name,
+    currentAvatarUrl: player.avatar_url
+  });
+
+  return (
+    <Avatar className="h-6 w-6">
+      <AvatarImage src={avatarUrl || undefined} />
+      <AvatarFallback className="text-xs">
+        {player.name.substring(0, 2).toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
+  );
+};
 
 const GamesList = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -46,7 +66,7 @@ const GamesList = () => {
           .order('created_at', { ascending: false }),
         supabase
           .from('players')
-          .select('id, name')
+          .select('id, name, avatar_url')
           .order('name')
       ]);
 
@@ -74,9 +94,12 @@ const GamesList = () => {
     }
   };
 
+  const getPlayer = (playerId: string) => {
+    return players.find(p => p.id === playerId) || { id: playerId, name: 'Unknown Player', avatar_url: null };
+  };
+
   const getPlayerName = (playerId: string) => {
-    const player = players.find(p => p.id === playerId);
-    return player?.name || 'Unknown Player';
+    return getPlayer(playerId).name;
   };
 
   if (isLoading) {
@@ -128,9 +151,10 @@ const GamesList = () => {
                   <div>
                     <div className="font-medium text-muted-foreground mb-2">Team 1 Players:</div>
                       <div className="space-y-1">
-                        {game.team1_players.map(playerId => (
+                         {game.team1_players.map(playerId => (
                            <div key={playerId} className="flex items-center justify-between">
                              <div className="flex items-center gap-2">
+                               <PlayerAvatarWithDefault player={getPlayer(playerId)} />
                                <span>{getPlayerName(playerId)}</span>
                                {game.team1_captain === playerId && (
                                  <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
@@ -152,9 +176,10 @@ const GamesList = () => {
                   <div>
                     <div className="font-medium text-muted-foreground mb-2">Team 2 Players:</div>
                       <div className="space-y-1">
-                        {game.team2_players.map(playerId => (
+                         {game.team2_players.map(playerId => (
                            <div key={playerId} className="flex items-center justify-between">
                              <div className="flex items-center gap-2">
+                               <PlayerAvatarWithDefault player={getPlayer(playerId)} />
                                <span>{getPlayerName(playerId)}</span>
                                {game.team2_captain === playerId && (
                                  <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">

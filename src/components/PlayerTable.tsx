@@ -7,10 +7,28 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle } from 'lucide-react';
+import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 
 interface PlayerTableProps {
   players: Player[];
 }
+
+const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
+  const { avatarUrl } = useDefaultAvatar({
+    playerId: player.id,
+    playerName: player.name,
+    currentAvatarUrl: player.avatar_url
+  });
+
+  return (
+    <Avatar className="h-10 w-10">
+      <AvatarImage src={avatarUrl || undefined} />
+      <AvatarFallback>
+        {player.name.substring(0, 2).toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
+  );
+};
 
 type SortField = 'points' | 'mvp_awards' | 'goal_difference' | 'games_played' | 'pointsPerGame' | 'winPercentage';
 
@@ -193,14 +211,9 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                          {rank}
                        </Badge>
                     </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={(player as any).avatar_url || undefined} />
-                          <AvatarFallback>
-                            {player.name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
+                     <td className="px-4 py-4">
+                       <div className="flex items-center gap-3">
+                         <PlayerAvatarWithDefault player={player} />
                         <div className="flex items-center gap-2">
                           <Link to={`/player/${player.id}`}>
                             <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-blue-600">

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Upload, UserCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 
 import { Player } from '@/types';
 
@@ -20,6 +21,13 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Use default avatar for current user's player
+  const { avatarUrl } = useDefaultAvatar({
+    playerId: currentUserPlayer?.id || '',
+    playerName: currentUserPlayer?.name || '',
+    currentAvatarUrl: currentUserPlayer?.avatar_url
+  });
 
   const handleClaimPlayer = async (playerId: string) => {
     if (!user) return;
@@ -181,7 +189,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src={currentUserPlayer.avatar_url || undefined} />
+                <AvatarImage src={avatarUrl || undefined} />
                 <AvatarFallback>
                   {currentUserPlayer.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>

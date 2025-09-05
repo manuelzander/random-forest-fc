@@ -117,11 +117,27 @@ const AdminPlayerManagement = () => {
           description: "Player updated successfully",
         });
       } else {
-        const { error } = await supabase
+        const { data: newPlayer, error } = await supabase
           .from('players')
-          .insert([playerData]);
+          .insert([playerData])
+          .select()
+          .single();
 
         if (error) throw error;
+
+        // Generate default avatar for new player
+        try {
+          await supabase.functions.invoke('generate-avatar', {
+            body: { 
+              playerName: playerData.name,
+              playerId: newPlayer.id 
+            }
+          });
+        } catch (avatarError) {
+          console.error('Failed to generate default avatar:', avatarError);
+          // Don't fail the player creation if avatar generation fails
+        }
+
         toast({
           title: "Success",
           description: "Player added successfully",
