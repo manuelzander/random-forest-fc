@@ -130,10 +130,14 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
     if (!user) return;
 
     try {
+      console.log('Attempting to claim player:', playerId, 'for user:', user.id);
+      
       const { error } = await supabase
         .from('players')
         .update({ user_id: user.id })
         .eq('id', playerId);
+
+      console.log('Claim result:', { error });
 
       if (error) throw error;
 
