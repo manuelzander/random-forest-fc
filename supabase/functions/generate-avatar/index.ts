@@ -31,22 +31,21 @@ serve(async (req) => {
 
     console.log(`Generating avatar for player: ${playerName}`)
 
-    // Create a detailed, realistic FIFA-style avatar prompt
-    const prompt = `Create a realistic FIFA Ultimate Team style player card portrait for "${playerName}". 
-    Style: Professional FIFA video game character portrait, high quality 3D render style like FIFA 23/24 player cards.
+    // Create a funny, colorful footballer face prompt
+    const prompt = `Create a funny, cartoonish footballer face for a player named "${playerName}". 
+    Make it colorful and vibrant with exaggerated, humorous features:
+    - Big expressive smile or goofy expression
+    - Bright, unusual hair colors (rainbow, neon, etc.)
+    - Exaggerated facial features (big eyes, funny mustache, quirky expressions)
+    - Vibrant skin tones and colorful details
+    - Solid bright background color that complements the character
+    - Fun cartoon illustration style, not realistic
+    - Each avatar should look completely unique and different
+    - Think animated sports character with lots of personality
+    - Vary hair styles, facial expressions, colors dramatically between characters
+    - Ultra colorful, fun, and engaging design
     
-    Details:
-    - Male football/soccer player portrait, head and shoulders view
-    - Slightly cartoonish but realistic proportions (FIFA game style, not photorealistic)
-    - Bright, vibrant colors and professional lighting
-    - Clean background with subtle gradient (blue to white or green to white)
-    - Player should look confident and athletic
-    - Modern football jersey/kit visible at bottom
-    - High contrast, sharp details, video game quality rendering
-    - FIFA Ultimate Team card aesthetic
-    - Colorful, engaging, professional sports game character design
-    
-    Make it look exactly like a FIFA Ultimate Team player card portrait - clean, professional, video game style but not too cartoonish.`
+    Make this look like a fun cartoon character, not a realistic person - bright colors and lots of personality!`
 
     // Use Gemini API for realistic image generation
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`, {
