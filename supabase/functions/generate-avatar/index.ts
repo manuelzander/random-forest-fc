@@ -31,24 +31,25 @@ serve(async (req) => {
 
     console.log(`Generating avatar for player: ${playerName}`)
 
-    // Create a realistic but funny football comic-style avatar prompt
-    const prompt = `Create a realistic football comic-style portrait for a player named "${playerName}". 
+    // Create a realistic but funny soccer comic-style avatar prompt
+    const prompt = `Create a realistic soccer (European football) comic-style portrait for a player named "${playerName}". 
     Style: Comic book illustration with realistic proportions but funny characteristics.
     
     Details:
     - Realistic human facial features and proportions (not overly cartoonish)
-    - Football comic book art style, like sports manga or graphic novels
+    - Soccer comic book art style, like sports manga or graphic novels
     - Funny facial expressions (cheeky smile, determined look, or humorous expression)
     - Natural skin tones and realistic hair colors (brown, black, blonde, etc.)
     - Subtle humor in facial features (slightly exaggerated eyebrows, funny mustache, etc.)
     - Simple, clean background in muted colors (light gray, soft blue, or white)
     - Each avatar should have distinct facial features and expressions
-    - Wearing a simple football jersey or sports clothing
+    - Wearing a soccer jersey or football kit (European football uniform)
     - Professional comic book illustration quality
     - Less saturated colors, more natural palette
-    - Think "funny football player caricature" but still recognizably human
+    - Think "funny soccer player caricature" but still recognizably human
+    - Soccer/football theme - NOT American football
     
-    Make it look like a professional sports comic book character - realistic but with humorous personality showing through!`
+    Make it look like a professional soccer comic book character - realistic but with humorous personality showing through!`
 
     // Use Gemini API for realistic image generation
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`, {
