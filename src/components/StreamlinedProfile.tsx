@@ -168,10 +168,14 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
     if (!confirmed) return;
 
     try {
+      console.log('Attempting to unclaim player:', currentUserPlayer.id, 'for user:', user?.id);
+      
       const { error } = await supabase
         .from('players')
         .update({ user_id: null, avatar_url: null })
         .eq('id', currentUserPlayer.id);
+
+      console.log('Unclaim result:', { error });
 
       if (error) throw error;
 
