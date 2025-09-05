@@ -33,16 +33,21 @@ serve(async (req) => {
 
     // Create a realistic but funny soccer comic-style avatar prompt with unique variations
     const prompt = `Create a realistic soccer (European football) comic-style portrait for a player named "${playerName}". 
-    IMPORTANT: Make this character look COMPLETELY DIFFERENT from other soccer players - vary everything!
     
-    Randomize these features to ensure uniqueness:
+    POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a confident/funny expression.
+    
+    JERSEY BACK: Show the back of the soccer jersey clearly with:
+    - Player name "${playerName}" printed on the back in capital letters
+    - Random jersey number (1-99) below the name
+    - Make the text clearly readable and professional looking
+    
+    UNIQUE FEATURES - Make this character look COMPLETELY DIFFERENT:
     - Face shape: round, oval, square, rectangular, or diamond-shaped
     - Ethnicity: diverse representation (European, African, Asian, Latin American, Middle Eastern, mixed heritage)
     - Age appearance: young (18-22), mid-career (23-28), or veteran (29-35)
     - Hair: completely different styles and colors (buzz cut, curly, straight, wavy, bald, long, short, afro, etc.)
     - Facial hair: clean shaven, mustache, beard, goatee, stubble, or unique styles
     - Eye shape and color: vary dramatically
-    - Nose shape: different sizes and shapes
     - Facial expressions: confident smile, determined look, cheeky grin, serious focus, etc.
     - Skin tone: natural variety across all ethnicities
     - Jersey colors: randomize team colors and styles
@@ -50,7 +55,7 @@ serve(async (req) => {
     Style: Comic book illustration but realistic proportions with subtle humor.
     Background: Simple, clean muted color.
     
-    Generate a UNIQUE individual who looks nothing like other soccer player avatars!`
+    Generate a UNIQUE individual looking back over shoulder with jersey back visible!`
 
     // Use Gemini API for realistic image generation
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`, {
