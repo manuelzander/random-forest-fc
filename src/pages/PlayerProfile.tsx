@@ -186,7 +186,7 @@ const PlayerProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="loading-container">
         <div>Loading player...</div>
       </div>
     );
@@ -194,9 +194,9 @@ const PlayerProfile = () => {
 
   if (!player) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="loading-container">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Player Not Found</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Player Not Found</h2>
           <Link to="/">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -211,16 +211,16 @@ const PlayerProfile = () => {
   const badges = getBadges();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="page-container">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <div className="page-header">
+        <div className="page-header-content">
+          <div className="page-header-inner">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-600 rounded-lg">
-                <Trophy className="h-6 w-6 text-white" />
+              <div className="header-brand-primary">
+                <Trophy className="h-6 w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Random Forest FC</h1>
+              <h1 className="text-2xl font-bold text-foreground">Random Forest FC</h1>
             </div>
             <div className="flex items-center gap-4">
               {user ? (
@@ -283,9 +283,9 @@ const PlayerProfile = () => {
                   {player.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{player.name}</h1>
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+               <div className="flex-1">
+                 <h1 className="text-3xl font-bold text-foreground mb-2">{player.name}</h1>
+                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                   <div className="flex items-center gap-1">
                     <Trophy className="h-4 w-4" />
                     {player.points} Points
@@ -307,9 +307,9 @@ const PlayerProfile = () => {
                     </div>
                   )}
                 </div>
-                {profile?.bio && (
-                  <p className="text-gray-700 mb-3">{profile.bio}</p>
-                )}
+                 {profile?.bio && (
+                   <p className="text-muted-foreground mb-3">{profile.bio}</p>
+                 )}
                 {badges.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                      {badges.map((badge, index) => (
@@ -406,9 +406,9 @@ const PlayerProfile = () => {
                     </Badge>
                   ))}
                 </div>
-              ) : (
-                <p className="text-gray-500 text-sm">No skills listed yet</p>
-              )}
+               ) : (
+                 <p className="text-muted-foreground text-sm">No skills listed yet</p>
+               )}
             </CardContent>
           </Card>
         </div>

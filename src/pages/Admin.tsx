@@ -36,28 +36,28 @@ const Admin = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="loading-container">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="page-container">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <div className="page-header">
+        <div className="page-header-content">
+          <div className="page-header-inner">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-red-600 rounded-lg">
-                <Shield className="h-6 w-6 text-white" />
+              <div className="header-brand-admin">
+                <Shield className="h-6 w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Panel</h1>
+              <h1 className="text-2xl font-bold text-foreground">Admin Panel</h1>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600">
-                Welcome, {user?.email}
-              </div>
+             <div className="flex items-center gap-4">
+               <div className="text-sm text-muted-foreground">
+                 Welcome, {user?.email}
+               </div>
               <Link to="/">
                 <Button variant="outline" size="sm">
                   <Home className="h-4 w-4 mr-2" />
@@ -74,7 +74,7 @@ const Admin = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="page-main-content">
         <Tabs defaultValue="players" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
             <TabsTrigger value="players" className="flex items-center gap-2">

@@ -80,23 +80,23 @@ const Auth = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="loading-container">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
+    <div className="page-container flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="p-2 bg-green-600 rounded-lg">
-              <Trophy className="h-6 w-6 text-white" />
+            <div className="header-brand-primary">
+              <Trophy className="h-6 w-6" />
             </div>
             <CardTitle className="text-2xl">Random Forest FC</CardTitle>
           </div>
-          <p className="text-gray-600">Sign in to manage your league</p>
+          <p className="text-muted-foreground">Sign in to manage your league</p>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">

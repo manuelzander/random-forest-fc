@@ -70,26 +70,27 @@ const News = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="loading-container">
         <div>Loading news...</div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      <Card className="w-full">
-        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
-          <CardTitle className="flex items-center gap-2 text-2xl">
-            <Newspaper className="h-6 w-6" />
-            Latest News
-          </CardTitle>
-        </CardHeader>
+    <div className="page-container">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <Card className="w-full">
+          <CardHeader className="card-header-gradient-news">
+            <CardTitle className="flex items-center gap-2 text-2xl">
+              <Newspaper className="h-6 w-6" />
+              Latest News
+            </CardTitle>
+          </CardHeader>
         <CardContent className="pt-6">
           {news.length === 0 ? (
             <div className="text-center py-8">
-              <Newspaper className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-600">No news articles available at this time.</p>
+              <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">No news articles available at this time.</p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -97,15 +98,15 @@ const News = () => {
                 <article key={article.id} className="border-b border-gray-200 pb-6 last:border-b-0">
                   <div className="flex items-start gap-4">
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        {article.title}
-                      </h3>
-                      {article.content && (
-                        <p className="text-gray-700 mb-3 leading-relaxed">
-                          {article.content}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                       <h3 className="text-xl font-semibold text-foreground mb-2">
+                         {article.title}
+                       </h3>
+                       {article.content && (
+                         <p className="text-muted-foreground mb-3 leading-relaxed">
+                           {article.content}
+                         </p>
+                       )}
+                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="h-4 w-4" />
                         <time dateTime={article.created_at}>
                           {format(new Date(article.created_at), 'PPP')}
@@ -158,6 +159,7 @@ const News = () => {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

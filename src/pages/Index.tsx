@@ -175,23 +175,23 @@ const Index = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="loading-container">
         <div>Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="page-container">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <div className="page-header">
+        <div className="page-header-content">
+          <div className="page-header-inner">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-600 rounded-lg">
-                <Trophy className="h-6 w-6 text-white" />
+              <div className="header-brand-primary">
+                <Trophy className="h-6 w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Random Forest FC</h1>
+              <h1 className="text-2xl font-bold text-foreground">Random Forest FC</h1>
             </div>
             <div className="flex items-center gap-4">
                {user ? (
@@ -229,24 +229,24 @@ const Index = () => {
       </div>
 
        {/* Main Content */}
-       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-         {/* Stats Cards */}
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-           <Card>
-             <CardContent className="p-4 text-center">
-               <div className="text-2xl font-bold text-green-600">{players.length}</div>
-               <div className="text-sm text-gray-600">Total Players</div>
-             </CardContent>
-           </Card>
+       <div className="page-main-content space-y-6">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardContent className="p-4 text-center">
-                 <div className="text-2xl font-bold text-blue-600">
-                   {totalGames}
-                 </div>
-                <div className="text-sm text-gray-600">Games Played</div>
+                <div className="text-2xl font-bold text-primary">{players.length}</div>
+                <div className="text-sm text-muted-foreground">Total Players</div>
               </CardContent>
             </Card>
-         </div>
+             <Card>
+               <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-primary">
+                    {totalGames}
+                  </div>
+                 <div className="text-sm text-muted-foreground">Games Played</div>
+               </CardContent>
+             </Card>
+          </div>
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -263,7 +263,7 @@ const Index = () => {
             </TabsContent>
             <TabsContent value="news">
               <Card>
-                <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
+                <CardHeader className="card-header-gradient-news">
                   <CardTitle className="flex items-center gap-2 text-2xl">
                     <Newspaper className="h-6 w-6" />
                     Latest News
@@ -274,11 +274,11 @@ const Index = () => {
                     <div className="text-center py-8">
                       <div>Loading news...</div>
                     </div>
-                  ) : news.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Newspaper className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                      <p className="text-gray-600">No news articles yet.</p>
-                    </div>
+                   ) : news.length === 0 ? (
+                     <div className="text-center py-8">
+                       <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                       <p className="text-muted-foreground">No news articles yet.</p>
+                     </div>
                   ) : (
                     <div className="space-y-4">
                       {news.map((article) => (
