@@ -369,24 +369,26 @@ const AdminPlayerManagement = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5" />
-          Player Management
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="hidden sm:inline">Player Management</span>
+          <span className="sm:hidden">Players</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Players ({players.length})</h3>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+          <h3 className="text-base sm:text-lg font-semibold">Players ({players.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => openDialog()}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Player
+              <Button size="sm" onClick={() => openDialog()}>
+                <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">Add Player</span>
+                <span className="sm:hidden">Add</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md mx-2 sm:mx-auto">
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="text-base sm:text-lg">
                   {editingPlayer ? 'Edit Player' : 'Add New Player'}
                 </DialogTitle>
               </DialogHeader>
@@ -422,31 +424,33 @@ const AdminPlayerManagement = () => {
           {players.map((player) => {
             const profile = getProfileByUserId(player.user_id);
             return (
-              <div key={player.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar key={`${player.id}-${player.avatar_url}`} className="h-12 w-12">
-                      <AvatarImage src={player.avatar_url || undefined} />
-                      <AvatarFallback>
-                        {player.name.substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h4 className="font-semibold">{player.name}</h4>
-                      <p className="text-sm text-gray-600">
-                        {player.points} pts • {player.games_played} games • {player.wins}W-{player.draws}D-{player.losses}L
+              <div key={player.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
+                <div className="flex items-center gap-3 flex-1">
+                  <Avatar key={`${player.id}-${player.avatar_url}`} className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
+                    <AvatarImage src={player.avatar_url || undefined} />
+                    <AvatarFallback>
+                      {player.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {player.points} pts • {player.games_played} games
+                    </p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {player.wins}W-{player.draws}D-{player.losses}L
+                    </p>
+                    {profile && (
+                      <p className="text-xs text-blue-600 mt-1 truncate">
+                        <span className="hidden sm:inline">Connected to: </span>
+                        {profile.display_name || profile.email}
                       </p>
-                      {profile && (
-                        <p className="text-xs text-blue-600 mt-1">
-                          Connected to: {profile.display_name || profile.email}
-                        </p>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                   <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
-                    <Edit2 className="h-4 w-4" />
+                    <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                   <Button
                     size="sm"
@@ -456,9 +460,9 @@ const AdminPlayerManagement = () => {
                     title="Generate Avatar"
                   >
                     {generatingAvatarFor === player.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                     ) : (
-                      <Wand2 className="h-4 w-4" />
+                      <Wand2 className="h-3 w-3 sm:h-4 sm:w-4" />
                     )}
                   </Button>
                   {player.user_id ? (
@@ -468,15 +472,15 @@ const AdminPlayerManagement = () => {
                       onClick={() => handleUnclaimPlayer(player.id)}
                       className="text-red-600 hover:text-red-700"
                     >
-                      <UserX className="h-4 w-4" />
+                      <UserX className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   ) : (
                     <Button size="sm" variant="outline" onClick={() => openClaimDialog(player)}>
-                      <UserCheck className="h-4 w-4" />
+                      <UserCheck className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   )}
                   <Button size="sm" variant="outline" onClick={() => handleDelete(player.id)}>
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
               </div>

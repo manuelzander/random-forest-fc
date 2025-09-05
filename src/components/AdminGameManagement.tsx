@@ -168,24 +168,26 @@ const AdminGameManagement = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <History className="h-5 w-5" />
-          Game Management
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <History className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="hidden sm:inline">Game Management</span>
+          <span className="sm:hidden">Games</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Games ({games.length})</h3>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+          <h3 className="text-base sm:text-lg font-semibold">Games ({games.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => openDialog()}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Game
+              <Button size="sm" onClick={() => openDialog()}>
+                <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">Add Game</span>
+                <span className="sm:hidden">Add</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl mx-2 sm:mx-auto max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="text-base sm:text-lg">
                   {editingGame ? 'Edit Game' : 'Add New Game'}
                 </DialogTitle>
               </DialogHeader>
@@ -210,38 +212,39 @@ const AdminGameManagement = () => {
 
         <div className="space-y-3">
           {games.map((game) => (
-            <div key={game.id} className="p-4 border rounded-lg">
-              <div className="flex items-center justify-between">
+            <div key={game.id} className="p-3 sm:p-4 border rounded-lg">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                 <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-2">
+                  <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-4 mb-3">
                     <div className="text-center">
-                      <div className="text-sm font-medium text-gray-600">Team 1</div>
-                      <div className="text-2xl font-bold">{game.team1_goals}</div>
+                      <div className="text-xs sm:text-sm font-medium text-muted-foreground">Team 1</div>
+                      <div className="text-xl sm:text-2xl font-bold">{game.team1_goals}</div>
                     </div>
-                    <div className="text-lg font-medium text-gray-500">vs</div>
+                    <div className="text-sm sm:text-lg font-medium text-muted-foreground">vs</div>
                     <div className="text-center">
-                      <div className="text-sm font-medium text-gray-600">Team 2</div>
-                      <div className="text-2xl font-bold">{game.team2_goals}</div>
+                      <div className="text-xs sm:text-sm font-medium text-muted-foreground">Team 2</div>
+                      <div className="text-xl sm:text-2xl font-bold">{game.team2_goals}</div>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                     <div>
-                      <div className="font-medium text-gray-600 mb-1">Team 1 Players:</div>
+                      <div className="font-medium text-muted-foreground mb-1">Team 1 Players:</div>
                       <div className="space-y-1">
                         {game.team1_players.map(playerId => (
-                          <div key={playerId} className="flex items-center justify-between">
+                          <div key={playerId} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                             <div className="flex items-center gap-2">
-                              <span>{getPlayerName(playerId)}</span>
+                              <span className="text-xs sm:text-sm truncate">{getPlayerName(playerId)}</span>
                               {game.team1_captain === playerId && (
-                                <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
-                                  <Crown className="h-3 w-3 mr-1" />
-                                  Captain
+                                <Badge variant="secondary" className="text-xs px-1 py-0.5 h-auto">
+                                  <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                                  <span className="hidden sm:inline">Captain</span>
+                                  <span className="sm:hidden">C</span>
                                 </Badge>
                               )}
                             </div>
                             {game.mvp_player === playerId && (
-                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
+                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                 <span>👑</span>
                                 MVP
                               </Badge>
@@ -251,21 +254,22 @@ const AdminGameManagement = () => {
                       </div>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-600 mb-1">Team 2 Players:</div>
+                      <div className="font-medium text-muted-foreground mb-1">Team 2 Players:</div>
                       <div className="space-y-1">
                         {game.team2_players.map(playerId => (
-                          <div key={playerId} className="flex items-center justify-between">
+                          <div key={playerId} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                             <div className="flex items-center gap-2">
-                              <span>{getPlayerName(playerId)}</span>
+                              <span className="text-xs sm:text-sm truncate">{getPlayerName(playerId)}</span>
                               {game.team2_captain === playerId && (
-                                <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
-                                  <Crown className="h-3 w-3 mr-1" />
-                                  Captain
+                                <Badge variant="secondary" className="text-xs px-1 py-0.5 h-auto">
+                                  <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                                  <span className="hidden sm:inline">Captain</span>
+                                  <span className="sm:hidden">C</span>
                                 </Badge>
                               )}
                             </div>
                             {game.mvp_player === playerId && (
-                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
+                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                 <span>👑</span>
                                 MVP
                               </Badge>
@@ -276,17 +280,17 @@ const AdminGameManagement = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-2 text-xs text-gray-500">
+                  <div className="mt-2 text-xs text-muted-foreground">
                     {new Date(game.created_at).toLocaleDateString()} at {new Date(game.created_at).toLocaleTimeString()}
                   </div>
                 </div>
                 
-                <div className="flex flex-col gap-2 ml-4">
+                <div className="flex sm:flex-col gap-2 justify-center sm:ml-4">
                   <Button size="sm" variant="outline" onClick={() => openDialog(game)}>
-                    <Edit2 className="h-4 w-4" />
+                    <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => handleDelete(game.id)}>
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
               </div>
