@@ -50,35 +50,85 @@ const PlayerProfile = () => {
     try {
       setIsLoading(true);
       
-      // Fetch player data
-      const { data: playerData, error: playerError } = await supabase
-        .from('player_stats')
-        .select('*')
+      // First get the basic player info
+      const { data: basicPlayer, error: basicError } = await supabase
+        .from('players')
+        .select('id, name, avatar_url, user_id, badges')
         .eq('id', playerId)
         .maybeSingle();
 
-      if (playerError) throw playerError;
+      if (basicError) throw basicError;
       
-      if (playerData) {
-        setPlayer({
-          ...playerData,
-          points: Number(playerData.points),
-          games_played: Number(playerData.games_played),
-          wins: Number(playerData.wins),
-          draws: Number(playerData.draws),
-          losses: Number(playerData.losses),
-          mvp_awards: Number(playerData.mvp_awards),
-          goal_difference: Number(playerData.goal_difference),
-          badges: Array.isArray(playerData.badges) ? playerData.badges : []
+      if (!basicPlayer) {
+        setPlayer(null);
+        return;
+      }
+
+      // Then calculate stats from games
+      const { data: statsData, error: statsError } = await supabase
+        .from('games')
+        .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player')
+        .or(`team1_players.cs.{${playerId}},team2_players.cs.{${playerId}}`);
+
+      if (statsError) throw statsError;
+
+      // Calculate stats
+      let points = 0;
+      let wins = 0;
+      let draws = 0;
+      let losses = 0;
+      let mvp_awards = 0;
+      let goal_difference = 0;
+      
+      if (statsData) {
+        statsData.forEach(game => {
+          const isTeam1 = game.team1_players.includes(playerId);
+          const isTeam2 = game.team2_players.includes(playerId);
+          
+          if (isTeam1 || isTeam2) {
+            const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
+            const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
+            
+            goal_difference += playerGoals - opponentGoals;
+            
+            if (playerGoals > opponentGoals) {
+              wins++;
+              points += 3;
+            } else if (playerGoals === opponentGoals) {
+              draws++;
+              points += 1;
+            } else {
+              losses++;
+            }
+            
+            if (game.mvp_player === playerId) {
+              mvp_awards++;
+            }
+          }
         });
       }
 
+      setPlayer({
+        id: basicPlayer.id,
+        name: basicPlayer.name,
+        avatar_url: basicPlayer.avatar_url,
+        user_id: basicPlayer.user_id,
+        points,
+        games_played: wins + draws + losses,
+        wins,
+        draws,
+        losses,
+        mvp_awards,
+        goal_difference,
+        badges: Array.isArray(basicPlayer.badges) ? basicPlayer.badges : []
+      });
+
       // Fetch profile data if player has a user_id
-      if (playerData.user_id) {
+      if (basicPlayer.user_id) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('bio, football_skills, favorite_position, years_playing, favorite_club')
-          .eq('user_id', playerData.user_id)
+          .eq('user_id', basicPlayer.user_id)
           .maybeSingle();
 
         if (profileError) {
