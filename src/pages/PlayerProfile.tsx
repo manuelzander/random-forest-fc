@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -29,6 +29,7 @@ interface ProfileData {
   football_skills?: string[];
   favorite_position?: string;
   years_playing?: number;
+  favorite_club?: string;
 }
 
 const PlayerProfile = () => {
@@ -76,7 +77,7 @@ const PlayerProfile = () => {
       if (playerData.user_id) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('bio, football_skills, favorite_position, years_playing')
+          .select('bio, football_skills, favorite_position, years_playing, favorite_club')
           .eq('user_id', playerData.user_id)
           .maybeSingle();
 
@@ -294,19 +295,25 @@ const PlayerProfile = () => {
                     <Target className="h-4 w-4" />
                     {getWinRate()}% Win Rate
                   </div>
-                  {profile?.favorite_position && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {profile.favorite_position}
-                    </div>
-                  )}
-                  {profile?.years_playing && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {profile.years_playing} years playing
-                    </div>
-                  )}
-                </div>
+                   {profile?.favorite_position && (
+                     <div className="flex items-center gap-1">
+                       <MapPin className="h-4 w-4" />
+                       {profile.favorite_position}
+                     </div>
+                   )}
+                   {profile?.favorite_club && (
+                     <div className="flex items-center gap-1">
+                       <Heart className="h-4 w-4" />
+                       {profile.favorite_club}
+                     </div>
+                   )}
+                   {profile?.years_playing && (
+                     <div className="flex items-center gap-1">
+                       <Clock className="h-4 w-4" />
+                       {profile.years_playing} years playing
+                     </div>
+                   )}
+                 </div>
                  {profile?.bio && (
                    <p className="text-muted-foreground mb-3">{profile.bio}</p>
                  )}
