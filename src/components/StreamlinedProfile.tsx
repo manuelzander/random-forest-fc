@@ -108,7 +108,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
 
     // Show security warning
     const confirmed = window.confirm(
-      `⚠️ Security Warning ⚠️\n\nAre you sure you want to unclaim "${currentUserPlayer.name}"?\n\nThis will:\n• Remove your connection to this player\n• Delete your custom avatar and profile data\n• Make this player available for others to claim\n\nThis action cannot be undone!`
+      `⚠️ Warning\n\nAre you sure you want to unclaim "${currentUserPlayer.name}"?\n\nThis will remove your connection to this player and delete your custom avatar. This action cannot be undone!`
     );
 
     if (!confirmed) return;
