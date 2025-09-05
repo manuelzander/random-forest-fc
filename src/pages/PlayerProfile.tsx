@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PlayerData {
   id: string;
@@ -36,6 +37,7 @@ const PlayerProfile = () => {
   const { playerId } = useParams();
   const { toast } = useToast();
   const { user, userRole, signOut } = useAuth();
+  const isMobile = useIsMobile();
   const [player, setPlayer] = useState<PlayerData | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -271,48 +273,50 @@ const PlayerProfile = () => {
               <div className="header-brand-primary">
                 <Trophy className="h-6 w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-foreground">Random Forest FC</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                {isMobile ? 'RFFC' : 'Random Forest FC'}
+              </h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               {user ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <Link to="/profile">
                     <Button variant="outline" size="sm">
-                      <User className="h-4 w-4 mr-2" />
-                      Profile
+                      <User className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Profile</span>
                     </Button>
                   </Link>
                   {userRole === 'admin' && (
                     <Link to="/admin">
                       <Button variant="outline" size="sm">
-                        <Shield className="h-4 w-4 mr-2" />
-                        Admin
+                        <Shield className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Admin</span>
                       </Button>
                     </Link>
                   )}
                   <Link to="/">
                     <Button variant="outline" size="sm">
-                      <Home className="h-4 w-4 mr-2" />
-                      Home
+                      <Home className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Home</span>
                     </Button>
                   </Link>
                   <Button variant="outline" size="sm" onClick={handleSignOut}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
+                    <LogOut className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Sign Out</span>
                   </Button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <Link to="/">
                     <Button variant="outline" size="sm">
-                      <Home className="h-4 w-4 mr-2" />
-                      Home
+                      <Home className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Home</span>
                     </Button>
                   </Link>
                   <Link to="/auth">
                     <Button variant="outline" size="sm">
-                      <LogIn className="h-4 w-4 mr-2" />
-                      Sign In
+                      <LogIn className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Sign In</span>
                     </Button>
                   </Link>
                 </div>

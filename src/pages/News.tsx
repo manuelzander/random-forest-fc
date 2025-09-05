@@ -81,8 +81,8 @@ const News = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <Card className="w-full">
           <CardHeader className="card-header-gradient-news">
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Newspaper className="h-6 w-6" />
+            <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
+              <Newspaper className="h-5 w-5 sm:h-6 sm:w-6" />
               Latest News
             </CardTitle>
           </CardHeader>
@@ -98,16 +98,16 @@ const News = () => {
                 <article key={article.id} className="border-b border-gray-200 pb-6 last:border-b-0">
                   <div className="flex items-start gap-4">
                     <div className="flex-1">
-                       <h3 className="text-xl font-semibold text-foreground mb-2">
+                       <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
                          {article.title}
                        </h3>
                        {article.content && (
-                         <p className="text-muted-foreground mb-3 leading-relaxed">
+                         <p className="text-muted-foreground mb-3 leading-relaxed text-sm sm:text-base">
                            {article.content}
                          </p>
                        )}
-                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
+                       <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                         <time dateTime={article.created_at}>
                           {format(new Date(article.created_at), 'PPP')}
                         </time>
@@ -119,25 +119,27 @@ const News = () => {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 pt-6">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-6">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
+                    className="w-full sm:w-auto"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    Previous
+                    <span className="sm:hidden">Prev</span>
+                    <span className="hidden sm:inline">Previous</span>
                   </Button>
                   
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                       <Button
                         key={page}
                         variant={page === currentPage ? "default" : "outline"}
                         size="sm"
                         onClick={() => handlePageChange(page)}
-                        className="min-w-[40px]"
+                        className="min-w-[32px] sm:min-w-[40px] text-xs sm:text-sm"
                       >
                         {page}
                       </Button>
@@ -149,8 +151,10 @@ const News = () => {
                     size="sm"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
+                    className="w-full sm:w-auto"
                   >
-                    Next
+                    <span className="sm:hidden">Next</span>
+                    <span className="hidden sm:inline">Next</span>
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>

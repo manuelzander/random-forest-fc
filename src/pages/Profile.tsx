@@ -49,23 +49,25 @@ const Profile = () => {
               <div className="header-brand-profile">
                 <User className="h-6 w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-foreground">Profile</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Profile</h1>
             </div>
-             <div className="flex items-center gap-4">
-               <div className="text-sm text-muted-foreground">
+             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+               <div className="text-xs sm:text-sm text-muted-foreground">
                  Welcome, {user?.email}
                </div>
-              <Link to="/">
-                <Button variant="outline" size="sm">
-                  <Home className="h-4 w-4 mr-2" />
-                  Home
-                </Button>
-              </Link>
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
+               <div className="flex items-center gap-1 sm:gap-2">
+                 <Link to="/">
+                   <Button variant="outline" size="sm">
+                     <Home className="h-4 w-4 sm:mr-2" />
+                     <span className="hidden sm:inline">Home</span>
+                   </Button>
+                 </Link>
+                 <Button variant="outline" size="sm" onClick={handleSignOut}>
+                   <LogOut className="h-4 w-4 sm:mr-2" />
+                   <span className="hidden sm:inline">Sign Out</span>
+                 </Button>
+               </div>
+             </div>
           </div>
         </div>
       </div>

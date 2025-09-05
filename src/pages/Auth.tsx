@@ -94,9 +94,9 @@ const Auth = () => {
             <div className="header-brand-primary">
               <Trophy className="h-6 w-6" />
             </div>
-            <CardTitle className="text-2xl">Random Forest FC</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl">Random Forest FC</CardTitle>
           </div>
-          <p className="text-muted-foreground">Sign in to manage your league</p>
+          <p className="text-muted-foreground text-sm sm:text-base">Sign in to manage your league</p>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">

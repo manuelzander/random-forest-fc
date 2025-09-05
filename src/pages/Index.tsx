@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Player, GameInput as GameInputType, NewsItem } from '@/types';
 import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
@@ -18,6 +19,7 @@ import { format } from 'date-fns';
 
 const Index = () => {
   const { user, userRole, signOut } = useAuth();
+  const isMobile = useIsMobile();
   const { toast } = useToast();
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentUserPlayer, setCurrentUserPlayer] = useState<any>(null);
@@ -191,35 +193,37 @@ const Index = () => {
               <div className="header-brand-primary">
                 <Trophy className="h-6 w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-foreground">Random Forest FC</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                {isMobile ? 'RFFC' : 'Random Forest FC'}
+              </h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
                {user ? (
-                 <div className="flex items-center gap-2">
+                 <div className="flex items-center gap-1 sm:gap-2">
                     <Link to="/profile">
                      <Button variant="outline" size="sm">
-                       <User className="h-4 w-4 mr-2" />
-                       Profile
+                       <User className="h-4 w-4 sm:mr-2" />
+                       <span className="hidden sm:inline">Profile</span>
                      </Button>
                    </Link>
                    {userRole === 'admin' && (
                      <Link to="/admin">
                        <Button variant="outline" size="sm">
-                         <Shield className="h-4 w-4 mr-2" />
-                         Admin
+                         <Shield className="h-4 w-4 sm:mr-2" />
+                         <span className="hidden sm:inline">Admin</span>
                        </Button>
                      </Link>
                    )}
                     <Button variant="outline" size="sm" onClick={handleSignOut}>
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Sign Out
+                      <LogOut className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Sign Out</span>
                     </Button>
                   </div>
                 ) : (
                   <Link to="/auth">
                     <Button variant="outline" size="sm">
-                      <LogIn className="h-4 w-4 mr-2" />
-                      Sign In
+                      <LogIn className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Sign In</span>
                     </Button>
                   </Link>
                )}
@@ -231,7 +235,7 @@ const Index = () => {
        {/* Main Content */}
        <div className="page-main-content space-y-6">
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card>
               <CardContent className="p-4 text-center">
                 <div className="text-2xl font-bold text-primary">{players.length}</div>
@@ -251,9 +255,9 @@ const Index = () => {
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="ranking">Home</TabsTrigger>
-              <TabsTrigger value="games">Games</TabsTrigger>
-              <TabsTrigger value="news">News</TabsTrigger>
+              <TabsTrigger value="ranking" className="text-xs sm:text-sm">Home</TabsTrigger>
+              <TabsTrigger value="games" className="text-xs sm:text-sm">Games</TabsTrigger>
+              <TabsTrigger value="news" className="text-xs sm:text-sm">News</TabsTrigger>
             </TabsList>
             <TabsContent value="ranking">
               <PlayerTable players={players} />
@@ -280,22 +284,22 @@ const Index = () => {
                        <p className="text-muted-foreground">No news articles yet.</p>
                      </div>
                   ) : (
-                    <div className="space-y-4">
-                      {news.map((article) => (
-                        <div key={article.id} className="p-4 border rounded-lg bg-card">
-                          <div className="flex items-start justify-between mb-3">
-                            <h3 className="text-lg font-semibold text-foreground flex-1 pr-4">{article.title}</h3>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Calendar className="h-3 w-3" />
-                              {format(new Date(article.created_at), 'MMM d, yyyy')}
-                            </div>
-                          </div>
-                          {article.content && (
-                            <p className="text-muted-foreground leading-relaxed">{article.content}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                     <div className="space-y-4">
+                       {news.map((article) => (
+                         <div key={article.id} className="p-4 border rounded-lg bg-card">
+                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 gap-2">
+                             <h3 className="text-lg font-semibold text-foreground flex-1">{article.title}</h3>
+                             <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
+                               <Calendar className="h-3 w-3" />
+                               {format(new Date(article.created_at), 'MMM d, yyyy')}
+                             </div>
+                           </div>
+                           {article.content && (
+                             <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">{article.content}</p>
+                           )}
+                         </div>
+                       ))}
+                     </div>
                   )}
                 </CardContent>
               </Card>

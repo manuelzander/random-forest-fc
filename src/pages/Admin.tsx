@@ -52,23 +52,25 @@ const Admin = () => {
               <div className="header-brand-admin">
                 <Shield className="h-6 w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-foreground">Admin Panel</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Admin Panel</h1>
             </div>
-             <div className="flex items-center gap-4">
-               <div className="text-sm text-muted-foreground">
+             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+               <div className="text-xs sm:text-sm text-muted-foreground">
                  Welcome, {user?.email}
                </div>
-              <Link to="/">
-                <Button variant="outline" size="sm">
-                  <Home className="h-4 w-4 mr-2" />
-                  Home
-                </Button>
-              </Link>
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
+               <div className="flex items-center gap-1 sm:gap-2">
+                 <Link to="/">
+                   <Button variant="outline" size="sm">
+                     <Home className="h-4 w-4 sm:mr-2" />
+                     <span className="hidden sm:inline">Home</span>
+                   </Button>
+                 </Link>
+                 <Button variant="outline" size="sm" onClick={handleSignOut}>
+                   <LogOut className="h-4 w-4 sm:mr-2" />
+                   <span className="hidden sm:inline">Sign Out</span>
+                 </Button>
+               </div>
+             </div>
           </div>
         </div>
       </div>
@@ -77,17 +79,17 @@ const Admin = () => {
       <div className="page-main-content">
         <Tabs defaultValue="players" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
-            <TabsTrigger value="players" className="flex items-center gap-2">
+            <TabsTrigger value="players" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
               <Users className="h-4 w-4" />
-              Players
+              <span className="hidden sm:inline">Players</span>
             </TabsTrigger>
-            <TabsTrigger value="games" className="flex items-center gap-2">
+            <TabsTrigger value="games" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
               <History className="h-4 w-4" />
-              Games
+              <span className="hidden sm:inline">Games</span>
             </TabsTrigger>
-            <TabsTrigger value="news" className="flex items-center gap-2">
+            <TabsTrigger value="news" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
               <Newspaper className="h-4 w-4" />
-              News
+              <span className="hidden sm:inline">News</span>
             </TabsTrigger>
           </TabsList>
 
