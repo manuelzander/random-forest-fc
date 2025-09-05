@@ -128,6 +128,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
+  const [hasUploadedImage, setHasUploadedImage] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -210,9 +211,9 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
             description: "Your avatar has been updated successfully.",
           });
 
-          // Clear the file and preview since we've uploaded it
-          setAvatarFile(null);
+          // Keep the file for AI Transform but clear preview
           setAvatarPreview(null);
+          setHasUploadedImage(true);
 
           onProfileUpdate?.();
         } catch (error) {
@@ -326,7 +327,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   };
 
   const generateImageToImageAvatar = async () => {
-    if (!playerData || !avatarFile) {
+    if (!playerData || (!avatarFile && !hasUploadedImage)) {
       toast({
         title: "Upload Required",
         description: "Please upload an image first to use image-to-image generation.",
@@ -377,9 +378,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           description: "Your new personalized avatar has been created.",
         });
 
-        // Clear the uploaded file since we've used it
+        // Clear the uploaded file and reset state after AI transformation
         setAvatarFile(null);
         setAvatarPreview(null);
+        setHasUploadedImage(false);
 
         onProfileUpdate?.();
       }
@@ -442,7 +444,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                   <Button 
                     variant="outline" 
                     onClick={generateImageToImageAvatar}
-                    disabled={isGeneratingAvatar || !avatarFile}
+                    disabled={isGeneratingAvatar || (!avatarFile && !hasUploadedImage)}
                     className="flex-1"
                   >
                     <Wand2 className="h-4 w-4 mr-2" />
@@ -459,7 +461,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                 />
                 
                 <p className="text-sm text-gray-500">
-                  Images upload immediately when selected. Use AI Transform or Random Avatar for generated options.
+                  Images upload immediately when selected. After uploading, you can still use AI Transform to create a cartoon version.
                 </p>
               </div>
             </div>
