@@ -43,14 +43,15 @@
   --gradient-accent: linear-gradient(135deg, hsl(var(--vice-orange)), hsl(var(--vice-pink)));
   --gradient-background: linear-gradient(180deg, hsl(var(--vice-light)), hsl(300 15% 96%));
   
-  /* Neon Glows */
-  --glow-pink: 0 0 20px hsl(var(--vice-pink) / 0.5);
-  --glow-cyan: 0 0 20px hsl(var(--vice-cyan) / 0.5);
-  --glow-purple: 0 0 20px hsl(var(--vice-purple) / 0.5);
+  /* Neo Brutalist Borders */
+  --border-brutal: 3px solid hsl(var(--foreground));
+  --border-brutal-pink: 3px solid hsl(var(--vice-pink));
+  --border-brutal-cyan: 3px solid hsl(var(--vice-cyan));
+  --border-brutal-purple: 3px solid hsl(var(--vice-purple));
   
-  /* Retro Shadows */
-  --shadow-neon: 0 0 10px hsl(var(--vice-pink) / 0.3), 0 0 20px hsl(var(--vice-pink) / 0.2);
-  --shadow-cyber: 0 4px 20px hsl(var(--vice-purple) / 0.4);
+  /* Remove shadows - replaced with borders */
+  --shadow-neon: none;
+  --shadow-cyber: none;
 }
 
 .dark {
@@ -71,15 +72,15 @@ body {
   min-height: 100vh;
 }
 
-/* Vice City Utility Classes */
-.retro-glow {
-  box-shadow: var(--glow-pink);
-  border: 1px solid hsl(var(--vice-pink) / 0.5);
+/* Neo Brutalist Utility Classes */
+.brutal-border {
+  border: var(--border-brutal);
+  box-shadow: 4px 4px 0px hsl(var(--foreground));
 }
 
-.cyber-glow {
-  box-shadow: var(--glow-cyan);
-  border: 1px solid hsl(var(--vice-cyan) / 0.5);
+.brutal-pink {
+  border: var(--border-brutal-pink);
+  box-shadow: 4px 4px 0px hsl(var(--vice-pink));
 }
 
 .neon-text {
@@ -123,12 +124,11 @@ body {
   transform: translateY(-1px);
 }
 
-/* Vice City Card Styles */
+/* Neo Brutalist Card Styles */
 .card-vice {
-  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.8) 100%);
-  border: 1px solid hsl(var(--vice-pink) / 0.2);
-  box-shadow: var(--shadow-cyber);
-  backdrop-filter: blur(10px);
+  background: hsl(var(--card));
+  border: var(--border-brutal);
+  box-shadow: 6px 6px 0px hsl(var(--foreground));
 }
 
 /* Page Layout Classes */
@@ -138,9 +138,9 @@ body {
 }
 
 .page-header {
-  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
-  border-bottom: 2px solid hsl(var(--vice-pink) / 0.3);
-  box-shadow: 0 4px 20px hsl(var(--vice-pink) / 0.1);
+  background: hsl(var(--background));
+  border-bottom: var(--border-brutal-pink);
+  box-shadow: 0 6px 0px hsl(var(--vice-pink));
 }
 
 .page-header-content {

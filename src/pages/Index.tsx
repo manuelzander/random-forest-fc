@@ -191,7 +191,7 @@ const Index = () => {
               <div className="header-brand-primary">
                 <Trophy className="h-6 w-6" />
               </div>
-              <h1 className="text-2xl font-bold text-foreground">Random Forest FC</h1>
+              <h1 className="text-2xl font-bold text-foreground">⚡ Random Forest FC ⚡</h1>
             </div>
             <div className="flex items-center gap-4">
                {user ? (

@@ -9,15 +9,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-primary text-primary-foreground shadow-neon hover:shadow-glow-pink border border-vice-pink/30 hover:scale-105 transition-all duration-300",
-        destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground border-vice-cyan/50 text-vice-cyan hover:shadow-glow-cyan hover:bg-vice-cyan/10",
-        secondary: "bg-gradient-secondary text-secondary-foreground shadow-cyber hover:shadow-glow-cyan border border-vice-cyan/30 hover:scale-105 transition-all duration-300",
-        ghost: "hover:bg-accent hover:text-accent-foreground text-vice-light hover:bg-vice-purple/20 hover:text-vice-purple",
+        default: "bg-gradient-primary text-primary-foreground border-3 border-vice-pink hover:scale-105 transition-all duration-300 shadow-[4px_4px_0px_hsl(var(--vice-pink))] hover:shadow-[6px_6px_0px_hsl(var(--vice-pink))]",
+        destructive: "bg-destructive text-destructive-foreground border-3 border-destructive hover:bg-destructive/90",
+        outline: "border-3 border-vice-cyan bg-background text-vice-cyan hover:bg-vice-cyan/10 shadow-[4px_4px_0px_hsl(var(--vice-cyan))] hover:shadow-[6px_6px_0px_hsl(var(--vice-cyan))]",
+        secondary: "bg-gradient-secondary text-secondary-foreground border-3 border-vice-cyan hover:scale-105 transition-all duration-300 shadow-[4px_4px_0px_hsl(var(--vice-cyan))] hover:shadow-[6px_6px_0px_hsl(var(--vice-cyan))]",
+        ghost: "hover:bg-vice-purple/20 hover:text-vice-purple text-foreground border-2 border-transparent hover:border-vice-purple",
         link: "text-primary underline-offset-4 hover:underline text-vice-pink hover:text-vice-cyan transition-colors",
-        vice: "bg-gradient-primary text-primary-foreground shadow-neon hover:shadow-glow-pink border border-vice-pink/30 hover:scale-105 transition-all duration-300 font-cyber",
-        cyber: "bg-gradient-secondary text-secondary-foreground shadow-cyber hover:shadow-glow-cyan border border-vice-cyan/30 hover:scale-105 transition-all duration-300 font-cyber",
-        neon: "bg-gradient-accent text-primary-foreground border border-vice-orange/30 shadow-[0_0_20px_hsl(var(--vice-orange)/0.5)] hover:shadow-[0_0_30px_hsl(var(--vice-orange)/0.8)] hover:scale-105 transition-all duration-300",
+        vice: "bg-gradient-primary text-primary-foreground border-3 border-vice-pink hover:scale-105 transition-all duration-300 font-cyber shadow-[4px_4px_0px_hsl(var(--vice-pink))] hover:shadow-[6px_6px_0px_hsl(var(--vice-pink))]",
+        cyber: "bg-gradient-secondary text-secondary-foreground border-3 border-vice-cyan hover:scale-105 transition-all duration-300 font-cyber shadow-[4px_4px_0px_hsl(var(--vice-cyan))] hover:shadow-[6px_6px_0px_hsl(var(--vice-cyan))]",
+        neon: "bg-gradient-accent text-primary-foreground border-3 border-vice-orange hover:scale-105 transition-all duration-300 shadow-[4px_4px_0px_hsl(var(--vice-orange))] hover:shadow-[6px_6px_0px_hsl(var(--vice-orange))]",
       },
       size: {
         default: "h-9 px-4 py-2",
