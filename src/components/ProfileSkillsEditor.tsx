@@ -467,7 +467,12 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                   <Button variant="outline" asChild className="w-full" disabled={isSaving}>
                     <span>
                       <Upload className="h-4 w-4 mr-2" />
-                      {isSaving ? 'Uploading...' : 'Upload Image'}
+                      <span className="hidden sm:inline">
+                        {isSaving ? 'Uploading...' : 'Upload Image'}
+                      </span>
+                      <span className="sm:hidden">
+                        {isSaving ? 'Uploading...' : 'Upload'}
+                      </span>
                       </span>
                     </Button>
                   </Label>
@@ -479,7 +484,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                     className="flex-1"
                   >
                     <Shuffle className="h-4 w-4 mr-2" />
-                    {isGeneratingAvatar ? 'Generating...' : 'Random Avatar'}
+                    {isGeneratingAvatar ? 'Generating...' : <><span className="hidden sm:inline">Random Avatar</span><span className="sm:hidden">Random</span></>}
                   </Button>
                   
                   <Button 
@@ -489,7 +494,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                     className="flex-1"
                   >
                     <Wand2 className="h-4 w-4 mr-2" />
-                    {isGeneratingAvatar ? 'Generating...' : 'AI Transform'}
+                    {isGeneratingAvatar ? 'Generating...' : <><span className="hidden sm:inline">AI Transform</span><span className="sm:hidden">AI</span></>}
                   </Button>
                 </div>
                 

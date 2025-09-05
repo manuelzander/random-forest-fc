@@ -244,7 +244,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                   className="bg-green-600 text-white hover:bg-green-700"
                   size="sm"
                 >
-                  {isSaving ? 'Saving...' : 'Save Profile'}
+                  {isSaving ? 'Saving...' : <><span className="hidden sm:inline">Save Profile</span><span className="sm:hidden">Save</span></>}
                 </Button>
                 <Button
                   variant="outline"
@@ -252,7 +252,8 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                   onClick={handleUnclaimPlayer}
                   className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
                 >
-                  Unclaim Player
+                  <span className="hidden sm:inline">Unclaim Player</span>
+                  <span className="sm:hidden">Unclaim</span>
                 </Button>
               </div>
             </div>

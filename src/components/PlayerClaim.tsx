@@ -122,7 +122,8 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
                 variant="outline"
                 onClick={handleUnclaimPlayer}
               >
-                Unclaim Player
+                <span className="hidden sm:inline">Unclaim Player</span>
+                <span className="sm:hidden">Unclaim</span>
               </Button>
             </div>
           </CardContent>
