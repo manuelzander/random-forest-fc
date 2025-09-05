@@ -491,7 +491,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                 />
                 
                 <p className="text-sm text-gray-500">
-                  Images upload immediately when selected. After uploading, you can still use AI Transform to create a cartoon version.
+                  Upload your photo, generate random avatar, or transform uploaded images into cartoons
                 </p>
               </div>
             </div>
