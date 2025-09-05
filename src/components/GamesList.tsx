@@ -156,19 +156,20 @@ const GamesList = () => {
                              <div className="flex items-center gap-2">
                                <PlayerAvatarWithDefault player={getPlayer(playerId)} />
                                <span>{getPlayerName(playerId)}</span>
-                               {game.team1_captain === playerId && (
-                                 <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
-                                   <Crown className="h-3 w-3 mr-1" />
-                                   Captain
-                                 </Badge>
-                               )}
+                                {game.team1_captain === playerId && (
+                                  <Badge variant="secondary" className="text-xs px-1 py-0.5 h-auto">
+                                    <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                                    <span className="hidden sm:inline">Captain</span>
+                                    <span className="sm:hidden">C</span>
+                                  </Badge>
+                                )}
                              </div>
-                             {game.mvp_player === playerId && (
-                               <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
-                                 <span>👑</span>
-                                 MVP
-                               </Badge>
-                             )}
+                              {game.mvp_player === playerId && (
+                                <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                  <span>👑</span>
+                                  MVP
+                                </Badge>
+                              )}
                           </div>
                         ))}
                       </div>
@@ -181,19 +182,20 @@ const GamesList = () => {
                              <div className="flex items-center gap-2">
                                <PlayerAvatarWithDefault player={getPlayer(playerId)} />
                                <span>{getPlayerName(playerId)}</span>
-                               {game.team2_captain === playerId && (
-                                 <Badge variant="secondary" className="text-xs px-1.5 py-0.5 h-auto">
-                                   <Crown className="h-3 w-3 mr-1" />
-                                   Captain
-                                 </Badge>
-                               )}
+                                {game.team2_captain === playerId && (
+                                  <Badge variant="secondary" className="text-xs px-1 py-0.5 h-auto">
+                                    <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                                    <span className="hidden sm:inline">Captain</span>
+                                    <span className="sm:hidden">C</span>
+                                  </Badge>
+                                )}
                              </div>
-                             {game.mvp_player === playerId && (
-                               <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 border-0">
-                                 <span>👑</span>
-                                 MVP
-                               </Badge>
-                             )}
+                              {game.mvp_player === playerId && (
+                                <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                  <span>👑</span>
+                                  MVP
+                                </Badge>
+                              )}
                           </div>
                         ))}
                       </div>
