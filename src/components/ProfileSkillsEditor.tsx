@@ -128,6 +128,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(0); // Force re-render of file input
 
   // Simple function to check if avatar can be transformed (user uploaded vs AI generated)
   const canTransformAvatar = () => {
@@ -226,9 +227,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
         description: "Your avatar has been updated successfully.",
       });
 
-      // Clear states after successful upload
+      // Clear states after successful upload and reset file input
       setAvatarFile(null);
       setAvatarPreview(null);
+      setFileInputKey(prev => prev + 1); // Force file input reset
 
       onProfileUpdate?.();
     } catch (error) {
@@ -405,9 +407,10 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           description: "Your personalized cartoon avatar has been created.",
         });
 
-        // Clear states after transformation
+        // Clear states after transformation and reset file input
         setAvatarFile(null);
         setAvatarPreview(null);
+        setFileInputKey(prev => prev + 1); // Force file input reset
 
         onProfileUpdate?.();
       }
@@ -479,6 +482,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
                 </div>
                 
                 <Input
+                  key={fileInputKey}
                   id="avatar-upload"
                   type="file"
                   accept="image/*"
