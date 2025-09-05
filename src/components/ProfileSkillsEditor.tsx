@@ -196,16 +196,23 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
             .from('avatars')
             .getPublicUrl(filePath);
 
+          // Add cache-busting parameter
+          const avatarUrlWithCacheBust = `${data.publicUrl}?t=${Date.now()}`;
+
           // Update player avatar immediately
           await supabase
             .from('players')
-            .update({ avatar_url: data.publicUrl })
+            .update({ avatar_url: avatarUrlWithCacheBust })
             .eq('id', playerData.id);
 
           toast({
             title: "Avatar uploaded!",
             description: "Your avatar has been updated successfully.",
           });
+
+          // Clear the file and preview since we've uploaded it
+          setAvatarFile(null);
+          setAvatarPreview(null);
 
           onProfileUpdate?.();
         } catch (error) {
@@ -290,10 +297,13 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
       if (error) throw error;
 
       if (data?.avatarUrl) {
+        // Add cache-busting parameter to force image refresh
+        const avatarUrlWithCacheBust = `${data.avatarUrl}?t=${Date.now()}`;
+        
         // Update player avatar in database
         await supabase
           .from('players')
-          .update({ avatar_url: data.avatarUrl })
+          .update({ avatar_url: avatarUrlWithCacheBust })
           .eq('id', playerData.id);
 
         toast({
@@ -353,10 +363,13 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
       if (error) throw error;
 
       if (data?.avatarUrl) {
+        // Add cache-busting parameter to force image refresh
+        const avatarUrlWithCacheBust = `${data.avatarUrl}?t=${Date.now()}`;
+        
         // Update player avatar in database
         await supabase
           .from('players')
-          .update({ avatar_url: data.avatarUrl })
+          .update({ avatar_url: avatarUrlWithCacheBust })
           .eq('id', playerData.id);
 
         toast({
@@ -399,7 +412,7 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
-              <Avatar key={`editor-${playerData.id}-${Date.now()}`} className="h-20 w-20">
+              <Avatar key={`editor-${playerData.id}-${playerData.avatar_url}-${Date.now()}`} className="h-20 w-20">
                 <AvatarImage src={avatarPreview || playerData.avatar_url || undefined} />
                 <AvatarFallback className="text-xl">
                   {playerData.name.charAt(0).toUpperCase()}

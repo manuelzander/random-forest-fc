@@ -29,6 +29,9 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
     currentAvatarUrl: currentUserPlayer?.avatar_url
   });
 
+  // Force re-render when avatar changes by using a key that includes avatar URL
+  const avatarKey = `${currentUserPlayer?.id}-${currentUserPlayer?.avatar_url || 'no-avatar'}-${Date.now()}`;
+
   useEffect(() => {
     if (user) {
       fetchPlayers();

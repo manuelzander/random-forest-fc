@@ -12,8 +12,13 @@ export const useDefaultAvatar = ({ playerId, playerName, currentAvatarUrl }: Use
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
+    // Update avatar URL when currentAvatarUrl changes
+    setAvatarUrl(currentAvatarUrl || null);
+  }, [currentAvatarUrl]);
+
+  useEffect(() => {
     // If no current avatar, try to generate a default one
-    if (!currentAvatarUrl && !isGenerating) {
+    if (!currentAvatarUrl && !isGenerating && playerId && playerName) {
       generateDefaultAvatar();
     }
   }, [playerId, playerName, currentAvatarUrl]);
