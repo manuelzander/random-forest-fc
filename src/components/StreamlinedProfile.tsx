@@ -64,8 +64,6 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
       // Find current user's claimed player
       const userPlayer = formattedPlayers.find(player => player.user_id === user.id);
       setCurrentUserPlayer(userPlayer || null);
-      
-      onDataRefresh();
     } catch (error) {
       console.error('Error fetching players:', error);
       toast({
