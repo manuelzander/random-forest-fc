@@ -86,7 +86,33 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     if (player.games_played >= 20) {
       badges.push({ icon: '🎯', name: 'Veteran' });
     }
-
+    
+    // Funny/Creative badges
+    if (player.goal_difference <= -10) {
+      badges.push({ icon: '🤡', name: 'Goal Leaker' });
+    }
+    if (player.draws >= 5) {
+      badges.push({ icon: '🤝', name: 'Peacekeeper' });
+    }
+    if (player.losses >= 10) {
+      badges.push({ icon: '💀', name: 'Unlucky' });
+    }
+    if (winRate === 0 && player.games_played >= 5) {
+      badges.push({ icon: '😅', name: 'Trying Hard' });
+    }
+    if (player.mvp_awards === 0 && player.games_played >= 10) {
+      badges.push({ icon: '🐐', name: 'Team Player' });
+    }
+    if (winRate === 100 && player.games_played >= 3) {
+      badges.push({ icon: '🔥', name: 'Unstoppable' });
+    }
+    if (player.goal_difference === 0 && player.games_played >= 5) {
+      badges.push({ icon: '⚖️', name: 'Balanced' });
+    }
+    if (player.games_played === 1) {
+      badges.push({ icon: '🆕', name: 'Fresh Meat' });
+    }
+    
     return badges;
   };
 

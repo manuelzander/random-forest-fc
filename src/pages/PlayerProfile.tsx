@@ -126,6 +126,32 @@ const PlayerProfile = () => {
     if (player?.games_played >= 20) {
       badges.push({ icon: '🎯', name: 'Veteran', description: '20+ Games Played' });
     }
+    
+    // Funny/Creative badges
+    if (player?.goal_difference <= -10) {
+      badges.push({ icon: '🤡', name: 'Goal Leaker', description: 'Conceded 10+ more goals than scored' });
+    }
+    if (player?.draws >= 5) {
+      badges.push({ icon: '🤝', name: 'Peacekeeper', description: '5+ drawn games' });
+    }
+    if (player?.losses >= 10) {
+      badges.push({ icon: '💀', name: 'Unlucky', description: '10+ losses' });
+    }
+    if (getWinRate() === 0 && player?.games_played >= 5) {
+      badges.push({ icon: '😅', name: 'Trying Hard', description: 'No wins yet but still playing!' });
+    }
+    if (player?.mvp_awards === 0 && player?.games_played >= 10) {
+      badges.push({ icon: '🐐', name: 'Team Player', description: 'No MVPs but always showing up' });
+    }
+    if (getWinRate() === 100 && player?.games_played >= 3) {
+      badges.push({ icon: '🔥', name: 'Unstoppable', description: 'Perfect win record' });
+    }
+    if (player?.goal_difference === 0 && player?.games_played >= 5) {
+      badges.push({ icon: '⚖️', name: 'Balanced', description: 'Perfectly balanced goal difference' });
+    }
+    if (player?.games_played === 1) {
+      badges.push({ icon: '🆕', name: 'Fresh Meat', description: 'Just getting started' });
+    }
 
     return badges;
   };
