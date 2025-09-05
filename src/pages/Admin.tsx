@@ -3,15 +3,32 @@ import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Shield, Users, History, Settings, LogOut, Loader2, Home, Newspaper } from 'lucide-react';
+import { Shield, Users, History, Settings, LogOut, Loader2, Home, Newspaper, Wand2 } from 'lucide-react';
 import AdminPlayerManagement from '@/components/AdminPlayerManagement';
 import AdminGameManagement from '@/components/AdminGameManagement';
 import AdminNewsManagement from '@/components/AdminNewsManagement';
+import { AvatarGenerator } from '@/components/AvatarGenerator';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const Admin = () => {
   const { user, userRole, isLoading, signOut } = useAuth();
   const { toast } = useToast();
+
+  // Fetch players for avatar generation
+  const { data: players = [], refetch: refetchPlayers } = useQuery({
+    queryKey: ['players'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('players')
+        .select('id, name, avatar_url')
+        .order('name');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -75,8 +92,12 @@ const Admin = () => {
 
       {/* Main Content */}
       <div className="page-main-content">
-        <Tabs defaultValue="players" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
+        <Tabs defaultValue="avatars" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto">
+            <TabsTrigger value="avatars" className="flex items-center gap-2">
+              <Wand2 className="h-4 w-4" />
+              Avatars
+            </TabsTrigger>
             <TabsTrigger value="players" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Players
@@ -90,6 +111,13 @@ const Admin = () => {
               News
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="avatars">
+            <AvatarGenerator 
+              players={players} 
+              onAvatarsGenerated={() => refetchPlayers()} 
+            />
+          </TabsContent>
 
           <TabsContent value="players">
             <AdminPlayerManagement />
