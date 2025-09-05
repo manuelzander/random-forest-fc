@@ -90,11 +90,14 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
 
   const fetchProfile = async () => {
     try {
+      console.log('ProfileSkillsEditor: Fetching profile for userId:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('bio, football_skills, favorite_position, years_playing')
         .eq('user_id', userId)
         .maybeSingle();
+
+      console.log('ProfileSkillsEditor: Profile query result:', { data, error });
 
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -137,8 +140,8 @@ const ProfileSkillsEditor: React.FC<Props> = ({ userId, playerData, onProfileUpd
 
     try {
       const fileExt = avatarFile.name.split('.').pop();
-      const fileName = `${playerData.id}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const fileName = `avatar.${fileExt}`;
+      const filePath = `${userId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')

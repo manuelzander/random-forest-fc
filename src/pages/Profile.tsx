@@ -38,11 +38,13 @@ const Profile = () => {
 
   const fetchPlayers = async () => {
     try {
+      console.log('Profile: Starting to fetch players for user:', user?.id);
       const { data, error } = await supabase
         .from('players')
         .select('*')
         .order('points', { ascending: false });
 
+      console.log('Profile: Players query result:', { data, error });
       if (error) throw error;
       
       // Convert database format to component format with avatar support
@@ -71,7 +73,7 @@ const Profile = () => {
       console.error('Error fetching players:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch players",
+        description: "Failed to fetch player data",
         variant: "destructive",
       });
     } finally {
