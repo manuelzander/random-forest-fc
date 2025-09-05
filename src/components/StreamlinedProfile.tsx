@@ -160,12 +160,6 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           <CardContent className="space-y-6">
             {/* Player Overview */}
             <div className="flex items-center gap-4">
-              <Avatar key={`profile-${currentUserPlayer.id}-${currentUserPlayer.avatar_url}`} className="h-20 w-20">
-                <AvatarImage src={currentUserPlayer.avatar_url || undefined} />
-                <AvatarFallback className="text-xl">
-                  {currentUserPlayer.name.substring(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
               <div className="flex-1">
                 <h3 className="text-xl font-semibold">{currentUserPlayer.name}</h3>
                 <p className="text-muted-foreground">
