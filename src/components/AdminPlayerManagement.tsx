@@ -102,13 +102,6 @@ const AdminPlayerManagement = () => {
     
     const playerData = {
       name: formData.get('name') as string,
-      points: parseFloat(formData.get('points') as string) || 0,
-      games_played: parseInt(formData.get('games_played') as string) || 0,
-      wins: parseInt(formData.get('wins') as string) || 0,
-      draws: parseInt(formData.get('draws') as string) || 0,
-      losses: parseInt(formData.get('losses') as string) || 0,
-      mvp_awards: parseInt(formData.get('mvp_awards') as string) || 0,
-      goal_difference: parseInt(formData.get('goal_difference') as string) || 0,
     };
 
     try {
@@ -281,76 +274,11 @@ const AdminPlayerManagement = () => {
                     required
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="points">Points</Label>
-                    <Input
-                      id="points"
-                      name="points"
-                      type="number"
-                      step="0.1"
-                      defaultValue={editingPlayer?.points || 0}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="games_played">Games Played</Label>
-                    <Input
-                      id="games_played"
-                      name="games_played"
-                      type="number"
-                      defaultValue={editingPlayer?.games_played || 0}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="wins">Wins</Label>
-                    <Input
-                      id="wins"
-                      name="wins"
-                      type="number"
-                      defaultValue={editingPlayer?.wins || 0}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="draws">Draws</Label>
-                    <Input
-                      id="draws"
-                      name="draws"
-                      type="number"
-                      defaultValue={editingPlayer?.draws || 0}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="losses">Losses</Label>
-                    <Input
-                      id="losses"
-                      name="losses"
-                      type="number"
-                      defaultValue={editingPlayer?.losses || 0}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="mvp_awards">MVP Awards</Label>
-                    <Input
-                      id="mvp_awards"
-                      name="mvp_awards"
-                      type="number"
-                      defaultValue={editingPlayer?.mvp_awards || 0}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="goal_difference">Goal Difference</Label>
-                    <Input
-                      id="goal_difference"
-                      name="goal_difference"
-                      type="number"
-                      defaultValue={editingPlayer?.goal_difference || 0}
-                    />
-                  </div>
-                </div>
+                <Alert className="mb-4">
+                  <AlertDescription>
+                    ℹ️ Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.
+                  </AlertDescription>
+                </Alert>
                 <div className="flex justify-end gap-2">
                   <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                     Cancel
