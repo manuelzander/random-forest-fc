@@ -1,10 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Upload, UserCheck } from 'lucide-react';
+import { UserCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 
@@ -19,8 +19,6 @@ interface PlayerClaimProps {
 export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: PlayerClaimProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use default avatar for current user's player
   const { avatarUrl } = useDefaultAvatar({
@@ -93,87 +91,6 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
     }
   };
 
-  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || !event.target.files[0] || !currentUserPlayer || !user) return;
-
-    const file = event.target.files[0];
-    
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please select an image smaller than 5MB.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Validate file type - be more specific about allowed formats
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type.toLowerCase())) {
-      toast({
-        title: "Invalid file type",
-        description: "Please select a JPEG, PNG, WebP, or GIF image.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setUploading(true);
-
-    try {
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
-      const filename = `avatar.${fileExt}`;
-      const filePath = `${user.id}/${filename}`;
-
-      // Delete old avatar if exists
-      if (currentUserPlayer.avatar_url) {
-        const oldFilename = currentUserPlayer.avatar_url.split('/').pop();
-        if (oldFilename) {
-          await supabase.storage
-            .from('avatars')
-            .remove([`${user.id}/${oldFilename}`]);
-        }
-      }
-
-      // Upload new avatar
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { data } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      // Update player with new avatar URL
-      const { error: updateError } = await supabase
-        .from('players')
-        .update({ avatar_url: data.publicUrl })
-        .eq('id', currentUserPlayer.id);
-
-      if (updateError) throw updateError;
-
-      toast({
-        title: "Avatar updated!",
-        description: "Your player avatar has been updated successfully.",
-      });
-      
-      onPlayerClaimed();
-    } catch (error) {
-      console.error('Error uploading avatar:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload avatar. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const availablePlayers = players.filter(player => !player.user_id);
 
   return (
@@ -203,27 +120,11 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                {uploading ? 'Uploading...' : 'Change Avatar'}
-              </Button>
-              <Button
-                variant="outline"
                 onClick={handleUnclaimPlayer}
               >
                 Unclaim Player
               </Button>
             </div>
-            
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarUpload}
-              className="hidden"
-            />
           </CardContent>
         </Card>
       ) : (

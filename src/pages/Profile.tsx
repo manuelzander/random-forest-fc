@@ -1,23 +1,15 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Home, Loader2, LogOut } from 'lucide-react';
-import { PlayerClaim } from '@/components/PlayerClaim';
-import AccountDetailsEditor from '@/components/AccountDetailsEditor';
-import ProfileSkillsEditor from '@/components/ProfileSkillsEditor';
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Player } from '@/types';
+import { StreamlinedProfile } from '@/components/StreamlinedProfile';
 import { useToast } from '@/hooks/use-toast';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 const Profile = () => {
   const { user, isLoading, signOut } = useAuth();
   const { toast } = useToast();
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [currentUserPlayer, setCurrentUserPlayer] = useState<any>(null);
-  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -30,55 +22,8 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchPlayers();
-    }
-  }, [user]);
-
-  const fetchPlayers = async () => {
-    try {
-      console.log('Profile: Starting to fetch players for user:', user?.id);
-      const { data, error } = await supabase
-        .from('player_stats')
-        .select('*')
-        .order('points', { ascending: false });
-
-      console.log('Profile: Players query result:', { data, error });
-      if (error) throw error;
-      
-      // Convert database format to component format with avatar support
-      const formattedPlayers: Player[] = (data || []).map(player => ({
-        id: player.id,
-        name: player.name,
-        points: Number(player.points),
-        games_played: Number(player.games_played),
-        wins: Number(player.wins),
-        draws: Number(player.draws),
-        losses: Number(player.losses),
-        mvp_awards: Number(player.mvp_awards),
-        goal_difference: Number(player.goal_difference),
-        user_id: player.user_id,
-        avatar_url: player.avatar_url,
-      }));
-      
-      setPlayers(formattedPlayers);
-
-      // Find current user's claimed player
-      if (user) {
-        const userPlayer = formattedPlayers.find(player => player.user_id === user.id);
-        setCurrentUserPlayer(userPlayer || null);
-      }
-    } catch (error) {
-      console.error('Error fetching players:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch player data",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoadingData(false);
-    }
+  const handleDataRefresh = () => {
+    setRefreshKey(prev => prev + 1);
   };
 
   // Redirect if not authenticated
@@ -86,7 +31,7 @@ const Profile = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  if (isLoading || isLoadingData) {
+  if (isLoading) {
     return (
       <div className="loading-container">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -126,35 +71,12 @@ const Profile = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <PlayerClaim 
-          players={players}
-          currentUserPlayer={currentUserPlayer}
-          onPlayerClaimed={fetchPlayers}
+      <div className="page-main-content">
+        <StreamlinedProfile 
+          user={user} 
+          onDataRefresh={handleDataRefresh}
+          key={refreshKey}
         />
-        
-        {!currentUserPlayer && (
-          <AccountDetailsEditor userEmail={user!.email || ''} />
-        )}
-        
-        {currentUserPlayer && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Edit Your Profile</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProfileSkillsEditor 
-                userId={user!.id}
-                playerData={currentUserPlayer}
-                onProfileUpdate={fetchPlayers}
-              />
-            </CardContent>
-          </Card>
-        )}
-
-        {currentUserPlayer && (
-          <AccountDetailsEditor userEmail={user!.email || ''} />
-        )}
       </div>
     </div>
   );
