@@ -65,17 +65,17 @@ serve(async (req) => {
 
     if (imageToImage && baseImageData) {
       // Image-to-image generation - face forward portrait
-      prompt = `Transform this image into a hilarious soccer player portrait for "${playerName}".
+      prompt = `Transform this image into a hilarious European football (soccer) player portrait for "${playerName}".
       
       Create a front-facing cartoon portrait with:
       - Transform into funny cartoon/comic style with exaggerated comedic features
       - Person looking directly at camera with hilarious facial expression
       - Make the face amusing (goofy smile, funny eyes, big nose, comedic eyebrows, etc.)
-      - Keep it as a head and shoulders portrait (face forward, not back view)
+      - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
       - Background MUST be pure white (#FFFFFF) with no other colors or patterns
-      - Maintain the person's unique characteristics while making it genuinely funny
+      - Maintain the person's unique characteristics while making it soccer/football-themed and genuinely funny
       - Make it entertaining and amusing while being respectful
-      - Focus on the face and expression, not the jersey`
+      - Focus on the face and expression, soccer/football player style`
       
       requestBody.contents[0].parts = [
         { text: prompt },
