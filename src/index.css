@@ -2,201 +2,185 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Vice City Color Palette */
-  --vice-pink: 336 96% 45%;
-  --vice-cyan: 180 100% 35%;
-  --vice-purple: 270 100% 50%;
-  --vice-orange: 33 100% 45%;
-  --vice-blue: 220 100% 45%;
-  --vice-dark: 240 20% 15%;
-  --vice-darker: 240 25% 10%;
-  --vice-light: 300 20% 98%;
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+
+@layer base {
+  :root {
+    /* Base colors */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Primary branding - Forest Green for football theme */
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Secondary colors */
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 142 76% 36%;
+
+    --radius: 0.5rem;
+
+    /* Custom page backgrounds */
+    --page-gradient: linear-gradient(135deg, hsl(142 20% 96%) 0%, hsl(200 20% 96%) 100%);
+    
+    /* Header variants */
+    --header-primary: 142 76% 36%;
+    --header-admin: 0 84% 60%;
+    --header-profile: 217 91% 60%;
+    --header-news: 142 76% 36%;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 142 76% 46%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 142 76% 46%;
+
+    /* Custom page backgrounds for dark mode */
+    --page-gradient: linear-gradient(135deg, hsl(222 84% 6%) 0%, hsl(217 32% 18%) 100%);
+    
+    /* Header variants for dark mode */
+    --header-primary: 142 76% 46%;
+    --header-admin: 0 84% 60%;
+    --header-profile: 217 91% 60%;
+    --header-news: 142 76% 46%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Page layout components */
+  .page-container {
+    @apply min-h-screen;
+    background: var(--page-gradient);
+  }
   
-  /* Main Theme Colors - Light Mode */
-  --background: var(--vice-light);
-  --foreground: var(--vice-dark);
-  --card: 300 20% 96%;
-  --card-foreground: var(--vice-dark);
-  --popover: 300 20% 98%;
-  --popover-foreground: var(--vice-dark);
+  .page-header {
+    @apply bg-card shadow-sm border-b;
+  }
   
-  --primary: var(--vice-pink);
-  --primary-foreground: 300 20% 98%;
-  --secondary: var(--vice-cyan);
-  --secondary-foreground: 300 20% 98%;
-  --accent: var(--vice-purple);
-  --accent-foreground: 300 20% 98%;
+  .page-header-content {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
   
-  --muted: 300 10% 90%;
-  --muted-foreground: 240 10% 40%;
-  --border: 240 20% 85%;
-  --input: 300 10% 94%;
-  --ring: var(--vice-pink);
+  .page-header-inner {
+    @apply flex items-center justify-between h-16;
+  }
   
-  --destructive: 0 100% 50%;
-  --destructive-foreground: var(--vice-light);
+  .page-main-content {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
+
+  /* Header brand variants */
+  .header-brand-primary {
+    @apply p-2 rounded-lg text-white;
+    background-color: hsl(var(--header-primary));
+  }
   
-  /* Vice City Gradients - Light Mode */
-  --gradient-primary: linear-gradient(135deg, hsl(var(--vice-pink)), hsl(var(--vice-purple)));
-  --gradient-secondary: linear-gradient(135deg, hsl(var(--vice-cyan)), hsl(var(--vice-blue)));
-  --gradient-accent: linear-gradient(135deg, hsl(var(--vice-orange)), hsl(var(--vice-pink)));
-  --gradient-background: linear-gradient(180deg, hsl(var(--vice-light)), hsl(300 15% 96%));
+  .header-brand-admin {
+    @apply p-2 rounded-lg text-white;
+    background-color: hsl(var(--header-admin));
+  }
   
-  /* Neo Brutalist Borders */
-  --border-brutal: 3px solid hsl(var(--foreground));
-  --border-brutal-pink: 3px solid hsl(var(--vice-pink));
-  --border-brutal-cyan: 3px solid hsl(var(--vice-cyan));
-  --border-brutal-purple: 3px solid hsl(var(--vice-purple));
+  .header-brand-profile {
+    @apply p-2 rounded-lg text-white;
+    background-color: hsl(var(--header-profile));
+  }
   
-  /* Remove shadows - replaced with borders */
-  --shadow-neon: none;
-  --shadow-cyber: none;
-}
+  .header-brand-news {
+    @apply p-2 rounded-lg text-white;
+    background-color: hsl(var(--header-news));
+  }
 
-.dark {
-  /* Same colors for dark mode */
-  --background: var(--vice-dark);
-  --foreground: var(--vice-light);
-}
+  /* Loading states */
+  .loading-container {
+    @apply min-h-screen flex items-center justify-center;
+    background: var(--page-gradient);
+  }
 
-* {
-  border-color: hsl(var(--border));
-}
-
-body {
-  background: var(--gradient-background);
-  color: hsl(var(--foreground));
-  font-feature-settings: "rlig" 1, "calt" 1;
-  font-family: 'Rajdhani', 'Exo 2', system-ui, sans-serif;
-  min-height: 100vh;
-}
-
-/* Neo Brutalist Utility Classes */
-.brutal-border {
-  border: var(--border-brutal);
-  box-shadow: 4px 4px 0px hsl(var(--foreground));
-}
-
-.brutal-pink {
-  border: var(--border-brutal-pink);
-  box-shadow: 4px 4px 0px hsl(var(--vice-pink));
-}
-
-.neon-text {
-  text-shadow: 0 0 10px hsl(var(--vice-pink) / 0.8);
-  color: hsl(var(--vice-pink));
-}
-
-.cyber-text {
-  text-shadow: 0 0 10px hsl(var(--vice-cyan) / 0.8);
-  color: hsl(var(--vice-cyan));
-}
-
-/* Vice City Button Styles */
-.btn-vice {
-  background: var(--gradient-primary);
-  border: 1px solid hsl(var(--vice-pink) / 0.3);
-  box-shadow: var(--shadow-neon);
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-}
-
-.btn-vice:hover {
-  box-shadow: var(--glow-pink), var(--shadow-cyber);
-  transform: translateY(-1px);
-}
-
-.btn-cyber {
-  background: var(--gradient-secondary);
-  border: 1px solid hsl(var(--vice-cyan) / 0.3);
-  box-shadow: var(--glow-cyan);
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-}
-
-.btn-cyber:hover {
-  box-shadow: var(--glow-cyan), var(--shadow-cyber);
-  transform: translateY(-1px);
-}
-
-/* Neo Brutalist Card Styles */
-.card-vice {
-  background: hsl(var(--card));
-  border: var(--border-brutal);
-  box-shadow: 6px 6px 0px hsl(var(--foreground));
-}
-
-/* Page Layout Classes */
-.page-container {
-  min-height: 100vh;
-  background: var(--gradient-background);
-}
-
-.page-header {
-  background: hsl(var(--background));
-  border-bottom: var(--border-brutal-pink);
-  box-shadow: 0 6px 0px hsl(var(--vice-pink));
-}
-
-.page-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.page-header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 4rem;
-}
-
-.header-brand-primary {
-  background: var(--gradient-primary);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  box-shadow: var(--glow-pink);
-}
-
-.header-brand-profile {
-  background: var(--gradient-secondary);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  box-shadow: var(--glow-cyan);
-}
-
-.header-brand-admin {
-  background: var(--gradient-accent);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 20px hsl(var(--vice-orange) / 0.5);
-}
-
-.header-brand-news {
-  background: var(--gradient-primary);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  box-shadow: var(--glow-pink);
-}
-
-.page-main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
-
-.loading-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 50vh;
-  font-family: 'Orbitron', monospace;
-  font-weight: 700;
-  color: hsl(var(--vice-pink));
-  text-shadow: var(--glow-pink);
+  /* Card headers with gradients */
+  .card-header-gradient-primary {
+    @apply text-white rounded-t-lg;
+    background: linear-gradient(135deg, hsl(var(--header-primary)), hsl(var(--header-primary) / 0.8));
+  }
+  
+  .card-header-gradient-news {
+    @apply text-white rounded-t-lg;
+    background: linear-gradient(135deg, hsl(var(--header-news)), hsl(var(--header-news) / 0.8));
+  }
 }
