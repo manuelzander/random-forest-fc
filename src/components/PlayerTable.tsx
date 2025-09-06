@@ -194,6 +194,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                   <SortButton field="goal_difference">Goal Diff</SortButton>
                 </th>
                 <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Record</th>
+                <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Form</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -220,12 +221,12 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                               {player.name}
                             </Button>
                           </Link>
-                           {(player as any).user_id && (
-                              <Badge variant="secondary" className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Verified
-                              </Badge>
-                            )}
+                            {(player as any).user_id && (
+                               <Badge variant="secondary" className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                 <CheckCircle className="h-3 w-3 sm:mr-1" />
+                                 <span className="hidden sm:inline">Verified</span>
+                               </Badge>
+                             )}
                            {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
                              <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                                <span>{badge.icon}</span>
@@ -271,6 +272,33 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                         <span className="text-gray-500">/</span>
                         <span className="text-red-600 font-medium">{player.losses}L</span>
                       </div>
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      {(() => {
+                        // Get recent results from stats
+                        const recentResults: ('win' | 'draw' | 'loss')[] = [];
+                        // This would need to be calculated from games data - for now showing placeholder
+                        for (let i = 0; i < Math.min(5, player.games_played); i++) {
+                          if (i < player.wins) recentResults.push('win');
+                          else if (i < player.wins + player.draws) recentResults.push('draw');
+                          else recentResults.push('loss');
+                        }
+                        return (
+                          <div className="flex gap-0.5 justify-center">
+                            {recentResults.slice(0, 5).map((result, index) => (
+                              <div 
+                                key={index}
+                                className={`w-3 h-3 rounded ${
+                                  result === 'win' ? 'bg-green-500' :
+                                  result === 'draw' ? 'bg-yellow-500' :
+                                  'bg-red-500'
+                                }`}
+                                title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
+                              />
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </td>
                   </tr>
                 );
