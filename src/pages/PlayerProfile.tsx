@@ -23,6 +23,7 @@ interface PlayerData {
   avatar_url?: string;
   badges?: any[];
   user_id?: string;
+  recentResults?: ('win' | 'draw' | 'loss')[];
 }
 
 interface ProfileData {
@@ -69,8 +70,9 @@ const PlayerProfile = () => {
       // Then calculate stats from games
       const { data: statsData, error: statsError } = await supabase
         .from('games')
-        .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player')
-        .or(`team1_players.cs.{${playerId}},team2_players.cs.{${playerId}}`);
+        .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, created_at')
+        .or(`team1_players.cs.{${playerId}},team2_players.cs.{${playerId}}`)
+        .order('created_at', { ascending: false });
 
       if (statsError) throw statsError;
 
@@ -81,6 +83,7 @@ const PlayerProfile = () => {
       let losses = 0;
       let mvp_awards = 0;
       let goal_difference = 0;
+      const recentResults: ('win' | 'draw' | 'loss')[] = [];
       
       if (statsData) {
         statsData.forEach(game => {
@@ -96,11 +99,14 @@ const PlayerProfile = () => {
             if (playerGoals > opponentGoals) {
               wins++;
               points += 3;
+              if (recentResults.length < 5) recentResults.push('win');
             } else if (playerGoals === opponentGoals) {
               draws++;
               points += 1;
+              if (recentResults.length < 5) recentResults.push('draw');
             } else {
               losses++;
+              if (recentResults.length < 5) recentResults.push('loss');
             }
             
             if (game.mvp_player === playerId) {
@@ -122,7 +128,8 @@ const PlayerProfile = () => {
         losses,
         mvp_awards,
         goal_difference,
-        badges: Array.isArray(basicPlayer.badges) ? basicPlayer.badges : []
+        badges: Array.isArray(basicPlayer.badges) ? basicPlayer.badges : [],
+        recentResults
       });
 
       // Fetch profile data if player has a user_id
@@ -351,6 +358,24 @@ const PlayerProfile = () => {
                     <Target className="h-4 w-4" />
                     <span>{getWinRate()}% Win Rate</span>
                   </div>
+                  {player.recentResults && player.recentResults.length > 0 && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs font-medium">Form:</span>
+                      <div className="flex gap-0.5">
+                        {player.recentResults.map((result, index) => (
+                          <div 
+                            key={index}
+                            className={`w-3 h-3 sm:w-4 sm:h-4 rounded ${
+                              result === 'win' ? 'bg-green-500' :
+                              result === 'draw' ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`}
+                            title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                  </div>
                  
                  {/* Profile details - responsive layout */}

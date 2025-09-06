@@ -448,7 +448,7 @@ const AdminPlayerManagement = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex gap-1 sm:gap-2 flex-shrink-0">
+                <div className="flex justify-center gap-1 sm:gap-2 flex-shrink-0">
                   <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
                     <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>

@@ -82,7 +82,7 @@ serve(async (req) => {
       // Image-to-image generation - face forward portrait
       prompt = `Transform this image into a hilarious retro European football (soccer) player portrait.
       
-      Create a front-facing cartoon portrait with:
+      Create a front-facing SQUARE ASPECT RATIO (1:1) cartoon portrait with:
       - Transform into funny cartoon/comic style with exaggerated comedic features
       - Person looking directly at camera with hilarious facial expression
       - Make the face amusing (goofy smile, funny eyes, big nose, comedic eyebrows, etc.)
@@ -90,6 +90,7 @@ serve(async (req) => {
       - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
       - NO NAME or NUMBER visible anywhere on the jersey or image
       - Background MUST be pure white (#FFFFFF) with no other colors or patterns
+      - IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display
       - Maintain the person's unique characteristics while making it soccer/football-themed and genuinely funny
       - Make it entertaining and amusing while being respectful
       - Focus on the face and expression with vintage soccer aesthetic`
@@ -106,6 +107,8 @@ serve(async (req) => {
     } else {
       // Random generation (existing logic)
       prompt = `Create a hilarious retro European football (soccer) comic-style portrait for a player named "${playerName}".
+    
+    IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display.
     
     POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a HILARIOUS and funny expression.
     
@@ -133,6 +136,7 @@ serve(async (req) => {
     
     Style: Funny cartoon/comic book illustration with exaggerated features for maximum humor and retro 70s/80s soccer vibe.
     Background: PURE WHITE background (#FFFFFF) - absolutely no other colors or patterns.
+    Format: SQUARE ASPECT RATIO (1:1) for perfect circular avatar display.
     
     Generate a totally unique individual that has never been created before! Use the seed ${randomSeed} to ensure complete uniqueness.
     
