@@ -416,13 +416,13 @@ const PlayerProfile = () => {
                 Statistics
               </CardTitle>
               {player.recentResults && player.recentResults.length > 0 && (
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-3 mt-2">
                   <span className="text-sm font-medium text-muted-foreground">Form:</span>
-                  <div className="flex gap-1">
+                  <div className="flex gap-1.5">
                     {player.recentResults.map((result, index) => (
                       <div 
                         key={index}
-                        className={`w-4 h-4 rounded ${
+                        className={`w-6 h-6 rounded ${
                           result === 'win' ? 'bg-green-500' :
                           result === 'draw' ? 'bg-yellow-500' :
                           'bg-red-500'

@@ -193,8 +193,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                 <th className="px-4 py-3 text-center">
                   <SortButton field="goal_difference">Goal Diff</SortButton>
                 </th>
-                <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Record</th>
-                <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Form</th>
+                <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Record & Form</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -265,40 +264,40 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                       </span>
                     </td>
                     <td className="px-4 py-4 text-center text-sm">
-                      <div className="flex gap-1 justify-center">
-                        <span className="text-green-600 font-medium">{player.wins}W</span>
-                        <span className="text-gray-500">/</span>
-                        <span className="text-yellow-600 font-medium">{player.draws}D</span>
-                        <span className="text-gray-500">/</span>
-                        <span className="text-red-600 font-medium">{player.losses}L</span>
+                      <div className="space-y-1">
+                        <div className="flex gap-1 justify-center">
+                          <span className="text-green-600 font-medium">{player.wins}W</span>
+                          <span className="text-gray-500">/</span>
+                          <span className="text-yellow-600 font-medium">{player.draws}D</span>
+                          <span className="text-gray-500">/</span>
+                          <span className="text-red-600 font-medium">{player.losses}L</span>
+                        </div>
+                        {(() => {
+                          // Get recent results from stats
+                          const recentResults: ('win' | 'draw' | 'loss')[] = [];
+                          // This would need to be calculated from games data - for now showing placeholder
+                          for (let i = 0; i < Math.min(5, player.games_played); i++) {
+                            if (i < player.wins) recentResults.push('win');
+                            else if (i < player.wins + player.draws) recentResults.push('draw');
+                            else recentResults.push('loss');
+                          }
+                          return (
+                            <div className="flex gap-0.5 justify-center">
+                              {recentResults.slice(0, 5).map((result, index) => (
+                                <div 
+                                  key={index}
+                                  className={`w-3 h-3 rounded ${
+                                    result === 'win' ? 'bg-green-500' :
+                                    result === 'draw' ? 'bg-yellow-500' :
+                                    'bg-red-500'
+                                  }`}
+                                  title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
+                                />
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </div>
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      {(() => {
-                        // Get recent results from stats
-                        const recentResults: ('win' | 'draw' | 'loss')[] = [];
-                        // This would need to be calculated from games data - for now showing placeholder
-                        for (let i = 0; i < Math.min(5, player.games_played); i++) {
-                          if (i < player.wins) recentResults.push('win');
-                          else if (i < player.wins + player.draws) recentResults.push('draw');
-                          else recentResults.push('loss');
-                        }
-                        return (
-                          <div className="flex gap-0.5 justify-center">
-                            {recentResults.slice(0, 5).map((result, index) => (
-                              <div 
-                                key={index}
-                                className={`w-3 h-3 rounded ${
-                                  result === 'win' ? 'bg-green-500' :
-                                  result === 'draw' ? 'bg-yellow-500' :
-                                  'bg-red-500'
-                                }`}
-                                title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
-                              />
-                            ))}
-                          </div>
-                        );
-                      })()}
                     </td>
                   </tr>
                 );
