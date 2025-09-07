@@ -104,15 +104,17 @@ serve(async (req) => {
         }
       ]
     } else {
-      // Random generation (existing logic)
-      prompt = `Create a retro European football (soccer) comic-style portrait for a player named "${playerName}".
+      // Random generation - avoid using real names that might trigger content filters
+      const genericPlayerName = `Player ${Math.floor(Math.random() * 999) + 1}`
+      
+      prompt = `Create a retro European football (soccer) comic-style portrait for a fictional soccer player.
     
     IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display.
     
     POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a friendly expression.
     
     RETRO JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey clearly with:
-    - Player name "${playerName}" printed on the back in capital letters
+    - Generic player name "${genericPlayerName}" printed on the back in capital letters
     - Random jersey number (1-99) below the name  
     - ${clubInfo} with retro styling (thick collar, classic cut, vintage color schemes)
     - Make the text clearly readable and professional looking with retro font style
@@ -131,15 +133,15 @@ serve(async (req) => {
     - Jersey: ${clubInfo} with vintage retro 70s/80s soccer styling
     - Body build: vary between slim, athletic, stocky, tall, short proportions
     
-    CRITICAL: This must be a COMPLETELY NEW and UNIQUE character. Do not repeat any previous designs or characteristics.
+    CRITICAL: This must be a COMPLETELY NEW and UNIQUE FICTIONAL character. Create an original person.
     
     Style: Clean retro comic book illustration with bold outlines and vibrant colors, professional 70s/80s soccer card aesthetic.
     Background: PURE WHITE background (#FFFFFF) with NO borders, frames, or other decorative elements - only solid white.
     Format: SQUARE ASPECT RATIO (1:1) for perfect circular avatar display.
     
-    Generate a totally unique individual that has never been created before! Use the seed ${randomSeed} to ensure complete uniqueness.
+    Generate a totally unique FICTIONAL individual that has never been created before! Use the seed ${randomSeed} to ensure complete uniqueness.
     
-    Generate a UNIQUE individual looking back over shoulder with jersey back visible!`
+    Generate a UNIQUE fictional individual looking back over shoulder with jersey back visible!`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
@@ -161,6 +163,102 @@ serve(async (req) => {
 
     const data = await response.json()
     console.log('Gemini response received, checking for image data...')
+    
+    // Check for prohibited content or safety filter blocks
+    if (data.candidates?.[0]?.finishReason === 'PROHIBITED_CONTENT') {
+      console.log('Content was blocked by safety filters, trying with more generic prompt...')
+      
+      // Fallback with very generic prompt
+      const fallbackPrompt = `Create a cartoon-style portrait of a fictional soccer player in retro 70s style.
+      
+      Square format (1:1), clean cartoon illustration, player looking at camera with friendly smile.
+      Vintage soccer jersey with random team colors, simple retro design.
+      Pure white background, no text or names visible.
+      Make it colorful and fun cartoon style suitable for a sports avatar.`
+      
+      const fallbackBody = {
+        contents: [{
+          parts: [{ text: fallbackPrompt }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 4096,
+        },
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_ONLY_HIGH"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH", 
+            threshold: "BLOCK_ONLY_HIGH"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_ONLY_HIGH"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_ONLY_HIGH"
+          }
+        ]
+      }
+      
+      const fallbackResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(fallbackBody),
+      })
+      
+      if (fallbackResponse.ok) {
+        const fallbackData = await fallbackResponse.json()
+        
+        // Try to extract image from fallback
+        if (fallbackData.candidates?.[0]?.content?.parts) {
+          for (const part of fallbackData.candidates[0].content.parts) {
+            if (part.inlineData?.data) {
+              const imageBuffer = Uint8Array.from(atob(part.inlineData.data), c => c.charCodeAt(0))
+              
+              // Upload fallback image
+              const timestamp = Date.now()
+              const fileName = `avatar-${playerId}-${timestamp}.png`
+              const filePath = `default/${fileName}`
+
+              const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, imageBuffer, {
+                  contentType: 'image/png',
+                  upsert: true
+                })
+
+              if (!uploadError) {
+                const { data: urlData } = supabase.storage
+                  .from('avatars')
+                  .getPublicUrl(filePath)
+
+                console.log(`Fallback avatar generated: ${urlData.publicUrl}`)
+                return new Response(
+                  JSON.stringify({ 
+                    success: true, 
+                    avatarUrl: urlData.publicUrl,
+                    playerId 
+                  }),
+                  {
+                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                  }
+                )
+              }
+            }
+          }
+        }
+      }
+      
+      throw new Error('Content blocked by safety filters and fallback generation failed')
+    }
 
     // Extract image data from Gemini response
     let imageData = null
