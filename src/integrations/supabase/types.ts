@@ -134,6 +134,7 @@ export type Database = {
           favorite_position: string | null
           football_skills: Json | null
           id: string
+          skill_ratings: Json | null
           updated_at: string
           user_id: string
           years_playing: number | null
@@ -147,6 +148,7 @@ export type Database = {
           favorite_position?: string | null
           football_skills?: Json | null
           id?: string
+          skill_ratings?: Json | null
           updated_at?: string
           user_id: string
           years_playing?: number | null
@@ -160,6 +162,7 @@ export type Database = {
           favorite_position?: string | null
           football_skills?: Json | null
           id?: string
+          skill_ratings?: Json | null
           updated_at?: string
           user_id?: string
           years_playing?: number | null

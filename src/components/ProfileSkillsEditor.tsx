@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Slider } from '@/components/ui/slider';
 import { User, Upload, X, Plus, Shuffle, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -17,6 +18,14 @@ interface ProfileData {
   favorite_position?: string;
   years_playing?: number;
   favorite_club?: string;
+  skill_ratings?: {
+    pace: number;
+    shooting: number;
+    passing: number;
+    dribbling: number;
+    defending: number;
+    physical: number;
+  };
 }
 
 interface Props {
@@ -122,7 +131,15 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
     bio: '',
     football_skills: [],
     favorite_position: '',
-    years_playing: undefined
+    years_playing: undefined,
+    skill_ratings: {
+      pace: 50,
+      shooting: 50,
+      passing: 50,
+      dribbling: 50,
+      defending: 50,
+      physical: 50
+    }
   });
   const [newSkill, setNewSkill] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -155,7 +172,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
       console.log('ProfileSkillsEditor: Fetching profile for userId:', userId);
       const { data, error } = await supabase
         .from('profiles')
-        .select('bio, football_skills, favorite_position, years_playing, favorite_club')
+        .select('bio, football_skills, favorite_position, years_playing, favorite_club, skill_ratings')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -171,7 +188,17 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
           football_skills: Array.isArray(data.football_skills) ? data.football_skills as string[] : [],
           favorite_position: data.favorite_position || '',
           years_playing: data.years_playing || undefined,
-          favorite_club: data.favorite_club || ''
+          favorite_club: data.favorite_club || '',
+          skill_ratings: (data.skill_ratings && typeof data.skill_ratings === 'object' && !Array.isArray(data.skill_ratings)) 
+            ? data.skill_ratings as any 
+            : {
+                pace: 50,
+                shooting: 50,
+                passing: 50,
+                dribbling: 50,
+                defending: 50,
+                physical: 50
+              }
         });
       }
     } catch (error) {
@@ -267,7 +294,8 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
           football_skills: profile.football_skills as any,
           favorite_position: profile.favorite_position,
           years_playing: profile.years_playing,
-          favorite_club: profile.favorite_club
+          favorite_club: profile.favorite_club,
+          skill_ratings: profile.skill_ratings as any
         })
         .eq('user_id', userId);
 
@@ -577,6 +605,124 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                 value={profile.favorite_club || ''}
                 onChange={(e) => setProfile(prev => ({ ...prev, favorite_club: e.target.value }))}
               />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Skill Ratings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Player Ratings</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label>PAC - Pace</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.pace || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, pace: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.pace || 50}</span>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>SHO - Shooting</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.shooting || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, shooting: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.shooting || 50}</span>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>PAS - Passing</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.passing || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, passing: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.passing || 50}</span>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>DRI - Dribbling</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.dribbling || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, dribbling: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.dribbling || 50}</span>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>DEF - Defending</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.defending || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, defending: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.defending || 50}</span>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>PHY - Physical</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.physical || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, physical: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.physical || 50}</span>
+              </div>
             </div>
           </div>
         </CardContent>
