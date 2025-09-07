@@ -121,6 +121,8 @@ serve(async (req) => {
     Player Features (Seed: ${randomSeed}):
     - Ethnicity: ${randomEthnicity}, Age: ${randomAge}
     - Hair: ${randomHair}, Facial hair: ${randomFacialHair}
+    - Create diverse, authentic representations from all backgrounds
+    - Ensure varied skin tones, facial features, and cultural authenticity
     
     IMPORTANT: Perfect circle format with 1:1 aspect ratio, absolutely no borders or frames, portrait blends into white background.`
       
