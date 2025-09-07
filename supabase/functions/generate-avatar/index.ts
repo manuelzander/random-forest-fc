@@ -80,25 +80,19 @@ serve(async (req) => {
 
     if (imageToImage && baseImageData) {
       // Image-to-image generation - face forward portrait
-      prompt = `Transform this image into a retro European football (soccer) player portrait.
+      prompt = `Transform this image into a retro soccer player trading card portrait.
       
-      Create a front-facing SQUARE cartoon portrait with:
-      - Transform into retro comic style with clean illustration
-      - Person looking directly at camera with friendly expression
-      - TIGHT CROP: Head and shoulders only, cut off cleanly at mid-chest level (no lower body visible)
-      - Face should fill 70% of the square frame with shoulders cropped tightly at bottom edge
-      - NO WHITE SPACE below the player - crop should end exactly where the jersey/shoulders end
-      - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
-      - NO NAME or NUMBER visible anywhere on the jersey or image
-      - Background MUST be pure white (#FFFFFF) 
-      - ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS OF ANY KIND
-      - DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
-      - NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
-      - CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-      - IMPORTANT: Generate as perfect SQUARE format with tight cropping - no empty space at bottom
-      - Maintain the person's unique characteristics while making it soccer/football-themed
-      - Professional retro soccer card aesthetic with clean lines
-      - Focus primarily on facial features and expression with clean shoulder cutoff`
+      Style: Clean cartoon illustration, retro 70s/80s soccer card aesthetic
+      Format: Square card with person looking directly at camera
+      Crop: Head and shoulders only, clean cutoff at mid-chest
+      Jersey: ${clubInfo} with vintage styling (no names/numbers visible)
+      Background: Pure white (#FFFFFF) - clean card background
+      Face: Large and prominent, friendly expression
+      
+      IMPORTANT: 
+      - No borders, frames, or outlines of any kind
+      - Portrait blends seamlessly into white background
+      - Classic soccer trading card look`
       
       requestBody.contents[0].parts = [
         { text: prompt },
@@ -111,35 +105,20 @@ serve(async (req) => {
       ]
     } else {
       // Random generation - use the actual player name
-      prompt = `Create a retro soccer player portrait for ${playerName}.
+      prompt = `Create a retro soccer trading card portrait for ${playerName}.
     
-    IMPORTANT: Generate as perfect SQUARE format with tight cropping.
+    Style: Clean cartoon illustration, vintage 70s/80s soccer card
+    Format: Square card with player looking over shoulder at camera
+    Crop: Head and shoulders, clean cutoff at mid-chest
+    Jersey: Back view showing "${playerName}" and random number (1-99)
+    Jersey Style: ${clubInfo} with retro design
+    Background: Pure white (#FFFFFF) - classic card background
     
-    POSE: Player facing away from camera (back view) but looking over their shoulder at the camera with a friendly expression.
-    COMPOSITION: TIGHT CROP showing head and shoulders only, cut off cleanly at mid-chest level
-    - Face should be prominently visible and large, filling 60% of the frame
-    - NO WHITE SPACE below the player - crop should end exactly where the jersey/shoulders end
-    - Clean cutoff at shoulder/chest level with no lower body visible
+    Player Features (Seed: ${randomSeed}):
+    - Ethnicity: ${randomEthnicity}, Age: ${randomAge}
+    - Hair: ${randomHair}, Facial hair: ${randomFacialHair}
     
-    JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey with:
-    - "${playerName}" printed on the back in capital letters
-    - Random jersey number (1-99) below the name  
-    - ${clubInfo} with retro styling
-    
-    UNIQUE FEATURES (Seed: ${randomSeed}):
-    - Ethnicity: ${randomEthnicity}
-    - Age: ${randomAge}
-    - Hair: ${randomHair}
-    - Facial hair: ${randomFacialHair}
-    - ${clubInfo} with vintage styling
-    
-    Style: Clean retro comic illustration with bold outlines.
-    Background: Pure white (#FFFFFF)
-    ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS OF ANY KIND
-    DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
-    NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
-    CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-    Format: Perfect square with tight cropping - no empty space at bottom, clean shoulder cutoff.`
+    IMPORTANT: No borders or frames, portrait blends into white background, trading card aesthetic.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
@@ -167,18 +146,14 @@ serve(async (req) => {
       console.log('Content was blocked by safety filters, trying with more generic prompt...')
       
       // Fallback with very generic prompt
-      const fallbackPrompt = `Create a cartoon-style portrait of a fictional soccer player in retro 70s style.
+      const fallbackPrompt = `Create a cartoon soccer player trading card portrait.
       
-      Square format, clean cartoon illustration, player looking at camera with friendly smile.
-      TIGHT CROP: Head and shoulders only, cut off cleanly at mid-chest level.
-      Face prominently featured, filling most of the square frame.
-      NO WHITE SPACE below the player - crop should end exactly where the jersey/shoulders end.
-      Vintage soccer jersey with random team colors, simple retro design.
-      Pure white background, no text or names visible.
-      ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS
-      DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
-      The portrait should blend seamlessly into the white background with no visible boundary.
-      Make it colorful and fun cartoon style with tight cropping and clean shoulder cutoff.`
+      Style: Clean retro cartoon illustration, friendly expression
+      Format: Square card, head and shoulders crop
+      Background: Pure white (#FFFFFF) - trading card style
+      Jersey: Vintage soccer uniform with team colors
+      
+      IMPORTANT: No borders or frames, classic soccer card aesthetic.`
       
       const fallbackBody = {
         contents: [{
