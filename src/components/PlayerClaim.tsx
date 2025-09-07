@@ -170,7 +170,8 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
       });
       
       setDeletePlayerDialogOpen(false);
-      onPlayerClaimed();
+      // Refresh the data which should set currentUserPlayer to null
+      await onPlayerClaimed();
     } catch (error) {
       console.error('Error deleting player:', error);
       toast({
