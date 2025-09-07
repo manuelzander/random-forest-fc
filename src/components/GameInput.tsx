@@ -44,8 +44,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   
   
 
-  const availablePlayersForTeam1 = players.filter(p => !team2Players.includes(p.id));
-  const availablePlayersForTeam2 = players.filter(p => !team1Players.includes(p.id));
+  const availablePlayersForTeam1 = players.filter(p => !team2Players.includes(p.id) && !team1Players.includes(p.id));
+  const availablePlayersForTeam2 = players.filter(p => !team1Players.includes(p.id) && !team2Players.includes(p.id));
   const allGamePlayers = [...team1Players, ...team2Players];
 
   const addPlayerToTeam = (teamNumber: 1 | 2, playerId: string) => {
