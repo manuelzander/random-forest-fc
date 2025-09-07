@@ -112,6 +112,7 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
         min: 0,
         ticks: {
           stepSize: 25,
+          display: false, // Hide the scale numbers
           font: {
             size: 11,
             weight: 'bold' as const,
