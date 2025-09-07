@@ -81,7 +81,7 @@ const News = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <Card className="w-full">
           <CardHeader className="card-header-gradient-news">
-            <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
               <Newspaper className="h-5 w-5 sm:h-6 sm:w-6" />
               Latest News
             </CardTitle>

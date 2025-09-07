@@ -321,7 +321,7 @@ const Index = () => {
             <TabsContent value="news">
               <Card>
                 <CardHeader className="card-header-gradient-news">
-                  <CardTitle className="flex items-center gap-2 text-2xl">
+                  <CardTitle className="flex items-center gap-2 text-xl">
                     <Newspaper className="h-6 w-6" />
                     Latest News
                   </CardTitle>
