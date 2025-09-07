@@ -16,12 +16,13 @@ export const useDefaultAvatar = ({ playerId, playerName, currentAvatarUrl }: Use
     setAvatarUrl(currentAvatarUrl || null);
   }, [currentAvatarUrl]);
 
-  useEffect(() => {
-    // If no current avatar, try to generate a default one
-    if (!currentAvatarUrl && !isGenerating && playerId && playerName) {
-      generateDefaultAvatar();
-    }
-  }, [playerId, playerName, currentAvatarUrl]);
+  // Removed automatic avatar generation
+  // useEffect(() => {
+  //   // If no current avatar, try to generate a default one
+  //   if (!currentAvatarUrl && !isGenerating && playerId && playerName) {
+  //     generateDefaultAvatar();
+  //   }
+  // }, [playerId, playerName, currentAvatarUrl]);
 
   const generateDefaultAvatar = async () => {
     try {
