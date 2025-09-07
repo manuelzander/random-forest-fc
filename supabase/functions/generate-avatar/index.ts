@@ -104,44 +104,28 @@ serve(async (req) => {
         }
       ]
     } else {
-      // Random generation - avoid using real names that might trigger content filters
-      const genericPlayerName = `Player ${Math.floor(Math.random() * 999) + 1}`
-      
-      prompt = `Create a retro European football (soccer) comic-style portrait for a fictional soccer player.
+      // Random generation - use the actual player name
+      prompt = `Create a retro soccer player portrait for ${playerName}.
     
     IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display.
     
-    POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a friendly expression.
+    POSE: Player facing away from camera (back view) but looking over their shoulder at the camera with a friendly expression.
     
-    RETRO JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey clearly with:
-    - Generic player name "${genericPlayerName}" printed on the back in capital letters
+    JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey with:
+    - "${playerName}" printed on the back in capital letters
     - Random jersey number (1-99) below the name  
-    - ${clubInfo} with retro styling (thick collar, classic cut, vintage color schemes)
-    - Make the text clearly readable and professional looking with retro font style
+    - ${clubInfo} with retro styling
     
-    UNIQUE FEATURES - Make this character look COMPLETELY DIFFERENT from any previous generation (Seed: ${randomSeed}):
-    - Ethnicity: ${randomEthnicity} - make this very distinct
-    - Age appearance: ${randomAge} - reflect this clearly in facial features
-    - Hair: ${randomHair} - make this the dominant hair characteristic
-    - Facial hair: ${randomFacialHair} - make this prominent and defining
-    - Face shape: randomly choose between round, oval, square, rectangular, diamond-shaped, heart-shaped, or triangular
-    - Eyes: vary dramatically (small/large, close/wide-set, different colors, different shapes)
-    - Nose: vary significantly (button, roman, aquiline, flat, wide, narrow, straight)
-    - Mouth: vary greatly (thin/thick lips, wide/narrow mouth, different smile styles)
-    - Facial expressions: choose friendly expressions (warm smile, confident look, determined gaze)
-    - Skin tone: natural variety matching the chosen ethnicity
-    - Jersey: ${clubInfo} with vintage retro 70s/80s soccer styling
-    - Body build: vary between slim, athletic, stocky, tall, short proportions
+    UNIQUE FEATURES (Seed: ${randomSeed}):
+    - Ethnicity: ${randomEthnicity}
+    - Age: ${randomAge}
+    - Hair: ${randomHair}
+    - Facial hair: ${randomFacialHair}
+    - ${clubInfo} with vintage styling
     
-    CRITICAL: This must be a COMPLETELY NEW and UNIQUE FICTIONAL character. Create an original person.
-    
-    Style: Clean retro comic book illustration with bold outlines and vibrant colors, professional 70s/80s soccer card aesthetic.
-    Background: PURE WHITE background (#FFFFFF) with NO borders, frames, or other decorative elements - only solid white.
-    Format: SQUARE ASPECT RATIO (1:1) for perfect circular avatar display.
-    
-    Generate a totally unique FICTIONAL individual that has never been created before! Use the seed ${randomSeed} to ensure complete uniqueness.
-    
-    Generate a UNIQUE fictional individual looking back over shoulder with jersey back visible!`
+    Style: Clean retro comic illustration with bold outlines.
+    Background: Pure white (#FFFFFF).
+    Format: Square (1:1) for circular avatar display.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
