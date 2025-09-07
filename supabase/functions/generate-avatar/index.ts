@@ -88,7 +88,8 @@ serve(async (req) => {
       - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
       - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
       - NO NAME or NUMBER visible anywhere on the jersey or image
-      - Background MUST be pure white (#FFFFFF) with NO borders, frames, lines, or decorative elements
+       - Background MUST be pure white (#FFFFFF) with NO borders, frames, lines, decorative elements, or outer edges
+       - CRITICAL: No borders, outlines, or frames around the portrait itself
       - IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display
       - Maintain the person's unique characteristics while making it soccer/football-themed
       - Professional retro soccer card aesthetic with clean lines
@@ -123,8 +124,9 @@ serve(async (req) => {
     - Facial hair: ${randomFacialHair}
     - ${clubInfo} with vintage styling
     
-    Style: Clean retro comic illustration with bold outlines.
-    Background: Pure white (#FFFFFF) with NO borders, frames, lines, or decorative elements.
+     Style: Clean retro comic illustration with bold outlines.
+     Background: Pure white (#FFFFFF) with NO borders, frames, lines, decorative elements, or outer edges.
+     CRITICAL: No borders, outlines, or frames around the portrait itself.
     Format: Square (1:1) for circular avatar display.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
@@ -157,7 +159,7 @@ serve(async (req) => {
       
       Square format (1:1), clean cartoon illustration, player looking at camera with friendly smile.
       Vintage soccer jersey with random team colors, simple retro design.
-      Pure white background, no text or names visible.
+      Pure white background, no text or names visible, no borders or frames around the portrait.
       Make it colorful and fun cartoon style suitable for a sports avatar.`
       
       const fallbackBody = {
