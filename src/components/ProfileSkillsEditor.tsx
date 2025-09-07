@@ -296,6 +296,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
       });
 
       onProfileUpdate?.();
+      onSave?.(); // Notify parent that save completed
     } catch (error) {
       console.error('Error saving profile:', error);
       toast({
