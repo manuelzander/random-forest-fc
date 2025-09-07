@@ -320,13 +320,13 @@ const Index = () => {
             </TabsContent>
             <TabsContent value="news">
               <Card>
-                <CardHeader className="card-header-gradient-news">
+                <CardHeader className="card-header-gradient-news py-3">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <Newspaper className="h-6 w-6" />
                     Latest News
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-6">
+                <CardContent className="pt-4">
                   {newsLoading ? (
                     <div className="text-center py-8">
                       <div>Loading news...</div>
