@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { UserCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
@@ -19,6 +20,7 @@ interface PlayerClaimProps {
 export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: PlayerClaimProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [unclaimDialogOpen, setUnclaimDialogOpen] = useState(false);
 
   // Use default avatar for current user's player
   const { avatarUrl } = useDefaultAvatar({
@@ -54,6 +56,10 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
     }
   };
 
+  const openUnclaimDialog = () => {
+    setUnclaimDialogOpen(true);
+  };
+
   const handleUnclaimPlayer = async () => {
     if (!currentUserPlayer) return;
 
@@ -80,6 +86,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
         description: "You are no longer connected to this player.",
       });
       
+      setUnclaimDialogOpen(false);
       onPlayerClaimed();
     } catch (error) {
       console.error('Error unclaiming player:', error);
@@ -120,7 +127,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                onClick={handleUnclaimPlayer}
+                onClick={openUnclaimDialog}
               >
                 <span className="hidden sm:inline">Unclaim Player</span>
                 <span className="sm:hidden">Unclaim</span>
@@ -161,6 +168,24 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
           </CardContent>
         </Card>
       )}
+
+      {/* Unclaim Confirmation Dialog */}
+      <AlertDialog open={unclaimDialogOpen} onOpenChange={setUnclaimDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unclaim Player</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to unclaim "{currentUserPlayer?.name}"? This will remove your connection to this player and delete your custom avatar. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-red-600 hover:bg-red-700">
+              Unclaim Player
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

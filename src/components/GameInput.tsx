@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Plus, Trash2, Users, Target, Award, Video } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { isValidYouTubeUrl } from '@/utils/youtube';
@@ -37,6 +38,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   const [team2Captain, setTeam2Captain] = useState(initialData?.team2Captain || '');
   const [mvpPlayer, setMvpPlayer] = useState(initialData?.mvpPlayer || '');
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl || '');
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [playerToRemove, setPlayerToRemove] = useState<{playerId: string, playerName: string, teamNumber: 1 | 2} | null>(null);
   
   
 
@@ -52,7 +55,17 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
     }
   };
 
-  const removePlayerFromTeam = (teamNumber: 1 | 2, playerId: string) => {
+  const openRemoveDialog = (teamNumber: 1 | 2, playerId: string) => {
+    const playerName = players.find(p => p.id === playerId)?.name || 'Unknown Player';
+    setPlayerToRemove({ playerId, playerName, teamNumber });
+    setRemoveDialogOpen(true);
+  };
+
+  const removePlayerFromTeam = () => {
+    if (!playerToRemove) return;
+
+    const { teamNumber, playerId } = playerToRemove;
+    
     if (teamNumber === 1) {
       setTeam1Players(team1Players.filter(id => id !== playerId));
       // Reset captain if removed player was captain
@@ -66,6 +79,9 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
         setTeam2Captain('');
       }
     }
+    
+    setRemoveDialogOpen(false);
+    setPlayerToRemove(null);
   };
 
 
@@ -192,7 +208,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
                       variant="ghost"
                       size="sm"
                       className="h-4 w-4 p-0 hover:bg-transparent"
-                      onClick={() => removePlayerFromTeam(1, playerId)}
+                      onClick={() => openRemoveDialog(1, playerId)}
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -228,7 +244,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
                       variant="ghost"
                       size="sm"
                       className="h-4 w-4 p-0 hover:bg-transparent"
-                      onClick={() => removePlayerFromTeam(2, playerId)}
+                      onClick={() => openRemoveDialog(2, playerId)}
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -345,6 +361,24 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
         </form>
       </CardContent>
     </Card>
+
+    {/* Remove Player Confirmation Dialog */}
+    <AlertDialog open={removeDialogOpen} onOpenChange={setRemoveDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Remove Player</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to remove "{playerToRemove?.playerName}" from Team {playerToRemove?.teamNumber}? If they were the captain, a new captain will need to be selected.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={removePlayerFromTeam} className="bg-orange-600 hover:bg-orange-700">
+            Remove Player
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 

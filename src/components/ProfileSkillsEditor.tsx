@@ -134,6 +134,8 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
   const [fileInputKey, setFileInputKey] = useState(0); // Force re-render of file input
+  const [removeSkillDialogOpen, setRemoveSkillDialogOpen] = useState(false);
+  const [skillToRemove, setSkillToRemove] = useState<string>('');
 
   // Simple function to check if avatar can be transformed (user uploaded vs AI generated)
   const canTransformAvatar = () => {
@@ -315,11 +317,18 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
     }
   };
 
-  const removeSkill = (skillToRemove: string) => {
+  const openRemoveSkillDialog = (skill: string) => {
+    setSkillToRemove(skill);
+    setRemoveSkillDialogOpen(true);
+  };
+
+  const removeSkill = () => {
     setProfile(prev => ({
       ...prev,
       football_skills: prev.football_skills?.filter(skill => skill !== skillToRemove) || []
     }));
+    setRemoveSkillDialogOpen(false);
+    setSkillToRemove('');
   };
 
   const generateRandomAvatar = async () => {
@@ -725,7 +734,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
               <Badge key={index} variant="secondary" className="flex items-center gap-1">
                 {skill}
                 <button
-                  onClick={() => removeSkill(skill)}
+                  onClick={() => openRemoveSkillDialog(skill)}
                   className="ml-1 hover:text-red-500"
                 >
                   <X className="h-3 w-3" />
@@ -763,6 +772,24 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
           </div>
         </CardContent>
       </Card>
+
+      {/* Remove Skill Confirmation Dialog */}
+      <AlertDialog open={removeSkillDialogOpen} onOpenChange={setRemoveSkillDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Skill</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove "{skillToRemove}" from your skills list?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={removeSkill} className="bg-orange-600 hover:bg-orange-700">
+              Remove Skill
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 });

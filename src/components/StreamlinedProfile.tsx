@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { UserCheck, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
@@ -22,6 +23,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
   const [currentUserPlayer, setCurrentUserPlayer] = useState<Player | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [unclaimDialogOpen, setUnclaimDialogOpen] = useState(false);
   const profileEditorRef = useRef<{ handleSave: () => void }>(null);
 
   // Use default avatar for current user's player
@@ -157,15 +159,12 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
     }
   };
 
+  const openUnclaimDialog = () => {
+    setUnclaimDialogOpen(true);
+  };
+
   const handleUnclaimPlayer = async () => {
     if (!currentUserPlayer) return;
-
-    // Show security warning
-    const confirmed = window.confirm(
-      `⚠️ Warning\n\nAre you sure you want to unclaim "${currentUserPlayer.name}"?\n\nThis will remove your connection to this player and delete your custom avatar. This action cannot be undone!`
-    );
-
-    if (!confirmed) return;
 
     try {
       console.log('Attempting to unclaim player:', currentUserPlayer.id, 'for user:', user?.id);
@@ -194,6 +193,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
         description: "You are no longer connected to this player.",
       });
       
+      setUnclaimDialogOpen(false);
       fetchPlayers();
     } catch (error) {
       console.error('Error unclaiming player:', error);
@@ -249,7 +249,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleUnclaimPlayer}
+                  onClick={openUnclaimDialog}
                   className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
                 >
                   <span className="hidden sm:inline">Unclaim Player</span>
@@ -320,6 +320,23 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           <AccountDetailsEditor userEmail={user.email || ''} />
         </CardContent>
       </Card>
+      {/* Unclaim Confirmation Dialog */}
+      <AlertDialog open={unclaimDialogOpen} onOpenChange={setUnclaimDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>⚠️ Unclaim Player</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to unclaim "{currentUserPlayer?.name}"? This will remove your connection to this player and delete your custom avatar. This action cannot be undone!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-red-600 hover:bg-red-700">
+              Unclaim Player
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
