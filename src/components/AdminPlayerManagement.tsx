@@ -440,7 +440,7 @@ const AdminPlayerManagement = () => {
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isSavingPlayer}>
-                    {isSavingPlayer ? 'Saving...' : editingPlayer ? 'Update' : 'Add'} Player
+                    {isSavingPlayer ? 'Saving...' : `${editingPlayer ? 'Update' : 'Add'} Player`}
                   </Button>
                 </div>
               </form>
