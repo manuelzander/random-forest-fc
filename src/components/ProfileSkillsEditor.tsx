@@ -725,10 +725,10 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
         </CardContent>
       </Card>
 
-      {/* Player Quirks */}
+      {/* Signature Moves */}
       <Card>
         <CardHeader>
-          <CardTitle>Player Quirks</CardTitle>
+          <CardTitle>Signature Moves</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
@@ -746,10 +746,10 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
           </div>
           
           <div className="space-y-2">
-            <Label>Add Quirks</Label>
+            <Label>Add Signature Moves</Label>
             <div className="flex gap-2">
               <Input
-                placeholder="Custom quirk..."
+                placeholder="Custom signature move..."
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addSkill(newSkill)}

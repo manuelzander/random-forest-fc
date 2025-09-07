@@ -540,12 +540,12 @@ const PlayerProfile = () => {
               </CardContent>
             </Card>
 
-            {/* Player Quirks */}
+            {/* Signature Moves */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5" />
-                  Player Quirks
+                  Signature Moves
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -560,7 +560,7 @@ const PlayerProfile = () => {
                 ) : (
                   <div className="text-center py-2">
                     <Zap className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground text-sm">No quirks listed yet</p>
+                    <p className="text-muted-foreground text-sm">No signature moves listed yet</p>
                   </div>
                 )}
               </CardContent>
