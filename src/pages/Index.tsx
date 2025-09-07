@@ -95,20 +95,73 @@ const Index = () => {
         throw error;
       }
       
-      // Convert database format to component format with avatar support
-      const formattedPlayers: Player[] = (data || []).map(player => ({
-        id: player.id,
-        name: player.name,
-        points: 0, // Set default values since players table doesn't have these stats
-        games_played: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        mvp_awards: 0,
-        goal_difference: 0,
-        user_id: player.user_id,
-        avatar_url: player.avatar_url,
-      }));
+      // Get all games data to calculate statistics
+      const { data: gamesData, error: gamesError } = await supabase
+        .from('games')
+        .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, created_at')
+        .order('created_at', { ascending: false });
+
+      if (gamesError) {
+        console.error('Games fetch error:', gamesError);
+        throw gamesError;
+      }
+      
+      // Convert database format to component format with calculated stats
+      const formattedPlayers: Player[] = (data || []).map(player => {
+        // Calculate stats from games
+        let points = 0;
+        let wins = 0;
+        let draws = 0;
+        let losses = 0;
+        let mvp_awards = 0;
+        let goal_difference = 0;
+        
+        if (gamesData) {
+          gamesData.forEach(game => {
+            const isTeam1 = game.team1_players.includes(player.id);
+            const isTeam2 = game.team2_players.includes(player.id);
+            
+            if (isTeam1 || isTeam2) {
+              const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
+              const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
+              
+              goal_difference += playerGoals - opponentGoals;
+              
+              if (playerGoals > opponentGoals) {
+                wins++;
+                points += 3;
+              } else if (playerGoals === opponentGoals) {
+                draws++;
+                points += 1;
+              } else {
+                losses++;
+              }
+              
+              if (game.mvp_player === player.id) {
+                mvp_awards++;
+                points += 1;
+              }
+            }
+          });
+        }
+        
+        return {
+          id: player.id,
+          name: player.name,
+          points,
+          games_played: wins + draws + losses,
+          wins,
+          draws,
+          losses,
+          mvp_awards,
+          goal_difference,
+          user_id: player.user_id,
+          avatar_url: player.avatar_url,
+        };
+      });
+      
+      // Sort by points descending
+      formattedPlayers.sort((a, b) => b.points - a.points);
       
       setPlayers(formattedPlayers);
 

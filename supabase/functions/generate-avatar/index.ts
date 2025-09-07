@@ -106,11 +106,11 @@ serve(async (req) => {
       ]
     } else {
       // Random generation (existing logic)
-      prompt = `Create a hilarious retro European football (soccer) comic-style portrait for a player named "${playerName}".
+      prompt = `Create a retro European football (soccer) comic-style portrait for a player named "${playerName}".
     
     IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display.
     
-    POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a HILARIOUS and funny expression.
+    POSE: Player facing away from camera (back view) but looking over their shoulder directly at the camera with a friendly expression.
     
     RETRO JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey clearly with:
     - Player name "${playerName}" printed on the back in capital letters
@@ -124,17 +124,17 @@ serve(async (req) => {
     - Hair: ${randomHair} - make this the dominant hair characteristic
     - Facial hair: ${randomFacialHair} - make this prominent and defining
     - Face shape: randomly choose between round, oval, square, rectangular, diamond-shaped, heart-shaped, or triangular
-    - Eyes: vary dramatically (small/large, close/wide-set, different colors, different shapes, squinting, wide-open, etc.)
-    - Nose: vary significantly (button, roman, aquiline, flat, wide, narrow, crooked, straight)
-    - Mouth: vary greatly (thin/thick lips, wide/narrow mouth, different smile styles, teeth gaps, etc.)
-    - Facial expressions: randomly choose hilarious expressions (goofy grin, shocked face, winking, tongue out, surprised, etc.)
+    - Eyes: vary dramatically (small/large, close/wide-set, different colors, different shapes)
+    - Nose: vary significantly (button, roman, aquiline, flat, wide, narrow, straight)
+    - Mouth: vary greatly (thin/thick lips, wide/narrow mouth, different smile styles)
+    - Facial expressions: choose friendly expressions (warm smile, confident look, determined gaze)
     - Skin tone: natural variety matching the chosen ethnicity
     - Jersey: ${clubInfo} with vintage retro 70s/80s soccer styling
     - Body build: vary between slim, athletic, stocky, tall, short proportions
     
     CRITICAL: This must be a COMPLETELY NEW and UNIQUE character. Do not repeat any previous designs or characteristics.
     
-    Style: Funny cartoon/comic book illustration with exaggerated features for maximum humor and retro 70s/80s soccer vibe.
+    Style: Clean retro comic book illustration with bold outlines and vibrant colors, professional 70s/80s soccer card aesthetic.
     Background: PURE WHITE background (#FFFFFF) - absolutely no other colors or patterns.
     Format: SQUARE ASPECT RATIO (1:1) for perfect circular avatar display.
     
