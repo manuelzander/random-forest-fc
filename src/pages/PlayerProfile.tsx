@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle, Heart } from 'lucide-react';
+import { SkillRadarChart } from '@/components/SkillRadarChart';
+import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle, Heart, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -32,6 +33,14 @@ interface ProfileData {
   favorite_position?: string;
   years_playing?: number;
   favorite_club?: string;
+  skill_ratings?: {
+    PAC?: number;
+    SHO?: number;
+    PAS?: number;
+    DRI?: number;
+    DEF?: number;
+    PHY?: number;
+  };
 }
 
 const PlayerProfile = () => {
@@ -136,7 +145,7 @@ const PlayerProfile = () => {
       if (basicPlayer.user_id) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('bio, football_skills, favorite_position, years_playing, favorite_club')
+          .select('bio, football_skills, favorite_position, years_playing, favorite_club, skill_ratings')
           .eq('user_id', basicPlayer.user_id)
           .maybeSingle();
 
@@ -145,7 +154,10 @@ const PlayerProfile = () => {
         } else {
           setProfile({
             ...profileData,
-            football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : []
+            football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
+            skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
+              ? profileData.skill_ratings as ProfileData['skill_ratings'] 
+              : {}
           });
         }
       }
@@ -494,29 +506,57 @@ const PlayerProfile = () => {
              </CardContent>
           </Card>
 
-          {/* Skills */}
+          {/* Player Skills Radar Chart */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="h-5 w-5" />
-                Football Skills
+                Player Skills
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {profile?.football_skills && profile.football_skills.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {profile.football_skills.map((skill, index) => (
-                    <Badge key={index} variant="secondary">
-                      {skill}
-                    </Badge>
-                  ))}
+              {profile?.skill_ratings && Object.keys(profile.skill_ratings).length > 0 ? (
+                <div className="flex justify-center">
+                  <SkillRadarChart 
+                    skillRatings={profile.skill_ratings} 
+                    className="w-full max-w-xs"
+                  />
                 </div>
-               ) : (
-                 <p className="text-muted-foreground text-sm">No skills listed yet</p>
-               )}
+              ) : (
+                <div className="text-center py-8">
+                  <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground text-sm">No skill ratings available</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
+
+        {/* Player Quirks Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5" />
+              Player Quirks
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {profile?.football_skills && profile.football_skills.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {profile.football_skills.map((skill, index) => (
+                  <Badge key={index} variant="secondary" className="text-sm">
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <Zap className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-muted-foreground text-sm">No quirks listed yet</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
