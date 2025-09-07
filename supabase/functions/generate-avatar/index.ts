@@ -85,7 +85,8 @@ serve(async (req) => {
       Create a front-facing CIRCULAR cartoon portrait with:
       - Transform into retro comic style with clean illustration
       - Person looking directly at camera with friendly expression
-      - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
+      - CLOSE-UP head and upper shoulders portrait focusing heavily on the face (face should fill 70% of the circular frame)
+      - Zoom in significantly on the facial features for maximum detail and impact
       - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
       - NO NAME or NUMBER visible anywhere on the jersey or image
       - Background MUST be pure white (#FFFFFF) 
@@ -96,7 +97,7 @@ serve(async (req) => {
       - IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle
       - Maintain the person's unique characteristics while making it soccer/football-themed
       - Professional retro soccer card aesthetic with clean lines
-      - Focus on the face and expression with vintage soccer aesthetic`
+      - Focus primarily on facial features and expression with prominent face size`
       
       requestBody.contents[0].parts = [
         { text: prompt },
@@ -114,6 +115,7 @@ serve(async (req) => {
     IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle.
     
     POSE: Player facing away from camera (back view) but looking over their shoulder at the camera with a friendly expression.
+    COMPOSITION: CLOSE-UP view focusing on head and upper shoulders (face should be prominently visible and large, filling 60% of the frame)
     
     JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey with:
     - "${playerName}" printed on the back in capital letters
@@ -133,7 +135,7 @@ serve(async (req) => {
     DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
     NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
     CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-    Format: Perfect circle with portrait filling the entire circular area.`
+    Format: Perfect circle with portrait filling the entire circular area, zoomed in for maximum facial detail.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
@@ -164,12 +166,14 @@ serve(async (req) => {
       const fallbackPrompt = `Create a cartoon-style portrait of a fictional soccer player in retro 70s style.
       
       Circular format, clean cartoon illustration, player looking at camera with friendly smile.
+      CLOSE-UP composition with face prominently featured, filling most of the circular frame.
+      Focus on facial features and expression for maximum visual impact.
       Vintage soccer jersey with random team colors, simple retro design.
       Pure white background, no text or names visible.
       ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS
       DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
       The portrait should blend seamlessly into the white background with no visible boundary.
-      Make it colorful and fun cartoon style suitable for a sports avatar with portrait filling the entire circle.`
+      Make it colorful and fun cartoon style suitable for a sports avatar with large, prominent facial features.`
       
       const fallbackBody = {
         contents: [{
