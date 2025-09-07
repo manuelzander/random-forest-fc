@@ -456,7 +456,7 @@ const PlayerProfile = () => {
                 <div className="text-center p-6 bg-muted/50 rounded-lg">
                   <div className="flex gap-2 justify-center mb-3">
                     {player.recentResults && player.recentResults.length > 0 ? (
-                      player.recentResults.slice(0, 5).map((result, index) => (
+                      player.recentResults.slice(0, 5).reverse().map((result, index) => (
                         <div 
                           key={index}
                           className={`w-8 h-8 rounded ${
