@@ -82,17 +82,19 @@ serve(async (req) => {
       // Image-to-image generation - face forward portrait
       prompt = `Transform this image into a retro soccer player trading card portrait.
       
+      Format: 1:1 ratio, round circular format with no borders
       Style: Clean cartoon illustration, retro 70s/80s soccer card aesthetic
-      Format: Square card with person looking directly at camera
+      Composition: Person looking directly at camera
       Crop: Head and shoulders only, clean cutoff at mid-chest
       Jersey: ${clubInfo} with vintage styling (no names/numbers visible)
       Background: Pure white (#FFFFFF) - clean card background
       Face: Large and prominent, friendly expression
       
       IMPORTANT: 
-      - No borders, frames, or outlines of any kind
+      - Perfect circle format, 1:1 aspect ratio
+      - Absolutely no borders, frames, or outlines of any kind
       - Portrait blends seamlessly into white background
-      - Classic soccer trading card look`
+      - Classic soccer trading card look in round format`
       
       requestBody.contents[0].parts = [
         { text: prompt },
@@ -107,8 +109,9 @@ serve(async (req) => {
       // Random generation - use the actual player name
       prompt = `Create a retro soccer trading card portrait for ${playerName}.
     
+    Format: 1:1 ratio, round circular format with no borders
     Style: Clean cartoon illustration, vintage 70s/80s soccer card
-    Format: Square card with player looking over shoulder at camera
+    Composition: Player looking over shoulder at camera
     Crop: Head and shoulders, clean cutoff at mid-chest
     Jersey: Back view showing "${playerName}" and random number (1-99)
     Jersey Style: ${clubInfo} with retro design
@@ -118,7 +121,7 @@ serve(async (req) => {
     - Ethnicity: ${randomEthnicity}, Age: ${randomAge}
     - Hair: ${randomHair}, Facial hair: ${randomFacialHair}
     
-    IMPORTANT: No borders or frames, portrait blends into white background, trading card aesthetic.`
+    IMPORTANT: Perfect circle format with 1:1 aspect ratio, absolutely no borders or frames, portrait blends into white background.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
@@ -148,12 +151,13 @@ serve(async (req) => {
       // Fallback with very generic prompt
       const fallbackPrompt = `Create a cartoon soccer player trading card portrait.
       
+      Format: 1:1 ratio, round circular format with no borders
       Style: Clean retro cartoon illustration, friendly expression
-      Format: Square card, head and shoulders crop
+      Composition: Head and shoulders crop
       Background: Pure white (#FFFFFF) - trading card style
       Jersey: Vintage soccer uniform with team colors
       
-      IMPORTANT: No borders or frames, classic soccer card aesthetic.`
+      IMPORTANT: Perfect circle format with 1:1 aspect ratio, absolutely no borders or frames.`
       
       const fallbackBody = {
         contents: [{
