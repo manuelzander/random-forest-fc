@@ -116,6 +116,7 @@ serve(async (req) => {
     Jersey: Back view showing "${playerName}" and random number (1-99)
     Jersey Style: ${clubInfo} with retro design
     Background: Pure white (#FFFFFF) - classic card background
+    Face: Large and prominent, friendly expression
     
     Player Features (Seed: ${randomSeed}):
     - Ethnicity: ${randomEthnicity}, Age: ${randomAge}
