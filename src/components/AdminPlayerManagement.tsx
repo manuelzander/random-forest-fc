@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -42,6 +43,10 @@ const AdminPlayerManagement = () => {
   const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [generatingAvatarFor, setGeneratingAvatarFor] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [playerToDelete, setPlayerToDelete] = useState<Player | null>(null);
+  const [playerToDisconnect, setPlayerToDisconnect] = useState<Player | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -208,14 +213,19 @@ const AdminPlayerManagement = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this player?')) return;
+  const openDeleteDialog = (player: Player) => {
+    setPlayerToDelete(player);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!playerToDelete) return;
 
     try {
       const { error } = await supabase
         .from('players')
         .delete()
-        .eq('id', id);
+        .eq('id', playerToDelete.id);
 
       if (error) throw error;
       
@@ -224,6 +234,8 @@ const AdminPlayerManagement = () => {
         description: "Player deleted successfully",
       });
       fetchPlayers();
+      setDeleteDialogOpen(false);
+      setPlayerToDelete(null);
     } catch (error) {
       console.error('Error deleting player:', error);
       toast({
@@ -273,12 +285,19 @@ const AdminPlayerManagement = () => {
     }
   };
 
-  const handleUnclaimPlayer = async (playerId: string) => {
+  const openDisconnectDialog = (player: Player) => {
+    setPlayerToDisconnect(player);
+    setDisconnectDialogOpen(true);
+  };
+
+  const handleUnclaimPlayer = async () => {
+    if (!playerToDisconnect) return;
+
     try {
       const { error } = await supabase
         .from('players')
         .update({ user_id: null, avatar_url: null })
-        .eq('id', playerId);
+        .eq('id', playerToDisconnect.id);
 
       if (error) throw error;
 
@@ -288,6 +307,8 @@ const AdminPlayerManagement = () => {
       });
 
       fetchPlayers();
+      setDisconnectDialogOpen(false);
+      setPlayerToDisconnect(null);
     } catch (error) {
       console.error('Error disconnecting player:', error);
       toast({
@@ -469,7 +490,7 @@ const AdminPlayerManagement = () => {
                     <Button 
                       size="sm" 
                       variant="outline" 
-                      onClick={() => handleUnclaimPlayer(player.id)}
+                      onClick={() => openDisconnectDialog(player)}
                       className="text-red-600 hover:text-red-700"
                     >
                       <UserX className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -479,7 +500,7 @@ const AdminPlayerManagement = () => {
                       <UserCheck className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   )}
-                  <Button size="sm" variant="outline" onClick={() => handleDelete(player.id)}>
+                  <Button size="sm" variant="outline" onClick={() => openDeleteDialog(player)}>
                     <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
@@ -527,6 +548,42 @@ const AdminPlayerManagement = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Player</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete "{playerToDelete?.name}"? This action cannot be undone and will also affect all game statistics.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+                Delete Player
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Disconnect Confirmation Dialog */}
+        <AlertDialog open={disconnectDialogOpen} onOpenChange={setDisconnectDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Disconnect Player</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to disconnect "{playerToDisconnect?.name}" from their user account? This will remove their custom avatar and profile connection.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-orange-600 hover:bg-orange-700">
+                Disconnect Player
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );

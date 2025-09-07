@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Edit2, Trash2, History, Plus, Crown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +34,8 @@ const AdminGameManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -74,14 +77,19 @@ const AdminGameManagement = () => {
     return player?.name || 'Unknown Player';
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this game? This will also update player statistics.')) return;
+  const openDeleteDialog = (game: Game) => {
+    setGameToDelete(game);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!gameToDelete) return;
 
     try {
       const { error } = await supabase
         .from('games')
         .delete()
-        .eq('id', id);
+        .eq('id', gameToDelete.id);
 
       if (error) throw error;
       
@@ -90,6 +98,8 @@ const AdminGameManagement = () => {
         description: "Game deleted successfully",
       });
       fetchData();
+      setDeleteDialogOpen(false);
+      setGameToDelete(null);
     } catch (error) {
       console.error('Error deleting game:', error);
       toast({
@@ -289,7 +299,7 @@ const AdminGameManagement = () => {
                   <Button size="sm" variant="outline" onClick={() => openDialog(game)}>
                     <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleDelete(game.id)}>
+                  <Button size="sm" variant="outline" onClick={() => openDeleteDialog(game)}>
                     <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
@@ -304,6 +314,24 @@ const AdminGameManagement = () => {
             </Alert>
           )}
         </div>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Game</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this game? This action cannot be undone and will also update player statistics.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+                Delete Game
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Newspaper, Plus, Edit, Trash2, Eye, EyeOff, Calendar } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -29,6 +30,8 @@ const AdminNewsManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState<NewsItem | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -128,14 +131,19 @@ const AdminNewsManagement = () => {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this news article?')) return;
+  const openDeleteDialog = (article: NewsItem) => {
+    setArticleToDelete(article);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!articleToDelete) return;
 
     try {
       const { error } = await (supabase as any)
         .from('news')
         .delete()
-        .eq('id', id);
+        .eq('id', articleToDelete.id);
 
       if (error) throw error;
 
@@ -144,6 +152,8 @@ const AdminNewsManagement = () => {
         description: "News article deleted successfully",
       });
       fetchNews();
+      setDeleteDialogOpen(false);
+      setArticleToDelete(null);
     } catch (error) {
       console.error('Error deleting news:', error);
       toast({
@@ -320,7 +330,7 @@ const AdminNewsManagement = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => openDeleteDialog(item)}
                     >
                       <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
@@ -330,6 +340,24 @@ const AdminNewsManagement = () => {
             ))}
           </div>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete News Article</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete "{articleToDelete?.title}"? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+                Delete Article
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );
