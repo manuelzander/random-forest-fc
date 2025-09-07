@@ -85,8 +85,9 @@ serve(async (req) => {
       Create a front-facing SQUARE cartoon portrait with:
       - Transform into retro comic style with clean illustration
       - Person looking directly at camera with friendly expression
-      - CLOSE-UP head and upper shoulders portrait focusing heavily on the face (face should fill 70% of the square frame)
-      - Zoom in significantly on the facial features for maximum detail and impact
+      - TIGHT CROP: Head and shoulders only, cut off cleanly at mid-chest level (no lower body visible)
+      - Face should fill 70% of the square frame with shoulders cropped tightly at bottom edge
+      - NO WHITE SPACE below the player - crop should end exactly where the jersey/shoulders end
       - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
       - NO NAME or NUMBER visible anywhere on the jersey or image
       - Background MUST be pure white (#FFFFFF) 
@@ -94,10 +95,10 @@ serve(async (req) => {
       - DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
       - NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
       - CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-      - IMPORTANT: Generate as perfect SQUARE format with the portrait filling the entire square
+      - IMPORTANT: Generate as perfect SQUARE format with tight cropping - no empty space at bottom
       - Maintain the person's unique characteristics while making it soccer/football-themed
       - Professional retro soccer card aesthetic with clean lines
-      - Focus primarily on facial features and expression with prominent face size`
+      - Focus primarily on facial features and expression with clean shoulder cutoff`
       
       requestBody.contents[0].parts = [
         { text: prompt },
@@ -112,10 +113,13 @@ serve(async (req) => {
       // Random generation - use the actual player name
       prompt = `Create a retro soccer player portrait for ${playerName}.
     
-    IMPORTANT: Generate as perfect SQUARE format with the portrait filling the entire square.
+    IMPORTANT: Generate as perfect SQUARE format with tight cropping.
     
     POSE: Player facing away from camera (back view) but looking over their shoulder at the camera with a friendly expression.
-    COMPOSITION: CLOSE-UP view focusing on head and upper shoulders (face should be prominently visible and large, filling 60% of the frame)
+    COMPOSITION: TIGHT CROP showing head and shoulders only, cut off cleanly at mid-chest level
+    - Face should be prominently visible and large, filling 60% of the frame
+    - NO WHITE SPACE below the player - crop should end exactly where the jersey/shoulders end
+    - Clean cutoff at shoulder/chest level with no lower body visible
     
     JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey with:
     - "${playerName}" printed on the back in capital letters
@@ -135,7 +139,7 @@ serve(async (req) => {
     DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
     NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
     CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-    Format: Perfect square with portrait filling the entire square area, zoomed in for maximum facial detail.`
+    Format: Perfect square with tight cropping - no empty space at bottom, clean shoulder cutoff.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
@@ -166,14 +170,15 @@ serve(async (req) => {
       const fallbackPrompt = `Create a cartoon-style portrait of a fictional soccer player in retro 70s style.
       
       Square format, clean cartoon illustration, player looking at camera with friendly smile.
-      CLOSE-UP composition with face prominently featured, filling most of the square frame.
-      Focus on facial features and expression for maximum visual impact.
+      TIGHT CROP: Head and shoulders only, cut off cleanly at mid-chest level.
+      Face prominently featured, filling most of the square frame.
+      NO WHITE SPACE below the player - crop should end exactly where the jersey/shoulders end.
       Vintage soccer jersey with random team colors, simple retro design.
       Pure white background, no text or names visible.
       ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS
       DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
       The portrait should blend seamlessly into the white background with no visible boundary.
-      Make it colorful and fun cartoon style suitable for a sports avatar with large, prominent facial features.`
+      Make it colorful and fun cartoon style with tight cropping and clean shoulder cutoff.`
       
       const fallbackBody = {
         contents: [{
