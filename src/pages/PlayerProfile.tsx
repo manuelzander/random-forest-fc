@@ -415,27 +415,7 @@ const PlayerProfile = () => {
                 <Trophy className="h-5 w-5" />
                 Statistics
               </CardTitle>
-               {player.recentResults && player.recentResults.length > 0 && (
-                 <div className="flex items-center gap-3 mt-3">
-                   <span className="text-base font-medium text-foreground">Form:</span>
-                   <div className="flex gap-2">
-                     {player.recentResults.map((result, index) => (
-                       <div 
-                         key={index}
-                         className={`w-8 h-8 rounded-lg flex items-center justify-center font-semibold text-white text-sm ${
-                           result === 'win' ? 'bg-green-500' :
-                           result === 'draw' ? 'bg-yellow-500' :
-                           'bg-red-500'
-                         }`}
-                         title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
-                       >
-                         {result === 'win' ? 'W' : result === 'draw' ? 'D' : 'L'}
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-               )}
-            </CardHeader>
+             </CardHeader>
              <CardContent className="space-y-6">
                <div className="grid grid-cols-2 gap-6">
                  <div className="text-center p-4 bg-muted/50 rounded-lg">
@@ -453,29 +433,52 @@ const PlayerProfile = () => {
                    <div className="text-sm font-medium text-muted-foreground">MVP Awards</div>
                  </div>
                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                   <div className={`text-3xl font-bold ${
-                     player.goal_difference > 0 ? 'text-green-600' : 
-                     player.goal_difference < 0 ? 'text-red-600' : 'text-muted-foreground'
-                   }`}>
-                     {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
+                   <div className="flex gap-2 justify-center mb-2">
+                     {player.recentResults && player.recentResults.length > 0 ? (
+                       player.recentResults.slice(0, 5).map((result, index) => (
+                         <div 
+                           key={index}
+                           className={`w-6 h-6 rounded ${
+                             result === 'win' ? 'bg-green-500' :
+                             result === 'draw' ? 'bg-yellow-500' :
+                             'bg-red-500'
+                           }`}
+                           title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
+                         />
+                       ))
+                     ) : (
+                       <span className="text-sm text-muted-foreground">No recent games</span>
+                     )}
                    </div>
-                   <div className="text-sm font-medium text-muted-foreground">Goal Difference</div>
+                   <div className="text-sm font-medium text-muted-foreground">Form (Last 5)</div>
                  </div>
-               </div>
-               <div className="grid grid-cols-2 gap-6">
-                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                   <div className="text-2xl font-bold text-purple-600">
-                     {player.games_played > 0 ? (Number(player.points) / player.games_played).toFixed(1) : '0.0'}
-                   </div>
-                   <div className="text-sm font-medium text-muted-foreground">Points Per Game</div>
-                 </div>
-                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                   <div className="text-2xl font-bold text-blue-600">
-                     {player.games_played > 0 ? ((player.wins / player.games_played) * 100).toFixed(1) : '0.0'}%
-                   </div>
-                   <div className="text-sm font-medium text-muted-foreground">Win Rate</div>
-                 </div>
-               </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className={`text-3xl font-bold ${
+                      player.goal_difference > 0 ? 'text-green-600' : 
+                      player.goal_difference < 0 ? 'text-red-600' : 'text-muted-foreground'
+                    }`}>
+                      {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground">Goal Difference</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {player.games_played > 0 ? (Number(player.points) / player.games_played).toFixed(1) : '0.0'}
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground">Points Per Game</div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {player.games_played > 0 ? ((player.wins / player.games_played) * 100).toFixed(1) : '0.0'}%
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground">Win Rate</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg"></div>
+                </div>
                <div className="grid grid-cols-3 gap-4">
                  <div className="text-center p-3 bg-green-100 rounded-lg">
                    <div className="text-xl font-bold text-green-700">{player.wins}</div>
@@ -490,16 +493,7 @@ const PlayerProfile = () => {
                    <div className="text-xs font-medium text-red-600">Losses</div>
                  </div>
                </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <div className={`text-2xl font-bold ${
-                  player.goal_difference > 0 ? 'text-green-600' : 
-                  player.goal_difference < 0 ? 'text-red-600' : 'text-gray-600'
-                }`}>
-                  {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
-                </div>
-                <div className="text-sm text-gray-600">Goal Difference</div>
-              </div>
-            </CardContent>
+             </CardContent>
           </Card>
 
           {/* Skills */}
