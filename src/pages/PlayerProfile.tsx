@@ -506,57 +506,60 @@ const PlayerProfile = () => {
              </CardContent>
           </Card>
 
-          {/* Player Skills Radar Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5" />
-                Player Skills
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {profile?.skill_ratings && Object.keys(profile.skill_ratings).length > 0 ? (
-                <div className="flex justify-center">
-                  <SkillRadarChart 
-                    skillRatings={profile.skill_ratings} 
-                    className="w-full max-w-xs"
-                  />
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground text-sm">No skill ratings available</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+          {/* Right column: Player Skills + Player Quirks */}
+          <div className="space-y-4">
+            {/* Player Skills Radar Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Player Skills
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {profile?.skill_ratings && Object.keys(profile.skill_ratings).length > 0 ? (
+                  <div className="flex justify-center">
+                    <SkillRadarChart 
+                      skillRatings={profile.skill_ratings} 
+                      className="w-full max-w-xs"
+                    />
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground text-sm">No skill ratings available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-        {/* Player Quirks Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5" />
-              Player Quirks
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {profile?.football_skills && profile.football_skills.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {profile.football_skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary" className="text-sm">
-                    {skill}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <Zap className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground text-sm">No quirks listed yet</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            {/* Player Quirks */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  Player Quirks
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {profile?.football_skills && profile.football_skills.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {profile.football_skills.map((skill, index) => (
+                      <Badge key={index} variant="secondary" className="text-sm">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-2">
+                    <Zap className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-muted-foreground text-sm">No quirks listed yet</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
