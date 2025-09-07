@@ -471,7 +471,7 @@ const PlayerProfile = () => {
                       <span className="text-sm text-muted-foreground">No recent games</span>
                     )}
                   </div>
-                  <div className="text-lg font-bold text-muted-foreground">Form (Last 5)</div>
+                  <div className="text-lg font-bold text-muted-foreground">Form (Last 6)</div>
                 </div>
 
                 {/* Stats grid - 6 smaller boxes */}
