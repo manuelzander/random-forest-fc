@@ -32,6 +32,7 @@ const AdminNewsManagement = () => {
   const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [articleToDelete, setArticleToDelete] = useState<NewsItem | null>(null);
+  const [isSavingNews, setIsSavingNews] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -68,9 +69,11 @@ const AdminNewsManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || isSavingNews) return; // Prevent double submission
 
     try {
+      setIsSavingNews(true);
+      
       if (editingItem) {
         // Update existing news
         const { error } = await (supabase as any)
@@ -118,6 +121,8 @@ const AdminNewsManagement = () => {
         description: "Failed to save news article",
         variant: "destructive",
       });
+    } finally {
+      setIsSavingNews(false);
     }
   };
 
@@ -263,13 +268,14 @@ const AdminNewsManagement = () => {
                   </label>
                 </div>
                 <div className="flex gap-2">
-                  <Button type="submit">
-                    {editingItem ? 'Update Article' : 'Create Article'}
+                  <Button type="submit" disabled={isSavingNews}>
+                    {isSavingNews ? 'Saving...' : editingItem ? 'Update Article' : 'Create Article'}
                   </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => setIsDialogOpen(false)}
+                    disabled={isSavingNews}
                   >
                     Cancel
                   </Button>

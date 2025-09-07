@@ -36,6 +36,7 @@ const AdminGameManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
+  const [isSavingGame, setIsSavingGame] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -111,7 +112,11 @@ const AdminGameManagement = () => {
   };
 
   const handleGameSubmit = async (gameData: any) => {
+    if (isSavingGame) return; // Prevent double submission
+    
     try {
+      setIsSavingGame(true);
+      
       if (editingGame) {
         const { error } = await supabase
           .from('games')
@@ -163,6 +168,8 @@ const AdminGameManagement = () => {
         description: "Failed to save game",
         variant: "destructive",
       });
+    } finally {
+      setIsSavingGame(false);
     }
   };
 
@@ -215,6 +222,7 @@ const AdminGameManagement = () => {
                   youtubeUrl: editingGame.youtube_url || '',
                 } : undefined}
                 isEditing={!!editingGame}
+                isSaving={isSavingGame}
               />
             </DialogContent>
           </Dialog>

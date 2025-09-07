@@ -26,9 +26,10 @@ interface GameInputProps {
     youtubeUrl?: string;
   };
   isEditing?: boolean;
+  isSaving?: boolean;
 }
 
-const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialData, isEditing = false }) => {
+const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialData, isEditing = false, isSaving = false }) => {
   const { toast } = useToast();
   const [team1Players, setTeam1Players] = useState<string[]>(initialData?.team1Players || []);
   const [team2Players, setTeam2Players] = useState<string[]>(initialData?.team2Players || []);
@@ -356,8 +357,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-3">
-            {isEditing ? 'Update Match Result' : 'Record Match Result'}
+          <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-3" disabled={isSaving}>
+            {isSaving ? 'Saving...' : isEditing ? 'Update Match Result' : 'Record Match Result'}
           </Button>
         </form>
       </CardContent>
