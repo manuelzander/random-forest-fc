@@ -466,7 +466,7 @@ const PlayerProfile = () => {
                     <div className="text-sm font-medium text-muted-foreground">Games Played</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-primary">{player.mvp_awards}</div>
+                    <div className="text-2xl font-bold text-yellow-700">{player.mvp_awards}</div>
                     <div className="text-sm font-medium text-muted-foreground">MVP Awards</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
