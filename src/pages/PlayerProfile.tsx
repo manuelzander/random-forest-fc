@@ -40,6 +40,13 @@ interface ProfileData {
     DRI?: number;
     DEF?: number;
     PHY?: number;
+    // Also support the database field names
+    pace?: number;
+    shooting?: number;
+    passing?: number;
+    dribbling?: number;
+    defending?: number;
+    physical?: number;
   };
 }
 
