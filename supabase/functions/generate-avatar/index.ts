@@ -82,19 +82,19 @@ serve(async (req) => {
       // Image-to-image generation - face forward portrait
       prompt = `Transform this image into a retro European football (soccer) player portrait.
       
-      Create a front-facing CIRCULAR cartoon portrait with:
+      Create a front-facing SQUARE cartoon portrait with:
       - Transform into retro comic style with clean illustration
       - Person looking directly at camera with friendly expression
-      - CLOSE-UP head and upper shoulders portrait focusing heavily on the face (face should fill 70% of the circular frame)
+      - CLOSE-UP head and upper shoulders portrait focusing heavily on the face (face should fill 70% of the square frame)
       - Zoom in significantly on the facial features for maximum detail and impact
       - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
       - NO NAME or NUMBER visible anywhere on the jersey or image
       - Background MUST be pure white (#FFFFFF) 
       - ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS OF ANY KIND
-      - DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
+      - DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
       - NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
       - CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-      - IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle
+      - IMPORTANT: Generate as perfect SQUARE format with the portrait filling the entire square
       - Maintain the person's unique characteristics while making it soccer/football-themed
       - Professional retro soccer card aesthetic with clean lines
       - Focus primarily on facial features and expression with prominent face size`
@@ -112,7 +112,7 @@ serve(async (req) => {
       // Random generation - use the actual player name
       prompt = `Create a retro soccer player portrait for ${playerName}.
     
-    IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle.
+    IMPORTANT: Generate as perfect SQUARE format with the portrait filling the entire square.
     
     POSE: Player facing away from camera (back view) but looking over their shoulder at the camera with a friendly expression.
     COMPOSITION: CLOSE-UP view focusing on head and upper shoulders (face should be prominently visible and large, filling 60% of the frame)
@@ -132,10 +132,10 @@ serve(async (req) => {
     Style: Clean retro comic illustration with bold outlines.
     Background: Pure white (#FFFFFF)
     ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS OF ANY KIND
-    DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
+    DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
     NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
     CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-    Format: Perfect circle with portrait filling the entire circular area, zoomed in for maximum facial detail.`
+    Format: Perfect square with portrait filling the entire square area, zoomed in for maximum facial detail.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
@@ -165,13 +165,13 @@ serve(async (req) => {
       // Fallback with very generic prompt
       const fallbackPrompt = `Create a cartoon-style portrait of a fictional soccer player in retro 70s style.
       
-      Circular format, clean cartoon illustration, player looking at camera with friendly smile.
-      CLOSE-UP composition with face prominently featured, filling most of the circular frame.
+      Square format, clean cartoon illustration, player looking at camera with friendly smile.
+      CLOSE-UP composition with face prominently featured, filling most of the square frame.
       Focus on facial features and expression for maximum visual impact.
       Vintage soccer jersey with random team colors, simple retro design.
       Pure white background, no text or names visible.
       ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS
-      DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
+      DO NOT ADD ANY SQUARE BORDER OR OUTLINE AROUND THE PORTRAIT
       The portrait should blend seamlessly into the white background with no visible boundary.
       Make it colorful and fun cartoon style suitable for a sports avatar with large, prominent facial features.`
       
