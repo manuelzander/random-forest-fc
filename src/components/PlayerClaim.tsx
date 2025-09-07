@@ -115,7 +115,8 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
         .from('players')
         .insert([{
           name: newPlayerName.trim(),
-          user_id: user.id
+          user_id: user.id,
+          created_by: user.id
         }]);
 
       if (error) throw error;
@@ -216,14 +217,16 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
                 <span className="hidden sm:inline">Unclaim Player</span>
                 <span className="sm:hidden">Unclaim</span>
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => setDeletePlayerDialogOpen(true)}
-                className="border-red-200 text-red-600 hover:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Delete Player</span>
-              </Button>
+              {currentUserPlayer.created_by === user?.id && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDeletePlayerDialogOpen(true)}
+                  className="border-red-200 text-red-600 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Delete Player</span>
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>

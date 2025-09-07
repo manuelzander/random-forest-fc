@@ -11,6 +11,7 @@ export interface Player {
   goal_difference: number;
   user_id?: string | null;
   avatar_url?: string | null;
+  created_by?: string | null;
 }
 
 export interface GameResult {

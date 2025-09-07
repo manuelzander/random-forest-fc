@@ -99,6 +99,7 @@ export type Database = {
           avatar_url: string | null
           badges: Json | null
           created_at: string
+          created_by: string | null
           id: string
           name: string
           updated_at: string
@@ -108,6 +109,7 @@ export type Database = {
           avatar_url?: string | null
           badges?: Json | null
           created_at?: string
+          created_by?: string | null
           id?: string
           name: string
           updated_at?: string
@@ -117,6 +119,7 @@ export type Database = {
           avatar_url?: string | null
           badges?: Json | null
           created_at?: string
+          created_by?: string | null
           id?: string
           name?: string
           updated_at?: string
