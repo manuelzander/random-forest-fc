@@ -53,7 +53,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
           .select('team1_players, team2_players, team1_goals, team2_goals, created_at')
           .or(`team1_players.cs.{${player.id}},team2_players.cs.{${player.id}}`)
           .order('created_at', { ascending: false })
-          .limit(5);
+          .limit(6);
 
         const recentResults: ('win' | 'draw' | 'loss')[] = [];
         
@@ -75,7 +75,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
         
         playersWithRecentResults.push({
           ...player,
-          recentResults
+          recentResults: recentResults.reverse() // Reverse to show oldest to newest
         });
       }
       
@@ -325,7 +325,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                         </div>
                         <div className="flex gap-0.5 justify-center">
                           {player.recentResults && player.recentResults.length > 0 ? (
-                            player.recentResults.slice(0, 5).map((result, index) => (
+                            player.recentResults.slice(0, 6).map((result, index) => (
                               <div 
                                 key={index}
                                 className={`w-3 h-3 rounded ${

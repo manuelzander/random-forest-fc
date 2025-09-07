@@ -115,14 +115,14 @@ const PlayerProfile = () => {
             if (playerGoals > opponentGoals) {
               wins++;
               points += 3;
-              if (recentResults.length < 5) recentResults.push('win');
+              if (recentResults.length < 6) recentResults.push('win');
             } else if (playerGoals === opponentGoals) {
               draws++;
               points += 1;
-              if (recentResults.length < 5) recentResults.push('draw');
+              if (recentResults.length < 6) recentResults.push('draw');
             } else {
               losses++;
-              if (recentResults.length < 5) recentResults.push('loss');
+              if (recentResults.length < 6) recentResults.push('loss');
             }
             
             if (game.mvp_player === playerId) {
@@ -456,7 +456,7 @@ const PlayerProfile = () => {
                 <div className="text-center p-6 bg-muted/50 rounded-lg">
                   <div className="flex gap-2 justify-center mb-3">
                     {player.recentResults && player.recentResults.length > 0 ? (
-                      player.recentResults.slice(0, 5).reverse().map((result, index) => (
+                      player.recentResults.slice(0, 6).reverse().map((result, index) => (
                         <div 
                           key={index}
                           className={`w-8 h-8 rounded ${
