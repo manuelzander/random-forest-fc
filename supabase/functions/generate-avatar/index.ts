@@ -80,19 +80,18 @@ serve(async (req) => {
 
     if (imageToImage && baseImageData) {
       // Image-to-image generation - face forward portrait
-      prompt = `Transform this image into a hilarious retro European football (soccer) player portrait.
+      prompt = `Transform this image into a retro European football (soccer) player portrait.
       
       Create a front-facing SQUARE ASPECT RATIO (1:1) cartoon portrait with:
-      - Transform into funny cartoon/comic style with exaggerated comedic features
-      - Person looking directly at camera with hilarious facial expression
-      - Make the face amusing (goofy smile, funny eyes, big nose, comedic eyebrows, etc.)
+      - Transform into retro comic style with clean illustration
+      - Person looking directly at camera with friendly expression
       - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
       - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
       - NO NAME or NUMBER visible anywhere on the jersey or image
-      - Background MUST be pure white (#FFFFFF) with no other colors or patterns
+      - Background MUST be pure white (#FFFFFF) with NO borders, frames, or other elements
       - IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display
-      - Maintain the person's unique characteristics while making it soccer/football-themed and genuinely funny
-      - Make it entertaining and amusing while being respectful
+      - Maintain the person's unique characteristics while making it soccer/football-themed
+      - Professional retro soccer card aesthetic with clean lines
       - Focus on the face and expression with vintage soccer aesthetic`
       
       requestBody.contents[0].parts = [
@@ -135,7 +134,7 @@ serve(async (req) => {
     CRITICAL: This must be a COMPLETELY NEW and UNIQUE character. Do not repeat any previous designs or characteristics.
     
     Style: Clean retro comic book illustration with bold outlines and vibrant colors, professional 70s/80s soccer card aesthetic.
-    Background: PURE WHITE background (#FFFFFF) - absolutely no other colors or patterns.
+    Background: PURE WHITE background (#FFFFFF) with NO borders, frames, or other decorative elements - only solid white.
     Format: SQUARE ASPECT RATIO (1:1) for perfect circular avatar display.
     
     Generate a totally unique individual that has never been created before! Use the seed ${randomSeed} to ensure complete uniqueness.
