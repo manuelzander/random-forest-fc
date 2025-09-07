@@ -250,11 +250,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                          {player.games_played > 0 ? Math.round((player.wins / player.games_played) * 100) : 0}%
                        </Badge>
                      </td>
-                    <td className="px-4 py-4 text-center">
-                      <Badge variant="outline" className="font-semibold text-yellow-700">
-                        {player.mvp_awards}
-                      </Badge>
-                    </td>
+                     <td className="px-4 py-4 text-center">
+                       <Badge variant="outline" className="font-semibold text-amber-700">
+                         {player.mvp_awards}
+                       </Badge>
+                     </td>
                     <td className="px-4 py-4 text-center">
                       <span className={`font-medium ${
                         player.goal_difference > 0 ? 'text-green-600' : 
