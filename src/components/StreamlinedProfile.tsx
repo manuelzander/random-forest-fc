@@ -340,15 +340,17 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                   <span className="hidden sm:inline">Unclaim Player</span>
                   <span className="sm:hidden">Unclaim</span>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setDeletePlayerDialogOpen(true)}
-                  className="border-red-200 text-red-600 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Delete Player</span>
-                </Button>
+                {currentUserPlayer.created_by === user?.id && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setDeletePlayerDialogOpen(true)}
+                    className="border-red-200 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Delete Player</span>
+                  </Button>
+                )}
               </div>
             </div>
 
