@@ -164,36 +164,36 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Rank</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Player</th>
-                <th className="px-4 py-3 text-center">
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-900">Rank</th>
+                <th className="px-3 py-3 text-left text-sm font-medium text-gray-900">Player</th>
+                <th className="px-3 py-3 text-center">
                   <SortButton field="points">
                     <Award className="h-4 w-4 mr-1" />
                     Points
                   </SortButton>
                 </th>
-                <th className="px-4 py-3 text-center">
+                <th className="px-3 py-3 text-center">
                   <SortButton field="games_played">
                     <Users className="h-4 w-4 mr-1" />
                     Games
                   </SortButton>
                 </th>
-                <th className="px-4 py-3 text-center">
+                <th className="px-3 py-3 text-center">
                   <SortButton field="pointsPerGame">
                     <Target className="h-4 w-4 mr-1" />
                     PPG
                   </SortButton>
                 </th>
-                <th className="px-4 py-3 text-center">
+                <th className="px-3 py-3 text-center">
                   <SortButton field="winPercentage">Win %</SortButton>
                 </th>
-                <th className="px-4 py-3 text-center">
+                <th className="px-3 py-3 text-center">
                   <SortButton field="mvp_awards">MVP</SortButton>
                 </th>
-                <th className="px-4 py-3 text-center">
+                <th className="px-3 py-3 text-center">
                   <SortButton field="goal_difference">Goal Diff</SortButton>
                 </th>
-                <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Record & Form</th>
+                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900">Record & Form</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -204,14 +204,14 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                     key={player.id} 
                     className="hover:bg-gray-50 transition-colors"
                   >
-                    <td className="px-4 py-4">
+                    <td className="px-3 py-4">
                        <Badge 
                          className={`${getRankBadgeColor(rank)} text-white font-bold !border-0 border-transparent`}
                        >
                          {rank}
                        </Badge>
                     </td>
-                     <td className="px-4 py-4">
+                     <td className="px-3 py-4">
                        <div className="flex items-center gap-3">
                          <PlayerAvatarWithDefault player={player} />
                         <div className="flex items-center gap-2">
@@ -234,28 +234,28 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-3 py-4 text-center">
                       <Badge variant="secondary" className="font-bold text-lg">
                         {player.points}
                       </Badge>
                     </td>
-                    <td className="px-4 py-4 text-center font-medium">{player.games_played}</td>
-                     <td className="px-4 py-4 text-center">
+                    <td className="px-3 py-4 text-center font-medium">{player.games_played}</td>
+                     <td className="px-3 py-4 text-center">
                        <Badge variant="outline" className="font-semibold text-purple-700">
                          {player.games_played > 0 ? (player.points / player.games_played).toFixed(1) : '0.0'}
                        </Badge>
                      </td>
-                     <td className="px-4 py-4 text-center">
+                     <td className="px-3 py-4 text-center">
                        <Badge variant="outline" className="font-semibold text-blue-700">
                          {player.games_played > 0 ? Math.round((player.wins / player.games_played) * 100) : 0}%
                        </Badge>
                      </td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-3 py-4 text-center">
                       <Badge variant="outline" className="font-semibold text-yellow-700">
                         {player.mvp_awards}
                       </Badge>
                     </td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-3 py-4 text-center">
                       <span className={`font-medium ${
                         player.goal_difference > 0 ? 'text-green-600' : 
                         player.goal_difference < 0 ? 'text-red-600' : 'text-gray-600'
@@ -263,7 +263,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                         {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-center text-sm">
+                    <td className="px-3 py-4 text-center text-sm">
                       <div className="space-y-1">
                         <div className="flex gap-1 justify-center">
                           <span className="text-green-600 font-medium">{player.wins}W</span>
