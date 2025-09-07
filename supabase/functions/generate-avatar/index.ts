@@ -88,8 +88,11 @@ serve(async (req) => {
       - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
       - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
       - NO NAME or NUMBER visible anywhere on the jersey or image
-       - Background MUST be pure white (#FFFFFF) with NO borders, frames, lines, decorative elements, or outer edges
-       - CRITICAL: No borders, outlines, or frames around the portrait itself
+      - Background MUST be pure white (#FFFFFF) 
+      - ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS OF ANY KIND
+      - DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
+      - NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
+      - CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
       - IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle
       - Maintain the person's unique characteristics while making it soccer/football-themed
       - Professional retro soccer card aesthetic with clean lines
@@ -124,9 +127,12 @@ serve(async (req) => {
     - Facial hair: ${randomFacialHair}
     - ${clubInfo} with vintage styling
     
-     Style: Clean retro comic illustration with bold outlines.
-     Background: Pure white (#FFFFFF) with NO borders, frames, lines, decorative elements, or outer edges.
-     CRITICAL: No borders, outlines, or frames around the portrait itself.
+    Style: Clean retro comic illustration with bold outlines.
+    Background: Pure white (#FFFFFF)
+    ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS OF ANY KIND
+    DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
+    NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
+    CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
     Format: Perfect circle with portrait filling the entire circular area.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
@@ -159,7 +165,10 @@ serve(async (req) => {
       
       Circular format, clean cartoon illustration, player looking at camera with friendly smile.
       Vintage soccer jersey with random team colors, simple retro design.
-      Pure white background, no text or names visible, no borders or frames around the portrait.
+      Pure white background, no text or names visible.
+      ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS
+      DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
+      The portrait should blend seamlessly into the white background with no visible boundary.
       Make it colorful and fun cartoon style suitable for a sports avatar with portrait filling the entire circle.`
       
       const fallbackBody = {
