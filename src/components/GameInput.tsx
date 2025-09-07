@@ -176,7 +176,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <>
+      <Card className="w-full max-w-4xl mx-auto">
       <CardContent className="p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Teams Section */}
@@ -379,6 +380,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+    </>
   );
 };
 
