@@ -49,22 +49,8 @@ const FOOTBALL_POSITIONS = [
   'Center Forward'
 ];
 
-const COMMON_SKILLS = [
-  // Actual skills
-  'Dribbling',
-  'Passing',
-  'Shooting',
-  'Defending',
-  'Crossing',
-  'Headers',
-  'Free Kicks',
-  'Penalties',
-  'Long Shots',
-  'Pace',
-  'Physical',
-  'Tactical Awareness',
-  
-  // Hilarious skills (reduced list)
+const FUNNY_SKILLS = [
+  // Hilarious skills only
   'Ball Watching',
   'Complaining to Ref',
   'Dramatic Diving',
@@ -610,125 +596,130 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
         </CardContent>
       </Card>
 
-      {/* Skills */}
+      {/* Player Skills */}
       <Card>
         <CardHeader>
-          <CardTitle>Football Skills</CardTitle>
+          <CardTitle>Player Skills</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Skill Ratings */}
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>PAC - Pace</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[profile.skill_ratings?.pace || 50]}
-                    onValueChange={(value) => setProfile(prev => ({
-                      ...prev,
-                      skill_ratings: { ...prev.skill_ratings!, pace: value[0] }
-                    }))}
-                    max={100}
-                    min={0}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.pace || 50}</span>
-                </div>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label>PAC - Pace</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.pace || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, pace: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.pace || 50}</span>
               </div>
-              
-              <div className="space-y-2">
-                <Label>SHO - Shooting</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[profile.skill_ratings?.shooting || 50]}
-                    onValueChange={(value) => setProfile(prev => ({
-                      ...prev,
-                      skill_ratings: { ...prev.skill_ratings!, shooting: value[0] }
-                    }))}
-                    max={100}
-                    min={0}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.shooting || 50}</span>
-                </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>SHO - Shooting</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.shooting || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, shooting: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.shooting || 50}</span>
               </div>
-              
-              <div className="space-y-2">
-                <Label>PAS - Passing</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[profile.skill_ratings?.passing || 50]}
-                    onValueChange={(value) => setProfile(prev => ({
-                      ...prev,
-                      skill_ratings: { ...prev.skill_ratings!, passing: value[0] }
-                    }))}
-                    max={100}
-                    min={0}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.passing || 50}</span>
-                </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>PAS - Passing</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.passing || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, passing: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.passing || 50}</span>
               </div>
-              
-              <div className="space-y-2">
-                <Label>DRI - Dribbling</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[profile.skill_ratings?.dribbling || 50]}
-                    onValueChange={(value) => setProfile(prev => ({
-                      ...prev,
-                      skill_ratings: { ...prev.skill_ratings!, dribbling: value[0] }
-                    }))}
-                    max={100}
-                    min={0}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.dribbling || 50}</span>
-                </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>DRI - Dribbling</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.dribbling || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, dribbling: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.dribbling || 50}</span>
               </div>
-              
-              <div className="space-y-2">
-                <Label>DEF - Defending</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[profile.skill_ratings?.defending || 50]}
-                    onValueChange={(value) => setProfile(prev => ({
-                      ...prev,
-                      skill_ratings: { ...prev.skill_ratings!, defending: value[0] }
-                    }))}
-                    max={100}
-                    min={0}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.defending || 50}</span>
-                </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>DEF - Defending</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.defending || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, defending: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.defending || 50}</span>
               </div>
-              
-              <div className="space-y-2">
-                <Label>PHY - Physical</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[profile.skill_ratings?.physical || 50]}
-                    onValueChange={(value) => setProfile(prev => ({
-                      ...prev,
-                      skill_ratings: { ...prev.skill_ratings!, physical: value[0] }
-                    }))}
-                    max={100}
-                    min={0}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.physical || 50}</span>
-                </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>PHY - Physical</Label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[profile.skill_ratings?.physical || 50]}
+                  onValueChange={(value) => setProfile(prev => ({
+                    ...prev,
+                    skill_ratings: { ...prev.skill_ratings!, physical: value[0] }
+                  }))}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-8 text-center">{profile.skill_ratings?.physical || 50}</span>
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
+      {/* Player Personality */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Player Personality</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
             {profile.football_skills?.map((skill, index) => (
               <Badge key={index} variant="secondary" className="flex items-center gap-1">
@@ -744,10 +735,10 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
           </div>
           
           <div className="space-y-2">
-            <Label>Add Skills</Label>
+            <Label>Add Personality Traits</Label>
             <div className="flex gap-2">
               <Input
-                placeholder="Custom skill..."
+                placeholder="Custom trait..."
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addSkill(newSkill)}
@@ -757,7 +748,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
               </Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
-              {COMMON_SKILLS.map(skill => (
+              {FUNNY_SKILLS.map(skill => (
                 <Button
                   key={skill}
                   variant="outline"
