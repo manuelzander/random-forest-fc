@@ -82,7 +82,7 @@ serve(async (req) => {
       // Image-to-image generation - face forward portrait
       prompt = `Transform this image into a retro European football (soccer) player portrait.
       
-      Create a front-facing SQUARE ASPECT RATIO (1:1) cartoon portrait with:
+      Create a front-facing CIRCULAR cartoon portrait with:
       - Transform into retro comic style with clean illustration
       - Person looking directly at camera with friendly expression
       - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
@@ -90,7 +90,7 @@ serve(async (req) => {
       - NO NAME or NUMBER visible anywhere on the jersey or image
        - Background MUST be pure white (#FFFFFF) with NO borders, frames, lines, decorative elements, or outer edges
        - CRITICAL: No borders, outlines, or frames around the portrait itself
-      - IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display
+      - IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle
       - Maintain the person's unique characteristics while making it soccer/football-themed
       - Professional retro soccer card aesthetic with clean lines
       - Focus on the face and expression with vintage soccer aesthetic`
@@ -108,7 +108,7 @@ serve(async (req) => {
       // Random generation - use the actual player name
       prompt = `Create a retro soccer player portrait for ${playerName}.
     
-    IMPORTANT: Generate as perfect SQUARE format (1:1 aspect ratio) for circular avatar display.
+    IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle.
     
     POSE: Player facing away from camera (back view) but looking over their shoulder at the camera with a friendly expression.
     
@@ -127,7 +127,7 @@ serve(async (req) => {
      Style: Clean retro comic illustration with bold outlines.
      Background: Pure white (#FFFFFF) with NO borders, frames, lines, decorative elements, or outer edges.
      CRITICAL: No borders, outlines, or frames around the portrait itself.
-    Format: Square (1:1) for circular avatar display.`
+    Format: Perfect circle with portrait filling the entire circular area.`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
@@ -157,10 +157,10 @@ serve(async (req) => {
       // Fallback with very generic prompt
       const fallbackPrompt = `Create a cartoon-style portrait of a fictional soccer player in retro 70s style.
       
-      Square format (1:1), clean cartoon illustration, player looking at camera with friendly smile.
+      Circular format, clean cartoon illustration, player looking at camera with friendly smile.
       Vintage soccer jersey with random team colors, simple retro design.
       Pure white background, no text or names visible, no borders or frames around the portrait.
-      Make it colorful and fun cartoon style suitable for a sports avatar.`
+      Make it colorful and fun cartoon style suitable for a sports avatar with portrait filling the entire circle.`
       
       const fallbackBody = {
         contents: [{
