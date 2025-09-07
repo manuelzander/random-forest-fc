@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle } from 'lucide-react';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 
@@ -152,7 +153,8 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   };
 
   return (
-    <Card className="w-full">
+    <TooltipProvider>
+      <Card className="w-full">
       <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
         <CardTitle className="flex items-center gap-2 text-lg sm:text-2xl">
           <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -225,12 +227,19 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                  <CheckCircle className="h-3 w-3 sm:mr-1" />
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
-                             )}
-                           {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
-                             <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
-                               <span>{badge.icon}</span>
-                             </Badge>
-                           ))}
+                              )}
+                            {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
+                              <Tooltip key={badgeIndex}>
+                                <TooltipTrigger asChild>
+                                  <Badge className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 cursor-help">
+                                    <span>{badge.icon}</span>
+                                  </Badge>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{badge.name}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ))}
                         </div>
                       </div>
                     </td>
@@ -307,6 +316,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
         </div>
       </CardContent>
     </Card>
+    </TooltipProvider>
   );
 };
 
