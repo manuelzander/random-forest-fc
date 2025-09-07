@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Player } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,9 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle } from 'lucide-react';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PlayerTableProps {
   players: Player[];
+}
+
+interface PlayerWithForm extends Player {
+  recentResults?: ('win' | 'draw' | 'loss')[];
 }
 
 const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
@@ -35,8 +40,54 @@ type SortField = 'points' | 'mvp_awards' | 'goal_difference' | 'games_played' | 
 const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   const [sortField, setSortField] = useState<SortField>('points');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [playersWithForm, setPlayersWithForm] = useState<PlayerWithForm[]>([]);
 
-  const sortedPlayers = [...players].sort((a, b) => {
+  useEffect(() => {
+    const fetchFormData = async () => {
+      const playersWithRecentResults: PlayerWithForm[] = [];
+      
+      for (const player of players) {
+        // Get recent games for this player
+        const { data: statsData, error } = await supabase
+          .from('games')
+          .select('team1_players, team2_players, team1_goals, team2_goals, created_at')
+          .or(`team1_players.cs.{${player.id}},team2_players.cs.{${player.id}}`)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        const recentResults: ('win' | 'draw' | 'loss')[] = [];
+        
+        if (statsData && !error) {
+          statsData.forEach(game => {
+            const isTeam1 = game.team1_players.includes(player.id);
+            const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
+            const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
+            
+            if (playerGoals > opponentGoals) {
+              recentResults.push('win');
+            } else if (playerGoals === opponentGoals) {
+              recentResults.push('draw');
+            } else {
+              recentResults.push('loss');
+            }
+          });
+        }
+        
+        playersWithRecentResults.push({
+          ...player,
+          recentResults
+        });
+      }
+      
+      setPlayersWithForm(playersWithRecentResults);
+    };
+
+    if (players.length > 0) {
+      fetchFormData();
+    }
+  }, [players]);
+
+  const sortedPlayers = [...playersWithForm].sort((a, b) => {
     let aValue: number;
     let bValue: number;
     
@@ -272,31 +323,23 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                           <span className="text-gray-500">/</span>
                           <span className="text-red-600 font-medium">{player.losses}L</span>
                         </div>
-                        {(() => {
-                          // Get recent results from stats
-                          const recentResults: ('win' | 'draw' | 'loss')[] = [];
-                          // This would need to be calculated from games data - for now showing placeholder
-                          for (let i = 0; i < Math.min(5, player.games_played); i++) {
-                            if (i < player.wins) recentResults.push('win');
-                            else if (i < player.wins + player.draws) recentResults.push('draw');
-                            else recentResults.push('loss');
-                          }
-                          return (
-                            <div className="flex gap-0.5 justify-center">
-                              {recentResults.slice(0, 5).map((result, index) => (
-                                <div 
-                                  key={index}
-                                  className={`w-3 h-3 rounded ${
-                                    result === 'win' ? 'bg-green-500' :
-                                    result === 'draw' ? 'bg-yellow-500' :
-                                    'bg-red-500'
-                                  }`}
-                                  title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
-                                />
-                              ))}
-                            </div>
-                          );
-                        })()}
+                        <div className="flex gap-0.5 justify-center">
+                          {player.recentResults && player.recentResults.length > 0 ? (
+                            player.recentResults.slice(0, 5).map((result, index) => (
+                              <div 
+                                key={index}
+                                className={`w-3 h-3 rounded ${
+                                  result === 'win' ? 'bg-green-500' :
+                                  result === 'draw' ? 'bg-yellow-500' :
+                                  'bg-red-500'
+                                }`}
+                                title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
+                              />
+                            ))
+                          ) : (
+                            <span className="text-gray-400 text-xs">No games</span>
+                          )}
+                        </div>
                       </div>
                     </td>
                   </tr>
