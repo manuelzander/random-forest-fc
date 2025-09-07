@@ -47,6 +47,7 @@ const AdminPlayerManagement = () => {
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [playerToDelete, setPlayerToDelete] = useState<Player | null>(null);
   const [playerToDisconnect, setPlayerToDisconnect] = useState<Player | null>(null);
+  const [isSavingPlayer, setIsSavingPlayer] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -154,6 +155,8 @@ const AdminPlayerManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSavingPlayer) return; // Prevent double submission
+    
     const formData = new FormData(e.currentTarget);
     
     const playerData = {
@@ -161,6 +164,8 @@ const AdminPlayerManagement = () => {
     };
 
     try {
+      setIsSavingPlayer(true);
+      
       if (editingPlayer) {
         const { error } = await supabase
           .from('players')
@@ -210,6 +215,8 @@ const AdminPlayerManagement = () => {
         description: "Failed to save player",
         variant: "destructive",
       });
+    } finally {
+      setIsSavingPlayer(false);
     }
   };
 
@@ -429,11 +436,11 @@ const AdminPlayerManagement = () => {
                   </AlertDescription>
                 </Alert>
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSavingPlayer}>
                     Cancel
                   </Button>
-                  <Button type="submit">
-                    {editingPlayer ? 'Update' : 'Add'} Player
+                  <Button type="submit" disabled={isSavingPlayer}>
+                    {isSavingPlayer ? 'Saving...' : editingPlayer ? 'Update' : 'Add'} Player
                   </Button>
                 </div>
               </form>
