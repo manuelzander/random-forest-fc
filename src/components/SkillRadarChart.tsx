@@ -76,6 +76,15 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
     ],
   };
 
+  const skillColors = [
+    'rgb(239, 68, 68)',   // Red for PAC
+    'rgb(34, 197, 94)',   // Green for SHO
+    'rgb(59, 130, 246)',  // Blue for PAS
+    'rgb(168, 85, 247)',  // Purple for DRI
+    'rgb(245, 158, 11)',  // Amber for DEF
+    'rgb(239, 68, 68)',   // Red for PHY
+  ];
+
   const options = {
     responsive: true,
     maintainAspectRatio: true,
@@ -124,7 +133,9 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
             size: 14,
             weight: 'bold' as const,
           },
-          color: 'hsl(var(--foreground))',
+          color: (context: any) => {
+            return skillColors[context.index] || 'hsl(var(--foreground))';
+          },
           padding: 15,
         },
       },
@@ -133,7 +144,7 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
 
   // Show individual skill values below the chart
   const skillLabels = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'];
-  const skillColors = [
+  const skillColorClasses = [
     'text-red-600',
     'text-green-600', 
     'text-blue-600',
@@ -150,7 +161,7 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
       <div className="grid grid-cols-3 gap-2 text-xs">
         {skillLabels.map((label, index) => (
           <div key={label} className="text-center">
-            <div className={`font-bold ${skillColors[index]}`}>
+            <div className={`font-bold ${skillColorClasses[index]}`}>
               {label}
             </div>
             <div className="text-muted-foreground">
