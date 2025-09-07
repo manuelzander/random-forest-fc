@@ -139,7 +139,7 @@ const Index = () => {
               
               if (game.mvp_player === player.id) {
                 mvp_awards++;
-                points += 1;
+                // Note: MVP awards don't add points to league standings
               }
             }
           });
