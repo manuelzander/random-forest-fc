@@ -80,23 +80,29 @@ serve(async (req) => {
 
     if (imageToImage && baseImageData) {
       // Image-to-image generation - face forward portrait
-      prompt = `Transform this image into a retro European football (soccer) player portrait.
+      prompt = `Transform this image into a borderless retro European football player portrait.
+
+      CRITICAL REQUIREMENTS - NO EXCEPTIONS:
+      - Create a CIRCULAR portrait that seamlessly blends into pure white background
+      - ABSOLUTELY ZERO borders, outlines, frames, or edge lines of ANY KIND
+      - NO black lines, white lines, colored lines, or decorative borders ANYWHERE
+      - The portrait edges must fade/blend naturally into the white background
+      - Portrait should look like it's floating on white space with no visible boundary
       
-      Create a front-facing CIRCULAR cartoon portrait with:
-      - Transform into retro comic style with clean illustration
-      - Person looking directly at camera with friendly expression
-      - Keep it as a head and shoulders portrait of a soccer/football player (face forward, not back view)
-      - ${clubInfo} with RETRO 70s/80s vintage soccer jersey styling (thick collar, simple design, classic cut)
-      - NO NAME or NUMBER visible anywhere on the jersey or image
-      - Background MUST be pure white (#FFFFFF) 
-      - ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS OF ANY KIND
-      - DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
-      - NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
-      - CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-      - IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle
-      - Maintain the person's unique characteristics while making it soccer/football-themed
-      - Professional retro soccer card aesthetic with clean lines
-      - Focus on the face and expression with vintage soccer aesthetic`
+      STYLE & COMPOSITION:
+      - Retro comic illustration style with clean artwork
+      - Person facing camera directly with friendly expression  
+      - Head and shoulders soccer player portrait (face forward view)
+      - ${clubInfo} with vintage 70s/80s styling (thick collar, simple classic cut)
+      - NO text, names, or numbers visible anywhere
+      - Maintain person's unique characteristics while adding soccer theme
+      - Professional retro soccer card aesthetic with smooth clean artwork
+      
+      BACKGROUND & EDGES:
+      - Pure white (#FFFFFF) background that extends to all edges
+      - Portrait must seamlessly transition into white background
+      - NO visible separation between portrait and background
+      - Image should appear borderless and frameless`
       
       requestBody.contents[0].parts = [
         { text: prompt },
@@ -109,31 +115,35 @@ serve(async (req) => {
       ]
     } else {
       // Random generation - use the actual player name
-      prompt = `Create a retro soccer player portrait for ${playerName}.
-    
-    IMPORTANT: Generate as perfect CIRCULAR/ROUND format with the portrait filling the entire circle.
-    
-    POSE: Player facing away from camera (back view) but looking over their shoulder at the camera with a friendly expression.
-    
-    JERSEY BACK: Show the back of a vintage 70s/80s style soccer jersey with:
-    - "${playerName}" printed on the back in capital letters
-    - Random jersey number (1-99) below the name  
-    - ${clubInfo} with retro styling
-    
-    UNIQUE FEATURES (Seed: ${randomSeed}):
-    - Ethnicity: ${randomEthnicity}
-    - Age: ${randomAge}
-    - Hair: ${randomHair}
-    - Facial hair: ${randomFacialHair}
-    - ${clubInfo} with vintage styling
-    
-    Style: Clean retro comic illustration with bold outlines.
-    Background: Pure white (#FFFFFF)
-    ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS OF ANY KIND
-    DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
-    NO BLACK LINES, WHITE LINES, OR COLORED LINES AROUND THE IMAGE EDGES
-    CRITICAL: The portrait should blend seamlessly into the white background with no visible boundary
-    Format: Perfect circle with portrait filling the entire circular area.`
+      prompt = `Create a borderless retro soccer player portrait for ${playerName}.
+
+      CRITICAL REQUIREMENTS - NO EXCEPTIONS:
+      - Generate a CIRCULAR portrait that seamlessly blends into pure white background  
+      - ABSOLUTELY ZERO borders, outlines, frames, or edge lines of ANY KIND
+      - NO black lines, white lines, colored lines, or decorative borders ANYWHERE
+      - The portrait edges must fade/blend naturally into the white background
+      - Portrait should look like it's floating on white space with no visible boundary
+      
+      POSE & JERSEY:
+      - Player facing away (back view) but looking over shoulder at camera with friendly expression
+      - Show back of vintage 70s/80s soccer jersey with:
+        * "${playerName}" printed on back in capital letters
+        * Random jersey number (1-99) below the name
+        * ${clubInfo} with retro styling
+      
+      UNIQUE FEATURES (Seed: ${randomSeed}):
+      - Ethnicity: ${randomEthnicity}
+      - Age: ${randomAge}  
+      - Hair: ${randomHair}
+      - Facial hair: ${randomFacialHair}
+      - ${clubInfo} with vintage styling
+      
+      STYLE & BACKGROUND:
+      - Clean retro comic illustration with smooth artwork
+      - Pure white (#FFFFFF) background extending to all edges
+      - Portrait must seamlessly transition into white background
+      - NO visible separation between portrait and background
+      - Image should appear completely borderless and frameless`
       
       requestBody.contents[0].parts = [{ text: prompt }]
     }
@@ -161,15 +171,21 @@ serve(async (req) => {
       console.log('Content was blocked by safety filters, trying with more generic prompt...')
       
       // Fallback with very generic prompt
-      const fallbackPrompt = `Create a cartoon-style portrait of a fictional soccer player in retro 70s style.
+      const fallbackPrompt = `Create a borderless cartoon soccer player portrait in retro 70s style.
+
+      CRITICAL REQUIREMENTS - NO EXCEPTIONS:
+      - Generate a CIRCULAR portrait that seamlessly blends into pure white background
+      - ABSOLUTELY ZERO borders, outlines, frames, or edge lines of ANY KIND  
+      - NO black lines, white lines, colored lines, or decorative borders ANYWHERE
+      - The portrait edges must fade/blend naturally into the white background
+      - Portrait should look like it's floating on white space with no visible boundary
       
-      Circular format, clean cartoon illustration, player looking at camera with friendly smile.
-      Vintage soccer jersey with random team colors, simple retro design.
-      Pure white background, no text or names visible.
-      ABSOLUTELY NO BORDERS, FRAMES, OUTLINES, LINES, EDGES, OR DECORATIVE ELEMENTS
-      DO NOT ADD ANY CIRCULAR BORDER OR OUTLINE AROUND THE PORTRAIT
-      The portrait should blend seamlessly into the white background with no visible boundary.
-      Make it colorful and fun cartoon style suitable for a sports avatar with portrait filling the entire circle.`
+      STYLE & COMPOSITION:
+      - Clean cartoon illustration with friendly player looking at camera
+      - Vintage soccer jersey with random team colors and simple retro design
+      - Pure white background extending to all edges with no text or names
+      - Colorful fun cartoon style suitable for sports avatar
+      - Portrait must seamlessly transition into white background with NO visible separation`
       
       const fallbackBody = {
         contents: [{
