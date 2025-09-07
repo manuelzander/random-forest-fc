@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -155,7 +156,12 @@ const GamesList = () => {
                            <div key={playerId} className="flex items-center justify-between">
                              <div className="flex items-center gap-2">
                                <PlayerAvatarWithDefault player={getPlayer(playerId)} />
-                               <span>{getPlayerName(playerId)}</span>
+                                <Link 
+                                  to={`/player/${playerId}`} 
+                                  className="hover:text-primary transition-colors"
+                                >
+                                  {getPlayerName(playerId)}
+                                </Link>
                                 {game.team1_captain === playerId && (
                                   <Badge variant="secondary" className="text-xs px-1 py-0.5 h-auto">
                                     <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
@@ -181,7 +187,12 @@ const GamesList = () => {
                            <div key={playerId} className="flex items-center justify-between">
                              <div className="flex items-center gap-2">
                                <PlayerAvatarWithDefault player={getPlayer(playerId)} />
-                               <span>{getPlayerName(playerId)}</span>
+                                <Link 
+                                  to={`/player/${playerId}`} 
+                                  className="hover:text-primary transition-colors"
+                                >
+                                  {getPlayerName(playerId)}
+                                </Link>
                                 {game.team2_captain === playerId && (
                                   <Badge variant="secondary" className="text-xs px-1 py-0.5 h-auto">
                                     <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
