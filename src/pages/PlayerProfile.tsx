@@ -416,46 +416,61 @@ const PlayerProfile = () => {
                 Statistics
               </CardTitle>
              </CardHeader>
-             <CardContent className="space-y-6">
-               <div className="grid grid-cols-2 gap-6">
-                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                   <div className="text-3xl font-bold text-primary">{player.points}</div>
-                   <div className="text-sm font-medium text-muted-foreground">Points</div>
-                 </div>
-                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                   <div className="text-3xl font-bold text-primary">{player.games_played}</div>
-                   <div className="text-sm font-medium text-muted-foreground">Games Played</div>
-                 </div>
-               </div>
-               <div className="grid grid-cols-2 gap-6">
-                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                   <div className="text-3xl font-bold text-primary">{player.mvp_awards}</div>
-                   <div className="text-sm font-medium text-muted-foreground">MVP Awards</div>
-                 </div>
-                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                   <div className="flex gap-2 justify-center mb-2">
-                     {player.recentResults && player.recentResults.length > 0 ? (
-                       player.recentResults.slice(0, 5).map((result, index) => (
-                         <div 
-                           key={index}
-                           className={`w-6 h-6 rounded ${
-                             result === 'win' ? 'bg-green-500' :
-                             result === 'draw' ? 'bg-yellow-500' :
-                             'bg-red-500'
-                           }`}
-                           title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
-                         />
-                       ))
-                     ) : (
-                       <span className="text-sm text-muted-foreground">No recent games</span>
-                     )}
-                   </div>
-                   <div className="text-sm font-medium text-muted-foreground">Form (Last 5)</div>
-                 </div>
+              <CardContent className="space-y-6">
+                {/* Win/Draw/Loss at the top */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-3 bg-green-100 rounded-lg">
+                    <div className="text-xl font-bold text-green-700">{player.wins}</div>
+                    <div className="text-xs font-medium text-green-600">Wins</div>
+                  </div>
+                  <div className="text-center p-3 bg-yellow-100 rounded-lg">
+                    <div className="text-xl font-bold text-yellow-700">{player.draws}</div>
+                    <div className="text-xs font-medium text-yellow-600">Draws</div>
+                  </div>
+                  <div className="text-center p-3 bg-red-100 rounded-lg">
+                    <div className="text-xl font-bold text-red-700">{player.losses}</div>
+                    <div className="text-xs font-medium text-red-600">Losses</div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-6">
+
+                {/* Form - Big box */}
+                <div className="text-center p-6 bg-muted/50 rounded-lg">
+                  <div className="flex gap-2 justify-center mb-3">
+                    {player.recentResults && player.recentResults.length > 0 ? (
+                      player.recentResults.slice(0, 5).map((result, index) => (
+                        <div 
+                          key={index}
+                          className={`w-8 h-8 rounded ${
+                            result === 'win' ? 'bg-green-500' :
+                            result === 'draw' ? 'bg-yellow-500' :
+                            'bg-red-500'
+                          }`}
+                          title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
+                        />
+                      ))
+                    ) : (
+                      <span className="text-sm text-muted-foreground">No recent games</span>
+                    )}
+                  </div>
+                  <div className="text-lg font-bold text-muted-foreground">Form (Last 5)</div>
+                </div>
+
+                {/* Stats grid - 6 smaller boxes */}
+                <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className={`text-3xl font-bold ${
+                    <div className="text-2xl font-bold text-primary">{player.points}</div>
+                    <div className="text-sm font-medium text-muted-foreground">Points</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-primary">{player.games_played}</div>
+                    <div className="text-sm font-medium text-muted-foreground">Games Played</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-primary">{player.mvp_awards}</div>
+                    <div className="text-sm font-medium text-muted-foreground">MVP Awards</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className={`text-2xl font-bold ${
                       player.goal_difference > 0 ? 'text-green-600' : 
                       player.goal_difference < 0 ? 'text-red-600' : 'text-muted-foreground'
                     }`}>
@@ -469,30 +484,13 @@ const PlayerProfile = () => {
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">Points Per Game</div>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-6">
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">
                       {player.games_played > 0 ? ((player.wins / player.games_played) * 100).toFixed(1) : '0.0'}%
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">Win Rate</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg"></div>
                 </div>
-               <div className="grid grid-cols-3 gap-4">
-                 <div className="text-center p-3 bg-green-100 rounded-lg">
-                   <div className="text-xl font-bold text-green-700">{player.wins}</div>
-                   <div className="text-xs font-medium text-green-600">Wins</div>
-                 </div>
-                 <div className="text-center p-3 bg-yellow-100 rounded-lg">
-                   <div className="text-xl font-bold text-yellow-700">{player.draws}</div>
-                   <div className="text-xs font-medium text-yellow-600">Draws</div>
-                 </div>
-                 <div className="text-center p-3 bg-red-100 rounded-lg">
-                   <div className="text-xl font-bold text-red-700">{player.losses}</div>
-                   <div className="text-xs font-medium text-red-600">Losses</div>
-                 </div>
-               </div>
              </CardContent>
           </Card>
 
