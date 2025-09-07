@@ -113,6 +113,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           goal_difference,
           user_id: player.user_id,
           avatar_url: player.avatar_url,
+          created_by: player.created_by,
         };
       });
       
