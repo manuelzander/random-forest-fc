@@ -231,7 +231,8 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
         .from('players')
         .insert([{
           name: newPlayerName.trim(),
-          user_id: user.id
+          user_id: user.id,
+          created_by: user.id
         }]);
 
       if (error) throw error;

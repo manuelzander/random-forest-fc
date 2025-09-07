@@ -287,15 +287,6 @@ const Index = () => {
 
        {/* Main Content */}
         <div className="page-main-content space-y-6">
-          {/* Player Claim Section - Show when user is logged in */}
-          {user && (
-            <PlayerClaim 
-              players={players}
-              currentUserPlayer={currentUserPlayer}
-              onPlayerClaimed={fetchPlayers}
-            />
-          )}
-          
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card>
