@@ -465,10 +465,10 @@ const PlayerProfile = () => {
                     <div className="text-2xl font-bold text-primary">{player.games_played}</div>
                     <div className="text-sm font-medium text-muted-foreground">Games Played</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-primary">{player.mvp_awards}</div>
-                    <div className="text-sm font-medium text-muted-foreground">MVP Awards</div>
-                  </div>
+                   <div className="text-center p-4 bg-muted/50 rounded-lg">
+                     <div className="text-2xl font-bold text-amber-700">{player.mvp_awards}</div>
+                     <div className="text-sm font-medium text-muted-foreground">MVP Awards</div>
+                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className={`text-2xl font-bold ${
                       player.goal_difference > 0 ? 'text-green-600' : 
