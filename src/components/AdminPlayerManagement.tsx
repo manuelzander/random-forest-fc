@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Player {
@@ -43,6 +43,7 @@ const AdminPlayerManagement = () => {
   const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [generatingAvatarFor, setGeneratingAvatarFor] = useState<string | null>(null);
+  const [removingAvatarFor, setRemovingAvatarFor] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [playerToDelete, setPlayerToDelete] = useState<Player | null>(null);
@@ -390,6 +391,62 @@ const AdminPlayerManagement = () => {
     }
   };
 
+  const removeAvatar = async (player: Player) => {
+    try {
+      setRemovingAvatarFor(player.id);
+      
+      // Delete the avatar from storage if it exists
+      if (player.avatar_url) {
+        try {
+          // Extract filename from the URL
+          const urlParts = player.avatar_url.split('/');
+          const filename = urlParts[urlParts.length - 1];
+          
+          await supabase.storage
+            .from('avatars')
+            .remove([`${player.id}/${filename}`]);
+        } catch (storageError) {
+          console.error('Error deleting avatar from storage:', storageError);
+          // Continue with database update even if storage deletion fails
+        }
+      }
+      
+      // Remove avatar_url from database
+      const { error } = await supabase
+        .from('players')
+        .update({ avatar_url: null })
+        .eq('id', player.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Avatar removed",
+        description: `Removed avatar for ${player.name}`,
+      });
+      
+      // Refresh player data
+      await fetchPlayers();
+      
+      // Update state immediately
+      setPlayers(prevPlayers => 
+        prevPlayers.map(p => 
+          p.id === player.id 
+            ? { ...p, avatar_url: null }
+            : p
+        )
+      );
+    } catch (error) {
+      console.error('Error removing avatar:', error);
+      toast({
+        title: "Error",
+        description: `Failed to remove avatar for ${player.name}`,
+        variant: "destructive",
+      });
+    } finally {
+      setRemovingAvatarFor(null);
+    }
+  };
+
   if (isLoading) {
     return <div>Loading players...</div>;
   }
@@ -491,6 +548,19 @@ const AdminPlayerManagement = () => {
                       <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                     ) : (
                       <Wand2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => removeAvatar(player)}
+                    disabled={removingAvatarFor === player.id || !player.avatar_url}
+                    title="Remove Avatar"
+                  >
+                    {removingAvatarFor === player.id ? (
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                    ) : (
+                      <ImageOff className="h-3 w-3 sm:h-4 sm:w-4" />
                     )}
                   </Button>
                   {player.user_id ? (
