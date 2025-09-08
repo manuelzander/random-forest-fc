@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Slider } from '@/components/ui/slider';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { User, Upload, X, Plus, Shuffle, Wand2 } from 'lucide-react';
+import { User, Upload, X, Plus, Shuffle, Wand2, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProfileData {
@@ -463,6 +463,51 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
     }
   };
 
+  const downloadAvatar = async () => {
+    if (!playerData?.avatar_url) {
+      toast({
+        title: "No Avatar",
+        description: "No avatar available to download.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      const response = await fetch(playerData.avatar_url);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch avatar');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${playerData.name}-avatar.png`;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Downloaded!",
+        description: "Avatar image has been downloaded successfully.",
+      });
+    } catch (error) {
+      console.error('Error downloading avatar:', error);
+      toast({
+        title: "Error",
+        description: "Failed to download avatar. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return <div>Loading profile...</div>;
   }
@@ -489,7 +534,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                 </Avatar>
               </div>
               <div className="space-y-3 flex-1">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <Label htmlFor="avatar-upload" className="cursor-pointer">
                   <Button variant="outline" asChild className="w-full" disabled={isSaving} size="sm">
                     <span>
@@ -523,6 +568,16 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                     <Wand2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     {isGeneratingAvatar ? 'Generating...' : <><span className="hidden sm:inline">AI Transform</span><span className="sm:hidden">AI</span></>}
                   </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    onClick={downloadAvatar}
+                    disabled={!playerData?.avatar_url}
+                    size="sm"
+                  >
+                    <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                    <><span className="hidden sm:inline">Download</span><span className="sm:hidden">Save</span></>
+                  </Button>
                 </div>
                 
                 <Input
@@ -535,7 +590,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                 />
                 
                 <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-                  Upload your photo, generate random avatar, or transform uploaded images into cartoons
+                  Upload your photo, generate random avatar, transform images into cartoons, or download current avatar
                 </p>
               </div>
             </div>
