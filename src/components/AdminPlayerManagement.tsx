@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -530,7 +531,12 @@ const AdminPlayerManagement = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
+                    <Link 
+                      to={`/player/${player.id}`} 
+                      className="hover:text-primary transition-colors"
+                    >
+                      <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
+                    </Link>
                     <p className="text-xs sm:text-sm text-muted-foreground">
                       {player.points} pts • {player.games_played} games
                     </p>
