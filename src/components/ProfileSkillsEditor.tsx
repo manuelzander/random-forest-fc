@@ -534,7 +534,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                 </Avatar>
               </div>
               <div className="space-y-3 flex-1">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <Label htmlFor="avatar-upload" className="cursor-pointer">
                   <Button variant="outline" asChild className="w-full" disabled={isSaving} size="sm">
                     <span>
@@ -548,16 +548,6 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                       </span>
                     </Button>
                   </Label>
-                  
-                  <Button 
-                    variant="outline" 
-                    onClick={generateRandomAvatar}
-                    disabled={isGeneratingAvatar}
-                    size="sm"
-                  >
-                    <Shuffle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                    {isGeneratingAvatar ? 'Generating...' : <><span className="hidden sm:inline">Random Avatar</span><span className="sm:hidden">Random</span></>}
-                  </Button>
                   
                   <Button 
                     variant="outline" 
@@ -590,7 +580,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                 />
                 
                 <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-                  Upload your photo, generate random avatar, transform images into cartoons, or download current avatar
+                  Upload your photo, transform images into cartoons, or download current avatar
                 </p>
               </div>
             </div>
