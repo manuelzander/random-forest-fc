@@ -46,8 +46,10 @@ const AdminPlayerManagement = () => {
   const [removingAvatarFor, setRemovingAvatarFor] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [removeAvatarDialogOpen, setRemoveAvatarDialogOpen] = useState(false);
   const [playerToDelete, setPlayerToDelete] = useState<Player | null>(null);
   const [playerToDisconnect, setPlayerToDisconnect] = useState<Player | null>(null);
+  const [playerToRemoveAvatar, setPlayerToRemoveAvatar] = useState<Player | null>(null);
   const [isSavingPlayer, setIsSavingPlayer] = useState(false);
   const { toast } = useToast();
 
@@ -298,6 +300,11 @@ const AdminPlayerManagement = () => {
     setDisconnectDialogOpen(true);
   };
 
+  const openRemoveAvatarDialog = (player: Player) => {
+    setPlayerToRemoveAvatar(player);
+    setRemoveAvatarDialogOpen(true);
+  };
+
   const handleUnclaimPlayer = async () => {
     if (!playerToDisconnect) return;
 
@@ -391,20 +398,22 @@ const AdminPlayerManagement = () => {
     }
   };
 
-  const removeAvatar = async (player: Player) => {
+  const removeAvatar = async () => {
+    if (!playerToRemoveAvatar) return;
+
     try {
-      setRemovingAvatarFor(player.id);
+      setRemovingAvatarFor(playerToRemoveAvatar.id);
       
       // Delete the avatar from storage if it exists
-      if (player.avatar_url) {
+      if (playerToRemoveAvatar.avatar_url) {
         try {
           // Extract filename from the URL
-          const urlParts = player.avatar_url.split('/');
+          const urlParts = playerToRemoveAvatar.avatar_url.split('/');
           const filename = urlParts[urlParts.length - 1];
           
           await supabase.storage
             .from('avatars')
-            .remove([`${player.id}/${filename}`]);
+            .remove([`${playerToRemoveAvatar.id}/${filename}`]);
         } catch (storageError) {
           console.error('Error deleting avatar from storage:', storageError);
           // Continue with database update even if storage deletion fails
@@ -415,13 +424,13 @@ const AdminPlayerManagement = () => {
       const { error } = await supabase
         .from('players')
         .update({ avatar_url: null })
-        .eq('id', player.id);
+        .eq('id', playerToRemoveAvatar.id);
 
       if (error) throw error;
 
       toast({
         title: "Avatar removed",
-        description: `Removed avatar for ${player.name}`,
+        description: `Removed avatar for ${playerToRemoveAvatar.name}`,
       });
       
       // Refresh player data
@@ -430,16 +439,19 @@ const AdminPlayerManagement = () => {
       // Update state immediately
       setPlayers(prevPlayers => 
         prevPlayers.map(p => 
-          p.id === player.id 
+          p.id === playerToRemoveAvatar.id 
             ? { ...p, avatar_url: null }
             : p
         )
       );
+      
+      setRemoveAvatarDialogOpen(false);
+      setPlayerToRemoveAvatar(null);
     } catch (error) {
       console.error('Error removing avatar:', error);
       toast({
         title: "Error",
-        description: `Failed to remove avatar for ${player.name}`,
+        description: `Failed to remove avatar for ${playerToRemoveAvatar.name}`,
         variant: "destructive",
       });
     } finally {
@@ -553,7 +565,7 @@ const AdminPlayerManagement = () => {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => removeAvatar(player)}
+                    onClick={() => openRemoveAvatarDialog(player)}
                     disabled={removingAvatarFor === player.id || !player.avatar_url}
                     title="Remove Avatar"
                   >
@@ -657,6 +669,24 @@ const AdminPlayerManagement = () => {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-orange-600 hover:bg-orange-700">
                 Disconnect Player
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Remove Avatar Confirmation Dialog */}
+        <AlertDialog open={removeAvatarDialogOpen} onOpenChange={setRemoveAvatarDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remove Avatar</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to remove the avatar for "{playerToRemoveAvatar?.name}"? This will delete their current avatar image and they will display with initials only.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={removeAvatar} className="bg-red-600 hover:bg-red-700">
+                Remove Avatar
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
