@@ -358,7 +358,7 @@ const PlayerProfile = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0">
+              <Avatar className="h-24 w-24 sm:h-28 sm:w-28 flex-shrink-0">
                 <AvatarImage src={player.avatar_url} />
                 <AvatarFallback className="text-lg sm:text-2xl">
                   {player.name.charAt(0).toUpperCase()}

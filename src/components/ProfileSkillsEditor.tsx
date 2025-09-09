@@ -526,7 +526,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
           <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex justify-center sm:justify-start">
-                <Avatar className="h-16 w-16 sm:h-20 sm:w-20">
+                <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
                   <AvatarImage src={avatarPreview || playerData.avatar_url || undefined} />
                   <AvatarFallback className="text-lg sm:text-xl">
                     {playerData.name.charAt(0).toUpperCase()}
