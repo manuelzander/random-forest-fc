@@ -347,21 +347,30 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              )}
-                             {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
-                               <Popover key={badgeIndex}>
-                                 <PopoverTrigger asChild>
-                                   <Badge className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 cursor-pointer hover:opacity-80 transition-opacity">
-                                     <span>{badge.icon}</span>
-                                   </Badge>
-                                 </PopoverTrigger>
-                                 <PopoverContent side="top" className="max-w-xs w-auto p-3">
-                                   <div className="text-center">
-                                     <div className="font-semibold">{badge.name}</div>
-                                     <div className="text-sm text-muted-foreground mt-1">{badge.description}</div>
-                                   </div>
-                                 </PopoverContent>
-                               </Popover>
-                             ))}
+                             {getBadges(player).slice(0, 2).map((badge, badgeIndex) => {
+                               console.log('Rendering table badge:', badge.name, badge.description);
+                               return (
+                                 <Popover key={badgeIndex}>
+                                   <PopoverTrigger asChild>
+                                     <Badge 
+                                       className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 cursor-pointer hover:opacity-80 transition-opacity"
+                                       onClick={() => console.log('Table badge clicked:', badge.name)}
+                                     >
+                                       <span>{badge.icon}</span>
+                                     </Badge>
+                                   </PopoverTrigger>
+                                   <PopoverContent 
+                                     side="top" 
+                                     className="max-w-xs w-auto p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg z-50"
+                                   >
+                                     <div className="text-center">
+                                       <div className="font-semibold text-gray-900 dark:text-gray-100">{badge.name}</div>
+                                       <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{badge.description}</div>
+                                     </div>
+                                   </PopoverContent>
+                                 </Popover>
+                               );
+                             })}
                         </div>
                       </div>
                     </td>

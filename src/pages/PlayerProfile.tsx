@@ -532,26 +532,35 @@ const PlayerProfile = () => {
                  )}
                    {badges.length > 0 && (
                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                        {badges.map((badge, index) => (
-                          <Popover key={index}>
-                            <PopoverTrigger asChild>
-                              <Badge className={`${
-                                badge.name === 'Verified Player' 
-                                  ? 'bg-green-100 text-green-800 border-green-200' 
-                                  : 'bg-yellow-100 text-yellow-800'
-                              } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap cursor-pointer hover:opacity-80 transition-opacity`}>
-                                {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
-                                <span className="hidden sm:inline">{badge.name}</span>
-                              </Badge>
-                            </PopoverTrigger>
-                            <PopoverContent side="top" className="max-w-xs w-auto p-3">
-                              <div className="text-center">
-                                <div className="font-semibold">{badge.name}</div>
-                                <div className="text-sm text-muted-foreground mt-1">{badge.description}</div>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        ))}
+                        {badges.map((badge, index) => {
+                          console.log('Rendering badge:', badge.name, badge.description);
+                          return (
+                            <Popover key={index}>
+                              <PopoverTrigger asChild>
+                                <Badge 
+                                  className={`${
+                                    badge.name === 'Verified Player' 
+                                      ? 'bg-green-100 text-green-800 border-green-200' 
+                                      : 'bg-yellow-100 text-yellow-800'
+                                  } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap cursor-pointer hover:opacity-80 transition-opacity`}
+                                  onClick={() => console.log('Badge clicked:', badge.name)}
+                                >
+                                  {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
+                                  <span className="hidden sm:inline">{badge.name}</span>
+                                </Badge>
+                              </PopoverTrigger>
+                              <PopoverContent 
+                                side="top" 
+                                className="max-w-xs w-auto p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg z-50"
+                              >
+                                <div className="text-center">
+                                  <div className="font-semibold text-gray-900 dark:text-gray-100">{badge.name}</div>
+                                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{badge.description}</div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          );
+                        })}
                      </div>
                    )}
               </div>
