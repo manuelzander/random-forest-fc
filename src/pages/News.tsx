@@ -102,15 +102,10 @@ const News = () => {
                          {article.title}
                        </h3>
                        {article.content && (
-                          <p className="text-muted-foreground mb-3 leading-relaxed text-sm sm:text-base">
-                            {article.content.split('\n').map((line, idx) => (
-                              <React.Fragment key={idx}>
-                                {line}
-                                <br />
-                              </React.Fragment>
-                            ))}
-                          </p>
-                        )}
+                         <p className="text-muted-foreground mb-3 leading-relaxed text-sm sm:text-base">
+                           {article.content}
+                         </p>
+                       )}
                        <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                         <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                         <time dateTime={article.created_at}>
