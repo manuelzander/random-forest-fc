@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -347,23 +347,21 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              )}
-                            <TooltipProvider>
-                              {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
-                                <Tooltip key={badgeIndex}>
-                                  <TooltipTrigger asChild>
-                                    <Badge className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 cursor-pointer hover:opacity-80 transition-opacity">
-                                      <span>{badge.icon}</span>
-                                    </Badge>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="top" className="max-w-xs">
-                                    <div className="text-center">
-                                      <div className="font-semibold">{badge.name}</div>
-                                      <div className="text-sm text-muted-foreground">{badge.description}</div>
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              ))}
-                            </TooltipProvider>
+                             {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
+                               <Popover key={badgeIndex}>
+                                 <PopoverTrigger asChild>
+                                   <Badge className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 cursor-pointer hover:opacity-80 transition-opacity">
+                                     <span>{badge.icon}</span>
+                                   </Badge>
+                                 </PopoverTrigger>
+                                 <PopoverContent side="top" className="max-w-xs w-auto p-3">
+                                   <div className="text-center">
+                                     <div className="font-semibold">{badge.name}</div>
+                                     <div className="text-sm text-muted-foreground mt-1">{badge.description}</div>
+                                   </div>
+                                 </PopoverContent>
+                               </Popover>
+                             ))}
                         </div>
                       </div>
                     </td>
