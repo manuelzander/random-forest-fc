@@ -524,7 +524,7 @@ const AdminPlayerManagement = () => {
             return (
               <div key={player.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
                 <div className="flex items-center gap-3 flex-1">
-                  <Avatar key={`${player.id}-${player.avatar_url}`} className="h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0">
+                  <Avatar key={`${player.id}-${player.avatar_url}`} className="h-14 w-14 sm:h-16 sm:w-16 flex-shrink-0">
                     <AvatarImage src={player.avatar_url || undefined} />
                     <AvatarFallback>
                       {player.name.substring(0, 2).toUpperCase()}
