@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { SkillRadarChart } from '@/components/SkillRadarChart';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle, Heart, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -530,39 +529,20 @@ const PlayerProfile = () => {
                  {profile?.bio && (
                    <p className="text-muted-foreground mb-3 text-sm sm:text-base">{profile.bio}</p>
                  )}
-                   {badges.length > 0 && (
-                     <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                        {badges.map((badge, index) => {
-                          console.log('Rendering badge:', badge.name, badge.description);
-                          return (
-                            <Popover key={index}>
-                              <PopoverTrigger asChild>
-                                <Badge 
-                                  className={`${
-                                    badge.name === 'Verified Player' 
-                                      ? 'bg-green-100 text-green-800 border-green-200' 
-                                      : 'bg-yellow-100 text-yellow-800'
-                                  } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap cursor-pointer hover:opacity-80 transition-opacity`}
-                                  onClick={() => console.log('Badge clicked:', badge.name)}
-                                >
-                                  {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
-                                  <span className="hidden sm:inline">{badge.name}</span>
-                                </Badge>
-                              </PopoverTrigger>
-                              <PopoverContent 
-                                side="top" 
-                                className="max-w-xs w-auto p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg z-50"
-                              >
-                                <div className="text-center">
-                                  <div className="font-semibold text-gray-900 dark:text-gray-100">{badge.name}</div>
-                                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{badge.description}</div>
-                                </div>
-                              </PopoverContent>
-                            </Popover>
-                          );
-                        })}
-                     </div>
-                   )}
+                 {badges.length > 0 && (
+                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                      {badges.map((badge, index) => (
+                        <Badge key={index} className={`${
+                          badge.name === 'Verified Player' 
+                            ? 'bg-green-100 text-green-800 border-green-200' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap`}>
+                          {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
+                          <span className="hidden sm:inline">{badge.name}</span>
+                        </Badge>
+                      ))}
+                   </div>
+                 )}
               </div>
             </div>
           </CardContent>
