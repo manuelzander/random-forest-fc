@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { SkillRadarChart } from '@/components/SkillRadarChart';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle, Heart, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -529,20 +530,32 @@ const PlayerProfile = () => {
                  {profile?.bio && (
                    <p className="text-muted-foreground mb-3 text-sm sm:text-base">{profile.bio}</p>
                  )}
-                 {badges.length > 0 && (
-                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                      {badges.map((badge, index) => (
-                        <Badge key={index} className={`${
-                          badge.name === 'Verified Player' 
-                            ? 'bg-green-100 text-green-800 border-green-200' 
-                            : 'bg-yellow-100 text-yellow-800'
-                        } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap`}>
-                          {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
-                          <span className="hidden sm:inline">{badge.name}</span>
-                        </Badge>
-                      ))}
-                   </div>
-                 )}
+                  {badges.length > 0 && (
+                    <TooltipProvider>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                         {badges.map((badge, index) => (
+                           <Tooltip key={index}>
+                             <TooltipTrigger asChild>
+                               <Badge className={`${
+                                 badge.name === 'Verified Player' 
+                                   ? 'bg-green-100 text-green-800 border-green-200' 
+                                   : 'bg-yellow-100 text-yellow-800'
+                               } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap cursor-pointer hover:opacity-80 transition-opacity`}>
+                                 {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
+                                 <span className="hidden sm:inline">{badge.name}</span>
+                               </Badge>
+                             </TooltipTrigger>
+                             <TooltipContent side="top" className="max-w-xs">
+                               <div className="text-center">
+                                 <div className="font-semibold">{badge.name}</div>
+                                 <div className="text-sm text-muted-foreground">{badge.description}</div>
+                               </div>
+                             </TooltipContent>
+                           </Tooltip>
+                         ))}
+                      </div>
+                    </TooltipProvider>
+                  )}
               </div>
             </div>
           </CardContent>

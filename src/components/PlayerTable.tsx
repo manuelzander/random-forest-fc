@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -139,64 +140,133 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
   };
 
-  const getBadges = (player: Player) => {
+  const getBadges = (player: PlayerWithForm) => {
     const badges = [];
-    
-    if (player.mvp_awards >= 5) {
-      badges.push({ icon: '👑', name: 'MVP Champion' });
-    }
-    if (player.goal_difference >= 10) {
-      badges.push({ icon: '🚀', name: 'Goal Machine' });
-    }
     const winRate = player.games_played > 0 ? Math.round((player.wins / player.games_played) * 100) : 0;
-    if (winRate >= 70) {
-      badges.push({ icon: '🏆', name: 'Winner' });
+    const pointsPerGame = player.games_played > 0 ? player.points / player.games_played : 0;
+    
+    // Elite performance badges
+    if (player.mvp_awards >= 10) {
+      badges.push({ icon: '🌟', name: 'Legend', description: '10+ MVP Awards' });
+    } else if (player.mvp_awards >= 5) {
+      badges.push({ icon: '👑', name: 'MVP Champion', description: '5+ MVP Awards' });
     }
-    if (player.games_played >= 20) {
-      badges.push({ icon: '🎯', name: 'Veteran' });
+    
+    if (player.goal_difference >= 25) {
+      badges.push({ icon: '⚡', name: 'Goal God', description: '25+ Goal Difference' });
+    } else if (player.goal_difference >= 15) {
+      badges.push({ icon: '🚀', name: 'Goal Machine', description: '15+ Goal Difference' });
+    } else if (player.goal_difference >= 10) {
+      badges.push({ icon: '🎯', name: 'Sharp Shooter', description: '10+ Goal Difference' });
+    }
+    
+    // Win rate badges
+    if (winRate >= 90) {
+      badges.push({ icon: '🥇', name: 'Dominator', description: '90%+ Win Rate' });
+    } else if (winRate >= 80) {
+      badges.push({ icon: '🏆', name: 'Champion', description: '80%+ Win Rate' });
+    } else if (winRate >= 70) {
+      badges.push({ icon: '🥉', name: 'Winner', description: '70%+ Win Rate' });
+    }
+    
+    // Experience badges
+    if (player.games_played >= 50) {
+      badges.push({ icon: '🏛️', name: 'Hall of Famer', description: '50+ Games Played' });
+    } else if (player.games_played >= 30) {
+      badges.push({ icon: '⚔️', name: 'Warrior', description: '30+ Games Played' });
+    } else if (player.games_played >= 20) {
+      badges.push({ icon: '🎖️', name: 'Veteran', description: '20+ Games Played' });
+    }
+    
+    // Advanced stats badges
+    if (pointsPerGame >= 2.5) {
+      badges.push({ icon: '💎', name: 'Elite Performer', description: '2.5+ Points Per Game' });
+    } else if (pointsPerGame >= 2.0) {
+      badges.push({ icon: '⭐', name: 'Consistent', description: '2.0+ Points Per Game' });
+    }
+    
+    // Form-based badges
+    if (player.recentResults && player.recentResults.length >= 5) {
+      const recentWins = player.recentResults.filter(r => r === 'win').length;
+      const recentLosses = player.recentResults.filter(r => r === 'loss').length;
+      
+      if (recentWins >= 5) {
+        badges.push({ icon: '🔥', name: 'On Fire', description: '5+ recent wins' });
+      } else if (recentWins === 0 && recentLosses >= 4) {
+        badges.push({ icon: '🌧️', name: 'Stormy Weather', description: 'Rough patch' });
+      }
     }
     
     // Funny/Creative badges
-    if (player.goal_difference <= -10) {
-      badges.push({ icon: '🤡', name: 'Goal Leaker' });
-    }
-    if (player.draws >= 5) {
-      badges.push({ icon: '🤝', name: 'Peacekeeper' });
-    }
-    if (player.losses >= 10) {
-      badges.push({ icon: '💀', name: 'Unlucky' });
-    }
-    if (winRate === 0 && player.games_played >= 5) {
-      badges.push({ icon: '😅', name: 'Trying Hard' });
-    }
-    if (player.mvp_awards === 0 && player.games_played >= 10) {
-      badges.push({ icon: '🐐', name: 'Team Player' });
-    }
-    if (winRate === 100 && player.games_played >= 3) {
-      badges.push({ icon: '🔥', name: 'Unstoppable' });
-    }
-    if (player.goal_difference === 0 && player.games_played >= 5) {
-      badges.push({ icon: '⚖️', name: 'Balanced' });
-    }
-    if (player.games_played === 1) {
-      badges.push({ icon: '🆕', name: 'Fresh Meat' });
+    if (player.goal_difference <= -15) {
+      badges.push({ icon: '🕳️', name: 'Black Hole', description: 'Goals disappear around you' });
+    } else if (player.goal_difference <= -10) {
+      badges.push({ icon: '🤡', name: 'Goal Leaker', description: 'Conceded 10+ more goals than scored' });
     }
     
-    // More funny badges
+    if (player.draws >= 8) {
+      badges.push({ icon: '🤝', name: 'Diplomat', description: '8+ drawn games' });
+    } else if (player.draws >= 5) {
+      badges.push({ icon: '⚖️', name: 'Peacekeeper', description: '5+ drawn games' });
+    }
+    
+    if (player.losses >= 15) {
+      badges.push({ icon: '💀', name: 'Cursed', description: '15+ losses' });
+    } else if (player.losses >= 10) {
+      badges.push({ icon: '😤', name: 'Unlucky', description: '10+ losses' });
+    }
+    
+    // Special achievement badges
+    if (winRate === 0 && player.games_played >= 5) {
+      badges.push({ icon: '😅', name: 'Trying Hard', description: 'No wins yet but still playing!' });
+    }
+    if (player.mvp_awards === 0 && player.games_played >= 10) {
+      badges.push({ icon: '🐐', name: 'Team Player', description: 'No MVPs but always showing up' });
+    }
+    if (winRate === 100 && player.games_played >= 3) {
+      badges.push({ icon: '🦄', name: 'Unstoppable', description: 'Perfect win record' });
+    }
+    if (player.goal_difference === 0 && player.games_played >= 5) {
+      badges.push({ icon: '⚖️', name: 'Balanced', description: 'Perfectly balanced goal difference' });
+    }
+    if (player.games_played === 1) {
+      badges.push({ icon: '🆕', name: 'Fresh Meat', description: 'Just getting started' });
+    }
+    
+    // More funny situational badges
     if (player.wins === player.draws && player.draws === player.losses && player.wins >= 2) {
-      badges.push({ icon: '🎲', name: 'Chaos Agent' });
+      badges.push({ icon: '🎲', name: 'Chaos Agent', description: 'Equal wins, draws, and losses' });
     }
     if (player.games_played >= 15 && player.points === 0) {
-      badges.push({ icon: '🍕', name: 'Participation Trophy' });
+      badges.push({ icon: '🍕', name: 'Participation Trophy', description: '15+ games with 0 points' });
     }
     if (player.draws > (player.wins + player.losses) && player.draws >= 3) {
-      badges.push({ icon: '🎭', name: 'Drama Queen' });
+      badges.push({ icon: '🎭', name: 'Drama Queen', description: 'More draws than wins and losses combined' });
     }
     if (player.games_played >= 5 && player.points === 1) {
-      badges.push({ icon: '🐢', name: 'Slow Starter' });
+      badges.push({ icon: '🐢', name: 'Slow Starter', description: 'Exactly 1 point after 5+ games' });
     }
-    if (player.games_played >= 10 && Math.abs(player.goal_difference) <= 2) {
-      badges.push({ icon: '🎪', name: 'Wildcard' });
+    
+    // Quirky statistical badges
+    if (player.games_played >= 10 && player.wins === 0 && player.draws === 0) {
+      badges.push({ icon: '🎯', name: 'Perfectionist', description: 'Consistent in losing' });
+    }
+    if (player.mvp_awards > player.wins) {
+      badges.push({ icon: '👑', name: 'Hero of Lost Causes', description: 'More MVPs than wins' });
+    }
+    if (player && player.games_played >= 5 && Math.abs(player.goal_difference) === player.games_played) {
+      badges.push({ icon: '📊', name: 'Mathematician', description: 'Goal difference equals games played' });
+    }
+    if (player.games_played >= 7 && player.wins === 1 && player.draws === 1 && player.losses >= 5) {
+      badges.push({ icon: '🍀', name: 'One Hit Wonder', description: 'Rare moments of glory' });
+    }
+    
+    // Weekend warrior type badges
+    if (pointsPerGame < 1 && player.games_played >= 10) {
+      badges.push({ icon: '🏃', name: 'Cardio King', description: 'Here for the exercise' });
+    }
+    if (player.mvp_awards >= 3 && winRate < 50) {
+      badges.push({ icon: '🎪', name: 'Star of the Show', description: 'Individual brilliance in team struggles' });
     }
     
     return badges;
@@ -277,11 +347,23 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              )}
-                           {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
-                             <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
-                               <span>{badge.icon}</span>
-                             </Badge>
-                           ))}
+                            <TooltipProvider>
+                              {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
+                                <Tooltip key={badgeIndex}>
+                                  <TooltipTrigger asChild>
+                                    <Badge className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5 cursor-pointer hover:opacity-80 transition-opacity">
+                                      <span>{badge.icon}</span>
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="max-w-xs">
+                                    <div className="text-center">
+                                      <div className="font-semibold">{badge.name}</div>
+                                      <div className="text-sm text-muted-foreground">{badge.description}</div>
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              ))}
+                            </TooltipProvider>
                         </div>
                       </div>
                     </td>
