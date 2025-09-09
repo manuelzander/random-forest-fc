@@ -277,7 +277,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              )}
-                           {getBadges(player).slice(0, 2).map((badge, badgeIndex) => (
+                           {getBadges(player).slice(0, 6).map((badge, badgeIndex) => (
                              <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                                <span>{badge.icon}</span>
                              </Badge>
