@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Player } from '@/types';
+import { getBadges } from '@/utils/badges';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -139,68 +140,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
   };
 
-  const getBadges = (player: Player) => {
-    const badges = [];
-    
-    if (player.mvp_awards >= 5) {
-      badges.push({ icon: '👑', name: 'MVP Champion' });
-    }
-    if (player.goal_difference >= 10) {
-      badges.push({ icon: '🚀', name: 'Goal Machine' });
-    }
-    const winRate = player.games_played > 0 ? Math.round((player.wins / player.games_played) * 100) : 0;
-    if (winRate >= 70) {
-      badges.push({ icon: '🏆', name: 'Winner' });
-    }
-    if (player.games_played >= 20) {
-      badges.push({ icon: '🎯', name: 'Veteran' });
-    }
-    
-    // Funny/Creative badges
-    if (player.goal_difference <= -10) {
-      badges.push({ icon: '🤡', name: 'Goal Leaker' });
-    }
-    if (player.draws >= 5) {
-      badges.push({ icon: '🤝', name: 'Peacekeeper' });
-    }
-    if (player.losses >= 10) {
-      badges.push({ icon: '💀', name: 'Unlucky' });
-    }
-    if (winRate === 0 && player.games_played >= 5) {
-      badges.push({ icon: '😅', name: 'Trying Hard' });
-    }
-    if (player.mvp_awards === 0 && player.games_played >= 10) {
-      badges.push({ icon: '🐐', name: 'Team Player' });
-    }
-    if (winRate === 100 && player.games_played >= 3) {
-      badges.push({ icon: '🔥', name: 'Unstoppable' });
-    }
-    if (player.goal_difference === 0 && player.games_played >= 5) {
-      badges.push({ icon: '⚖️', name: 'Balanced' });
-    }
-    if (player.games_played === 1) {
-      badges.push({ icon: '🆕', name: 'Fresh Meat' });
-    }
-    
-    // More funny badges
-    if (player.wins === player.draws && player.draws === player.losses && player.wins >= 2) {
-      badges.push({ icon: '🎲', name: 'Chaos Agent' });
-    }
-    if (player.games_played >= 15 && player.points === 0) {
-      badges.push({ icon: '🍕', name: 'Participation Trophy' });
-    }
-    if (player.draws > (player.wins + player.losses) && player.draws >= 3) {
-      badges.push({ icon: '🎭', name: 'Drama Queen' });
-    }
-    if (player.games_played >= 5 && player.points === 1) {
-      badges.push({ icon: '🐢', name: 'Slow Starter' });
-    }
-    if (player.games_played >= 10 && Math.abs(player.goal_difference) <= 2) {
-      badges.push({ icon: '🎪', name: 'Wildcard' });
-    }
-    
-    return badges;
-  };
 
   return (
     <Card className="w-full">
@@ -277,10 +216,10 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              )}
-                           {getBadges(player).slice(0, 6).map((badge, badgeIndex) => (
-                             <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
-                               <span>{badge.icon}</span>
-                             </Badge>
+                            {getBadges(player).slice(0, 6).map((badge, badgeIndex) => (
+                              <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
+                                <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
+                              </Badge>
                            ))}
                         </div>
                       </div>
