@@ -47,9 +47,9 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
     return Math.round((player.wins / player.games_played) * 100);
   };
   
-  if (player?.user_id) {
-    badges.push({ icon: '✅', name: 'Verified Player', description: 'Claimed by user' });
-  }
+  // if (player?.user_id) {
+  //   badges.push({ icon: '✅', name: 'Verified Player', description: 'Claimed by user' });
+  // }
   
   // Elite performance badges
   if (player?.mvp_awards >= 10) {
