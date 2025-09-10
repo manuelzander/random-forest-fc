@@ -66,13 +66,15 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
     badges.push({ icon: '🎯', name: 'Sharp Shooter', description: '10+ Goal Difference' });
   }
   
-  // Win rate badges
-  if (getWinRate() >= 90) {
-    badges.push({ icon: '🥇', name: 'Dominator', description: '90%+ Win Rate' });
-  } else if (getWinRate() >= 80) {
-    badges.push({ icon: '🏆', name: 'Champion', description: '80%+ Win Rate' });
-  } else if (getWinRate() >= 70) {
-    badges.push({ icon: '🥉', name: 'Winner', description: '70%+ Win Rate' });
+  // Win rate badges (only for players with 10+ games)
+  if (player?.games_played >= 10) {
+    if (getWinRate() >= 80) {
+      badges.push({ icon: '🥇', name: 'Dominator', description: '80%+ Win Rate' });
+    } else if (getWinRate() >= 70) {
+      badges.push({ icon: '🏆', name: 'Champion', description: '70%+ Win Rate' });
+    } else if (getWinRate() >= 60) {
+      badges.push({ icon: '🥉', name: 'Winner', description: '60%+ Win Rate' });
+    }
   }
   
   // Experience badges
@@ -84,12 +86,14 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
     badges.push({ icon: '🎖️', name: 'Veteran', description: '20+ Games Played' });
   }
   
-  // Advanced stats badges
+  // Advanced stats badges (only for players with 10+ games)
   const pointsPerGame = player?.games_played > 0 ? player.points / player.games_played : 0;
-  if (pointsPerGame >= 2.5) {
-    badges.push({ icon: '💎', name: 'Elite Performer', description: '2.5+ Points Per Game' });
-  } else if (pointsPerGame >= 2.0) {
-    badges.push({ icon: '⭐', name: 'Consistent', description: '2.0+ Points Per Game' });
+  if (player?.games_played >= 10) {
+    if (pointsPerGame >= 2.2) {
+      badges.push({ icon: '💎', name: 'Elite Performer', description: '2.2+ Points Per Game' });
+    } else if (pointsPerGame >= 1.8) {
+      badges.push({ icon: '⭐', name: 'Consistent', description: '1.8+ Points Per Game' });
+    }
   }
   
   // Skills-based badges (if skill ratings are available)
