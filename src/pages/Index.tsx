@@ -348,7 +348,7 @@ const Index = () => {
                              </div>
                            </div>
                            {article.content && (
-                             <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">{article.content}</p>
+                             <p className="text-muted-foreground leading-relaxed text-sm sm:text-base whitespace-pre-wrap">{article.content}</p>
                            )}
                          </div>
                        ))}
