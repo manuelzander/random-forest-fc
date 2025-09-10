@@ -17,6 +17,10 @@ interface PlayerTableProps {
 
 interface PlayerWithForm extends Player {
   recentResults?: ('win' | 'draw' | 'loss')[];
+  profile?: {
+    football_skills?: string[];
+    skill_ratings?: any;
+  };
 }
 
 const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
@@ -73,10 +77,30 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
             }
           });
         }
+
+        // Fetch profile data if player has a user_id
+        let profile = undefined;
+        if ((player as any).user_id) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('football_skills, skill_ratings')
+            .eq('user_id', (player as any).user_id)
+            .maybeSingle();
+          
+          if (profileData) {
+            profile = {
+              football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
+              skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
+                ? profileData.skill_ratings 
+                : {}
+            };
+          }
+        }
         
         playersWithRecentResults.push({
           ...player,
-          recentResults: recentResults.reverse() // Reverse to show oldest to newest
+          recentResults: recentResults.reverse(), // Reverse to show oldest to newest
+          profile
         });
       }
       
@@ -216,7 +240,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              )}
-                            {getBadges(player).slice(0, 3).map((badge, badgeIndex) => (
+                            {getBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
                               <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                                 <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               </Badge>
