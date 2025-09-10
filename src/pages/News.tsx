@@ -102,7 +102,7 @@ const News = () => {
                          {article.title}
                        </h3>
                        {article.content && (
-                         <p className="text-muted-foreground mb-3 leading-relaxed text-sm sm:text-base">
+                         <p className="text-muted-foreground mb-3 leading-relaxed text-sm sm:text-base whitespace-pre-wrap">
                            {article.content}
                          </p>
                        )}
