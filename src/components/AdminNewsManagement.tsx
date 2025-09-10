@@ -304,7 +304,7 @@ const AdminNewsManagement = () => {
                       </Badge>
                     </div>
                     {item.content && (
-                      <p className="text-muted-foreground mb-2 line-clamp-2 text-sm sm:text-base">{item.content}</p>
+                      <p className="text-muted-foreground mb-2 line-clamp-5 text-sm sm:text-base whitespace-pre-wrap">{item.content}</p>
                     )}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
