@@ -118,7 +118,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
     }
 
     // MVP validation - optional, but if selected must be valid
-    if (mvpPlayer && !allGamePlayers.includes(mvpPlayer)) {
+    if (mvpPlayer && mvpPlayer !== "none" && !allGamePlayers.includes(mvpPlayer)) {
       toast({
         title: "Error",
         description: "Please select a valid MVP from the playing players",
@@ -144,7 +144,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
       team2Goals: parseInt(team2Goals) || 0,
       team1Captain,
       team2Captain,
-      mvpPlayer: mvpPlayer || null,
+      mvpPlayer: mvpPlayer === "none" ? null : mvpPlayer || null,
       youtubeUrl: youtubeUrl || undefined,
     };
 
@@ -331,7 +331,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
                 <SelectValue placeholder="Select MVP from playing players (optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem key="none" value="">None</SelectItem>
+                <SelectItem key="none" value="none">None</SelectItem>
                 {allGamePlayers.map((playerId) => (
                   <SelectItem key={playerId} value={playerId}>
                     {getPlayerName(playerId)}
