@@ -139,7 +139,7 @@ const Index = () => {
               
               if (game.mvp_player === player.id) {
                 mvp_awards++;
-                // Note: MVP awards don't add points to league standings
+                points += 1; // Add 1 point for MVP award
               }
             }
           });
@@ -160,8 +160,23 @@ const Index = () => {
         };
       });
       
-      // Sort by points descending
-      formattedPlayers.sort((a, b) => b.points - a.points);
+      // Sort by points first, then PPG, then goal difference
+      formattedPlayers.sort((a, b) => {
+        // First sort by points (descending)
+        if (b.points !== a.points) {
+          return b.points - a.points;
+        }
+        
+        // If points are equal, sort by points per game (descending)
+        const aPPG = a.games_played > 0 ? a.points / a.games_played : 0;
+        const bPPG = b.games_played > 0 ? b.points / b.games_played : 0;
+        if (bPPG !== aPPG) {
+          return bPPG - aPPG;
+        }
+        
+        // If PPG is equal, sort by goal difference (descending)
+        return b.goal_difference - a.goal_difference;
+      });
       
       setPlayers(formattedPlayers);
 

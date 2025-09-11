@@ -113,6 +113,25 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   }, [players]);
 
   const sortedPlayers = [...playersWithForm].sort((a, b) => {
+    // Default sorting: Points -> PPG -> Goal Diff
+    if (sortField === 'points' && sortDirection === 'desc') {
+      // First sort by points (descending)
+      if (b.points !== a.points) {
+        return b.points - a.points;
+      }
+      
+      // If points are equal, sort by points per game (descending)
+      const aPPG = a.games_played > 0 ? a.points / a.games_played : 0;
+      const bPPG = b.games_played > 0 ? b.points / b.games_played : 0;
+      if (bPPG !== aPPG) {
+        return bPPG - aPPG;
+      }
+      
+      // If PPG is equal, sort by goal difference (descending)
+      return b.goal_difference - a.goal_difference;
+    }
+    
+    // For other sort fields, use standard sorting
     let aValue: number;
     let bValue: number;
     
