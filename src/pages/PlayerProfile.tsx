@@ -128,6 +128,7 @@ const PlayerProfile = () => {
             
             if (game.mvp_player === playerId) {
               mvp_awards++;
+              points += 1; // Add 1 point for MVP award
             }
           }
         });
