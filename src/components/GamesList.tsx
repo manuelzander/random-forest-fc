@@ -169,9 +169,15 @@ const GamesList = () => {
                                     <span className="sm:hidden">C</span>
                                   </Badge>
                                 )}
+                                {game.mvp_player === playerId && (
+                                  <Badge className="bg-yellow-100 text-yellow-800 items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit hidden md:flex">
+                                    <span>👑</span>
+                                    MVP
+                                  </Badge>
+                                )}
                              </div>
                               {game.mvp_player === playerId && (
-                                <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit md:hidden">
                                   <span>👑</span>
                                   MVP
                                 </Badge>
@@ -200,9 +206,15 @@ const GamesList = () => {
                                     <span className="sm:hidden">C</span>
                                   </Badge>
                                 )}
+                                {game.mvp_player === playerId && (
+                                  <Badge className="bg-yellow-100 text-yellow-800 items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit hidden md:flex">
+                                    <span>👑</span>
+                                    MVP
+                                  </Badge>
+                                )}
                              </div>
                               {game.mvp_player === playerId && (
-                                <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit md:hidden">
                                   <span>👑</span>
                                   MVP
                                 </Badge>
