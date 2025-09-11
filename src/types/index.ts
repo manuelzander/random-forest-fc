@@ -32,7 +32,7 @@ export interface GameInput {
   team2Goals: number;
   team1Captain: string;
   team2Captain: string;
-  mvpPlayer: string;
+  mvpPlayer: string | null;
   youtubeUrl?: string;
 }
 
