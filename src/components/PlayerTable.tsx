@@ -170,7 +170,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
-          Player Rankings
+          Player Ranking
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
