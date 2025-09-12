@@ -354,9 +354,6 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
               value={youtubeUrl}
               onChange={(e) => setYoutubeUrl(e.target.value)}
             />
-            <div className="text-sm text-muted-foreground">
-              Add a YouTube link to showcase highlights from this game
-            </div>
           </div>
 
           <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-3" disabled={isSaving}>
