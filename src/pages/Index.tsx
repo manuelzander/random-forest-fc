@@ -8,12 +8,13 @@ import { Player, GameInput as GameInputType, NewsItem } from '@/types';
 import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
 import GamesList from '@/components/GamesList';
+import AchievementsTable from '@/components/AchievementsTable';
 import { PlayerClaim } from '@/components/PlayerClaim';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Plus, BarChart, Shield, LogIn, LogOut, Settings, User, Calendar, Newspaper } from 'lucide-react';
+import { Trophy, Plus, BarChart, Shield, LogIn, LogOut, Settings, User, Calendar, Newspaper, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
@@ -322,9 +323,10 @@ const Index = () => {
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="ranking" className="text-xs sm:text-sm">Ranking</TabsTrigger>
               <TabsTrigger value="games" className="text-xs sm:text-sm">Games</TabsTrigger>
+              <TabsTrigger value="achievements" className="text-xs sm:text-sm">Achievements</TabsTrigger>
               <TabsTrigger value="news" className="text-xs sm:text-sm">News</TabsTrigger>
             </TabsList>
             <TabsContent value="ranking">
@@ -332,6 +334,9 @@ const Index = () => {
             </TabsContent>
             <TabsContent value="games">
               <GamesList />
+            </TabsContent>
+            <TabsContent value="achievements">
+              <AchievementsTable players={players} />
             </TabsContent>
             <TabsContent value="news">
               <Card>
