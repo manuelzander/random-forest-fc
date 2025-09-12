@@ -7,7 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronUp, Trophy, Info } from 'lucide-react';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 
 interface AchievementsTableProps {
   players: Player[];
@@ -16,9 +17,22 @@ interface AchievementsTableProps {
 const AchievementsTable: React.FC<AchievementsTableProps> = ({ players }) => {
   const [isLegendOpen, setIsLegendOpen] = useState(false);
 
-  const getAvatarUrl = (player: Player) => {
-    return player.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${player.name}`;
-  };
+const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
+  const { avatarUrl } = useDefaultAvatar({
+    playerId: player.id,
+    playerName: player.name,
+    currentAvatarUrl: player.avatar_url
+  });
+
+  return (
+    <Avatar className="h-8 w-8">
+      <AvatarImage src={avatarUrl || undefined} />
+      <AvatarFallback>
+        {player.name.substring(0, 2).toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
+  );
+};
 
   // Get all unique badges from all players
   const allBadges = Array.from(
@@ -119,13 +133,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players }) => {
                         to={`/player/${player.id}`}
                         className="flex items-center gap-3 hover:text-primary transition-colors"
                       >
-                        <Avatar className="h-8 w-8">
-                          <img 
-                            src={getAvatarUrl(player)} 
-                            alt={player.name}
-                            className="h-full w-full object-cover"
-                          />
-                        </Avatar>
+                        <PlayerAvatarWithDefault player={player} />
                         <span className="font-medium">{player.name}</span>
                       </Link>
                     </TableCell>
