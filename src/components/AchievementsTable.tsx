@@ -57,7 +57,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players }) => {
   return (
     <Card>
       <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Trophy className="h-6 w-6" />
           Player Achievements
         </CardTitle>
