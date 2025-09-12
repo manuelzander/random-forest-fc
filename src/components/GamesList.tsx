@@ -218,7 +218,7 @@ const GamesList = () => {
                   <div className="mt-4 border-t pt-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Video className="h-4 w-4 text-primary" />
-                      <span className="font-medium text-sm">Game Highlights</span>
+                      <span className="font-medium text-sm">Game Recording</span>
                       <a 
                         href={game.youtube_url} 
                         target="_blank" 
