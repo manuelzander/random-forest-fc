@@ -101,30 +101,30 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
     const skills = profile.skill_ratings;
     const avgSkill = Object.values(skills).reduce((sum: number, val: any) => sum + (Number(val) || 0), 0) / Object.keys(skills).length;
     
-    if (avgSkill >= 85) {
-      badges.push({ icon: '🎨', name: 'Maestro', description: 'Elite overall skills' });
-    } else if (avgSkill >= 75) {
-      badges.push({ icon: '🔥', name: 'Skilled', description: 'High overall skills' });
+    if (avgSkill >= 90) {
+      badges.push({ icon: '🎨', name: 'Maestro', description: 'Elite overall skills (90+ avg)' });
+    } else if (avgSkill >= 80) {
+      badges.push({ icon: '🔥', name: 'Skilled', description: 'High overall skills (80+ avg)' });
     }
     
-    // Specific skill badges
-    if ((skills.pace || skills.PAC) >= 90) {
-      badges.push({ icon: '💨', name: 'Speed Demon', description: 'Lightning fast' });
+    // Specific skill badges - increased thresholds
+    if ((skills.pace || skills.PAC) >= 95) {
+      badges.push({ icon: '💨', name: 'Speed Demon', description: 'Lightning fast (95+ pace)' });
     }
-    if ((skills.shooting || skills.SHO) >= 90) {
-      badges.push({ icon: '🎯', name: 'Sniper', description: 'Deadly finisher' });
+    if ((skills.shooting || skills.SHO) >= 95) {
+      badges.push({ icon: '🎯', name: 'Sniper', description: 'Deadly finisher (95+ shooting)' });
     }
-    if ((skills.defending || skills.DEF) >= 90) {
-      badges.push({ icon: '🛡️', name: 'Wall', description: 'Impenetrable defense' });
+    if ((skills.defending || skills.DEF) >= 95) {
+      badges.push({ icon: '🛡️', name: 'Wall', description: 'Impenetrable defense (95+ defending)' });
     }
-    if ((skills.dribbling || skills.DRI) >= 90) {
-      badges.push({ icon: '🕺', name: 'Magician', description: 'Mesmerizing skills' });
+    if ((skills.dribbling || skills.DRI) >= 95) {
+      badges.push({ icon: '🕺', name: 'Magician', description: 'Mesmerizing skills (95+ dribbling)' });
     }
-    if ((skills.passing || skills.PAS) >= 90) {
-      badges.push({ icon: '🎛️', name: 'Playmaker', description: 'Vision master' });
+    if ((skills.passing || skills.PAS) >= 95) {
+      badges.push({ icon: '🎛️', name: 'Playmaker', description: 'Vision master (95+ passing)' });
     }
-    if ((skills.physical || skills.PHY) >= 90) {
-      badges.push({ icon: '💪', name: 'Beast', description: 'Physical powerhouse' });
+    if ((skills.physical || skills.PHY) >= 95) {
+      badges.push({ icon: '💪', name: 'Beast', description: 'Physical powerhouse (95+ physical)' });
     }
   }
   
