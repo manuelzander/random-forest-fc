@@ -206,7 +206,7 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
                       </div>
                     </td>
                     <td className="px-3 py-4 text-center">
-                      <Badge variant="secondary" className="font-bold text-lg bg-blue-100 text-blue-800 border-0">
+                      <Badge variant="secondary" className="font-bold text-lg">
                         {playerBadges.length}
                       </Badge>
                     </td>
@@ -214,22 +214,18 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
                       <div className="flex flex-wrap gap-2 justify-center">
                         {playerBadges.length > 0 ? (
                           playerBadges.slice(0, 8).map((badge, badgeIndex) => (
-                            <div
-                              key={badgeIndex}
-                              className="flex items-center gap-1.5 bg-yellow-100 text-yellow-800 border-0 rounded-md px-2.5 py-1.5 text-xs hover:bg-yellow-200 transition-colors shadow-sm"
-                              title={`${badge.name}: ${badge.description}`}
-                            >
-                              <span className="text-sm">{badge.icon}</span>
-                              <span className="hidden sm:inline font-medium">{badge.name}</span>
-                            </div>
+                            <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
+                              <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
+                              <span className="hidden sm:inline">{badge.name}</span>
+                            </Badge>
                           ))
                         ) : (
                           <span className="text-xs text-gray-400 italic">No badges earned yet</span>
                         )}
                         {playerBadges.length > 8 && (
-                          <Badge variant="outline" className="text-xs font-semibold text-gray-600 border-gray-300">
+                          <span className="text-xs text-gray-500 font-medium">
                             +{playerBadges.length - 8} more
-                          </Badge>
+                          </span>
                         )}
                       </div>
                     </td>
