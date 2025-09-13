@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Player } from '@/types';
 import { getBadges } from '@/utils/badges';
@@ -9,13 +9,66 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { ChevronDown, ChevronUp, Trophy, Info } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AchievementsTableProps {
   players: Player[];
 }
 
+interface PlayerWithProfile extends Player {
+  profile?: {
+    football_skills?: string[];
+    skill_ratings?: any;
+  };
+}
+
 const AchievementsTable: React.FC<AchievementsTableProps> = ({ players }) => {
   const [isLegendOpen, setIsLegendOpen] = useState(false);
+  const [playersWithProfiles, setPlayersWithProfiles] = useState<PlayerWithProfile[]>([]);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      const playersWithProfileData: PlayerWithProfile[] = [];
+      
+      for (const player of players) {
+        let profile = undefined;
+        if ((player as any).user_id) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('football_skills, skill_ratings')
+            .eq('user_id', (player as any).user_id)
+            .maybeSingle();
+          
+          if (profileData) {
+            profile = {
+              football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
+              skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
+                ? profileData.skill_ratings 
+                : {}
+            };
+          }
+        }
+        
+        playersWithProfileData.push({
+          ...player,
+          profile
+        });
+      }
+      
+      // Sort by badge count (descending)
+      playersWithProfileData.sort((a, b) => {
+        const aBadgeCount = getBadges(a, a.profile).length;
+        const bBadgeCount = getBadges(b, b.profile).length;
+        return bBadgeCount - aBadgeCount;
+      });
+      
+      setPlayersWithProfiles(playersWithProfileData);
+    };
+
+    if (players.length > 0) {
+      fetchProfileData();
+    }
+  }, [players]);
 
 const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
   const { avatarUrl } = useDefaultAvatar({
@@ -34,10 +87,10 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
   );
 };
 
-  // Get all unique badges from all players
+  // Get all unique badges from all players with profiles
   const allBadges = Array.from(
     new Map(
-      players.flatMap(player => getBadges(player))
+      playersWithProfiles.flatMap(player => getBadges(player, player.profile))
         .map(badge => [badge.name, badge])
     ).values()
   );
@@ -121,8 +174,8 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {players.map((player, index) => {
-                const playerBadges = getBadges(player);
+              {playersWithProfiles.map((player, index) => {
+                const playerBadges = getBadges(player, player.profile);
                 const rank = index + 1;
                 
                 const getRankBadgeColor = (rank: number) => {
