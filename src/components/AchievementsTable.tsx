@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Player } from '@/types';
 import { getBadges } from '@/utils/badges';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronUp, Trophy, Info } from 'lucide-react';
@@ -145,11 +145,10 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
                     <td className="px-3 py-4">
                       <div className="flex items-center gap-3">
                         <PlayerAvatarWithDefault player={player} />
-                        <Link 
-                          to={`/player/${player.id}`}
-                          className="font-semibold text-gray-900 hover:text-blue-600 transition-colors"
-                        >
-                          {player.name}
+                        <Link to={`/player/${player.id}`}>
+                          <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-blue-600">
+                            {player.name}
+                          </Button>
                         </Link>
                       </div>
                     </td>
