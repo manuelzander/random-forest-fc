@@ -10,119 +10,87 @@ import { ChevronDown, ChevronUp, Trophy, Info } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
-
 interface AchievementsTableProps {
   players: Player[];
 }
-
 interface PlayerWithProfile extends Player {
   profile?: {
     football_skills?: string[];
     skill_ratings?: any;
   };
 }
-
-const AchievementsTable: React.FC<AchievementsTableProps> = ({ players }) => {
+const AchievementsTable: React.FC<AchievementsTableProps> = ({
+  players
+}) => {
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [playersWithProfiles, setPlayersWithProfiles] = useState<PlayerWithProfile[]>([]);
-
   useEffect(() => {
     const fetchProfileData = async () => {
       const playersWithProfileData: PlayerWithProfile[] = [];
-      
       for (const player of players) {
         let profile = undefined;
         if ((player as any).user_id) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('football_skills, skill_ratings')
-            .eq('user_id', (player as any).user_id)
-            .maybeSingle();
-          
+          const {
+            data: profileData
+          } = await supabase.from('profiles').select('football_skills, skill_ratings').eq('user_id', (player as any).user_id).maybeSingle();
           if (profileData) {
             profile = {
               football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
-              skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
-                ? profileData.skill_ratings 
-                : {}
+              skill_ratings: profileData.skill_ratings && typeof profileData.skill_ratings === 'object' ? profileData.skill_ratings : {}
             };
           }
         }
-        
         playersWithProfileData.push({
           ...player,
           profile
         });
       }
-      
+
       // Sort by badge count (descending)
       playersWithProfileData.sort((a, b) => {
         const aBadgeCount = getBadges(a, a.profile).length;
         const bBadgeCount = getBadges(b, b.profile).length;
         return bBadgeCount - aBadgeCount;
       });
-      
       setPlayersWithProfiles(playersWithProfileData);
     };
-
     if (players.length > 0) {
       fetchProfileData();
     }
   }, [players]);
-
-const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
-  const { avatarUrl } = useDefaultAvatar({
-    playerId: player.id,
-    playerName: player.name,
-    currentAvatarUrl: player.avatar_url
-  });
-
-  return (
-    <Avatar className="h-10 w-10">
+  const PlayerAvatarWithDefault = ({
+    player
+  }: {
+    player: Player;
+  }) => {
+    const {
+      avatarUrl
+    } = useDefaultAvatar({
+      playerId: player.id,
+      playerName: player.name,
+      currentAvatarUrl: player.avatar_url
+    });
+    return <Avatar className="h-10 w-10">
       <AvatarImage src={avatarUrl || undefined} />
       <AvatarFallback>
         {player.name.substring(0, 2).toUpperCase()}
       </AvatarFallback>
-    </Avatar>
-  );
-};
+    </Avatar>;
+  };
 
   // Get all unique badges from all players with profiles
-  const allBadges = Array.from(
-    new Map(
-      playersWithProfiles.flatMap(player => getBadges(player, player.profile))
-        .map(badge => [badge.name, badge])
-    ).values()
-  );
+  const allBadges = Array.from(new Map(playersWithProfiles.flatMap(player => getBadges(player, player.profile)).map(badge => [badge.name, badge])).values());
 
   // Group badges by category
   const badgeCategories = {
-    'Performance': allBadges.filter(badge => 
-      ['Legend', 'MVP Champion', 'Dominator', 'Champion', 'Winner', 'Elite Performer', 'Consistent'].includes(badge.name)
-    ),
-    'Skills & Scoring': allBadges.filter(badge => 
-      ['Goal God', 'Goal Machine', 'Sharp Shooter', 'Speed Demon', 'Sniper', 'Wall', 'Magician', 'Playmaker', 'Beast', 'Maestro', 'Skilled'].includes(badge.name)
-    ),
-    'Experience': allBadges.filter(badge => 
-      ['Hall of Famer', 'Warrior', 'Veteran'].includes(badge.name)
-    ),
-    'Special Moves': allBadges.filter(badge => 
-      ['Showboat', 'Acrobat', 'Humiliator', 'Artist', 'Swiss Army Knife'].includes(badge.name)
-    ),
-    'Form & Personality': allBadges.filter(badge => 
-      ['On Fire', 'Stormy Weather', 'Diplomat', 'Peacekeeper', 'Team Player', 'Unstoppable', 'Balanced'].includes(badge.name)
-    ),
-    'Quirky & Fun': allBadges.filter(badge => 
-      !['Legend', 'MVP Champion', 'Dominator', 'Champion', 'Winner', 'Elite Performer', 'Consistent',
-        'Goal God', 'Goal Machine', 'Sharp Shooter', 'Speed Demon', 'Sniper', 'Wall', 'Magician', 'Playmaker', 'Beast', 'Maestro', 'Skilled',
-        'Hall of Famer', 'Warrior', 'Veteran',
-        'Showboat', 'Acrobat', 'Humiliator', 'Artist', 'Swiss Army Knife',
-        'On Fire', 'Stormy Weather', 'Diplomat', 'Peacekeeper', 'Team Player', 'Unstoppable', 'Balanced'].includes(badge.name)
-    )
+    'Performance': allBadges.filter(badge => ['Legend', 'MVP Champion', 'Dominator', 'Champion', 'Winner', 'Elite Performer', 'Consistent'].includes(badge.name)),
+    'Skills & Scoring': allBadges.filter(badge => ['Goal God', 'Goal Machine', 'Sharp Shooter', 'Speed Demon', 'Sniper', 'Wall', 'Magician', 'Playmaker', 'Beast', 'Maestro', 'Skilled'].includes(badge.name)),
+    'Experience': allBadges.filter(badge => ['Hall of Famer', 'Warrior', 'Veteran'].includes(badge.name)),
+    'Special Moves': allBadges.filter(badge => ['Showboat', 'Acrobat', 'Humiliator', 'Artist', 'Swiss Army Knife'].includes(badge.name)),
+    'Form & Personality': allBadges.filter(badge => ['On Fire', 'Stormy Weather', 'Diplomat', 'Peacekeeper', 'Team Player', 'Unstoppable', 'Balanced'].includes(badge.name)),
+    'Quirky & Fun': allBadges.filter(badge => !['Legend', 'MVP Champion', 'Dominator', 'Champion', 'Winner', 'Elite Performer', 'Consistent', 'Goal God', 'Goal Machine', 'Sharp Shooter', 'Speed Demon', 'Sniper', 'Wall', 'Magician', 'Playmaker', 'Beast', 'Maestro', 'Skilled', 'Hall of Famer', 'Warrior', 'Veteran', 'Showboat', 'Acrobat', 'Humiliator', 'Artist', 'Swiss Army Knife', 'On Fire', 'Stormy Weather', 'Diplomat', 'Peacekeeper', 'Team Player', 'Unstoppable', 'Balanced'].includes(badge.name))
   };
-
-  return (
-    <Card>
+  return <Card>
       <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Trophy className="h-6 w-6" />
@@ -140,24 +108,20 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-4 space-y-6">
               {Object.entries(badgeCategories).map(([category, badges]) => {
-                if (badges.length === 0) return null;
-                return (
-                  <div key={category}>
+              if (badges.length === 0) return null;
+              return <div key={category}>
                     <h4 className="font-semibold text-sm text-gray-700 mb-3 uppercase tracking-wide">{category}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-                      {badges.map((badge) => (
-                        <div key={badge.name} className="flex items-start gap-3 p-3 rounded-lg bg-white border shadow-sm hover:shadow-md transition-shadow">
+                      {badges.map(badge => <div key={badge.name} className="flex items-start gap-3 p-3 rounded-lg bg-white border shadow-sm hover:shadow-md transition-shadow">
                           <span className="text-xl flex-shrink-0 mt-0.5">{badge.icon}</span>
                           <div className="min-w-0 flex-1">
                             <div className="font-semibold text-gray-900">{badge.name}</div>
                             <div className="text-xs text-gray-600 mt-1 leading-relaxed">{badge.description}</div>
                           </div>
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
             </CollapsibleContent>
           </Collapsible>
         </div>
@@ -169,29 +133,25 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
               <tr>
                 <th className="px-3 py-3 text-left text-sm font-medium text-gray-900 w-12">Rank</th>
                 <th className="px-3 py-3 text-left text-sm font-medium text-gray-900">Player</th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900">Badge Count</th>
+                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900">Badges
+              </th>
                 <th className="px-3 py-3 text-center text-sm font-medium text-gray-900 min-w-[300px]">Achievements</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {playersWithProfiles.map((player, index) => {
-                const playerBadges = getBadges(player, player.profile);
-                const rank = index + 1;
-                
-                const getRankBadgeColor = (rank: number) => {
-                  if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-600';
-                  if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500 border-gray-500';
-                  if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800 border-amber-800';
-                  if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600 border-green-600';
-                  return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
-                };
-                
-                return (
-                  <tr key={player.id} className="hover:bg-gray-50 transition-colors">
+              const playerBadges = getBadges(player, player.profile);
+              const rank = index + 1;
+              const getRankBadgeColor = (rank: number) => {
+                if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-600';
+                if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500 border-gray-500';
+                if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800 border-amber-800';
+                if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600 border-green-600';
+                return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
+              };
+              return <tr key={player.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-3 py-4">
-                      <Badge 
-                        className={`${getRankBadgeColor(rank)} text-white font-bold !border-0 border-transparent`}
-                      >
+                      <Badge className={`${getRankBadgeColor(rank)} text-white font-bold !border-0 border-transparent`}>
                         {rank}
                       </Badge>
                     </td>
@@ -212,32 +172,21 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
                     </td>
                     <td className="px-3 py-4">
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {playerBadges.length > 0 ? (
-                          playerBadges.slice(0, 8).map((badge, badgeIndex) => (
-                            <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
+                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                               <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               <span className="hidden sm:inline">{badge.name}</span>
-                            </Badge>
-                          ))
-                        ) : (
-                          <span className="text-xs text-gray-400 italic">No badges earned yet</span>
-                        )}
-                        {playerBadges.length > 8 && (
-                          <span className="text-xs text-gray-500 font-medium">
+                            </Badge>) : <span className="text-xs text-gray-400 italic">No badges earned yet</span>}
+                        {playerBadges.length > 8 && <span className="text-xs text-gray-500 font-medium">
                             +{playerBadges.length - 8} more
-                          </span>
-                        )}
+                          </span>}
                       </div>
                     </td>
-                  </tr>
-                );
-              })}
+                  </tr>;
+            })}
             </tbody>
           </table>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default AchievementsTable;
