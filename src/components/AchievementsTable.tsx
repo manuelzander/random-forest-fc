@@ -133,9 +133,18 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
               <tr>
                 <th className="px-3 py-3 text-left text-sm font-medium text-gray-900 w-12">Rank</th>
                 <th className="px-3 py-3 text-left text-sm font-medium text-gray-900">Player</th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900">Badges
-              </th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900 min-w-[300px]">Achievements</th>
+                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900">
+                  <div className="flex items-center justify-center gap-1">
+                    <Trophy className="h-4 w-4" />
+                    Count
+                  </div>
+                </th>
+                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900 min-w-[300px]">
+                  <div className="flex items-center justify-center gap-1">
+                    <Trophy className="h-4 w-4" />
+                    Achievements
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
