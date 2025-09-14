@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp, Trophy, Info } from 'lucide-react';
+import { ChevronDown, ChevronUp, Trophy, Info, Award } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
@@ -134,7 +134,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
                 <th className="px-3 py-3 text-left text-sm font-medium text-gray-900 w-12">Rank</th>
                 <th className="px-3 py-3 text-left text-sm font-medium text-gray-900">Player</th>
                 <th className="px-3 py-3 text-center text-sm font-medium text-gray-900">
-                  <Trophy className="h-4 w-4 mr-1 inline" />
+                  <Award className="h-4 w-4 mr-1 inline" />
                   Count
                 </th>
                 <th className="px-3 py-3 text-center text-sm font-medium text-gray-900 min-w-[300px]">
