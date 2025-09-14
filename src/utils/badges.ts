@@ -107,24 +107,31 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
       badges.push({ icon: '🔥', name: 'Skilled', description: 'High overall skills (80+ avg)' });
     }
     
-    // Specific skill badges - increased thresholds
+    // Specific skill badges - increased thresholds (max 1 per player)
+    const skillBadges = [];
     if ((skills.pace || skills.PAC) >= 95) {
-      badges.push({ icon: '💨', name: 'Speed Demon', description: 'Lightning fast (95+ pace)' });
+      skillBadges.push({ icon: '💨', name: 'Speed Demon', description: 'Lightning fast (95+ pace)' });
     }
     if ((skills.shooting || skills.SHO) >= 95) {
-      badges.push({ icon: '🎯', name: 'Sniper', description: 'Deadly finisher (95+ shooting)' });
+      skillBadges.push({ icon: '🎯', name: 'Sniper', description: 'Deadly finisher (95+ shooting)' });
     }
     if ((skills.defending || skills.DEF) >= 95) {
-      badges.push({ icon: '🛡️', name: 'Wall', description: 'Impenetrable defense (95+ defending)' });
+      skillBadges.push({ icon: '🛡️', name: 'Wall', description: 'Impenetrable defense (95+ defending)' });
     }
     if ((skills.dribbling || skills.DRI) >= 95) {
-      badges.push({ icon: '🕺', name: 'Magician', description: 'Mesmerizing skills (95+ dribbling)' });
+      skillBadges.push({ icon: '🕺', name: 'Magician', description: 'Mesmerizing skills (95+ dribbling)' });
     }
     if ((skills.passing || skills.PAS) >= 95) {
-      badges.push({ icon: '🎛️', name: 'Playmaker', description: 'Vision master (95+ passing)' });
+      skillBadges.push({ icon: '🎛️', name: 'Playmaker', description: 'Vision master (95+ passing)' });
     }
     if ((skills.physical || skills.PHY) >= 95) {
-      badges.push({ icon: '💪', name: 'Beast', description: 'Physical powerhouse (95+ physical)' });
+      skillBadges.push({ icon: '💪', name: 'Beast', description: 'Physical powerhouse (95+ physical)' });
+    }
+    
+    // Add only one skill badge randomly if multiple qualify
+    if (skillBadges.length > 0) {
+      const randomSkillBadge = skillBadges[Math.floor(Math.random() * skillBadges.length)];
+      badges.push(randomSkillBadge);
     }
   }
   
