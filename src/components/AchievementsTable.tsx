@@ -171,7 +171,6 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
                   </SortButton>
                 </th>
                 <th className="px-3 py-3 text-center text-sm font-medium text-gray-900 min-w-[300px]">
-                  <Trophy className="h-4 w-4 mr-1 inline" />
                   Achievements
                 </th>
               </tr>
