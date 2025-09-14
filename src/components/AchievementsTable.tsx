@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp, Trophy, Info, Award } from 'lucide-react';
+import { ChevronDown, ChevronUp, Trophy, Info, Award, ArrowUp, ArrowDown } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,6 +24,8 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
 }) => {
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [playersWithProfiles, setPlayersWithProfiles] = useState<PlayerWithProfile[]>([]);
+  const [sortField, setSortField] = useState<'badges' | 'name'>('badges');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   useEffect(() => {
     const fetchProfileData = async () => {
       const playersWithProfileData: PlayerWithProfile[] = [];
@@ -46,18 +48,22 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
         });
       }
 
-      // Sort by badge count (descending)
+      // Sort by badge count (descending) or name (ascending)
       playersWithProfileData.sort((a, b) => {
-        const aBadgeCount = getBadges(a, a.profile).length;
-        const bBadgeCount = getBadges(b, b.profile).length;
-        return bBadgeCount - aBadgeCount;
+        if (sortField === 'badges') {
+          const aBadgeCount = getBadges(a, a.profile).length;
+          const bBadgeCount = getBadges(b, b.profile).length;
+          return sortDirection === 'desc' ? bBadgeCount - aBadgeCount : aBadgeCount - bBadgeCount;
+        } else {
+          return sortDirection === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
+        }
       });
       setPlayersWithProfiles(playersWithProfileData);
     };
     if (players.length > 0) {
       fetchProfileData();
     }
-  }, [players]);
+  }, [players, sortField, sortDirection]);
   const PlayerAvatarWithDefault = ({
     player
   }: {
@@ -77,6 +83,29 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
       </AvatarFallback>
     </Avatar>;
   };
+
+  const handleSort = (field: 'badges' | 'name') => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortField(field);
+      setSortDirection(field === 'badges' ? 'desc' : 'asc');
+    }
+  };
+
+  const SortButton = ({ field, children }: { field: 'badges' | 'name'; children: React.ReactNode }) => (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => handleSort(field)}
+      className="h-auto p-2 font-semibold"
+    >
+      {children}
+      {sortField === field && (
+        sortDirection === 'desc' ? <ArrowDown className="ml-1 h-3 w-3" /> : <ArrowUp className="ml-1 h-3 w-3" />
+      )}
+    </Button>
+  );
 
   // Get all unique badges from all players with profiles
   const allBadges = Array.from(new Map(playersWithProfiles.flatMap(player => getBadges(player, player.profile)).map(badge => [badge.name, badge])).values());
@@ -132,10 +161,14 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-3 py-3 text-left text-sm font-medium text-gray-900 w-12">Rank</th>
-                <th className="px-3 py-3 text-left text-sm font-medium text-gray-900">Player</th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900">
-                  <Award className="h-4 w-4 mr-1 inline" />
-                  Count
+                <th className="px-3 py-3 text-left">
+                  <SortButton field="name">Player</SortButton>
+                </th>
+                <th className="px-3 py-3 text-center">
+                  <SortButton field="badges">
+                    <Award className="h-4 w-4 mr-1" />
+                    Count
+                  </SortButton>
                 </th>
                 <th className="px-3 py-3 text-center text-sm font-medium text-gray-900 min-w-[300px]">
                   <Trophy className="h-4 w-4 mr-1 inline" />
