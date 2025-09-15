@@ -64,6 +64,69 @@ export type Database = {
           },
         ]
       }
+      games_schedule: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          scheduled_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          scheduled_at: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          scheduled_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      games_schedule_signups: {
+        Row: {
+          created_at: string
+          game_schedule_id: string
+          id: string
+          player_id: string
+          signed_up_at: string
+        }
+        Insert: {
+          created_at?: string
+          game_schedule_id: string
+          id?: string
+          player_id: string
+          signed_up_at?: string
+        }
+        Update: {
+          created_at?: string
+          game_schedule_id?: string
+          id?: string
+          player_id?: string
+          signed_up_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "games_schedule_signups_game_schedule_id_fkey"
+            columns: ["game_schedule_id"]
+            isOneToOne: false
+            referencedRelation: "games_schedule"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_schedule_signups_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news: {
         Row: {
           author_id: string

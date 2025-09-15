@@ -45,3 +45,20 @@ export interface NewsItem {
   updated_at: string;
   published: boolean;
 }
+
+export interface ScheduledGame {
+  id: string;
+  scheduled_at: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GameScheduleSignup {
+  id: string;
+  game_schedule_id: string;
+  player_id: string;
+  signed_up_at: string;
+  created_at: string;
+  player?: Player;
+}
