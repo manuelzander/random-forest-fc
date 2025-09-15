@@ -26,6 +26,7 @@ const AdminScheduleManagement = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [newGameDate, setNewGameDate] = useState<Date>();
   const [newGameTime, setNewGameTime] = useState('');
+  const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
 
   useEffect(() => {
     fetchData();
@@ -185,6 +186,51 @@ const AdminScheduleManagement = () => {
       fetchData();
     } catch (error) {
       console.error('Error adding player:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add player to game",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addRandomPlayerToGame = async (gameId: string, playerName: string) => {
+    if (!playerName.trim() || !user) return;
+
+    try {
+      // First create the random player
+      const { data: newPlayer, error: createError } = await supabase
+        .from('players')
+        .insert({
+          name: playerName.trim(),
+          user_id: null,
+          created_by: user.id
+        })
+        .select('id')
+        .single();
+
+      if (createError) throw createError;
+
+      // Then add them to the game
+      const { error: signupError } = await supabase
+        .from('games_schedule_signups')
+        .insert({
+          game_schedule_id: gameId,
+          player_id: newPlayer.id
+        });
+
+      if (signupError) throw signupError;
+
+      toast({
+        title: "Success",
+        description: `${playerName} added to game`,
+      });
+
+      // Clear the input and refresh data
+      setNewPlayerNames(prev => ({ ...prev, [gameId]: '' }));
+      fetchData();
+    } catch (error) {
+      console.error('Error adding random player:', error);
       toast({
         title: "Error",
         description: "Failed to add player to game",
@@ -354,7 +400,7 @@ const AdminScheduleManagement = () => {
                       <div className="flex items-center gap-2">
                         <Select onValueChange={(playerId) => addPlayerToGame(game.id, playerId)}>
                           <SelectTrigger className="w-48">
-                            <SelectValue placeholder="Add player" />
+                            <SelectValue placeholder="Add existing player" />
                           </SelectTrigger>
                           <SelectContent>
                             {getAvailablePlayers(game.id).map((player) => (
@@ -365,6 +411,26 @@ const AdminScheduleManagement = () => {
                           </SelectContent>
                         </Select>
                       </div>
+                    </div>
+
+                    {/* Add random player */}
+                    <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
+                      <Input
+                        placeholder="Add new player name"
+                        value={newPlayerNames[game.id] || ''}
+                        onChange={(e) => setNewPlayerNames(prev => ({ ...prev, [game.id]: e.target.value }))}
+                        onKeyPress={(e) => e.key === 'Enter' && addRandomPlayerToGame(game.id, newPlayerNames[game.id] || '')}
+                        className="flex-1"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addRandomPlayerToGame(game.id, newPlayerNames[game.id] || '')}
+                        disabled={!newPlayerNames[game.id]?.trim()}
+                      >
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Add Player
+                      </Button>
                     </div>
 
                     {(signups[game.id] || []).length > 0 ? (
