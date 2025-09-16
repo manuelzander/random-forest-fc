@@ -258,66 +258,51 @@ const GameSignup = () => {
       <div className="page-header">
         <div className="page-header-content">
           <div className="page-header-inner">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link to="/">
                 <Button variant="outline" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back
+                  <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Back</span>
                 </Button>
               </Link>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-foreground">Game Signup</h1>
-                <p className="text-sm text-muted-foreground">
-                  {format(gameDate, "EEEE, MMMM do, yyyy 'at' h:mm a")}
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">Game Signup</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                  {format(gameDate, "MMM d, yyyy 'at' h:mm a")}
                 </p>
               </div>
+              {isPastGame && (
+                <Badge variant="secondary" className="shrink-0">
+                  <Clock className="h-3 w-3 mr-1" />
+                  <span className="hidden sm:inline">Past Event</span>
+                  <span className="sm:hidden">Past</span>
+                </Badge>
+              )}
             </div>
-            {isPastGame && (
-              <Badge variant="secondary" className="ml-auto">
-                <Clock className="h-3 w-3 mr-1" />
-                Past Event
-              </Badge>
-            )}
           </div>
         </div>
       </div>
 
       <div className="page-main-content">
-        <div className="max-w-2xl mx-auto space-y-6">
-          {/* Game Info Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Game Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p><span className="font-medium">Date:</span> {format(gameDate, "EEEE, MMMM do, yyyy")}</p>
-                <p><span className="font-medium">Time:</span> {format(gameDate, "h:mm a")}</p>
-                <p><span className="font-medium">Players signed up:</span> {signups.length}</p>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 px-4">
 
           {/* Signup Actions */}
           {!isPastGame && (
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <UserPlus className="h-5 w-5" />
-                  Join the Game
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <UserPlus className="h-4 w-4 sm:h-5 sm:w-5" />
+                  Join Game
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {user ? (
                   <div className="space-y-3">
                     {isSignedUp ? (
-                      <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <span className="text-green-800 font-medium">You're signed up for this game!</span>
-                        <Button variant="outline" onClick={removeSignup}>
-                          Remove Signup
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <span className="text-green-800 font-medium text-sm sm:text-base">You're signed up!</span>
+                        <Button variant="outline" size="sm" onClick={removeSignup}>
+                          Remove
                         </Button>
                       </div>
                     ) : (
@@ -325,6 +310,7 @@ const GameSignup = () => {
                         onClick={signUpAsUser} 
                         disabled={isSigningUp}
                         className="w-full"
+                        size="sm"
                       >
                         {isSigningUp ? "Signing up..." : "Sign Me Up"}
                       </Button>
@@ -332,17 +318,17 @@ const GameSignup = () => {
                   </div>
                 ) : (
                   <div className="text-center space-y-3">
-                    <p className="text-muted-foreground">
-                      Sign in to join as yourself or add a player below
+                    <p className="text-muted-foreground text-sm">
+                      Sign in to join or add player below
                     </p>
                     <Link to="/auth">
-                      <Button variant="outline">Sign In</Button>
+                      <Button variant="outline" size="sm">Sign In</Button>
                     </Link>
                   </div>
                 )}
 
                 <div className="border-t pt-4">
-                  <h4 className="font-medium mb-3">Add another player:</h4>
+                  <h4 className="font-medium mb-3 text-sm sm:text-base">Add player:</h4>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <Label htmlFor="playerName" className="sr-only">Player Name</Label>
@@ -352,11 +338,13 @@ const GameSignup = () => {
                         value={playerName}
                         onChange={(e) => setPlayerName(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && signUpAsGuest()}
+                        className="text-sm"
                       />
                     </div>
                     <Button 
                       onClick={signUpAsGuest}
                       disabled={!playerName.trim() || isSigningUp}
+                      size="sm"
                     >
                       Add
                     </Button>
@@ -368,35 +356,37 @@ const GameSignup = () => {
 
           {/* Players List */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Signed Up Players ({signups.length})
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                Players ({signups.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {signups.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
-                  No players signed up yet. Be the first!
+                <p className="text-center text-muted-foreground py-6 text-sm">
+                  No players yet. Be the first!
                 </p>
               ) : (
                 <div className="space-y-2">
                   {signups.map((signup, index) => (
-                    <div key={signup.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline">#{index + 1}</Badge>
-                        <span className="font-medium">
-                          {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}
+                    <div key={signup.id} className="flex items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <Badge variant="outline" className="shrink-0 text-xs">#{index + 1}</Badge>
+                        <span className="font-medium truncate text-sm sm:text-base">
+                          {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown')}
                         </span>
-                        {signup.player?.user_id && (
-                          <Badge variant="secondary">Registered</Badge>
-                        )}
-                        {signup.is_guest && (
-                          <Badge variant="outline">Guest</Badge>
-                        )}
+                        <div className="flex gap-1 shrink-0">
+                          {signup.player?.user_id && (
+                            <Badge variant="secondary" className="text-xs">User</Badge>
+                          )}
+                          {signup.is_guest && (
+                            <Badge variant="outline" className="text-xs">Guest</Badge>
+                          )}
+                        </div>
                       </div>
-                      <span className="text-sm text-muted-foreground">
-                        {format(new Date(signup.signed_up_at), "MMM d, h:mm a")}
+                      <span className="text-xs text-muted-foreground shrink-0 ml-2">
+                        {format(new Date(signup.signed_up_at), "MMM d")}
                       </span>
                     </div>
                   ))}
