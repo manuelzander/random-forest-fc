@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus } from 'lucide-react';
+import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 
@@ -436,8 +436,20 @@ const AdminScheduleManagement = () => {
                           {(signups[game.id] || []).map((signup) => (
                             <TableRow key={signup.id}>
                               <TableCell className="font-medium">
-                                {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}
-                                {signup.is_guest && <Badge variant="outline" className="ml-2">Guest</Badge>}
+                                <div className="flex items-center gap-2">
+                                  <span>{signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}</span>
+                                  {signup.player?.user_id && (
+                                    <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                      <CheckCircle className="h-3 w-3 mr-1" />
+                                      Verified
+                                    </Badge>
+                                  )}
+                                  {signup.is_guest && (
+                                    <Badge variant="outline" className="text-xs h-5 px-1.5 bg-blue-50 text-blue-700 border-blue-200">
+                                      Guest
+                                    </Badge>
+                                  )}
+                                </div>
                               </TableCell>
                               <TableCell>
                                 {format(new Date(signup.signed_up_at), "PPP 'at' p")}

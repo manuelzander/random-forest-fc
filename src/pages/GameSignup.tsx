@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { Calendar, Users, UserPlus, ArrowLeft, Clock } from 'lucide-react';
+import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle } from 'lucide-react';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 
 const GameSignup = () => {
@@ -378,10 +378,15 @@ const GameSignup = () => {
                         </span>
                         <div className="flex gap-1 shrink-0">
                           {signup.player?.user_id && (
-                            <Badge variant="secondary" className="text-xs">User</Badge>
+                            <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              <span className="hidden sm:inline">Verified</span>
+                            </Badge>
                           )}
                           {signup.is_guest && (
-                            <Badge variant="outline" className="text-xs">Guest</Badge>
+                            <Badge variant="outline" className="text-xs h-5 px-1.5 bg-blue-50 text-blue-700 border-blue-200">
+                              Guest
+                            </Badge>
                           )}
                         </div>
                       </div>
