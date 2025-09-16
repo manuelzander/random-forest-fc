@@ -123,7 +123,8 @@ const GameSignup = () => {
         .from('games_schedule_signups')
         .insert({
           game_schedule_id: gameId,
-          player_id: playerId
+          player_id: playerId,
+          is_guest: false
         });
 
       if (error) throw error;
@@ -151,25 +152,14 @@ const GameSignup = () => {
 
     setIsSigningUp(true);
     try {
-      // Create a new player
-      const { data: newPlayer, error: createError } = await supabase
-        .from('players')
-        .insert({
-          name: playerName.trim(),
-          user_id: null,
-          created_by: user?.id || null
-        })
-        .select('id')
-        .single();
-
-      if (createError) throw createError;
-
-      // Sign up for the game
+      // Sign up as guest directly without creating a player record
       const { error } = await supabase
         .from('games_schedule_signups')
         .insert({
           game_schedule_id: gameId,
-          player_id: newPlayer.id
+          guest_name: playerName.trim(),
+          is_guest: true,
+          player_id: null
         });
 
       if (error) throw error;
@@ -395,9 +385,14 @@ const GameSignup = () => {
                     <div key={signup.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <Badge variant="outline">#{index + 1}</Badge>
-                        <span className="font-medium">{signup.player?.name || 'Unknown Player'}</span>
+                        <span className="font-medium">
+                          {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}
+                        </span>
                         {signup.player?.user_id && (
                           <Badge variant="secondary">Registered</Badge>
+                        )}
+                        {signup.is_guest && (
+                          <Badge variant="outline">Guest</Badge>
                         )}
                       </div>
                       <span className="text-sm text-muted-foreground">

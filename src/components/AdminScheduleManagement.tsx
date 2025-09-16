@@ -173,7 +173,8 @@ const AdminScheduleManagement = () => {
         .from('games_schedule_signups')
         .insert({
           game_schedule_id: gameId,
-          player_id: playerId
+          player_id: playerId,
+          is_guest: false
         });
 
       if (error) throw error;
@@ -194,46 +195,35 @@ const AdminScheduleManagement = () => {
     }
   };
 
-  const addRandomPlayerToGame = async (gameId: string, playerName: string) => {
-    if (!playerName.trim() || !user) return;
+  const addGuestToGame = async (gameId: string, guestName: string) => {
+    if (!guestName.trim()) return;
 
     try {
-      // First create the random player
-      const { data: newPlayer, error: createError } = await supabase
-        .from('players')
-        .insert({
-          name: playerName.trim(),
-          user_id: null,
-          created_by: user.id
-        })
-        .select('id')
-        .single();
-
-      if (createError) throw createError;
-
-      // Then add them to the game
-      const { error: signupError } = await supabase
+      // Add guest directly without creating player record
+      const { error } = await supabase
         .from('games_schedule_signups')
         .insert({
           game_schedule_id: gameId,
-          player_id: newPlayer.id
+          guest_name: guestName.trim(),
+          is_guest: true,
+          player_id: null
         });
 
-      if (signupError) throw signupError;
+      if (error) throw error;
 
       toast({
         title: "Success",
-        description: `${playerName} added to game`,
+        description: `${guestName} added to game as guest`,
       });
 
       // Clear the input and refresh data
       setNewPlayerNames(prev => ({ ...prev, [gameId]: '' }));
       fetchData();
     } catch (error) {
-      console.error('Error adding random player:', error);
+      console.error('Error adding guest:', error);
       toast({
         title: "Error",
-        description: "Failed to add player to game",
+        description: "Failed to add guest to game",
         variant: "destructive",
       });
     }
@@ -413,23 +403,23 @@ const AdminScheduleManagement = () => {
                       </div>
                     </div>
 
-                    {/* Add random player */}
+                    {/* Add guest */}
                     <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
                       <Input
-                        placeholder="Add new player name"
+                        placeholder="Add guest name"
                         value={newPlayerNames[game.id] || ''}
                         onChange={(e) => setNewPlayerNames(prev => ({ ...prev, [game.id]: e.target.value }))}
-                        onKeyPress={(e) => e.key === 'Enter' && addRandomPlayerToGame(game.id, newPlayerNames[game.id] || '')}
+                        onKeyPress={(e) => e.key === 'Enter' && addGuestToGame(game.id, newPlayerNames[game.id] || '')}
                         className="flex-1"
                       />
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => addRandomPlayerToGame(game.id, newPlayerNames[game.id] || '')}
+                        onClick={() => addGuestToGame(game.id, newPlayerNames[game.id] || '')}
                         disabled={!newPlayerNames[game.id]?.trim()}
                       >
                         <UserPlus className="h-4 w-4 mr-2" />
-                        Add Player
+                        Add Guest
                       </Button>
                     </div>
 
@@ -446,7 +436,8 @@ const AdminScheduleManagement = () => {
                           {(signups[game.id] || []).map((signup) => (
                             <TableRow key={signup.id}>
                               <TableCell className="font-medium">
-                                {signup.player?.name || 'Unknown Player'}
+                                {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}
+                                {signup.is_guest && <Badge variant="outline" className="ml-2">Guest</Badge>}
                               </TableCell>
                               <TableCell>
                                 {format(new Date(signup.signed_up_at), "PPP 'at' p")}

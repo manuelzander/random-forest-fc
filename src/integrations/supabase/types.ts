@@ -92,22 +92,28 @@ export type Database = {
         Row: {
           created_at: string
           game_schedule_id: string
+          guest_name: string | null
           id: string
-          player_id: string
+          is_guest: boolean | null
+          player_id: string | null
           signed_up_at: string
         }
         Insert: {
           created_at?: string
           game_schedule_id: string
+          guest_name?: string | null
           id?: string
-          player_id: string
+          is_guest?: boolean | null
+          player_id?: string | null
           signed_up_at?: string
         }
         Update: {
           created_at?: string
           game_schedule_id?: string
+          guest_name?: string | null
           id?: string
-          player_id?: string
+          is_guest?: boolean | null
+          player_id?: string | null
           signed_up_at?: string
         }
         Relationships: [

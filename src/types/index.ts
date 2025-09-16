@@ -57,8 +57,10 @@ export interface ScheduledGame {
 export interface GameScheduleSignup {
   id: string;
   game_schedule_id: string;
-  player_id: string;
+  player_id: string | null;
   signed_up_at: string;
   created_at: string;
   player?: Player;
+  guest_name?: string;
+  is_guest?: boolean;
 }
