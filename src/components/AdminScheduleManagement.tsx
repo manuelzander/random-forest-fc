@@ -39,7 +39,7 @@ const AdminScheduleManagement = () => {
       const { data: games, error: gamesError } = await supabase
         .from('games_schedule')
         .select('*')
-        .order('scheduled_at', { ascending: true });
+        .order('scheduled_at', { ascending: false });
 
       if (gamesError) throw gamesError;
       setScheduledGames(games || []);
