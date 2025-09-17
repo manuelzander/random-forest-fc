@@ -378,7 +378,7 @@ const GameSignup = () => {
                         </span>
                         <div className="flex gap-1 shrink-0">
                           {signup.player?.user_id && (
-                            <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                            <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
                               <CheckCircle className="h-3 w-3 mr-1" />
                               <span className="hidden sm:inline">Verified</span>
                             </Badge>
