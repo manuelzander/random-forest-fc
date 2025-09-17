@@ -384,7 +384,7 @@ const GameSignup = () => {
                             </Badge>
                           )}
                           {signup.is_guest && (
-                            <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                            <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
                               <User className="h-3 w-3 mr-1" />
                               <span className="hidden sm:inline">Guest</span>
                             </Badge>
