@@ -52,7 +52,8 @@ const AdminScheduleManagement = () => {
           players:player_id (
             id,
             name,
-            avatar_url
+            avatar_url,
+            user_id
           )
         `)
         .order('signed_up_at', { ascending: true });
