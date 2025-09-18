@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Player } from '@/types';
 import { getBadges } from '@/utils/badges';
+import { getCachedBadges } from '@/utils/badgeCache';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -51,8 +52,8 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
       // Sort by badge count (descending) or name (ascending)
       playersWithProfileData.sort((a, b) => {
         if (sortField === 'badges') {
-          const aBadgeCount = getBadges(a, a.profile).length;
-          const bBadgeCount = getBadges(b, b.profile).length;
+          const aBadgeCount = getCachedBadges(a, a.profile).length;
+          const bBadgeCount = getCachedBadges(b, b.profile).length;
           return sortDirection === 'desc' ? bBadgeCount - aBadgeCount : aBadgeCount - bBadgeCount;
         } else {
           return sortDirection === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
@@ -108,7 +109,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
   );
 
   // Get all unique badges from all players with profiles
-  const allBadges = Array.from(new Map(playersWithProfiles.flatMap(player => getBadges(player, player.profile)).map(badge => [badge.name, badge])).values());
+  const allBadges = Array.from(new Map(playersWithProfiles.flatMap(player => getCachedBadges(player, player.profile)).map(badge => [badge.name, badge])).values());
 
   // Group badges by category
   const badgeCategories = {
@@ -177,7 +178,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
             </thead>
             <tbody className="divide-y divide-gray-200">
               {playersWithProfiles.map((player, index) => {
-              const playerBadges = getBadges(player, player.profile);
+              const playerBadges = getCachedBadges(player, player.profile);
               const rank = index + 1;
               const getRankBadgeColor = (rank: number) => {
                 if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-600';

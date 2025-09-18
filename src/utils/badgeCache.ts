@@ -1,5 +1,5 @@
-import { Player, Badge } from '@/types';
-import { ProfileData, getBadges } from './badges';
+import { Player } from '@/types';
+import { ProfileData, getBadges, Badge } from './badges';
 
 // Simple in-memory cache for badges
 const badgeCache = new Map<string, { badges: Badge[], timestamp: number }>();

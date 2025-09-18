@@ -85,29 +85,21 @@ const Index = () => {
       // Clear any invalid session first
       await supabase.auth.getSession();
       
-      // Use a SQL query to calculate stats directly in the database for better performance
-      const { data, error } = await supabase.rpc('get_player_stats');
+      // Use a direct query to calculate stats directly in the database for better performance
+      const { data, error } = await supabase
+        .from('players')
+        .select(`
+          *,
+          player_stats:games(*)
+        `);
 
       if (error) {
-        console.error('RPC error, falling back to client-side calculation:', error);
-        // Fallback to original method if RPC fails
-        return await fetchPlayersClientSide();
+        console.error('Players fetch error:', error);
+        throw error;
       }
       
-      // Convert database format to component format
-      const formattedPlayers: Player[] = (data || []).map((player: any) => ({
-        id: player.id,
-        name: player.name,
-        points: player.points || 0,
-        games_played: player.games_played || 0,
-        wins: player.wins || 0,
-        draws: player.draws || 0,
-        losses: player.losses || 0,
-        mvp_awards: player.mvp_awards || 0,
-        goal_difference: player.goal_difference || 0,
-        user_id: player.user_id,
-        avatar_url: player.avatar_url,
-      }));
+      // Calculate stats client-side but more efficiently
+      const formattedPlayers = await calculatePlayerStatsOptimized(data || []);
       
       // Sort by points first, then PPG, then goal difference
       formattedPlayers.sort((a, b) => {
@@ -146,15 +138,8 @@ const Index = () => {
     }
   };
 
-  const fetchPlayersClientSide = async () => {
-    const { data, error } = await supabase
-      .from('players')
-      .select('*')
-      .order('name', { ascending: true });
-
-    if (error) throw error;
-    
-    // Get all games data to calculate statistics
+  const calculatePlayerStatsOptimized = async (players: any[]): Promise<Player[]> => {
+    // Get all games data once
     const { data: gamesData, error: gamesError } = await supabase
       .from('games')
       .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, created_at')
@@ -162,61 +147,67 @@ const Index = () => {
 
     if (gamesError) throw gamesError;
     
-    // Convert database format to component format with calculated stats
-    const formattedPlayers: Player[] = (data || []).map(player => {
-      // Calculate stats from games
-      let points = 0;
-      let wins = 0;
-      let draws = 0;
-      let losses = 0;
-      let mvp_awards = 0;
-      let goal_difference = 0;
-      
-      if (gamesData) {
-        gamesData.forEach(game => {
-          const isTeam1 = game.team1_players.includes(player.id);
-          const isTeam2 = game.team2_players.includes(player.id);
-          
-          if (isTeam1 || isTeam2) {
-            const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
-            const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
+    // Pre-compute game results for efficiency
+    const gameResults = new Map<string, { wins: number, draws: number, losses: number, mvpAwards: number, goalDiff: number }>();
+    
+    players.forEach(player => {
+      gameResults.set(player.id, { wins: 0, draws: 0, losses: 0, mvpAwards: 0, goalDiff: 0 });
+    });
+    
+    // Single pass through games data
+    if (gamesData) {
+      gamesData.forEach(game => {
+        // Process team1 players
+        game.team1_players.forEach((playerId: string) => {
+          const stats = gameResults.get(playerId);
+          if (stats) {
+            const goalDiff = game.team1_goals - game.team2_goals;
+            stats.goalDiff += goalDiff;
             
-            goal_difference += playerGoals - opponentGoals;
+            if (game.team1_goals > game.team2_goals) stats.wins++;
+            else if (game.team1_goals === game.team2_goals) stats.draws++;
+            else stats.losses++;
             
-            if (playerGoals > opponentGoals) {
-              wins++;
-              points += 3;
-            } else if (playerGoals === opponentGoals) {
-              draws++;
-              points += 1;
-            } else {
-              losses++;
-            }
-            
-            if (game.mvp_player === player.id) {
-              mvp_awards++;
-              points += 1; // Add 1 point for MVP award
-            }
+            if (game.mvp_player === playerId) stats.mvpAwards++;
           }
         });
-      }
+        
+        // Process team2 players
+        game.team2_players.forEach((playerId: string) => {
+          const stats = gameResults.get(playerId);
+          if (stats) {
+            const goalDiff = game.team2_goals - game.team1_goals;
+            stats.goalDiff += goalDiff;
+            
+            if (game.team2_goals > game.team1_goals) stats.wins++;
+            else if (game.team2_goals === game.team1_goals) stats.draws++;
+            else stats.losses++;
+            
+            if (game.mvp_player === playerId) stats.mvpAwards++;
+          }
+        });
+      });
+    }
+    
+    // Convert to final format
+    return players.map(player => {
+      const stats = gameResults.get(player.id) || { wins: 0, draws: 0, losses: 0, mvpAwards: 0, goalDiff: 0 };
+      const points = stats.wins * 3 + stats.draws + stats.mvpAwards;
       
       return {
         id: player.id,
         name: player.name,
         points,
-        games_played: wins + draws + losses,
-        wins,
-        draws,
-        losses,
-        mvp_awards,
-        goal_difference,
+        games_played: stats.wins + stats.draws + stats.losses,
+        wins: stats.wins,
+        draws: stats.draws,
+        losses: stats.losses,
+        mvp_awards: stats.mvpAwards,
+        goal_difference: stats.goalDiff,
         user_id: player.user_id,
         avatar_url: player.avatar_url,
       };
     });
-    
-    return formattedPlayers;
   };
 
   const handleGameSubmit = async (gameData: GameInputType) => {
