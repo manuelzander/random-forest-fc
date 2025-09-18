@@ -85,81 +85,29 @@ const Index = () => {
       // Clear any invalid session first
       await supabase.auth.getSession();
       
-      const { data, error } = await supabase
-        .from('players')
-        .select('*')
-        .order('name', { ascending: true });
+      // Use a SQL query to calculate stats directly in the database for better performance
+      const { data, error } = await supabase.rpc('get_player_stats');
 
-      console.log('Players fetch result:', { data, error, count: data?.length });
       if (error) {
-        console.error('Supabase error details:', error);
-        throw error;
+        console.error('RPC error, falling back to client-side calculation:', error);
+        // Fallback to original method if RPC fails
+        return await fetchPlayersClientSide();
       }
       
-      // Get all games data to calculate statistics
-      const { data: gamesData, error: gamesError } = await supabase
-        .from('games')
-        .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, created_at')
-        .order('created_at', { ascending: false });
-
-      if (gamesError) {
-        console.error('Games fetch error:', gamesError);
-        throw gamesError;
-      }
-      
-      // Convert database format to component format with calculated stats
-      const formattedPlayers: Player[] = (data || []).map(player => {
-        // Calculate stats from games
-        let points = 0;
-        let wins = 0;
-        let draws = 0;
-        let losses = 0;
-        let mvp_awards = 0;
-        let goal_difference = 0;
-        
-        if (gamesData) {
-          gamesData.forEach(game => {
-            const isTeam1 = game.team1_players.includes(player.id);
-            const isTeam2 = game.team2_players.includes(player.id);
-            
-            if (isTeam1 || isTeam2) {
-              const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
-              const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
-              
-              goal_difference += playerGoals - opponentGoals;
-              
-              if (playerGoals > opponentGoals) {
-                wins++;
-                points += 3;
-              } else if (playerGoals === opponentGoals) {
-                draws++;
-                points += 1;
-              } else {
-                losses++;
-              }
-              
-              if (game.mvp_player === player.id) {
-                mvp_awards++;
-                points += 1; // Add 1 point for MVP award
-              }
-            }
-          });
-        }
-        
-        return {
-          id: player.id,
-          name: player.name,
-          points,
-          games_played: wins + draws + losses,
-          wins,
-          draws,
-          losses,
-          mvp_awards,
-          goal_difference,
-          user_id: player.user_id,
-          avatar_url: player.avatar_url,
-        };
-      });
+      // Convert database format to component format
+      const formattedPlayers: Player[] = (data || []).map((player: any) => ({
+        id: player.id,
+        name: player.name,
+        points: player.points || 0,
+        games_played: player.games_played || 0,
+        wins: player.wins || 0,
+        draws: player.draws || 0,
+        losses: player.losses || 0,
+        mvp_awards: player.mvp_awards || 0,
+        goal_difference: player.goal_difference || 0,
+        user_id: player.user_id,
+        avatar_url: player.avatar_url,
+      }));
       
       // Sort by points first, then PPG, then goal difference
       formattedPlayers.sort((a, b) => {
@@ -196,6 +144,79 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fetchPlayersClientSide = async () => {
+    const { data, error } = await supabase
+      .from('players')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+    
+    // Get all games data to calculate statistics
+    const { data: gamesData, error: gamesError } = await supabase
+      .from('games')
+      .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, created_at')
+      .order('created_at', { ascending: false });
+
+    if (gamesError) throw gamesError;
+    
+    // Convert database format to component format with calculated stats
+    const formattedPlayers: Player[] = (data || []).map(player => {
+      // Calculate stats from games
+      let points = 0;
+      let wins = 0;
+      let draws = 0;
+      let losses = 0;
+      let mvp_awards = 0;
+      let goal_difference = 0;
+      
+      if (gamesData) {
+        gamesData.forEach(game => {
+          const isTeam1 = game.team1_players.includes(player.id);
+          const isTeam2 = game.team2_players.includes(player.id);
+          
+          if (isTeam1 || isTeam2) {
+            const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
+            const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
+            
+            goal_difference += playerGoals - opponentGoals;
+            
+            if (playerGoals > opponentGoals) {
+              wins++;
+              points += 3;
+            } else if (playerGoals === opponentGoals) {
+              draws++;
+              points += 1;
+            } else {
+              losses++;
+            }
+            
+            if (game.mvp_player === player.id) {
+              mvp_awards++;
+              points += 1; // Add 1 point for MVP award
+            }
+          }
+        });
+      }
+      
+      return {
+        id: player.id,
+        name: player.name,
+        points,
+        games_played: wins + draws + losses,
+        wins,
+        draws,
+        losses,
+        mvp_awards,
+        goal_difference,
+        user_id: player.user_id,
+        avatar_url: player.avatar_url,
+      };
+    });
+    
+    return formattedPlayers;
   };
 
   const handleGameSubmit = async (gameData: GameInputType) => {
