@@ -343,9 +343,12 @@ const AdminScheduleManagement = () => {
       {/* Scheduled Games List */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base sm:text-lg">Scheduled Games</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Schedule Management</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+            <h3 className="text-base sm:text-lg font-semibold">Scheduled Games ({scheduledGames.length})</h3>
+          </div>
           {scheduledGames.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
               No scheduled games yet. Create your first one above!
