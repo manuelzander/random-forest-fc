@@ -343,7 +343,7 @@ const AdminScheduleManagement = () => {
       {/* Scheduled Games List */}
       <Card>
         <CardHeader>
-          <CardTitle>Scheduled Games</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Scheduled Games</CardTitle>
         </CardHeader>
         <CardContent>
           {scheduledGames.length === 0 ? (
