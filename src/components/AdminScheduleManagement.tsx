@@ -344,7 +344,7 @@ const AdminScheduleManagement = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <Calendar className="h-5 w-5" />
+            <CalendarIcon className="h-5 w-5" />
             Schedule Management
           </CardTitle>
         </CardHeader>
