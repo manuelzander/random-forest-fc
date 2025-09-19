@@ -349,7 +349,7 @@ const GameSignup = () => {
                     <div className="text-center space-y-2">
                       <h4 className="font-medium text-base text-muted-foreground">Don't have an account?</h4>
                       <p className="text-sm text-muted-foreground">
-                        You can still join as a guest (stats won't be tracked)
+                        You can still join as a guest
                       </p>
                     </div>
                     <div className="flex gap-2">
