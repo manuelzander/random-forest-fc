@@ -365,7 +365,7 @@ const AdminScheduleManagement = () => {
                       <h3 className="font-semibold">
                         {format(new Date(game.scheduled_at), "PPP 'at' p")}
                       </h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground hidden sm:block">
                         Created {format(new Date(game.created_at), "PPP")}
                       </p>
                     </div>
@@ -376,7 +376,8 @@ const AdminScheduleManagement = () => {
                         onClick={() => copySignupUrl(game.id)}
                       >
                         <Copy className="h-4 w-4 mr-2" />
-                        Copy Signup URL
+                        <span className="hidden sm:inline">Copy Signup URL</span>
+                        <span className="sm:hidden">Copy URL</span>
                       </Button>
                       <Button
                         variant="destructive"
@@ -394,14 +395,16 @@ const AdminScheduleManagement = () => {
                       <h4 className="font-medium">
                         Signed Up Players ({(signups[game.id] || []).length})
                       </h4>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <UserPlus className="h-4 w-4 text-primary" />
-                          <h5 className="font-medium text-sm">Add Existing Player</h5>
-                        </div>
+                    </div>
+
+                    {/* Add Players - Side by Side */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                      {/* Add Existing Player */}
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Add Existing Player</Label>
                         <Select onValueChange={(playerId) => addPlayerToGame(game.id, playerId)}>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a registered player" />
+                            <SelectValue placeholder="Select player" />
                           </SelectTrigger>
                           <SelectContent className="bg-background border shadow-lg z-50">
                             {getAvailablePlayers(game.id).length > 0 ? (
@@ -412,40 +415,36 @@ const AdminScheduleManagement = () => {
                               ))
                             ) : (
                               <div className="p-2 text-sm text-muted-foreground">
-                                All registered players are already signed up
+                                All players signed up
                               </div>
                             )}
                           </SelectContent>
                         </Select>
                       </div>
+
+                      {/* Add Guest */}
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium text-muted-foreground">Add Guest</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Guest name"
+                            value={newPlayerNames[game.id] || ''}
+                            onChange={(e) => setNewPlayerNames(prev => ({ ...prev, [game.id]: e.target.value }))}
+                            onKeyPress={(e) => e.key === 'Enter' && addGuestToGame(game.id, newPlayerNames[game.id] || '')}
+                            className="flex-1"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => addGuestToGame(game.id, newPlayerNames[game.id] || '')}
+                            disabled={!newPlayerNames[game.id]?.trim()}
+                          >
+                            <UserPlus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Add Guest */}
-                    <div className="space-y-3 border-t pt-4">
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <h5 className="font-medium text-sm text-muted-foreground">Add Guest Player</h5>
-                        <span className="text-xs text-muted-foreground">(won't track stats)</span>
-                      </div>
-                      <div className="flex items-center gap-2 p-3 bg-muted/30 rounded-lg">
-                        <Input
-                          placeholder="Enter guest name"
-                          value={newPlayerNames[game.id] || ''}
-                          onChange={(e) => setNewPlayerNames(prev => ({ ...prev, [game.id]: e.target.value }))}
-                          onKeyPress={(e) => e.key === 'Enter' && addGuestToGame(game.id, newPlayerNames[game.id] || '')}
-                          className="flex-1"
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => addGuestToGame(game.id, newPlayerNames[game.id] || '')}
-                          disabled={!newPlayerNames[game.id]?.trim()}
-                        >
-                          <UserPlus className="h-4 w-4 mr-2" />
-                          Add Guest
-                        </Button>
-                      </div>
-                    </div>
 
                     {(signups[game.id] || []).length > 0 ? (
                       <Table>
