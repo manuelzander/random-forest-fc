@@ -343,7 +343,10 @@ const AdminScheduleManagement = () => {
       {/* Scheduled Games List */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base sm:text-lg">Schedule Management</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Calendar className="h-5 w-5" />
+            Schedule Management
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
