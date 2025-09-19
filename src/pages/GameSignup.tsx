@@ -286,68 +286,93 @@ const GameSignup = () => {
       <div className="page-main-content">
         <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 px-4">
 
-          {/* Signup Actions */}
+          {/* Main Signup Section */}
           {!isPastGame && (
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <UserPlus className="h-4 w-4 sm:h-5 sm:w-5" />
-                  Join Game
+                  Join This Game
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 {user ? (
                   <div className="space-y-3">
                     {isSignedUp ? (
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <span className="text-green-800 font-medium text-sm sm:text-base">You're signed up!</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                          <span className="text-green-800 font-medium text-sm sm:text-base">You're signed up for this game!</span>
+                        </div>
                         <Button variant="outline" size="sm" onClick={removeSignup}>
-                          Remove
+                          Cancel Signup
                         </Button>
                       </div>
                     ) : (
-                      <Button 
-                        onClick={signUpAsUser} 
-                        disabled={isSigningUp}
-                        className="w-full"
-                        size="sm"
-                      >
-                        {isSigningUp ? "Signing up..." : "Sign Me Up"}
-                      </Button>
+                      <div className="text-center space-y-3">
+                        <p className="text-muted-foreground text-sm">
+                          Ready to play? Sign up now!
+                        </p>
+                        <Button 
+                          onClick={signUpAsUser} 
+                          disabled={isSigningUp}
+                          className="w-full"
+                          size="lg"
+                        >
+                          {isSigningUp ? "Signing up..." : "Sign Me Up"}
+                        </Button>
+                      </div>
                     )}
                   </div>
                 ) : (
-                  <div className="text-center space-y-3">
-                    <p className="text-muted-foreground text-sm">
-                      Sign in to join or add player below
-                    </p>
-                    <Link to="/auth">
-                      <Button variant="outline" size="sm">Sign In</Button>
-                    </Link>
+                  <div className="text-center space-y-4 p-6 bg-muted/30 rounded-lg">
+                    <div className="space-y-2">
+                      <h3 className="font-semibold text-lg">Have an account?</h3>
+                      <p className="text-muted-foreground text-sm">
+                        Sign in to join the game and track your stats
+                      </p>
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                      <Link to="/auth">
+                        <Button size="lg">Sign In</Button>
+                      </Link>
+                      <Link to="/auth">
+                        <Button variant="outline" size="lg">Create Account</Button>
+                      </Link>
+                    </div>
                   </div>
                 )}
 
-                <div className="border-t pt-4">
-                  <h4 className="font-medium mb-3 text-sm sm:text-base">Add player:</h4>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <Label htmlFor="playerName" className="sr-only">Player Name</Label>
-                      <Input
-                        id="playerName"
-                        placeholder="Player name"
-                        value={playerName}
-                        onChange={(e) => setPlayerName(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && signUpAsGuest()}
-                        className="text-sm"
-                      />
+                {/* Guest Signup Section */}
+                <div className="border-t pt-6">
+                  <div className="space-y-4">
+                    <div className="text-center space-y-2">
+                      <h4 className="font-medium text-base text-muted-foreground">Don't have an account?</h4>
+                      <p className="text-sm text-muted-foreground">
+                        You can still join as a guest (stats won't be tracked)
+                      </p>
                     </div>
-                    <Button 
-                      onClick={signUpAsGuest}
-                      disabled={!playerName.trim() || isSigningUp}
-                      size="sm"
-                    >
-                      Add
-                    </Button>
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Label htmlFor="guestName" className="sr-only">Guest Name</Label>
+                        <Input
+                          id="guestName"
+                          placeholder="Enter your name"
+                          value={playerName}
+                          onChange={(e) => setPlayerName(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && signUpAsGuest()}
+                          className="text-sm"
+                        />
+                      </div>
+                      <Button 
+                        onClick={signUpAsGuest}
+                        disabled={!playerName.trim() || isSigningUp}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Join as Guest
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>
