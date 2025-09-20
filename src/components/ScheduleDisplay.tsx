@@ -139,23 +139,8 @@ const ScheduleDisplay = () => {
                       <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM do, yyyy 'at' h:mm a")}</span>
                       <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "PPP 'at' p")}</span>
                     </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs">
-                        <Users className="h-3 w-3 mr-1" />
-                        {signupCount} signed up
-                      </Badge>
-                    </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => copySignupUrl(game.id)}
-                    >
-                      <Copy className="h-4 w-4 mr-2" />
-                      <span className="hidden sm:inline">Copy Signup Link</span>
-                      <span className="sm:hidden">Copy Link</span>
-                    </Button>
                     <Button
                       variant="default"
                       size="sm"
