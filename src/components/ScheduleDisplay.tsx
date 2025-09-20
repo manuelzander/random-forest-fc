@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Calendar, Copy, User, CheckCircle, Users, ExternalLink } from 'lucide-react';
@@ -100,7 +101,7 @@ const ScheduleDisplay = () => {
   if (scheduledGames.length === 0) {
     return (
       <Card>
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg py-3">
+        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
             <Calendar className="h-6 w-6" />
             Upcoming Games Schedule
@@ -118,7 +119,7 @@ const ScheduleDisplay = () => {
 
   return (
     <Card>
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg py-3">
+      <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Calendar className="h-6 w-6" />
           Upcoming Games Schedule
@@ -168,34 +169,50 @@ const ScheduleDisplay = () => {
                 </div>
 
                 {/* Players List */}
-                {signupCount > 0 && (
+                {signupCount > 0 ? (
                   <div className="space-y-3">
                     <h4 className="font-medium text-sm text-muted-foreground">
                       Signed Up Players ({signupCount})
                     </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                      {gameSignups.map((signup) => (
-                        <div key={signup.id} className="flex items-center gap-2 p-2 bg-muted rounded-lg">
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
-                            <span className="text-sm font-medium truncate">
-                              {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}
-                            </span>
-                            {signup.player?.user_id && (
-                              <Badge className="text-xs h-4 px-1 bg-green-100 text-green-700 border-0 flex-shrink-0">
-                                <CheckCircle className="h-2.5 w-2.5 mr-0.5" />
-                                Verified
-                              </Badge>
-                            )}
-                            {signup.is_guest && (
-                              <Badge className="text-xs h-4 px-1 bg-blue-100 text-blue-700 border-0 flex-shrink-0">
-                                <User className="h-2.5 w-2.5 mr-0.5" />
-                                Guest
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Player</TableHead>
+                          <TableHead>Signup Time</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {gameSignups.map((signup) => (
+                          <TableRow key={signup.id}>
+                            <TableCell className="font-medium">
+                              <div className="flex items-center gap-2">
+                                <span>{signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}</span>
+                                {signup.player?.user_id && (
+                                  <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                    <CheckCircle className="h-3 w-3 mr-1" />
+                                    Verified
+                                  </Badge>
+                                )}
+                                {signup.is_guest && (
+                                  <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
+                                    <User className="h-3 w-3 mr-1" />
+                                    Guest
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              <span className="sm:hidden">{format(new Date(signup.signed_up_at), "MMM do 'at' h:mm a")}</span>
+                              <span className="hidden sm:inline">{format(new Date(signup.signed_up_at), "PPP 'at' p")}</span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-muted-foreground text-sm">
+                    No players signed up yet
                   </div>
                 )}
               </div>
