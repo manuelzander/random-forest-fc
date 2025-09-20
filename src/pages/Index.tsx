@@ -9,6 +9,7 @@ import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
 import GamesList from '@/components/GamesList';
 import AchievementsTable from '@/components/AchievementsTable';
+import ScheduleDisplay from '@/components/ScheduleDisplay';
 import { PlayerClaim } from '@/components/PlayerClaim';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -335,20 +336,24 @@ const Index = () => {
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="ranking" className="text-xs sm:text-sm">Ranking</TabsTrigger>
-              <TabsTrigger value="games" className="text-xs sm:text-sm">Games</TabsTrigger>
               <TabsTrigger value="achievements" className="text-xs sm:text-sm">Achievements</TabsTrigger>
+              <TabsTrigger value="games" className="text-xs sm:text-sm">Games</TabsTrigger>
+              <TabsTrigger value="schedule" className="text-xs sm:text-sm">Schedule</TabsTrigger>
               <TabsTrigger value="news" className="text-xs sm:text-sm">News</TabsTrigger>
             </TabsList>
             <TabsContent value="ranking">
               <PlayerTable players={players} />
             </TabsContent>
+            <TabsContent value="achievements">
+              <AchievementsTable players={players} />
+            </TabsContent>
             <TabsContent value="games">
               <GamesList />
             </TabsContent>
-            <TabsContent value="achievements">
-              <AchievementsTable players={players} />
+            <TabsContent value="schedule">
+              <ScheduleDisplay />
             </TabsContent>
             <TabsContent value="news">
               <Card>
