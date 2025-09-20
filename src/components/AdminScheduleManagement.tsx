@@ -360,10 +360,11 @@ const AdminScheduleManagement = () => {
             <div className="space-y-6">
               {scheduledGames.map((game) => (
                 <div key={game.id} className="border rounded-lg p-4 space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
-                      <h3 className="font-semibold">
-                        {format(new Date(game.scheduled_at), "PPP 'at' p")}
+                      <h3 className="font-semibold text-sm sm:text-base">
+                        <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM do, yyyy 'at' h:mm a")}</span>
+                        <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "PPP 'at' p")}</span>
                       </h3>
                       <p className="text-sm text-muted-foreground hidden sm:block">
                         Created {format(new Date(game.created_at), "PPP")}
@@ -475,8 +476,9 @@ const AdminScheduleManagement = () => {
                                   )}
                                 </div>
                               </TableCell>
-                              <TableCell>
-                                {format(new Date(signup.signed_up_at), "PPP 'at' p")}
+                              <TableCell className="text-sm">
+                                <span className="sm:hidden">{format(new Date(signup.signed_up_at), "MMM do 'at' h:mm a")}</span>
+                                <span className="hidden sm:inline">{format(new Date(signup.signed_up_at), "PPP 'at' p")}</span>
                               </TableCell>
                               <TableCell>
                                 <Button
