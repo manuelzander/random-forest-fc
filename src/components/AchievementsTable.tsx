@@ -27,7 +27,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
   const [playersWithProfiles, setPlayersWithProfiles] = useState<PlayerWithProfile[]>([]);
   const [sortField, setSortField] = useState<'badges' | 'name'>('badges');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
+    setIsLoading(true);
     const fetchProfileData = async () => {
       const playersWithProfileData: PlayerWithProfile[] = [];
       for (const player of players) {
@@ -60,9 +62,12 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
         }
       });
       setPlayersWithProfiles(playersWithProfileData);
+      setIsLoading(false);
     };
     if (players.length > 0) {
       fetchProfileData();
+    } else {
+      setIsLoading(players.length === 0);
     }
   }, [players, sortField, sortDirection]);
   const PlayerAvatarWithDefault = ({
@@ -120,6 +125,23 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
     'Form & Personality': allBadges.filter(badge => ['On Fire', 'Stormy Weather', 'Diplomat', 'Peacekeeper', 'Team Player', 'Unstoppable', 'Balanced'].includes(badge.name)),
     'Quirky & Fun': allBadges.filter(badge => !['Legend', 'MVP Champion', 'Dominator', 'Champion', 'Winner', 'Elite Performer', 'Consistent', 'Goal God', 'Goal Machine', 'Sharp Shooter', 'Speed Demon', 'Sniper', 'Wall', 'Magician', 'Playmaker', 'Beast', 'Maestro', 'Skilled', 'Hall of Famer', 'Warrior', 'Veteran', 'Showboat', 'Acrobat', 'Humiliator', 'Artist', 'Swiss Army Knife', 'On Fire', 'Stormy Weather', 'Diplomat', 'Peacekeeper', 'Team Player', 'Unstoppable', 'Balanced'].includes(badge.name))
   };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+            <Trophy className="h-6 w-6" />
+            Player Achievements
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return <Card>
       <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">

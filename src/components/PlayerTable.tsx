@@ -46,8 +46,10 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   const [sortField, setSortField] = useState<SortField>('points');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [playersWithForm, setPlayersWithForm] = useState<PlayerWithForm[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchFormData = async () => {
       const playersWithRecentResults: PlayerWithForm[] = [];
       
@@ -105,10 +107,13 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       }
       
       setPlayersWithForm(playersWithRecentResults);
+      setIsLoading(false);
     };
 
     if (players.length > 0) {
       fetchFormData();
+    } else {
+      setIsLoading(players.length === 0);
     }
   }, [players]);
 
@@ -183,6 +188,21 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
   };
 
+  if (isLoading) {
+    return (
+      <Card className="w-full">
+        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+            <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
+            Player Ranking
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full">
