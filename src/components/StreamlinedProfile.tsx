@@ -301,7 +301,11 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
   };
 
   if (isLoading) {
-    return <div className="loading-container">Loading your profile...</div>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   const availablePlayers = players.filter(player => !player.user_id);
