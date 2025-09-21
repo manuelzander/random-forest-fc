@@ -140,7 +140,7 @@ const ScheduleDisplay = () => {
                       <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "PPP 'at' p")}</span>
                     </h3>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center sm:justify-end gap-2">
                     <Button
                       variant="default"
                       size="sm"
