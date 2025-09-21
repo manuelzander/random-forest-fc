@@ -163,7 +163,7 @@ const ScheduleDisplay = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Player</TableHead>
-                          <TableHead>Signup Time</TableHead>
+                          <TableHead>Time</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -186,9 +186,9 @@ const ScheduleDisplay = () => {
                                 )}
                               </div>
                             </TableCell>
-                            <TableCell className="text-sm">
-                              <span className="sm:hidden">{format(new Date(signup.signed_up_at), "MMM do 'at' h:mm a")}</span>
-                              <span className="hidden sm:inline">{format(new Date(signup.signed_up_at), "PPP 'at' p")}</span>
+                            <TableCell className="text-xs text-muted-foreground">
+                              <span className="sm:hidden">{format(new Date(signup.signed_up_at), "M/d h:mm a")}</span>
+                              <span className="hidden sm:inline">{format(new Date(signup.signed_up_at), "MMM d, h:mm a")}</span>
                             </TableCell>
                           </TableRow>
                         ))}
