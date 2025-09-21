@@ -370,11 +370,12 @@ const AdminScheduleManagement = () => {
                         Created {format(new Date(game.created_at), "PPP")}
                       </p>
                     </div>
-                    <div className="flex items-center justify-center sm:justify-end gap-2">
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => copySignupUrl(game.id)}
+                        className="w-full sm:w-auto"
                       >
                         <Copy className="h-4 w-4 mr-2" />
                         <span className="hidden sm:inline">Copy Signup URL</span>
@@ -384,6 +385,7 @@ const AdminScheduleManagement = () => {
                         variant="destructive"
                         size="sm"
                         onClick={() => deleteScheduledGame(game.id)}
+                        className="w-full sm:w-auto"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
