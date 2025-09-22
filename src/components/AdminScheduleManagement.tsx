@@ -120,8 +120,8 @@ const AdminScheduleManagement = () => {
         created_by: user.id
       };
 
-      // Add pitch size if selected
-      if (newPitchSize) {
+      // Add pitch size if selected and not "none"
+      if (newPitchSize && newPitchSize !== 'none') {
         gameData.pitch_size = newPitchSize;
       }
 
@@ -138,7 +138,7 @@ const AdminScheduleManagement = () => {
 
       setNewGameDate(undefined);
       setNewGameTime('');
-      setNewPitchSize('');
+      setNewPitchSize('none');
       fetchData();
     } catch (error) {
       console.error('Error creating scheduled game:', error);
@@ -343,7 +343,7 @@ const AdminScheduleManagement = () => {
                   <SelectValue placeholder="Select pitch size" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border shadow-lg z-50">
-                  <SelectItem value="">No preference</SelectItem>
+                  <SelectItem value="none">No preference</SelectItem>
                   <SelectItem value="small">Small pitch</SelectItem>
                   <SelectItem value="big">Big pitch</SelectItem>
                 </SelectContent>
