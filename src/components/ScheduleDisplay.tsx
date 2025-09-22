@@ -126,21 +126,19 @@ const ScheduleDisplay = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
-        <div className="space-y-6">
+        <div className="space-y-4">
           {scheduledGames.map((game) => {
             const gameSignups = signups[game.id] || [];
-            const signupCount = gameSignups.length;
             
             return (
-              <div key={game.id} className="border rounded-lg p-4 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div>
-                    <h3 className="font-semibold text-lg">
-                      <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM do, yyyy 'at' h:mm a")}</span>
-                      <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "PPP 'at' p")}</span>
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-2">
+              <Card key={game.id}>
+                <CardHeader className="pb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM d, h:mm a")}</span>
+                      <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "MMM d, yyyy 'at' h:mm a")}</span>
+                    </CardTitle>
                     <Button
                       variant="default"
                       size="sm"
@@ -148,60 +146,56 @@ const ScheduleDisplay = () => {
                       className="w-full sm:w-auto"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      <span className="hidden sm:inline">Sign Up</span>
-                      <span className="sm:hidden">Sign Up</span>
+                      Sign Up
                     </Button>
                   </div>
-                </div>
-
-                {/* Players List */}
-                {signupCount > 0 ? (
+                </CardHeader>
+                <CardContent>
                   <div className="space-y-3">
-                    <h4 className="font-medium text-sm text-muted-foreground">
-                      Signed Up Players ({signupCount})
-                    </h4>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Player</TableHead>
-                          <TableHead>Time</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {gameSignups.map((signup) => (
-                          <TableRow key={signup.id}>
-                            <TableCell className="font-medium">
-                              <div className="flex items-center gap-2">
-                                <span>{signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}</span>
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-sm sm:text-base text-muted-foreground">
+                        <Users className="h-4 w-4 inline mr-1" />
+                        Players ({gameSignups.length})
+                      </h4>
+                    </div>
+                    {gameSignups.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-6 text-sm">
+                        No players yet. Be the first!
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {gameSignups.map((signup, index) => (
+                          <div key={signup.id} className="flex items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg">
+                            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                              <Badge variant="outline" className="shrink-0 text-xs">#{index + 1}</Badge>
+                              <span className="font-medium truncate text-sm sm:text-base">
+                                {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown')}
+                              </span>
+                              <div className="flex gap-1 shrink-0">
                                 {signup.player?.user_id && (
-                                  <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                  <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
                                     <CheckCircle className="h-3 w-3 mr-1" />
-                                    Verified
+                                    <span className="hidden sm:inline">Verified</span>
                                   </Badge>
                                 )}
                                 {signup.is_guest && (
                                   <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
                                     <User className="h-3 w-3 mr-1" />
-                                    Guest
+                                    <span className="hidden sm:inline">Guest</span>
                                   </Badge>
                                 )}
                               </div>
-                            </TableCell>
-                            <TableCell className="text-xs text-muted-foreground">
-                              <span className="sm:hidden">{format(new Date(signup.signed_up_at), "M/d h:mm a")}</span>
-                              <span className="hidden sm:inline">{format(new Date(signup.signed_up_at), "MMM d, h:mm a")}</span>
-                            </TableCell>
-                          </TableRow>
+                            </div>
+                            <span className="text-xs text-muted-foreground shrink-0 ml-2">
+                              {format(new Date(signup.signed_up_at), "MMM d")}
+                            </span>
+                          </div>
                         ))}
-                      </TableBody>
-                    </Table>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="text-center py-4 text-muted-foreground text-sm">
-                    No players signed up yet
-                  </div>
-                )}
-              </div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
