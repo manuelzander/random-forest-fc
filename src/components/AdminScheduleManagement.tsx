@@ -26,6 +26,7 @@ const AdminScheduleManagement = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [newGameDate, setNewGameDate] = useState<Date>();
   const [newGameTime, setNewGameTime] = useState('');
+  const [newPitchSize, setNewPitchSize] = useState<string>('');
   const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
 
   useEffect(() => {
@@ -114,12 +115,19 @@ const AdminScheduleManagement = () => {
       const [hours, minutes] = newGameTime.split(':');
       scheduledAt.setHours(parseInt(hours), parseInt(minutes));
 
+      const gameData: any = {
+        scheduled_at: scheduledAt.toISOString(),
+        created_by: user.id
+      };
+
+      // Add pitch size if selected
+      if (newPitchSize) {
+        gameData.pitch_size = newPitchSize;
+      }
+
       const { error } = await supabase
         .from('games_schedule')
-        .insert({
-          scheduled_at: scheduledAt.toISOString(),
-          created_by: user.id
-        });
+        .insert(gameData);
 
       if (error) throw error;
 
@@ -130,6 +138,7 @@ const AdminScheduleManagement = () => {
 
       setNewGameDate(undefined);
       setNewGameTime('');
+      setNewPitchSize('');
       fetchData();
     } catch (error) {
       console.error('Error creating scheduled game:', error);
@@ -289,7 +298,7 @@ const AdminScheduleManagement = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-2">
               <Label>Date</Label>
               <Popover>
@@ -325,6 +334,20 @@ const AdminScheduleManagement = () => {
                 value={newGameTime}
                 onChange={(e) => setNewGameTime(e.target.value)}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Pitch Size (Optional)</Label>
+              <Select value={newPitchSize} onValueChange={setNewPitchSize}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select pitch size" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border shadow-lg z-50">
+                  <SelectItem value="">No preference</SelectItem>
+                  <SelectItem value="small">Small pitch</SelectItem>
+                  <SelectItem value="big">Big pitch</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex items-end">
@@ -366,9 +389,16 @@ const AdminScheduleManagement = () => {
                         <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM do, yyyy 'at' h:mm a")}</span>
                         <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "PPP 'at' p")}</span>
                       </h3>
-                      <p className="text-sm text-muted-foreground hidden sm:block">
-                        Created {format(new Date(game.created_at), "PPP")}
-                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-sm text-muted-foreground hidden sm:block">
+                          Created {format(new Date(game.created_at), "PPP")}
+                        </p>
+                        {game.pitch_size && (
+                          <Badge variant="outline" className="text-xs">
+                            {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto sm:justify-end">
                       <Button

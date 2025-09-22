@@ -52,6 +52,7 @@ export interface ScheduledGame {
   created_by: string;
   created_at: string;
   updated_at: string;
+  pitch_size?: string | null;
 }
 
 export interface GameScheduleSignup {

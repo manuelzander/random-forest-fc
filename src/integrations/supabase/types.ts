@@ -69,6 +69,7 @@ export type Database = {
           created_at: string
           created_by: string
           id: string
+          pitch_size: string | null
           scheduled_at: string
           updated_at: string
         }
@@ -76,6 +77,7 @@ export type Database = {
           created_at?: string
           created_by: string
           id?: string
+          pitch_size?: string | null
           scheduled_at: string
           updated_at?: string
         }
@@ -83,6 +85,7 @@ export type Database = {
           created_at?: string
           created_by?: string
           id?: string
+          pitch_size?: string | null
           scheduled_at?: string
           updated_at?: string
         }

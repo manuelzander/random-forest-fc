@@ -267,9 +267,16 @@ const GameSignup = () => {
               </Link>
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">Game Signup</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  {format(gameDate, "MMM d, yyyy 'at' h:mm a")}
-                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                    {format(gameDate, "MMM d, yyyy 'at' h:mm a")}
+                  </p>
+                  {game.pitch_size && (
+                    <Badge variant="outline" className="text-xs">
+                      {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
+                    </Badge>
+                  )}
+                </div>
               </div>
               {isPastGame && (
                 <Badge variant="secondary" className="shrink-0">
