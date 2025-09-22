@@ -401,33 +401,47 @@ const GameSignup = () => {
                 </p>
               ) : (
                 <div className="space-y-2">
-                  {signups.map((signup, index) => (
-                    <div key={signup.id} className="flex items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                        <Badge variant="outline" className="shrink-0 text-xs">#{index + 1}</Badge>
-                        <span className="font-medium truncate text-sm sm:text-base">
-                          {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown')}
-                        </span>
-                        <div className="flex gap-1 shrink-0">
-                          {signup.player?.user_id && (
-                            <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              <span className="hidden sm:inline">Verified</span>
-                            </Badge>
-                          )}
-                          {signup.is_guest && (
-                            <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
-                              <User className="h-3 w-3 mr-1" />
-                              <span className="hidden sm:inline">Guest</span>
-                            </Badge>
-                          )}
+                  {signups.map((signup, index) => {
+                    const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
+                    const isWaitlisted = index >= pitchCapacity;
+                    
+                    return (
+                      <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
+                        isWaitlisted ? 'bg-orange-50 border border-orange-200' : 'bg-muted/50'
+                      }`}>
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                          <Badge variant="outline" className="shrink-0 text-xs">
+                            {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
+                          </Badge>
+                          <span className="font-medium truncate text-sm sm:text-base">
+                            {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown')}
+                          </span>
+                          <div className="flex gap-1 shrink-0">
+                            {isWaitlisted && (
+                              <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                                Waitlist
+                              </Badge>
+                            )}
+                            {signup.player?.user_id && (
+                              <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Verified</span>
+                              </Badge>
+                            )}
+                            {signup.is_guest && (
+                              <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
+                                <User className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Guest</span>
+                              </Badge>
+                            )}
+                          </div>
                         </div>
+                        <span className="text-xs text-muted-foreground shrink-0 ml-2">
+                          {format(new Date(signup.signed_up_at), "MMM d")}
+                        </span>
                       </div>
-                      <span className="text-xs text-muted-foreground shrink-0 ml-2">
-                        {format(new Date(signup.signed_up_at), "MMM d")}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>

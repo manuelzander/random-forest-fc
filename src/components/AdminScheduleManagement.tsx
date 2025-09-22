@@ -489,25 +489,39 @@ const AdminScheduleManagement = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {(signups[game.id] || []).map((signup) => (
-                            <TableRow key={signup.id}>
-                              <TableCell className="font-medium">
-                                <div className="flex items-center gap-2">
-                                  <span>{signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}</span>
-                                  {signup.player?.user_id && (
-                                    <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
-                                      <CheckCircle className="h-3 w-3 mr-1" />
-                                      Verified
+                          {(signups[game.id] || []).map((signup, index) => {
+                            const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
+                            const isWaitlisted = index >= pitchCapacity;
+                            
+                            return (
+                              <TableRow key={signup.id} className={isWaitlisted ? 'bg-orange-50' : ''}>
+                                <TableCell className="font-medium">
+                                  <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className="text-xs shrink-0">
+                                      {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
                                     </Badge>
-                                  )}
-                                  {signup.is_guest && (
-                                    <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
-                                      <User className="h-3 w-3 mr-1" />
-                                      Guest
-                                    </Badge>
-                                  )}
-                                </div>
-                              </TableCell>
+                                    <span>{signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}</span>
+                                    <div className="flex gap-1">
+                                      {isWaitlisted && (
+                                        <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                                          Waitlist
+                                        </Badge>
+                                      )}
+                                      {signup.player?.user_id && (
+                                        <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                          <CheckCircle className="h-3 w-3 mr-1" />
+                                          Verified
+                                        </Badge>
+                                      )}
+                                      {signup.is_guest && (
+                                        <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
+                                          <User className="h-3 w-3 mr-1" />
+                                          Guest
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                </TableCell>
                               <TableCell className="text-xs text-muted-foreground">
                                 <span className="sm:hidden">{format(new Date(signup.signed_up_at), "M/d h:mm a")}</span>
                                 <span className="hidden sm:inline">{format(new Date(signup.signed_up_at), "MMM d, h:mm a")}</span>
@@ -521,8 +535,9 @@ const AdminScheduleManagement = () => {
                                   <UserMinus className="h-4 w-4" />
                                 </Button>
                               </TableCell>
-                            </TableRow>
-                          ))}
+                             </TableRow>
+                            );
+                          })}
                         </TableBody>
                       </Table>
                     ) : (
