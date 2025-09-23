@@ -94,6 +94,7 @@ export type Database = {
       games_schedule_signups: {
         Row: {
           created_at: string
+          created_by_user_id: string | null
           game_schedule_id: string
           guest_name: string | null
           id: string
@@ -103,6 +104,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          created_by_user_id?: string | null
           game_schedule_id: string
           guest_name?: string | null
           id?: string
@@ -112,6 +114,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          created_by_user_id?: string | null
           game_schedule_id?: string
           guest_name?: string | null
           id?: string

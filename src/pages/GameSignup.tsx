@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User } from 'lucide-react';
+import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMinus } from 'lucide-react';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 
 const GameSignup = () => {
@@ -159,7 +159,8 @@ const GameSignup = () => {
           game_schedule_id: gameId,
           guest_name: playerName.trim(),
           is_guest: true,
-          player_id: null
+          player_id: null,
+          created_by_user_id: user?.id || null
         });
 
       if (error) throw error;
@@ -211,6 +212,33 @@ const GameSignup = () => {
       toast({
         title: "Error",
         description: "Failed to remove signup",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const removeGuestSignup = async (signupId: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('games_schedule_signups')
+        .delete()
+        .eq('id', signupId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Successfully removed guest from the game",
+      });
+
+      fetchGameData();
+    } catch (error) {
+      console.error('Error removing guest signup:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove guest signup",
         variant: "destructive",
       });
     }
@@ -436,10 +464,26 @@ const GameSignup = () => {
                               </Badge>
                             )}
                           </div>
-                        </div>
-                        <span className="text-xs text-muted-foreground shrink-0 ml-2">
-                          {format(new Date(signup.signed_up_at), "MMM d")}
-                        </span>
+                         </div>
+                         <div className="flex items-center gap-2 shrink-0">
+                           <span className="text-xs text-muted-foreground">
+                             {format(new Date(signup.signed_up_at), "MMM d")}
+                           </span>
+                           {/* Show remove button for own signups or guest signups created by current user */}
+                           {user && (
+                             (signup.player?.user_id === user.id) || 
+                             (signup.is_guest && signup.created_by_user_id === user.id)
+                           ) && (
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()}
+                               className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                             >
+                               <UserMinus className="h-3 w-3" />
+                             </Button>
+                           )}
+                         </div>
                       </div>
                     );
                   })}

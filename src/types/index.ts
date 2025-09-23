@@ -64,4 +64,5 @@ export interface GameScheduleSignup {
   player?: Player;
   guest_name?: string;
   is_guest?: boolean;
+  created_by_user_id?: string | null;
 }
