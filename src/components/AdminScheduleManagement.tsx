@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User } from 'lucide-react';
+import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 
@@ -502,11 +502,12 @@ const AdminScheduleManagement = () => {
                                     </Badge>
                                     <span>{signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}</span>
                                     <div className="flex gap-1">
-                                      {isWaitlisted && (
-                                        <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
-                                          Waitlist
-                                        </Badge>
-                                      )}
+                                       {isWaitlisted && (
+                                         <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                                           <Clock className="h-3 w-3 mr-1" />
+                                           <span className="hidden sm:inline">Waitlist</span>
+                                         </Badge>
+                                       )}
                                       {signup.player?.user_id && (
                                         <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
                                           <CheckCircle className="h-3 w-3 mr-1" />

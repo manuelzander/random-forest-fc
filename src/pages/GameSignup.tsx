@@ -417,11 +417,12 @@ const GameSignup = () => {
                             {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown')}
                           </span>
                           <div className="flex gap-1 shrink-0">
-                            {isWaitlisted && (
-                              <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
-                                Waitlist
-                              </Badge>
-                            )}
+                             {isWaitlisted && (
+                               <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                                 <Clock className="h-3 w-3 mr-1" />
+                                 <span className="hidden sm:inline">Waitlist</span>
+                               </Badge>
+                             )}
                             {signup.player?.user_id && (
                               <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
                                 <CheckCircle className="h-3 w-3 mr-1" />
