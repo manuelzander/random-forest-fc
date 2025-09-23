@@ -306,13 +306,6 @@ const GameSignup = () => {
                   )}
                 </div>
               </div>
-              {isPastGame && (
-                <Badge variant="secondary" className="shrink-0">
-                  <Clock className="h-3 w-3 mr-1" />
-                  <span className="hidden sm:inline">Past Event</span>
-                  <span className="sm:hidden">Past</span>
-                </Badge>
-              )}
             </div>
           </div>
         </div>
