@@ -394,7 +394,7 @@ const AdminScheduleManagement = () => {
                           Created {format(new Date(game.created_at), "PPP")}
                         </p>
                         {game.pitch_size && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs hidden sm:inline-flex">
                             {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
                           </Badge>
                         )}
