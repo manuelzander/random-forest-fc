@@ -9,7 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMinus } from 'lucide-react';
+import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMinus, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 
 const GameSignup = () => {
@@ -280,6 +281,11 @@ const GameSignup = () => {
 
   const gameDate = new Date(game.scheduled_at);
   const isPastGame = gameDate < new Date();
+  
+  // Check if game is within 48 hours
+  const timeUntilGame = gameDate.getTime() - new Date().getTime();
+  const hoursUntilGame = timeUntilGame / (1000 * 60 * 60);
+  const isWithin48Hours = hoursUntilGame <= 48 && hoursUntilGame > 0;
 
   return (
     <div className="page-container">
@@ -327,14 +333,26 @@ const GameSignup = () => {
                 {user ? (
                   <div className="space-y-3">
                     {isSignedUp ? (
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="h-5 w-5 text-green-600" />
-                          <span className="text-green-800 font-medium text-sm sm:text-base">You're signed up for this game!</span>
+                      <div className="space-y-3">
+                        {isWithin48Hours && (
+                          <Alert>
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertDescription>
+                              Can't remove signup within 48 hours of game time. Please message the group to request a replacement player.
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            <span className="text-green-800 font-medium text-sm sm:text-base">You're signed up for this game!</span>
+                          </div>
+                          {!isWithin48Hours && (
+                            <Button variant="outline" size="sm" onClick={removeSignup}>
+                              Cancel Signup
+                            </Button>
+                          )}
                         </div>
-                        <Button variant="outline" size="sm" onClick={removeSignup}>
-                          Cancel Signup
-                        </Button>
                       </div>
                     ) : (
                       <div className="text-center space-y-3">
@@ -407,6 +425,16 @@ const GameSignup = () => {
             </Card>
           )}
 
+          {/* 48-hour rule alert */}
+          {isWithin48Hours && (
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Note:</strong> Players cannot be removed within 48 hours of game time. Please message the group to request replacement players if needed.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Players List */}
           <Card>
             <CardHeader className="pb-4">
@@ -462,20 +490,20 @@ const GameSignup = () => {
                            <span className="text-xs text-muted-foreground">
                              {format(new Date(signup.signed_up_at), "MMM d")}
                            </span>
-                           {/* Show remove button for own signups or guest signups created by current user */}
-                           {user && (
-                             (signup.player?.user_id === user.id) || 
-                             (signup.is_guest && signup.created_by_user_id === user.id)
-                           ) && (
-                             <Button
-                               variant="ghost"
-                               size="sm"
-                               onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()}
-                               className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                             >
-                               <UserMinus className="h-3 w-3" />
-                             </Button>
-                           )}
+                            {/* Show remove button for own signups or guest signups created by current user */}
+                            {user && !isWithin48Hours && (
+                              (signup.player?.user_id === user.id) || 
+                              (signup.is_guest && signup.created_by_user_id === user.id)
+                            ) && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()}
+                                className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                              >
+                                <UserMinus className="h-3 w-3" />
+                              </Button>
+                            )}
                          </div>
                       </div>
                     );
