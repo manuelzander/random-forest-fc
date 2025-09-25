@@ -133,27 +133,34 @@ const ScheduleDisplay = () => {
               <Card key={game.id}>
                 <CardHeader className="pb-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                      <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
-                      <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM d, h:mm a")}</span>
-                      <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "MMM d, yyyy 'at' h:mm a")}</span>
-                    </CardTitle>
-                    <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                          <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
+                          <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM d, h:mm a")}</span>
+                          <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "MMM d, yyyy 'at' h:mm a")}</span>
+                        </CardTitle>
+                        {game.pitch_size && (
+                          <Badge variant="outline" className="text-xs sm:hidden">
+                            {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
+                          </Badge>
+                        )}
+                      </div>
                       {game.pitch_size && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs w-fit hidden sm:inline-flex">
                           {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
                         </Badge>
                       )}
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => navigateToSignup(game.id)}
-                        className="w-full sm:w-auto"
-                      >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Sign Up
-                      </Button>
                     </div>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => navigateToSignup(game.id)}
+                      className="w-full sm:w-auto"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Sign Up
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
