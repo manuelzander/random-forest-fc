@@ -314,13 +314,13 @@ const Index = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card>
-              <CardContent className="px-4 py-3 text-center">
+              <CardContent className="px-4 py-2 text-center">
                 <div className="text-2xl font-bold text-primary">{players.length}</div>
                 <div className="text-sm text-muted-foreground">Total Players</div>
               </CardContent>
             </Card>
              <Card>
-               <CardContent className="px-4 py-3 text-center">
+               <CardContent className="px-4 py-2 text-center">
                   <div className="text-2xl font-bold text-primary">
                     {totalGames}
                   </div>
