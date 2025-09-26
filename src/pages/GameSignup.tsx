@@ -307,11 +307,18 @@ const GameSignup = () => {
                     <span className="hidden sm:inline">{format(gameDate, "MMM d, yyyy 'at' h:mm a")}</span>
                   </p>
                   {game.pitch_size && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs sm:hidden">
                       {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
                     </Badge>
                   )}
                 </div>
+                {game.pitch_size && (
+                  <div className="hidden sm:flex items-center gap-2 mt-1">
+                    <Badge variant="outline" className="text-xs">
+                      {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
+                    </Badge>
+                  </div>
+                )}
               </div>
             </div>
           </div>
