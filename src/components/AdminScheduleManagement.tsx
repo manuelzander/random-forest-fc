@@ -386,7 +386,7 @@ const AdminScheduleManagement = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-sm sm:text-base">
+                        <h3 className="font-semibold text-base sm:text-lg">
                           <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM d, h:mm a")}</span>
                           <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "PPP 'at' p")}</span>
                         </h3>
