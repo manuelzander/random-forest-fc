@@ -29,6 +29,11 @@ const Index = () => {
   } = useToast();
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentUserPlayer, setCurrentUserPlayer] = useState<any>(null);
+  
+  // Add caching to prevent unnecessary reloads
+  const [playersCache, setPlayersCache] = useState<{ data: Player[], timestamp: number } | null>(null);
+  const CACHE_DURATION = 30000; // 30 seconds
+  
   const [activeTab, setActiveTab] = useState('ranking');
   const [isLoading, setIsLoading] = useState(true);
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -80,28 +85,47 @@ const Index = () => {
       fetchNews();
     }
   }, [activeTab]);
-  const fetchPlayers = async () => {
+  const fetchPlayers = async (useCache = true) => {
+    // Check cache first to avoid unnecessary database calls
+    if (useCache && playersCache && Date.now() - playersCache.timestamp < CACHE_DURATION) {
+      setPlayers(playersCache.data);
+      if (user) {
+        const userPlayer = playersCache.data.find(player => player.user_id === user.id);
+        setCurrentUserPlayer(userPlayer || null);
+      }
+      setIsLoading(false);
+      return;
+    }
+
     try {
       console.log('Starting player fetch...');
 
       // Clear any invalid session first
       await supabase.auth.getSession();
 
-      // Use a direct query to calculate stats directly in the database for better performance
-      const {
-        data,
-        error
-      } = await supabase.from('players').select(`
-          *,
-          player_stats:games(*)
-        `);
+      // Use the database function for much better performance
+      const { data, error } = await supabase.rpc('get_player_stats');
+      
       if (error) {
         console.error('Players fetch error:', error);
         throw error;
       }
 
-      // Calculate stats client-side but more efficiently
-      const formattedPlayers = await calculatePlayerStatsOptimized(data || []);
+      const formattedPlayers: Player[] = (data || []).map((player: any) => ({
+        id: player.id,
+        name: player.name,
+        user_id: player.user_id,
+        avatar_url: player.avatar_url,
+        points: player.points || 0,
+        games_played: player.games_played || 0,
+        wins: player.wins || 0,
+        draws: player.draws || 0,
+        losses: player.losses || 0,
+        mvp_awards: player.mvp_awards || 0,
+        goal_difference: player.goal_difference || 0,
+        created_by: null,
+        badges: null
+      }));
 
       // Sort by points first, then PPG, then goal difference
       formattedPlayers.sort((a, b) => {
@@ -120,6 +144,10 @@ const Index = () => {
         // If PPG is equal, sort by goal difference (descending)
         return b.goal_difference - a.goal_difference;
       });
+      
+      // Update cache
+      setPlayersCache({ data: formattedPlayers, timestamp: Date.now() });
+      
       setPlayers(formattedPlayers);
 
       // Find current user's claimed player
@@ -138,86 +166,7 @@ const Index = () => {
       setIsLoading(false);
     }
   };
-  const calculatePlayerStatsOptimized = async (players: any[]): Promise<Player[]> => {
-    // Get all games data once
-    const {
-      data: gamesData,
-      error: gamesError
-    } = await supabase.from('games').select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, created_at').order('created_at', {
-      ascending: false
-    });
-    if (gamesError) throw gamesError;
-
-    // Pre-compute game results for efficiency
-    const gameResults = new Map<string, {
-      wins: number;
-      draws: number;
-      losses: number;
-      mvpAwards: number;
-      goalDiff: number;
-    }>();
-    players.forEach(player => {
-      gameResults.set(player.id, {
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        mvpAwards: 0,
-        goalDiff: 0
-      });
-    });
-
-    // Single pass through games data
-    if (gamesData) {
-      gamesData.forEach(game => {
-        // Process team1 players
-        game.team1_players.forEach((playerId: string) => {
-          const stats = gameResults.get(playerId);
-          if (stats) {
-            const goalDiff = game.team1_goals - game.team2_goals;
-            stats.goalDiff += goalDiff;
-            if (game.team1_goals > game.team2_goals) stats.wins++;else if (game.team1_goals === game.team2_goals) stats.draws++;else stats.losses++;
-            if (game.mvp_player === playerId) stats.mvpAwards++;
-          }
-        });
-
-        // Process team2 players
-        game.team2_players.forEach((playerId: string) => {
-          const stats = gameResults.get(playerId);
-          if (stats) {
-            const goalDiff = game.team2_goals - game.team1_goals;
-            stats.goalDiff += goalDiff;
-            if (game.team2_goals > game.team1_goals) stats.wins++;else if (game.team2_goals === game.team1_goals) stats.draws++;else stats.losses++;
-            if (game.mvp_player === playerId) stats.mvpAwards++;
-          }
-        });
-      });
-    }
-
-    // Convert to final format
-    return players.map(player => {
-      const stats = gameResults.get(player.id) || {
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        mvpAwards: 0,
-        goalDiff: 0
-      };
-      const points = stats.wins * 3 + stats.draws + stats.mvpAwards;
-      return {
-        id: player.id,
-        name: player.name,
-        points,
-        games_played: stats.wins + stats.draws + stats.losses,
-        wins: stats.wins,
-        draws: stats.draws,
-        losses: stats.losses,
-        mvp_awards: stats.mvpAwards,
-        goal_difference: stats.goalDiff,
-        user_id: player.user_id,
-        avatar_url: player.avatar_url
-      };
-    });
-  };
+  // Removed calculatePlayerStatsOptimized function - now using database function
   const handleGameSubmit = async (gameData: GameInputType) => {
     try {
       // Save game to database
@@ -235,8 +184,9 @@ const Index = () => {
       }]);
       if (gameError) throw gameError;
 
-      // Refresh player stats from the database after saving the game
-      fetchPlayers();
+      // Clear cache and refresh player stats from the database after saving the game
+      setPlayersCache(null); // Clear cache
+      fetchPlayers(false); // Force refresh, bypass cache
       toast({
         title: "Game Recorded!",
         description: "The match result has been successfully recorded."

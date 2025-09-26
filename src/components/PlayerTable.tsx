@@ -49,23 +49,44 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (players.length === 0) {
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     const fetchFormData = async () => {
-      const playersWithRecentResults: PlayerWithForm[] = [];
-      
-      for (const player of players) {
-        // Get recent games for this player
-        const { data: statsData, error } = await supabase
+      try {
+        // Batch fetch all recent games data in a single query
+        const playerIds = players.map(p => p.id);
+        const { data: allGamesData, error: gamesError } = await supabase
           .from('games')
           .select('team1_players, team2_players, team1_goals, team2_goals, created_at')
-          .or(`team1_players.cs.{${player.id}},team2_players.cs.{${player.id}}`)
+          .or(playerIds.map(id => `team1_players.cs.{${id}},team2_players.cs.{${id}}`).join(','))
           .order('created_at', { ascending: false })
-          .limit(6);
+          .limit(6 * playerIds.length); // Limit per player * number of players
 
-        const recentResults: ('win' | 'draw' | 'loss')[] = [];
-        
-        if (statsData && !error) {
-          statsData.forEach(game => {
+        // Batch fetch all profile data in a single query
+        const userIds = players.filter(p => (p as any).user_id).map(p => (p as any).user_id);
+        const { data: allProfilesData } = userIds.length > 0 ? await supabase
+          .from('profiles')
+          .select('user_id, football_skills, skill_ratings')
+          .in('user_id', userIds)
+          : { data: [] };
+
+        // Process data for each player
+        const playersWithRecentResults: PlayerWithForm[] = players.map(player => {
+          // Get recent games for this player
+          const playerGames = (allGamesData || [])
+            .filter(game => 
+              game.team1_players.includes(player.id) || 
+              game.team2_players.includes(player.id)
+            )
+            .slice(0, 6); // Limit to 6 most recent
+
+          const recentResults: ('win' | 'draw' | 'loss')[] = [];
+          
+          playerGames.forEach(game => {
             const isTeam1 = game.team1_players.includes(player.id);
             const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
             const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
@@ -78,43 +99,37 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
               recentResults.push('loss');
             }
           });
-        }
 
-        // Fetch profile data if player has a user_id
-        let profile = undefined;
-        if ((player as any).user_id) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('football_skills, skill_ratings')
-            .eq('user_id', (player as any).user_id)
-            .maybeSingle();
-          
-          if (profileData) {
-            profile = {
-              football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
-              skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
-                ? profileData.skill_ratings 
-                : {}
-            };
+          // Get profile data for this player
+          let profile = undefined;
+          if ((player as any).user_id) {
+            const profileData = (allProfilesData || []).find(p => p.user_id === (player as any).user_id);
+            if (profileData) {
+              profile = {
+                football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
+                skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
+                  ? profileData.skill_ratings 
+                  : {}
+              };
+            }
           }
-        }
-        
-        playersWithRecentResults.push({
-          ...player,
-          recentResults: recentResults.reverse(), // Reverse to show oldest to newest
-          profile
+          
+          return {
+            ...player,
+            recentResults: recentResults.reverse(), // Reverse to show oldest to newest
+            profile
+          };
         });
+        
+        setPlayersWithForm(playersWithRecentResults);
+      } catch (error) {
+        console.error('Error fetching form data:', error);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setPlayersWithForm(playersWithRecentResults);
-      setIsLoading(false);
     };
 
-    if (players.length > 0) {
-      fetchFormData();
-    } else {
-      setIsLoading(players.length === 0);
-    }
+    fetchFormData();
   }, [players]);
 
   const sortedPlayers = [...playersWithForm].sort((a, b) => {
