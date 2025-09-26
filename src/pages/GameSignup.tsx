@@ -302,7 +302,7 @@ const GameSignup = () => {
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">Game Signup</h1>
                 <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <p className="text-base sm:text-lg text-muted-foreground truncate">
+                  <p className="text-sm sm:text-base text-muted-foreground truncate">
                     <span className="sm:hidden">{format(gameDate, "MMM d, h:mm a")}</span>
                     <span className="hidden sm:inline">{format(gameDate, "MMM d, yyyy 'at' h:mm a")}</span>
                   </p>
