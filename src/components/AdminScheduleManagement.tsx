@@ -432,7 +432,7 @@ const AdminScheduleManagement = () => {
                   {/* Signups Management */}
                   <div className="space-y-4 sm:space-y-6">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium hidden sm:block">
+                      <h4 className="font-medium">
                         Signed Up Players ({(signups[game.id] || []).length})
                       </h4>
                     </div>
