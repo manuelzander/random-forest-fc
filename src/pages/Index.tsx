@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { usePlayerStats, clearPlayerStatsCache } from '@/hooks/usePlayerStats';
 import { Player, GameInput as GameInputType, NewsItem } from '@/types';
 import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
@@ -27,20 +28,12 @@ const Index = () => {
   const {
     toast
   } = useToast();
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [currentUserPlayer, setCurrentUserPlayer] = useState<any>(null);
-  
-  // Add caching to prevent unnecessary reloads
-  const [playersCache, setPlayersCache] = useState<{ data: Player[], timestamp: number } | null>(null);
-  const CACHE_DURATION = 30000; // 30 seconds
-  
+  const { players, isLoading, error, refetch } = usePlayerStats();
   const [activeTab, setActiveTab] = useState('ranking');
-  const [isLoading, setIsLoading] = useState(true);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsLoading, setNewsLoading] = useState(false);
   const [totalGames, setTotalGames] = useState(0);
   useEffect(() => {
-    fetchPlayers();
     fetchGamesCount();
   }, []);
   const fetchGamesCount = async () => {
@@ -85,87 +78,12 @@ const Index = () => {
       fetchNews();
     }
   }, [activeTab]);
-  const fetchPlayers = async (useCache = true) => {
-    // Check cache first to avoid unnecessary database calls
-    if (useCache && playersCache && Date.now() - playersCache.timestamp < CACHE_DURATION) {
-      setPlayers(playersCache.data);
-      if (user) {
-        const userPlayer = playersCache.data.find(player => player.user_id === user.id);
-        setCurrentUserPlayer(userPlayer || null);
-      }
-      setIsLoading(false);
-      return;
+  
+  useEffect(() => {
+    if (error) {
+      toast({ title: "Error", description: "Failed to fetch players", variant: "destructive" });
     }
-
-    try {
-      console.log('Starting player fetch...');
-
-      // Clear any invalid session first
-      await supabase.auth.getSession();
-
-      // Use the database function for much better performance
-      const { data, error } = await supabase.rpc('get_player_stats');
-      
-      if (error) {
-        console.error('Players fetch error:', error);
-        throw error;
-      }
-
-      const formattedPlayers: Player[] = (data || []).map((player: any) => ({
-        id: player.id,
-        name: player.name,
-        user_id: player.user_id,
-        avatar_url: player.avatar_url,
-        points: player.points || 0,
-        games_played: player.games_played || 0,
-        wins: player.wins || 0,
-        draws: player.draws || 0,
-        losses: player.losses || 0,
-        mvp_awards: player.mvp_awards || 0,
-        goal_difference: player.goal_difference || 0,
-        created_by: null,
-        badges: null
-      }));
-
-      // Sort by points first, then PPG, then goal difference
-      formattedPlayers.sort((a, b) => {
-        // First sort by points (descending)
-        if (b.points !== a.points) {
-          return b.points - a.points;
-        }
-
-        // If points are equal, sort by points per game (descending)
-        const aPPG = a.games_played > 0 ? a.points / a.games_played : 0;
-        const bPPG = b.games_played > 0 ? b.points / b.games_played : 0;
-        if (bPPG !== aPPG) {
-          return bPPG - aPPG;
-        }
-
-        // If PPG is equal, sort by goal difference (descending)
-        return b.goal_difference - a.goal_difference;
-      });
-      
-      // Update cache
-      setPlayersCache({ data: formattedPlayers, timestamp: Date.now() });
-      
-      setPlayers(formattedPlayers);
-
-      // Find current user's claimed player
-      if (user) {
-        const userPlayer = formattedPlayers.find(player => player.user_id === user.id);
-        setCurrentUserPlayer(userPlayer || null);
-      }
-    } catch (error) {
-      console.error('Error fetching players:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch players",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [error, toast]);
   // Removed calculatePlayerStatsOptimized function - now using database function
   const handleGameSubmit = async (gameData: GameInputType) => {
     try {
@@ -185,8 +103,8 @@ const Index = () => {
       if (gameError) throw gameError;
 
       // Clear cache and refresh player stats from the database after saving the game
-      setPlayersCache(null); // Clear cache
-      fetchPlayers(false); // Force refresh, bypass cache
+      clearPlayerStatsCache();
+      refetch();
       toast({
         title: "Game Recorded!",
         description: "The match result has been successfully recorded."
