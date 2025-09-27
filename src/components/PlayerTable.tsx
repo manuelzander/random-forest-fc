@@ -56,128 +56,79 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
 
     setIsLoading(true);
     const fetchFormData = async () => {
-      const playerIds = players.map(p => p.id);
-      
-      if (playerIds.length === 0) {
-        setPlayersWithForm(players as PlayerWithForm[]);
-        return;
-      }
-
       try {
-        // Batch fetch all recent games data in a single query with better error handling
-        const gamesPromise = supabase
+        // Batch fetch all recent games data in a single query
+        const playerIds = players.map(p => p.id);
+        const { data: allGamesData, error: gamesError } = await supabase
           .from('games')
           .select('team1_players, team2_players, team1_goals, team2_goals, created_at')
           .or(playerIds.map(id => `team1_players.cs.{${id}},team2_players.cs.{${id}}`).join(','))
           .order('created_at', { ascending: false })
-          .limit(Math.min(6 * playerIds.length, 1000)); // Cap total queries to prevent timeout
+          .limit(6 * playerIds.length); // Limit per player * number of players
 
         // Batch fetch all profile data in a single query
-        const userIds = players.filter(p => p.user_id).map(p => p.user_id!);
-        const profilesPromise = userIds.length > 0 
-          ? supabase
-              .from('profiles')
-              .select('user_id, football_skills, skill_ratings')
-              .in('user_id', userIds)
-          : Promise.resolve({ data: [], error: null });
+        const userIds = players.filter(p => (p as any).user_id).map(p => (p as any).user_id);
+        const { data: allProfilesData } = userIds.length > 0 ? await supabase
+          .from('profiles')
+          .select('user_id, football_skills, skill_ratings')
+          .in('user_id', userIds)
+          : { data: [] };
 
-        // Execute both queries in parallel with timeout
-        const [gamesResult, profilesResult] = await Promise.allSettled([
-          gamesPromise,
-          profilesPromise
-        ]);
-
-        const allGamesData = gamesResult.status === 'fulfilled' && gamesResult.value.error === null
-          ? gamesResult.value.data || []
-          : [];
-          
-        const allProfilesData = profilesResult.status === 'fulfilled' && profilesResult.value.error === null
-          ? profilesResult.value.data || []
-          : [];
-
-        if (gamesResult.status === 'rejected') {
-          console.error('Failed to fetch games data:', gamesResult.reason);
-        }
-        
-        if (profilesResult.status === 'rejected') {
-          console.error('Failed to fetch profiles data:', profilesResult.reason);
-        }
-
-        // Process data for each player with better error handling
+        // Process data for each player
         const playersWithRecentResults: PlayerWithForm[] = players.map(player => {
-          try {
-            // Get recent games for this player
-            const playerGames = allGamesData
-              .filter(game => {
-                try {
-                  return Array.isArray(game.team1_players) && game.team1_players.includes(player.id) ||
-                         Array.isArray(game.team2_players) && game.team2_players.includes(player.id);
-                } catch {
-                  return false;
-                }
-              })
-              .slice(0, 6); // Limit to 6 most recent
+          // Get recent games for this player
+          const playerGames = (allGamesData || [])
+            .filter(game => 
+              game.team1_players.includes(player.id) || 
+              game.team2_players.includes(player.id)
+            )
+            .slice(0, 6); // Limit to 6 most recent
 
-            const recentResults: ('win' | 'draw' | 'loss')[] = [];
+          const recentResults: ('win' | 'draw' | 'loss')[] = [];
+          
+          playerGames.forEach(game => {
+            const isTeam1 = game.team1_players.includes(player.id);
+            const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
+            const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
             
-            playerGames.forEach(game => {
-              try {
-                const isTeam1 = Array.isArray(game.team1_players) && game.team1_players.includes(player.id);
-                const playerGoals = isTeam1 ? (game.team1_goals || 0) : (game.team2_goals || 0);
-                const opponentGoals = isTeam1 ? (game.team2_goals || 0) : (game.team1_goals || 0);
-                
-                if (playerGoals > opponentGoals) {
-                  recentResults.push('win');
-                } else if (playerGoals === opponentGoals) {
-                  recentResults.push('draw');
-                } else {
-                  recentResults.push('loss');
-                }
-              } catch (error) {
-                console.error('Error processing game result for player:', player.name, error);
-              }
-            });
-
-            // Get profile data for this player
-            let profile = undefined;
-            if (player.user_id) {
-              try {
-                const profileData = allProfilesData.find(p => p?.user_id === player.user_id);
-                if (profileData) {
-                  profile = {
-                    football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
-                    skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
-                      ? profileData.skill_ratings 
-                      : {}
-                  };
-                }
-              } catch (error) {
-                console.error('Error processing profile data for player:', player.name, error);
-              }
+            if (playerGoals > opponentGoals) {
+              recentResults.push('win');
+            } else if (playerGoals === opponentGoals) {
+              recentResults.push('draw');
+            } else {
+              recentResults.push('loss');
             }
-            
-            return {
-              ...player,
-              recentResults: recentResults.reverse(), // Reverse to show oldest to newest
-              profile
-            };
-          } catch (error) {
-            console.error('Error processing player:', player.name, error);
-            return {
-              ...player,
-              recentResults: [],
-              profile: undefined
-            };
+          });
+
+          // Get profile data for this player
+          let profile = undefined;
+          if ((player as any).user_id) {
+            const profileData = (allProfilesData || []).find(p => p.user_id === (player as any).user_id);
+            if (profileData) {
+              profile = {
+                football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
+                skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
+                  ? profileData.skill_ratings 
+                  : {}
+              };
+            }
           }
+          
+          return {
+            ...player,
+            recentResults: recentResults.reverse(), // Reverse to show oldest to newest
+            profile
+          };
         });
         
         setPlayersWithForm(playersWithRecentResults);
       } catch (error) {
-        console.error('Error in fetchFormData:', error);
-        // Fallback to basic player data if enrichment fails
-        setPlayersWithForm(players.map(p => ({ ...p, recentResults: [], profile: undefined })));
+        console.error('Error fetching form data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
+
     fetchFormData();
   }, [players]);
 
