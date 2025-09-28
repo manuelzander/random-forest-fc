@@ -277,6 +277,24 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      get_player_achievements: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avatar_url: string
+          draws: number
+          football_skills: Json
+          games_played: number
+          goal_difference: number
+          id: string
+          losses: number
+          mvp_awards: number
+          name: string
+          points: number
+          skill_ratings: Json
+          user_id: string
+          wins: number
+        }[]
+      }
       get_player_stats: {
         Args: Record<PropertyKey, never>
         Returns: {

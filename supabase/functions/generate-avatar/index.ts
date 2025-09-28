@@ -304,7 +304,7 @@ serve(async (req) => {
     console.error('Error generating avatar:', error)
     return new Response(
       JSON.stringify({ 
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         success: false 
       }),
       {

@@ -10,66 +10,42 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { ChevronDown, ChevronUp, Trophy, Info, Award, ArrowUp, ArrowDown } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
-import { supabase } from '@/integrations/supabase/client';
+import { usePlayerAchievements } from '@/hooks/usePlayerAchievements';
+
 interface AchievementsTableProps {
-  players: Player[];
+  players: Player[]; // This prop is now unused but kept for compatibility
 }
+
 interface PlayerWithProfile extends Player {
   profile?: {
     football_skills?: string[];
     skill_ratings?: any;
   };
 }
-const AchievementsTable: React.FC<AchievementsTableProps> = ({
-  players
-}) => {
+
+const AchievementsTable: React.FC<AchievementsTableProps> = () => {
   const [isLegendOpen, setIsLegendOpen] = useState(false);
-  const [playersWithProfiles, setPlayersWithProfiles] = useState<PlayerWithProfile[]>([]);
   const [sortField, setSortField] = useState<'badges' | 'name'>('badges');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [isLoading, setIsLoading] = useState(true);
+  
+  // Use the optimized hook instead of manual fetching
+  const { players: playersWithProfiles, isLoading, error } = usePlayerAchievements();
+  
+  // Sort players whenever sort options change
+  const [sortedPlayers, setSortedPlayers] = useState<PlayerWithProfile[]>([]);
+  
   useEffect(() => {
-    setIsLoading(true);
-    const fetchProfileData = async () => {
-      const playersWithProfileData: PlayerWithProfile[] = [];
-      for (const player of players) {
-        let profile = undefined;
-        if ((player as any).user_id) {
-          const {
-            data: profileData
-          } = await supabase.from('profiles').select('football_skills, skill_ratings').eq('user_id', (player as any).user_id).maybeSingle();
-          if (profileData) {
-            profile = {
-              football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
-              skill_ratings: profileData.skill_ratings && typeof profileData.skill_ratings === 'object' ? profileData.skill_ratings : {}
-            };
-          }
-        }
-        playersWithProfileData.push({
-          ...player,
-          profile
-        });
+    const sorted = [...playersWithProfiles].sort((a, b) => {
+      if (sortField === 'badges') {
+        const aBadgeCount = getCachedBadges(a, a.profile).length;
+        const bBadgeCount = getCachedBadges(b, b.profile).length;
+        return sortDirection === 'desc' ? bBadgeCount - aBadgeCount : aBadgeCount - bBadgeCount;
+      } else {
+        return sortDirection === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
       }
-
-      // Sort by badge count (descending) or name (ascending)
-      playersWithProfileData.sort((a, b) => {
-        if (sortField === 'badges') {
-          const aBadgeCount = getCachedBadges(a, a.profile).length;
-          const bBadgeCount = getCachedBadges(b, b.profile).length;
-          return sortDirection === 'desc' ? bBadgeCount - aBadgeCount : aBadgeCount - bBadgeCount;
-        } else {
-          return sortDirection === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
-        }
-      });
-      setPlayersWithProfiles(playersWithProfileData);
-      setIsLoading(false);
-    };
-    if (players.length > 0) {
-      fetchProfileData();
-    } else {
-      setIsLoading(players.length === 0);
-    }
-  }, [players, sortField, sortDirection]);
+    });
+    setSortedPlayers(sorted);
+  }, [playersWithProfiles, sortField, sortDirection]);
   const PlayerAvatarWithDefault = ({
     player
   }: {
@@ -114,7 +90,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
   );
 
   // Get all unique badges from all players with profiles
-  const allBadges = Array.from(new Map(playersWithProfiles.flatMap(player => getCachedBadges(player, player.profile)).map(badge => [badge.name, badge])).values());
+  const allBadges = Array.from(new Map(sortedPlayers.flatMap(player => getCachedBadges(player, player.profile)).map(badge => [badge.name, badge])).values());
 
   // Group badges by category
   const badgeCategories = {
@@ -125,6 +101,22 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
     'Form & Personality': allBadges.filter(badge => ['On Fire', 'Stormy Weather', 'Diplomat', 'Peacekeeper', 'Team Player', 'Unstoppable', 'Balanced'].includes(badge.name)),
     'Quirky & Fun': allBadges.filter(badge => !['Legend', 'MVP Champion', 'Dominator', 'Champion', 'Winner', 'Elite Performer', 'Consistent', 'Goal God', 'Goal Machine', 'Sharp Shooter', 'Speed Demon', 'Sniper', 'Wall', 'Magician', 'Playmaker', 'Beast', 'Maestro', 'Skilled', 'Hall of Famer', 'Warrior', 'Veteran', 'Showboat', 'Acrobat', 'Humiliator', 'Artist', 'Swiss Army Knife', 'On Fire', 'Stormy Weather', 'Diplomat', 'Peacekeeper', 'Team Player', 'Unstoppable', 'Balanced'].includes(badge.name))
   };
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+            <Trophy className="h-6 w-6" />
+            Player Achievements
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center p-8">
+          <div className="text-red-600">{error}</div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -199,7 +191,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {playersWithProfiles.map((player, index) => {
+              {sortedPlayers.map((player, index) => {
               const playerBadges = getCachedBadges(player, player.profile);
               const rank = index + 1;
               const getRankBadgeColor = (rank: number) => {
