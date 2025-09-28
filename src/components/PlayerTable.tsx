@@ -124,6 +124,8 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
         setPlayersWithForm(playersWithRecentResults);
       } catch (error) {
         console.error('Error fetching form data:', error);
+        // Fallback: show base players without recent results/profile
+        setPlayersWithForm(players as PlayerWithForm[]);
       } finally {
         setIsLoading(false);
       }

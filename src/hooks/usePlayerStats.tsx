@@ -37,20 +37,18 @@ export const usePlayerStats = (): PlayerStats => {
       if (statsError) throw statsError;
 
       const formattedPlayers: Player[] = (data || []).map((player: any) => ({
-        id: player.id,
-        name: player.name,
-        user_id: player.user_id,
-        avatar_url: player.avatar_url,
-        points: player.points || 0,
-        games_played: player.games_played || 0,
-        wins: player.wins || 0,
-        draws: player.draws || 0,
-        losses: player.losses || 0,
-        mvp_awards: player.mvp_awards || 0,
-        goal_difference: player.goal_difference || 0,
-        created_by: null,
-        badges: null
-      }));
+          id: player.id,
+          name: player.name,
+          user_id: player.user_id,
+          avatar_url: player.avatar_url,
+          points: player.points || 0,
+          games_played: player.games_played || 0,
+          wins: player.wins || 0,
+          draws: player.draws || 0,
+          losses: player.losses || 0,
+          mvp_awards: player.mvp_awards || 0,
+          goal_difference: player.goal_difference || 0
+        }));
 
       // Sort by points, then PPG, then goal difference
       formattedPlayers.sort((a, b) => {
