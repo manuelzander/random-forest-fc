@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { usePlayerStats, clearPlayerStatsCache } from '@/hooks/usePlayerStats';
+import { usePlayerAchievements, clearPlayerAchievementsCache } from '@/hooks/usePlayerAchievements';
 import { Player, GameInput as GameInputType, NewsItem } from '@/types';
 import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
@@ -28,7 +28,7 @@ const Index = () => {
   const {
     toast
   } = useToast();
-  const { players, isLoading, error, refetch } = usePlayerStats();
+  const { players, isLoading, error, refetch } = usePlayerAchievements();
   const [activeTab, setActiveTab] = useState('ranking');
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsLoading, setNewsLoading] = useState(false);
@@ -103,7 +103,7 @@ const Index = () => {
       if (gameError) throw gameError;
 
       // Clear cache and refresh player stats from the database after saving the game
-      clearPlayerStatsCache();
+      clearPlayerAchievementsCache();
       refetch();
       toast({
         title: "Game Recorded!",

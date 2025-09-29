@@ -11,16 +11,19 @@ import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle } from 'l
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
 
-interface PlayerTableProps {
-  players: Player[];
-}
-
-interface PlayerWithForm extends Player {
-  recentResults?: ('win' | 'draw' | 'loss')[];
+interface PlayerWithProfile extends Player {
   profile?: {
     football_skills?: string[];
     skill_ratings?: any;
   };
+}
+
+interface PlayerTableProps {
+  players: PlayerWithProfile[];
+}
+
+interface PlayerWithForm extends PlayerWithProfile {
+  recentResults?: ('win' | 'draw' | 'loss')[];
 }
 
 const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
@@ -64,25 +67,16 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
           .select('team1_players, team2_players, team1_goals, team2_goals, created_at')
           .or(playerIds.map(id => `team1_players.cs.{${id}},team2_players.cs.{${id}}`).join(','))
           .order('created_at', { ascending: false })
-          .limit(6 * playerIds.length); // Limit per player * number of players
+          .limit(6 * playerIds.length);
 
-        // Batch fetch all profile data in a single query
-        const userIds = players.filter(p => (p as any).user_id).map(p => (p as any).user_id);
-        const { data: allProfilesData } = userIds.length > 0 ? await supabase
-          .from('profiles')
-          .select('user_id, football_skills, skill_ratings')
-          .in('user_id', userIds)
-          : { data: [] };
-
-        // Process data for each player
+        // Process data for each player (profile data already comes from parent)
         const playersWithRecentResults: PlayerWithForm[] = players.map(player => {
-          // Get recent games for this player
           const playerGames = (allGamesData || [])
             .filter(game => 
               game.team1_players.includes(player.id) || 
               game.team2_players.includes(player.id)
             )
-            .slice(0, 6); // Limit to 6 most recent
+            .slice(0, 6);
 
           const recentResults: ('win' | 'draw' | 'loss')[] = [];
           
@@ -99,32 +93,16 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
               recentResults.push('loss');
             }
           });
-
-          // Get profile data for this player
-          let profile = undefined;
-          if ((player as any).user_id) {
-            const profileData = (allProfilesData || []).find(p => p.user_id === (player as any).user_id);
-            if (profileData) {
-              profile = {
-                football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
-                skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
-                  ? profileData.skill_ratings 
-                  : {}
-              };
-            }
-          }
           
           return {
             ...player,
-            recentResults: recentResults.reverse(), // Reverse to show oldest to newest
-            profile
+            recentResults: recentResults.reverse()
           };
         });
         
         setPlayersWithForm(playersWithRecentResults);
       } catch (error) {
         console.error('Error fetching form data:', error);
-        // Fallback: show base players without recent results/profile
         setPlayersWithForm(players as PlayerWithForm[]);
       } finally {
         setIsLoading(false);
