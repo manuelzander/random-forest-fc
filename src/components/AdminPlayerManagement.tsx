@@ -547,6 +547,9 @@ const AdminPlayerManagement = () => {
                     <p className="text-xs sm:text-sm text-muted-foreground">
                       {player.wins}W-{player.draws}D-{player.losses}L
                     </p>
+                    <p className="text-xs sm:text-sm font-medium text-orange-600">
+                      Debt: £{(player.games_played * 93.6).toFixed(2)}
+                    </p>
                     {profile && (
                       <p className="text-xs text-blue-600 mt-1 truncate">
                         <span className="hidden sm:inline">Connected to: </span>
