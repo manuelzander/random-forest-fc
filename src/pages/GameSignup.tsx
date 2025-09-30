@@ -426,16 +426,6 @@ const GameSignup = () => {
             </Card>
           )}
 
-          {/* 48-hour rule alert */}
-          {isWithin48Hours && (
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                <strong>Note:</strong> Players cannot be removed within 48 hours of game time. Please message the group to request replacement players if needed.
-              </AlertDescription>
-            </Alert>
-          )}
-
           {/* Players List */}
           <Card>
             <CardHeader className="pb-4">
