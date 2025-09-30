@@ -12,6 +12,7 @@ export interface Player {
   user_id?: string | null;
   avatar_url?: string | null;
   created_by?: string | null;
+  debt?: number;
 }
 
 export interface GameResult {

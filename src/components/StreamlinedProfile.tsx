@@ -72,6 +72,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
         let losses = 0;
         let mvp_awards = 0;
         let goal_difference = 0;
+        let debt = 0;
         
         if (gamesData) {
           gamesData.forEach(game => {
@@ -79,6 +80,10 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
             const isTeam2 = game.team2_players.includes(player.id);
             
             if (isTeam1 || isTeam2) {
+              // Calculate debt: £93.6 split among all players in this game
+              const totalPlayers = game.team1_players.length + game.team2_players.length;
+              debt += 93.6 / totalPlayers;
+              
               const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
               const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
               
@@ -114,6 +119,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           user_id: player.user_id,
           avatar_url: player.avatar_url,
           created_by: player.created_by,
+          debt,
         };
       });
       
@@ -443,7 +449,10 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           <CardTitle>Account Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <AccountDetailsEditor userEmail={user.email || ''} />
+          <AccountDetailsEditor 
+            userEmail={user.email || ''} 
+            debt={currentUserPlayer?.debt || 0}
+          />
         </CardContent>
       </Card>
       {/* Create Player Dialog */}

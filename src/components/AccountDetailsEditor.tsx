@@ -9,9 +9,10 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface AccountDetailsEditorProps {
   userEmail: string;
+  debt?: number;
 }
 
-const AccountDetailsEditor = ({ userEmail }: AccountDetailsEditorProps) => {
+const AccountDetailsEditor = ({ userEmail, debt = 0 }: AccountDetailsEditorProps) => {
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [email, setEmail] = useState(userEmail);
@@ -114,6 +115,16 @@ const AccountDetailsEditor = ({ userEmail }: AccountDetailsEditorProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Debt Display */}
+        <div className="space-y-2">
+          <Label className="text-xs sm:text-sm font-medium text-orange-600">
+            Current Debt
+          </Label>
+          <p className="text-2xl font-bold text-orange-600">
+            £{debt.toFixed(2)}
+          </p>
+        </div>
+
         {/* Email Section */}
         <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
