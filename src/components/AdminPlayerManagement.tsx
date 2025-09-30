@@ -549,10 +549,7 @@ const AdminPlayerManagement = () => {
                       <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
                     </Link>
                     <p className="text-xs sm:text-sm text-muted-foreground">
-                      {player.points} pts • {player.games_played} games
-                    </p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      {player.wins}W-{player.draws}D-{player.losses}L
+                      {player.games_played} games played
                     </p>
                     <p className="text-xs sm:text-sm font-medium text-orange-600">
                       Debt: £{player.debt.toFixed(2)}
