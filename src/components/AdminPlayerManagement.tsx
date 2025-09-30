@@ -558,9 +558,9 @@ const AdminPlayerManagement = () => {
                       Debt: £{player.debt.toFixed(2)}
                     </p>
                     {profile && (
-                      <p className="text-xs text-blue-600 mt-1 truncate">
+                      <p className="text-xs sm:text-sm font-medium text-green-600 truncate">
                         <span className="hidden sm:inline">Connected to: </span>
-                        {profile.display_name || profile.email}
+                        {profile.email}
                       </p>
                     )}
                   </div>
