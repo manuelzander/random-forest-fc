@@ -25,6 +25,7 @@ interface Player {
   goal_difference: number;
   user_id?: string | null;
   avatar_url?: string | null;
+  debt: number;
 }
 
 interface Profile {
@@ -83,6 +84,7 @@ const AdminPlayerManagement = () => {
       let losses = 0;
       let mvp_awards = 0;
       let goal_difference = 0;
+      let debt = 0;
       
       if (gamesData) {
         gamesData.forEach(game => {
@@ -90,6 +92,10 @@ const AdminPlayerManagement = () => {
           const isTeam2 = game.team2_players.includes(player.id);
           
           if (isTeam1 || isTeam2) {
+            // Calculate debt: £93.6 split among all players in this game
+            const totalPlayers = game.team1_players.length + game.team2_players.length;
+            debt += 93.6 / totalPlayers;
+            
             const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
             const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
             
@@ -124,6 +130,7 @@ const AdminPlayerManagement = () => {
         goal_difference,
         user_id: player.user_id,
         avatar_url: player.avatar_url,
+        debt,
       };
     });
     
@@ -548,7 +555,7 @@ const AdminPlayerManagement = () => {
                       {player.wins}W-{player.draws}D-{player.losses}L
                     </p>
                     <p className="text-xs sm:text-sm font-medium text-orange-600">
-                      Debt: £{(player.games_played * 93.6).toFixed(2)}
+                      Debt: £{player.debt.toFixed(2)}
                     </p>
                     {profile && (
                       <p className="text-xs text-blue-600 mt-1 truncate">
