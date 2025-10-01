@@ -10,9 +10,11 @@ import { supabase } from '@/integrations/supabase/client';
 interface AccountDetailsEditorProps {
   userEmail: string;
   debt?: number;
+  credit?: number;
+  onCreditUpdate?: () => void;
 }
 
-const AccountDetailsEditor = ({ userEmail, debt = 0 }: AccountDetailsEditorProps) => {
+const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate }: AccountDetailsEditorProps) => {
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [email, setEmail] = useState(userEmail);
@@ -20,6 +22,8 @@ const AccountDetailsEditor = ({ userEmail, debt = 0 }: AccountDetailsEditorProps
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [creditAmount, setCreditAmount] = useState('');
+  const [isAddingCredit, setIsAddingCredit] = useState(false);
 
   const handleEmailUpdate = async () => {
     if (email === userEmail) {
@@ -106,6 +110,50 @@ const AccountDetailsEditor = ({ userEmail, debt = 0 }: AccountDetailsEditorProps
     }
   };
 
+  const handleAddCredit = async () => {
+    const amount = parseFloat(creditAmount);
+    if (!amount || amount <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid credit amount",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAddingCredit(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ credit: credit + amount })
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+
+      toast({
+        title: "Credit added",
+        description: `£${amount.toFixed(2)} has been added to your account`,
+      });
+      
+      setCreditAmount('');
+      onCreditUpdate?.();
+    } catch (error: any) {
+      console.error('Error adding credit:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add credit",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingCredit(false);
+    }
+  };
+
+  const netBalance = debt - credit;
+
   return (
     <Card>
       <CardHeader>
@@ -115,17 +163,57 @@ const AccountDetailsEditor = ({ userEmail, debt = 0 }: AccountDetailsEditorProps
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Debt Display */}
-        <div className="space-y-3">
-          <Label className="text-sm font-medium flex items-center gap-2 text-orange-600">
-            <Banknote className="h-4 w-4" />
-            Current Debt
-          </Label>
-          <div className="flex h-10 items-center">
-            <p className="text-base md:text-sm font-semibold text-orange-600">
-              £{debt.toFixed(2)}
-            </p>
+        {/* Balance Overview */}
+        <div className="rounded-lg border bg-muted/50 p-4 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Total Debt</Label>
+              <p className="text-lg font-semibold text-destructive">
+                £{debt.toFixed(2)}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Credit Balance</Label>
+              <p className="text-lg font-semibold text-green-600">
+                £{credit.toFixed(2)}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Net Balance</Label>
+              <p className={`text-lg font-bold ${netBalance > 0 ? 'text-destructive' : netBalance < 0 ? 'text-green-600' : 'text-muted-foreground'}`}>
+                {netBalance > 0 ? '-' : netBalance < 0 ? '+' : ''}£{Math.abs(netBalance).toFixed(2)}
+              </p>
+            </div>
           </div>
+        </div>
+
+        {/* Add Credit Section */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium flex items-center gap-2">
+            <Banknote className="h-4 w-4" />
+            Add Credit
+          </Label>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              value={creditAmount}
+              onChange={(e) => setCreditAmount(e.target.value)}
+              placeholder="Enter amount"
+              className="flex-1"
+            />
+            <Button
+              onClick={handleAddCredit}
+              disabled={isAddingCredit || !creditAmount}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Add Credit
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Add funds to your account to pay off your debt
+          </p>
         </div>
 
         {/* Email Section */}

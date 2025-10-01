@@ -32,6 +32,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
   const [newPlayerName, setNewPlayerName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [userCredit, setUserCredit] = useState(0);
   const profileEditorRef = useRef<{ handleSave: () => void }>(null);
 
   // Use default avatar for current user's player
@@ -44,8 +45,24 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
   useEffect(() => {
     if (user) {
       fetchPlayers();
+      fetchUserCredit();
     }
   }, [user]);
+
+  const fetchUserCredit = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('credit')
+        .eq('user_id', user?.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      setUserCredit(data?.credit || 0);
+    } catch (error) {
+      console.error('Error fetching user credit:', error);
+    }
+  };
 
   const fetchPlayers = async () => {
     try {
@@ -452,6 +469,8 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           <AccountDetailsEditor 
             userEmail={user.email || ''} 
             debt={currentUserPlayer?.debt || 0}
+            credit={userCredit}
+            onCreditUpdate={fetchUserCredit}
           />
         </CardContent>
       </Card>
