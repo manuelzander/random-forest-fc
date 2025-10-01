@@ -112,10 +112,10 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
 
   const handleAddCredit = async () => {
     const amount = parseFloat(creditAmount);
-    if (!amount || amount <= 0) {
+    if (!amount || isNaN(amount)) {
       toast({
         title: "Error",
-        description: "Please enter a valid credit amount",
+        description: "Please enter a valid amount",
         variant: "destructive",
       });
       return;
@@ -134,8 +134,10 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
       if (error) throw error;
 
       toast({
-        title: "Credit added",
-        description: `£${amount.toFixed(2)} has been added to your account`,
+        title: "Credit updated",
+        description: amount > 0 
+          ? `£${amount.toFixed(2)} added to your account`
+          : `£${Math.abs(amount).toFixed(2)} deducted from your account`,
       });
       
       setCreditAmount('');
@@ -191,16 +193,15 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
         <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Banknote className="h-4 w-4" />
-            Add Credit
+            Update Credit
           </Label>
           <div className="flex gap-2">
             <Input
               type="number"
               step="0.01"
-              min="0"
               value={creditAmount}
               onChange={(e) => setCreditAmount(e.target.value)}
-              placeholder="Enter amount"
+              placeholder="Enter amount (+ or -)"
               className="flex-1"
             />
             <Button
@@ -208,11 +209,11 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
               disabled={isAddingCredit || !creditAmount}
               className="bg-green-600 hover:bg-green-700"
             >
-              Add Credit
+              Update
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Add funds to your account to pay off your debt
+            Add positive amount to increase credit, or negative to decrease (e.g., -5 to deduct £5)
           </p>
         </div>
 
