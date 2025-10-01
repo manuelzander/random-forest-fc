@@ -26,6 +26,7 @@ interface Player {
   user_id?: string | null;
   avatar_url?: string | null;
   debt: number;
+  credit: number;
 }
 
 interface Profile {
@@ -34,6 +35,7 @@ interface Profile {
   email: string;
   display_name: string | null;
   favorite_club?: string;
+  credit?: number;
 }
 
 const AdminPlayerManagement = () => {
@@ -75,6 +77,11 @@ const AdminPlayerManagement = () => {
       .select('*');
 
     if (gamesError) throw gamesError;
+    
+    // Fetch all profiles to get credit info
+    const { data: profilesData } = await supabase
+      .from('profiles')
+      .select('user_id, credit');
     
     const formattedPlayers = (playersData || []).map(player => {
       // Calculate stats for this player
@@ -118,6 +125,10 @@ const AdminPlayerManagement = () => {
         });
       }
       
+      // Get credit from profile
+      const playerProfile = profilesData?.find(p => p.user_id === player.user_id);
+      const credit = playerProfile?.credit || 0;
+      
       return {
         id: player.id,
         name: player.name,
@@ -131,6 +142,7 @@ const AdminPlayerManagement = () => {
         user_id: player.user_id,
         avatar_url: player.avatar_url,
         debt,
+        credit,
       };
     });
     
@@ -154,7 +166,7 @@ const AdminPlayerManagement = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, user_id, email, display_name, favorite_club')
+        .select('id, user_id, email, display_name, favorite_club, credit')
         .order('display_name');
 
       if (error) throw error;
@@ -551,9 +563,23 @@ const AdminPlayerManagement = () => {
                     <p className="text-xs sm:text-sm text-muted-foreground">
                       {player.games_played} games played
                     </p>
-                    <p className="text-xs sm:text-sm font-medium text-orange-600">
-                      Debt: £{player.debt.toFixed(2)}
-                    </p>
+                    <div className="flex flex-wrap gap-x-3 gap-y-1">
+                      <p className="text-xs sm:text-sm font-medium text-destructive">
+                        Debt: £{player.debt.toFixed(2)}
+                      </p>
+                      <p className="text-xs sm:text-sm font-medium text-green-600">
+                        Credit: £{player.credit.toFixed(2)}
+                      </p>
+                      <p className={`text-xs sm:text-sm font-bold ${
+                        (player.debt - player.credit) > 0 
+                          ? 'text-destructive' 
+                          : (player.debt - player.credit) < 0 
+                          ? 'text-green-600' 
+                          : 'text-muted-foreground'
+                      }`}>
+                        Net: {(player.debt - player.credit) > 0 ? '-' : (player.debt - player.credit) < 0 ? '+' : ''}£{Math.abs(player.debt - player.credit).toFixed(2)}
+                      </p>
+                    </div>
                     {profile && (
                       <p className="text-xs sm:text-sm font-medium text-green-600 truncate">
                         <span className="hidden sm:inline">Connected to: </span>
