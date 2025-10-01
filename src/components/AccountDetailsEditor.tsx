@@ -121,9 +121,11 @@ const AccountDetailsEditor = ({ userEmail, debt = 0 }: AccountDetailsEditorProps
             <Banknote className="h-4 w-4" />
             Current Debt
           </Label>
-          <p className="text-lg font-semibold text-orange-600">
-            £{debt.toFixed(2)}
-          </p>
+          <div className="flex h-10 items-center">
+            <p className="text-base md:text-sm font-semibold text-orange-600">
+              £{debt.toFixed(2)}
+            </p>
+          </div>
         </div>
 
         {/* Email Section */}
