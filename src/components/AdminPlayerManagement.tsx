@@ -569,7 +569,7 @@ const AdminPlayerManagement = () => {
                         {profile.email}
                       </p>
                     )}
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm">
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
                       <p>
                         Debt: <span className="font-medium text-destructive">£{player.debt.toFixed(2)}</span>
                       </p>
