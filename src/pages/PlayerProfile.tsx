@@ -10,7 +10,8 @@ import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut,
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { getBadges, type Player as BadgePlayer, type ProfileData as BadgeProfileData } from '@/utils/badges';
+import { getCachedBadges } from '@/utils/badgeCache';
+import { type Player as BadgePlayer, type ProfileData as BadgeProfileData } from '@/utils/badges';
 
 interface PlayerData {
   id: string;
@@ -223,7 +224,7 @@ const PlayerProfile = () => {
     );
   }
 
-  const badges = player ? getBadges(player as BadgePlayer, profile as BadgeProfileData) : [];
+  const badges = player ? getCachedBadges(player as BadgePlayer, profile as BadgeProfileData) : [];
 
   return (
     <div className="page-container">

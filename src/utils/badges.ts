@@ -128,10 +128,12 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
       skillBadges.push({ icon: '💪', name: 'Beast', description: 'Physical powerhouse (95+ physical)' });
     }
     
-    // Add only one skill badge randomly if multiple qualify
+    // Add only one skill badge deterministically if multiple qualify
+    // Use player ID as seed for consistent selection
     if (skillBadges.length > 0) {
-      const randomSkillBadge = skillBadges[Math.floor(Math.random() * skillBadges.length)];
-      badges.push(randomSkillBadge);
+      const seed = player.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const index = seed % skillBadges.length;
+      badges.push(skillBadges[index]);
     }
   }
   

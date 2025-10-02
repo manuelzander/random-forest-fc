@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Player } from '@/types';
-import { getBadges } from '@/utils/badges';
+import { getCachedBadges } from '@/utils/badgeCache';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -274,7 +274,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              )}
-                            {getBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
+                            {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
                               <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                                 <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               </Badge>
