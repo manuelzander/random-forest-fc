@@ -563,29 +563,31 @@ const AdminPlayerManagement = () => {
                     <p className="text-xs sm:text-sm text-muted-foreground">
                       {player.games_played} games played
                     </p>
-                    <div className="flex flex-wrap gap-x-3 gap-y-1">
-                      <p className="text-xs sm:text-sm font-medium text-destructive">
-                        Debt: £{player.debt.toFixed(2)}
-                      </p>
-                      <p className="text-xs sm:text-sm font-medium text-green-600">
-                        Credit: £{player.credit.toFixed(2)}
-                      </p>
-                      <p className={`text-xs sm:text-sm font-bold ${
-                        (player.debt - player.credit) > 0 
-                          ? 'text-destructive' 
-                          : (player.debt - player.credit) < 0 
-                          ? 'text-green-600' 
-                          : 'text-muted-foreground'
-                      }`}>
-                        Net: {(player.debt - player.credit) > 0 ? '-' : (player.debt - player.credit) < 0 ? '+' : ''}£{Math.abs(player.debt - player.credit).toFixed(2)}
-                      </p>
-                    </div>
                     {profile && (
-                      <p className="text-xs sm:text-sm font-medium text-green-600 truncate">
+                      <p className="text-xs sm:text-sm text-muted-foreground truncate">
                         <span className="hidden sm:inline">Connected to: </span>
                         {profile.email}
                       </p>
                     )}
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm">
+                      <p>
+                        Debt: <span className="font-medium text-destructive">£{player.debt.toFixed(2)}</span>
+                      </p>
+                      <p>
+                        Credit: <span className="font-medium text-green-600">£{player.credit.toFixed(2)}</span>
+                      </p>
+                      <p>
+                        Net: <span className={`font-bold ${
+                          (player.debt - player.credit) > 0 
+                            ? 'text-destructive' 
+                            : (player.debt - player.credit) < 0 
+                            ? 'text-green-600' 
+                            : 'text-muted-foreground'
+                        }`}>
+                          {(player.debt - player.credit) > 0 ? '-' : (player.debt - player.credit) < 0 ? '+' : ''}£{Math.abs(player.debt - player.credit).toFixed(2)}
+                        </span>
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-center gap-1 sm:gap-2 flex-shrink-0">
