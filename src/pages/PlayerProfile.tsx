@@ -23,6 +23,7 @@ interface PlayerData {
   losses: number;
   mvp_awards: number;
   goal_difference: number;
+  clean_sheets?: number;
   avatar_url?: string;
   badges?: any[];
   user_id?: string;
@@ -101,6 +102,7 @@ const PlayerProfile = () => {
       let losses = 0;
       let mvp_awards = 0;
       let goal_difference = 0;
+      let clean_sheets = 0;
       const recentResults: ('win' | 'draw' | 'loss')[] = [];
       
       if (statsData) {
@@ -117,6 +119,7 @@ const PlayerProfile = () => {
             if (playerGoals > opponentGoals) {
               wins++;
               points += 3;
+              if (opponentGoals === 0) clean_sheets++;
               if (recentResults.length < 6) recentResults.push('win');
             } else if (playerGoals === opponentGoals) {
               draws++;
@@ -147,6 +150,7 @@ const PlayerProfile = () => {
         losses,
         mvp_awards,
         goal_difference,
+        clean_sheets,
         badges: Array.isArray(basicPlayer.badges) ? basicPlayer.badges : [],
         recentResults
       });
@@ -445,6 +449,16 @@ const PlayerProfile = () => {
                       {player.games_played > 0 ? ((player.wins / player.games_played) * 100).toFixed(1) : '0.0'}%
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">Win Rate</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-cyan-600">
+                      {player.games_played > 0 ? (player.goal_difference / player.games_played).toFixed(2) : '0.00'}
+                    </div>
+                    <div className="text-sm font-medium text-muted-foreground">Avg GD/Game</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-emerald-600">{player.clean_sheets || 0}</div>
+                    <div className="text-sm font-medium text-muted-foreground">Clean Sheets</div>
                   </div>
                 </div>
              </CardContent>
