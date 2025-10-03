@@ -419,15 +419,24 @@ const PlayerProfile = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-primary">{player.points}</div>
-                    <div className="text-sm font-medium text-muted-foreground">Points</div>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      <span className="hidden sm:inline">Points</span>
+                      <span className="sm:hidden">PTS</span>
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-primary">{player.games_played}</div>
-                    <div className="text-sm font-medium text-muted-foreground">Games Played</div>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      <span className="hidden sm:inline">Games Played</span>
+                      <span className="sm:hidden">GP</span>
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-yellow-700">{player.mvp_awards}</div>
-                    <div className="text-sm font-medium text-muted-foreground">MVP Awards</div>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      <span className="hidden sm:inline">MVP Awards</span>
+                      <span className="sm:hidden">MVP</span>
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className={`text-2xl font-bold ${
@@ -436,29 +445,44 @@ const PlayerProfile = () => {
                     }`}>
                       {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Goal Difference</div>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      <span className="hidden sm:inline">Goal Difference</span>
+                      <span className="sm:hidden">GD</span>
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-purple-600">
                       {player.games_played > 0 ? (Number(player.points) / player.games_played).toFixed(1) : '0.0'}
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Points Per Game</div>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      <span className="hidden sm:inline">Points Per Game</span>
+                      <span className="sm:hidden">PPG</span>
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">
                       {player.games_played > 0 ? ((player.wins / player.games_played) * 100).toFixed(1) : '0.0'}%
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Win Rate</div>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      <span className="hidden sm:inline">Win Rate</span>
+                      <span className="sm:hidden">WR</span>
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-cyan-600">
                       {player.games_played > 0 ? (player.goal_difference / player.games_played).toFixed(2) : '0.00'}
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Avg GD/Game</div>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      <span className="hidden sm:inline">Avg GD/Game</span>
+                      <span className="sm:hidden">GD/G</span>
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-emerald-600">{player.clean_sheets || 0}</div>
-                    <div className="text-sm font-medium text-muted-foreground">Clean Sheets</div>
+                    <div className="text-sm font-medium text-muted-foreground">
+                      <span className="hidden sm:inline">Clean Sheets</span>
+                      <span className="sm:hidden">CS</span>
+                    </div>
                   </div>
                 </div>
              </CardContent>
