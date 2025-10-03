@@ -145,28 +145,58 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
 
   // Show individual skill values below the chart
   const skillLabels = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'];
-  const skillColorClasses = [
-    'text-red-600',
-    'text-green-600', 
-    'text-blue-600',
-    'text-purple-600',
-    'text-amber-600',
-    'text-red-600'
+  const skillBgClasses = [
+    'bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-800',
+    'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800', 
+    'bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800',
+    'bg-purple-50 border-purple-200 dark:bg-purple-950/30 dark:border-purple-800',
+    'bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800',
+    'bg-pink-50 border-pink-200 dark:bg-pink-950/30 dark:border-pink-800'
+  ];
+  const skillTextClasses = [
+    'text-red-600 dark:text-red-400',
+    'text-green-600 dark:text-green-400', 
+    'text-blue-600 dark:text-blue-400',
+    'text-purple-600 dark:text-purple-400',
+    'text-amber-600 dark:text-amber-400',
+    'text-pink-600 dark:text-pink-400'
+  ];
+  const skillProgressClasses = [
+    'bg-red-600 dark:bg-red-400',
+    'bg-green-600 dark:bg-green-400', 
+    'bg-blue-600 dark:bg-blue-400',
+    'bg-purple-600 dark:bg-purple-400',
+    'bg-amber-600 dark:bg-amber-400',
+    'bg-pink-600 dark:bg-pink-400'
   ];
 
   return (
     <div className={`relative ${className}`}>
-      <div className="mb-4">
+      <div className="mb-6">
         <Radar data={data} options={options} />
       </div>
-      <div className="grid grid-cols-3 gap-2 text-xs">
+      
+      {/* Colorful skill cards with hover effect */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {skillLabels.map((label, index) => (
-          <div key={label} className="text-center">
-            <div className={`font-bold ${skillColorClasses[index]}`}>
-              {label}
+          <div 
+            key={label} 
+            className={`p-3 rounded-lg border-2 transition-all duration-300 hover:scale-105 hover:shadow-md ${skillBgClasses[index]}`}
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <div className={`text-xs font-bold ${skillTextClasses[index]}`}>
+                {label}
+              </div>
+              <div className={`text-lg font-bold ${skillTextClasses[index]}`}>
+                {skillData[index]}
+              </div>
             </div>
-            <div className="text-muted-foreground">
-              {skillData[index]}/100
+            {/* Progress bar */}
+            <div className="w-full bg-white/50 dark:bg-black/20 rounded-full h-2 overflow-hidden">
+              <div 
+                className={`h-full rounded-full transition-all duration-1000 ease-out ${skillProgressClasses[index]}`}
+                style={{ width: `${skillData[index]}%` }}
+              />
             </div>
           </div>
         ))}
