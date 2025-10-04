@@ -146,12 +146,12 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
   // Show individual skill values below the chart
   const skillLabels = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'];
   const skillBgClasses = [
-    'bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-800',
-    'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800', 
-    'bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800',
-    'bg-purple-50 border-purple-200 dark:bg-purple-950/30 dark:border-purple-800',
-    'bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800',
-    'bg-pink-50 border-pink-200 dark:bg-pink-950/30 dark:border-pink-800'
+    'bg-red-50 dark:bg-red-950/30',
+    'bg-green-50 dark:bg-green-950/30', 
+    'bg-blue-50 dark:bg-blue-950/30',
+    'bg-purple-50 dark:bg-purple-950/30',
+    'bg-amber-50 dark:bg-amber-950/30',
+    'bg-pink-50 dark:bg-pink-950/30'
   ];
   const skillTextClasses = [
     'text-red-600 dark:text-red-400',
@@ -181,7 +181,7 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
         {skillLabels.map((label, index) => (
           <div 
             key={label} 
-            className={`p-3 rounded-lg border-2 transition-all duration-300 hover:scale-105 hover:shadow-md ${skillBgClasses[index]}`}
+            className={`p-3 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-md ${skillBgClasses[index]}`}
           >
             <div className="flex items-center justify-between mb-1.5">
               <div className={`text-xs font-bold ${skillTextClasses[index]}`}>
