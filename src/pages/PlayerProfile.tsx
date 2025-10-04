@@ -469,10 +469,10 @@ const PlayerProfile = () => {
                     <div className="text-sm font-medium text-muted-foreground">Goal Diff</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-amber-600">
-                      {player.games_played > 0 ? ((player.mvp_awards / player.games_played) * 100).toFixed(1) : '0.0'}%
+                    <div className="text-2xl font-bold text-violet-600">
+                      {player.games_played > 0 ? (((player.wins + player.draws) / player.games_played) * 100).toFixed(1) : '0.0'}%
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">MVP Rate</div>
+                    <div className="text-sm font-medium text-muted-foreground">Consistency</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-emerald-600">{player.clean_sheets || 0}</div>
