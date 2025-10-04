@@ -24,6 +24,8 @@ interface PlayerData {
   mvp_awards: number;
   goal_difference: number;
   clean_sheets?: number;
+  captain_count?: number;
+  longest_win_streak?: number;
   avatar_url?: string;
   badges?: any[];
   user_id?: string;
@@ -89,7 +91,7 @@ const PlayerProfile = () => {
       // Then calculate stats from games
       const { data: statsData, error: statsError } = await supabase
         .from('games')
-        .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, created_at')
+        .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, team1_captain, team2_captain, created_at')
         .or(`team1_players.cs.{${playerId}},team2_players.cs.{${playerId}}`)
         .order('created_at', { ascending: false });
 
@@ -103,6 +105,9 @@ const PlayerProfile = () => {
       let mvp_awards = 0;
       let goal_difference = 0;
       let clean_sheets = 0;
+      let captain_count = 0;
+      let current_streak = 0;
+      let longest_win_streak = 0;
       const recentResults: ('win' | 'draw' | 'loss')[] = [];
       
       if (statsData) {
@@ -116,17 +121,28 @@ const PlayerProfile = () => {
             
             goal_difference += playerGoals - opponentGoals;
             
+            // Check if player was captain
+            if (game.team1_captain === playerId || game.team2_captain === playerId) {
+              captain_count++;
+            }
+            
             if (playerGoals > opponentGoals) {
               wins++;
               points += 3;
+              current_streak++;
+              if (current_streak > longest_win_streak) {
+                longest_win_streak = current_streak;
+              }
               if (opponentGoals === 0) clean_sheets++;
               if (recentResults.length < 6) recentResults.push('win');
             } else if (playerGoals === opponentGoals) {
               draws++;
               points += 1;
+              current_streak = 0;
               if (recentResults.length < 6) recentResults.push('draw');
             } else {
               losses++;
+              current_streak = 0;
               if (recentResults.length < 6) recentResults.push('loss');
             }
             
@@ -151,6 +167,8 @@ const PlayerProfile = () => {
         mvp_awards,
         goal_difference,
         clean_sheets,
+        captain_count,
+        longest_win_streak,
         badges: Array.isArray(basicPlayer.badges) ? basicPlayer.badges : [],
         recentResults
       });
@@ -452,13 +470,21 @@ const PlayerProfile = () => {
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-cyan-600">
-                      {player.games_played > 0 ? (player.goal_difference / player.games_played).toFixed(2) : '0.00'}
+                      {player.games_played > 0 ? ((player.mvp_awards / player.games_played) * 100).toFixed(1) : '0.0'}%
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Avg GD</div>
+                    <div className="text-sm font-medium text-muted-foreground">MVP Rate</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-emerald-600">{player.clean_sheets || 0}</div>
                     <div className="text-sm font-medium text-muted-foreground">Clean Sheets</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-indigo-600">{player.captain_count || 0}</div>
+                    <div className="text-sm font-medium text-muted-foreground">Captain</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-orange-600">{player.longest_win_streak || 0}</div>
+                    <div className="text-sm font-medium text-muted-foreground">Win Streak</div>
                   </div>
                 </div>
              </CardContent>
