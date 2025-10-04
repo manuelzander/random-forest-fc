@@ -469,13 +469,10 @@ const PlayerProfile = () => {
                     <div className="text-sm font-medium text-muted-foreground">Goal Diff</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className={`text-2xl font-bold ${
-                      player.goal_difference > 0 ? 'text-cyan-600' : 
-                      player.goal_difference < 0 ? 'text-red-600' : 'text-muted-foreground'
-                    }`}>
-                      {player.games_played > 0 ? (player.goal_difference / player.games_played).toFixed(1) : '0.0'}
+                    <div className="text-2xl font-bold text-amber-600">
+                      {player.games_played > 0 ? ((player.mvp_awards / player.games_played) * 100).toFixed(1) : '0.0'}%
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Avg GD</div>
+                    <div className="text-sm font-medium text-muted-foreground">MVP Rate</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-emerald-600">{player.clean_sheets || 0}</div>
