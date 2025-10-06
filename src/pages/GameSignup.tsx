@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMinus, AlertTriangle } from 'lucide-react';
@@ -23,6 +24,7 @@ const GameSignup = () => {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [playerName, setPlayerName] = useState('');
   const [isSignedUp, setIsSignedUp] = useState(false);
+  const [confirmReplacement, setConfirmReplacement] = useState(false);
 
   useEffect(() => {
     if (gameId) {
@@ -188,6 +190,16 @@ const GameSignup = () => {
   const removeSignup = async () => {
     if (!user || !gameId) return;
 
+    // Check if within 24 hours and confirmation not checked
+    if (isWithin24Hours && !confirmReplacement) {
+      toast({
+        title: "Confirmation Required",
+        description: "Please confirm that you will ask the group for a replacement",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const userSignup = signups.find(
         signup => signup.player?.user_id === user.id
@@ -207,6 +219,7 @@ const GameSignup = () => {
         description: "Successfully removed from the game",
       });
 
+      setConfirmReplacement(false);
       fetchGameData();
     } catch (error) {
       console.error('Error removing signup:', error);
@@ -282,10 +295,10 @@ const GameSignup = () => {
   const gameDate = new Date(game.scheduled_at);
   const isPastGame = gameDate < new Date();
   
-  // Check if game is within 48 hours
+  // Check if game is within 24 hours
   const timeUntilGame = gameDate.getTime() - new Date().getTime();
   const hoursUntilGame = timeUntilGame / (1000 * 60 * 60);
-  const isWithin48Hours = hoursUntilGame <= 48 && hoursUntilGame > 0;
+  const isWithin24Hours = hoursUntilGame <= 24 && hoursUntilGame > 0;
 
   return (
     <div className="page-container">
@@ -335,24 +348,42 @@ const GameSignup = () => {
                   <div className="space-y-3">
                     {isSignedUp ? (
                       <div className="space-y-3">
-                        {isWithin48Hours && (
+                        {isWithin24Hours && (
                           <Alert>
                             <AlertTriangle className="h-4 w-4" />
                             <AlertDescription>
-                              Can't remove signup within 48 hours of game time. Please message the group to request a replacement player.
+                              Game is within 24 hours. If you cancel, please ask the group for a replacement player.
                             </AlertDescription>
                           </Alert>
                         )}
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
                           <div className="flex items-center gap-2">
                             <CheckCircle className="h-5 w-5 text-green-600" />
                             <span className="text-green-800 font-medium text-sm sm:text-base">You're signed up for this game!</span>
                           </div>
-                          {!isWithin48Hours && (
-                            <Button variant="outline" size="sm" onClick={removeSignup}>
-                              Cancel Signup
-                            </Button>
+                          {isWithin24Hours && (
+                            <div className="flex items-start gap-2 pt-2">
+                              <Checkbox 
+                                id="confirm-replacement" 
+                                checked={confirmReplacement}
+                                onCheckedChange={(checked) => setConfirmReplacement(checked as boolean)}
+                              />
+                              <label 
+                                htmlFor="confirm-replacement"
+                                className="text-sm text-muted-foreground cursor-pointer leading-tight"
+                              >
+                                I confirm I will ask the group for a replacement player
+                              </label>
+                            </div>
                           )}
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={removeSignup}
+                            disabled={isWithin24Hours && !confirmReplacement}
+                          >
+                            Cancel Signup
+                          </Button>
                         </div>
                       </div>
                     ) : (
@@ -482,7 +513,7 @@ const GameSignup = () => {
                              {format(new Date(signup.signed_up_at), "MMM d")}
                            </span>
                             {/* Show remove button for own signups or guest signups created by current user */}
-                            {user && !isWithin48Hours && (
+                            {user && !isWithin24Hours && (
                               (signup.player?.user_id === user.id) || 
                               (signup.is_guest && signup.created_by_user_id === user.id)
                             ) && (
