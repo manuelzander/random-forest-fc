@@ -26,6 +26,7 @@ interface PlayerData {
   clean_sheets?: number;
   captain_count?: number;
   longest_win_streak?: number;
+  longest_unbeaten_streak?: number;
   avatar_url?: string;
   badges?: any[];
   user_id?: string;
@@ -108,6 +109,8 @@ const PlayerProfile = () => {
       let captain_count = 0;
       let current_streak = 0;
       let longest_win_streak = 0;
+      let current_unbeaten_streak = 0;
+      let longest_unbeaten_streak = 0;
       const recentResults: ('win' | 'draw' | 'loss')[] = [];
       
       if (statsData) {
@@ -130,8 +133,12 @@ const PlayerProfile = () => {
               wins++;
               points += 3;
               current_streak++;
+              current_unbeaten_streak++;
               if (current_streak > longest_win_streak) {
                 longest_win_streak = current_streak;
+              }
+              if (current_unbeaten_streak > longest_unbeaten_streak) {
+                longest_unbeaten_streak = current_unbeaten_streak;
               }
               if (opponentGoals === 0) clean_sheets++;
               if (recentResults.length < 6) recentResults.push('win');
@@ -139,10 +146,15 @@ const PlayerProfile = () => {
               draws++;
               points += 1;
               current_streak = 0;
+              current_unbeaten_streak++;
+              if (current_unbeaten_streak > longest_unbeaten_streak) {
+                longest_unbeaten_streak = current_unbeaten_streak;
+              }
               if (recentResults.length < 6) recentResults.push('draw');
             } else {
               losses++;
               current_streak = 0;
+              current_unbeaten_streak = 0;
               if (recentResults.length < 6) recentResults.push('loss');
             }
             
@@ -169,6 +181,7 @@ const PlayerProfile = () => {
         clean_sheets,
         captain_count,
         longest_win_streak,
+        longest_unbeaten_streak,
         badges: Array.isArray(basicPlayer.badges) ? basicPlayer.badges : [],
         recentResults
       });
@@ -470,9 +483,9 @@ const PlayerProfile = () => {
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-violet-600">
-                      {player.games_played > 0 ? (((player.wins + player.draws) / player.games_played) * 100).toFixed(1) : '0.0'}%
+                      {player.longest_unbeaten_streak || 0}
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Consistency</div>
+                    <div className="text-sm font-medium text-muted-foreground">Unbeaten Streak</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-emerald-600">{player.clean_sheets || 0}</div>
