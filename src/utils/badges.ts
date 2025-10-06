@@ -104,7 +104,7 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
     if (avgSkill >= 90) {
       badges.push({ icon: '🎨', name: 'Maestro', description: 'Elite overall skills (90+ avg)' });
     } else if (avgSkill >= 80) {
-      badges.push({ icon: '🔥', name: 'Skilled', description: 'High overall skills (80+ avg)' });
+      badges.push({ icon: '✨', name: 'Skilled', description: 'High overall skills (80+ avg)' });
     }
     
     // Specific skill badges - increased thresholds (max 1 per player)
@@ -113,7 +113,7 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
       skillBadges.push({ icon: '💨', name: 'Speed Demon', description: 'Lightning fast (95+ pace)' });
     }
     if ((skills.shooting || skills.SHO) >= 95) {
-      skillBadges.push({ icon: '🎯', name: 'Sniper', description: 'Deadly finisher (95+ shooting)' });
+      skillBadges.push({ icon: '🏹', name: 'Sniper', description: 'Deadly finisher (95+ shooting)' });
     }
     if ((skills.defending || skills.DEF) >= 95) {
       skillBadges.push({ icon: '🛡️', name: 'Wall', description: 'Impenetrable defense (95+ defending)' });
@@ -200,7 +200,7 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
     badges.push({ icon: '🦄', name: 'Unstoppable', description: 'Perfect win record' });
   }
   if (player?.goal_difference === 0 && player?.games_played >= 5) {
-    badges.push({ icon: '⚖️', name: 'Balanced', description: 'Perfectly balanced goal difference' });
+    badges.push({ icon: '🔄', name: 'Balanced', description: 'Perfectly balanced goal difference' });
   }
   if (player?.games_played === 1) {
     badges.push({ icon: '🆕', name: 'Fresh Meat', description: 'Just getting started' });
