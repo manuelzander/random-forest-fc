@@ -205,6 +205,17 @@ const GameSignup = () => {
   };
   const removeGuestSignup = async (signupId: string) => {
     if (!user) return;
+    
+    // Check if within 24 hours and confirmation not checked
+    if (isWithin24Hours && !confirmReplacement) {
+      toast({
+        title: "Confirmation Required",
+        description: "Please confirm that you will ask the group for a replacement",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       const {
         error
@@ -214,6 +225,7 @@ const GameSignup = () => {
         title: "Success",
         description: "Successfully removed guest from the game"
       });
+      setConfirmReplacement(false);
       fetchGameData();
     } catch (error) {
       console.error('Error removing guest signup:', error);
