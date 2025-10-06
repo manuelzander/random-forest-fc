@@ -13,11 +13,18 @@ import { format } from 'date-fns';
 import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMinus, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
-
 const GameSignup = () => {
-  const { gameId } = useParams<{ gameId: string }>();
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const {
+    gameId
+  } = useParams<{
+    gameId: string;
+  }>();
+  const {
+    user
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
   const [game, setGame] = useState<ScheduledGame | null>(null);
   const [signups, setSignups] = useState<GameScheduleSignup[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,32 +32,28 @@ const GameSignup = () => {
   const [playerName, setPlayerName] = useState('');
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [confirmReplacement, setConfirmReplacement] = useState(false);
-
   useEffect(() => {
     if (gameId) {
       fetchGameData();
     }
   }, [gameId, user]);
-
   const fetchGameData = async () => {
     if (!gameId) return;
-
     setLoading(true);
     try {
       // Fetch game details
-      const { data: gameData, error: gameError } = await supabase
-        .from('games_schedule')
-        .select('*')
-        .eq('id', gameId)
-        .single();
-
+      const {
+        data: gameData,
+        error: gameError
+      } = await supabase.from('games_schedule').select('*').eq('id', gameId).single();
       if (gameError) throw gameError;
       setGame(gameData);
 
       // Fetch signups
-      const { data: signupsData, error: signupsError } = await supabase
-        .from('games_schedule_signups')
-        .select(`
+      const {
+        data: signupsData,
+        error: signupsError
+      } = await supabase.from('games_schedule_signups').select(`
           *,
           players:player_id (
             id,
@@ -58,121 +61,101 @@ const GameSignup = () => {
             avatar_url,
             user_id
           )
-        `)
-        .eq('game_schedule_id', gameId)
-        .order('signed_up_at', { ascending: true });
-
+        `).eq('game_schedule_id', gameId).order('signed_up_at', {
+        ascending: true
+      });
       if (signupsError) throw signupsError;
-
       const formattedSignups = (signupsData || []).map((signup: any) => ({
         ...signup,
         player: signup.players
       }));
-
       setSignups(formattedSignups);
 
       // Check if current user is already signed up
       if (user) {
-        const userSignup = formattedSignups.find(
-          signup => signup.player?.user_id === user.id
-        );
+        const userSignup = formattedSignups.find(signup => signup.player?.user_id === user.id);
         setIsSignedUp(!!userSignup);
       }
-
     } catch (error) {
       console.error('Error fetching game data:', error);
       toast({
         title: "Error",
         description: "Failed to load game information",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-
   const signUpAsUser = async () => {
     if (!user || !gameId) return;
-
     setIsSigningUp(true);
     try {
       // First, check if user has a claimed player profile
-      let { data: existingPlayer, error: playerError } = await supabase
-        .from('players')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
+      let {
+        data: existingPlayer,
+        error: playerError
+      } = await supabase.from('players').select('id').eq('user_id', user.id).maybeSingle();
       let playerId = existingPlayer?.id;
 
       // If no claimed player exists, create one
       if (!playerId) {
-        const { data: newPlayer, error: createError } = await supabase
-          .from('players')
-          .insert({
-            name: user.email?.split('@')[0] || 'Anonymous Player',
-            user_id: user.id,
-            created_by: user.id
-          })
-          .select('id')
-          .single();
-
+        const {
+          data: newPlayer,
+          error: createError
+        } = await supabase.from('players').insert({
+          name: user.email?.split('@')[0] || 'Anonymous Player',
+          user_id: user.id,
+          created_by: user.id
+        }).select('id').single();
         if (createError) throw createError;
         playerId = newPlayer.id;
       }
 
       // Sign up for the game
-      const { error } = await supabase
-        .from('games_schedule_signups')
-        .insert({
-          game_schedule_id: gameId,
-          player_id: playerId,
-          is_guest: false
-        });
-
+      const {
+        error
+      } = await supabase.from('games_schedule_signups').insert({
+        game_schedule_id: gameId,
+        player_id: playerId,
+        is_guest: false
+      });
       if (error) throw error;
-
       toast({
         title: "Success",
-        description: "Successfully signed up for the game!",
+        description: "Successfully signed up for the game!"
       });
-
       fetchGameData();
     } catch (error) {
       console.error('Error signing up:', error);
       toast({
         title: "Error",
         description: "Failed to sign up for the game",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsSigningUp(false);
     }
   };
-
   const signUpAsGuest = async () => {
     if (!playerName.trim() || !gameId) return;
-
     setIsSigningUp(true);
     try {
       // Sign up as guest directly without creating a player record
-      const { error } = await supabase
-        .from('games_schedule_signups')
-        .insert({
-          game_schedule_id: gameId,
-          guest_name: playerName.trim(),
-          is_guest: true,
-          player_id: null,
-          created_by_user_id: user?.id || null
-        });
-
+      const {
+        error
+      } = await supabase.from('games_schedule_signups').insert({
+        game_schedule_id: gameId,
+        guest_name: playerName.trim(),
+        is_guest: true,
+        player_id: null,
+        created_by_user_id: user?.id || null
+      });
       if (error) throw error;
-
       toast({
         title: "Success",
-        description: `${playerName} has been signed up for the game!`,
+        description: `${playerName} has been signed up for the game!`
       });
-
       setPlayerName('');
       fetchGameData();
     } catch (error) {
@@ -180,13 +163,12 @@ const GameSignup = () => {
       toast({
         title: "Error",
         description: "Failed to sign up for the game",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsSigningUp(false);
     }
   };
-
   const removeSignup = async () => {
     if (!user || !gameId) return;
 
@@ -195,30 +177,21 @@ const GameSignup = () => {
       toast({
         title: "Confirmation Required",
         description: "Please confirm that you will ask the group for a replacement",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     try {
-      const userSignup = signups.find(
-        signup => signup.player?.user_id === user.id
-      );
-
+      const userSignup = signups.find(signup => signup.player?.user_id === user.id);
       if (!userSignup) return;
-
-      const { error } = await supabase
-        .from('games_schedule_signups')
-        .delete()
-        .eq('id', userSignup.id);
-
+      const {
+        error
+      } = await supabase.from('games_schedule_signups').delete().eq('id', userSignup.id);
       if (error) throw error;
-
       toast({
         title: "Success",
-        description: "Successfully removed from the game",
+        description: "Successfully removed from the game"
       });
-
       setConfirmReplacement(false);
       fetchGameData();
     } catch (error) {
@@ -226,49 +199,38 @@ const GameSignup = () => {
       toast({
         title: "Error",
         description: "Failed to remove signup",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const removeGuestSignup = async (signupId: string) => {
     if (!user) return;
-
     try {
-      const { error } = await supabase
-        .from('games_schedule_signups')
-        .delete()
-        .eq('id', signupId);
-
+      const {
+        error
+      } = await supabase.from('games_schedule_signups').delete().eq('id', signupId);
       if (error) throw error;
-
       toast({
         title: "Success",
-        description: "Successfully removed guest from the game",
+        description: "Successfully removed guest from the game"
       });
-
       fetchGameData();
     } catch (error) {
       console.error('Error removing guest signup:', error);
       toast({
         title: "Error",
         description: "Failed to remove guest signup",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   if (loading) {
-    return (
-      <div className="loading-container">
+    return <div className="loading-container">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+      </div>;
   }
-
   if (!game) {
-    return (
-      <div className="page-container">
+    return <div className="page-container">
         <div className="page-main-content">
           <Card className="max-w-md mx-auto">
             <CardContent className="pt-6">
@@ -288,20 +250,16 @@ const GameSignup = () => {
             </CardContent>
           </Card>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   const gameDate = new Date(game.scheduled_at);
   const isPastGame = gameDate < new Date();
-  
+
   // Check if game is within 24 hours
   const timeUntilGame = gameDate.getTime() - new Date().getTime();
   const hoursUntilGame = timeUntilGame / (1000 * 60 * 60);
   const isWithin24Hours = hoursUntilGame <= 24 && hoursUntilGame > 0;
-
-  return (
-    <div className="page-container">
+  return <div className="page-container">
       <div className="page-header">
         <div className="page-header-content">
           <div className="page-header-inner">
@@ -319,11 +277,9 @@ const GameSignup = () => {
                     <span className="sm:hidden">{format(gameDate, "MMM d, h:mm a")}</span>
                     <span className="hidden sm:inline">{format(gameDate, "MMM d, yyyy 'at' h:mm a")}</span>
                   </p>
-                  {game.pitch_size && (
-                    <Badge variant="outline" className="text-xs">
+                  {game.pitch_size && <Badge variant="outline" className="text-xs">
                       {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
               </div>
             </div>
@@ -335,8 +291,7 @@ const GameSignup = () => {
         <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 px-4">
 
           {/* Main Signup Section */}
-          {!isPastGame && (
-            <Card>
+          {!isPastGame && <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <UserPlus className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -344,66 +299,36 @@ const GameSignup = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {user ? (
-                  <div className="space-y-3">
-                    {isSignedUp ? (
-                      <div className="space-y-3">
-                        {isWithin24Hours && (
-                          <Alert>
+                {user ? <div className="space-y-3">
+                    {isSignedUp ? <div className="space-y-3">
+                        {isWithin24Hours && <Alert>
                             <AlertTriangle className="h-4 w-4" />
-                            <AlertDescription>
-                              Game is within 24 hours. If you cancel, please ask the group for a replacement player.
-                            </AlertDescription>
-                          </Alert>
-                        )}
+                            <AlertDescription>Game is within 24 hours. If you cancel, please ask for a replacement player.</AlertDescription>
+                          </Alert>}
                         <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
                           <div className="flex items-center gap-2">
                             <CheckCircle className="h-5 w-5 text-green-600" />
                             <span className="text-green-800 font-medium text-sm sm:text-base">You're signed up for this game!</span>
                           </div>
-                          {isWithin24Hours && (
-                            <div className="flex items-start gap-2 pt-2">
-                              <Checkbox 
-                                id="confirm-replacement" 
-                                checked={confirmReplacement}
-                                onCheckedChange={(checked) => setConfirmReplacement(checked as boolean)}
-                              />
-                              <label 
-                                htmlFor="confirm-replacement"
-                                className="text-sm text-muted-foreground cursor-pointer leading-tight"
-                              >
+                          {isWithin24Hours && <div className="flex items-start gap-2 pt-2">
+                              <Checkbox id="confirm-replacement" checked={confirmReplacement} onCheckedChange={checked => setConfirmReplacement(checked as boolean)} />
+                              <label htmlFor="confirm-replacement" className="text-sm text-muted-foreground cursor-pointer leading-tight">
                                 I confirm I will ask the group for a replacement player
                               </label>
-                            </div>
-                          )}
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={removeSignup}
-                            disabled={isWithin24Hours && !confirmReplacement}
-                          >
+                            </div>}
+                          <Button variant="outline" size="sm" onClick={removeSignup} disabled={isWithin24Hours && !confirmReplacement}>
                             Cancel Signup
                           </Button>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="text-center space-y-3">
+                      </div> : <div className="text-center space-y-3">
                         <p className="text-muted-foreground text-sm">
                           Ready to play? Sign up now!
                         </p>
-                        <Button 
-                          onClick={signUpAsUser} 
-                          disabled={isSigningUp}
-                          className="w-full"
-                          size="lg"
-                        >
+                        <Button onClick={signUpAsUser} disabled={isSigningUp} className="w-full" size="lg">
                           {isSigningUp ? "Signing up..." : "Sign Me Up"}
                         </Button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-center space-y-4 p-6 bg-muted/30 rounded-lg">
+                      </div>}
+                  </div> : <div className="text-center space-y-4 p-6 bg-muted/30 rounded-lg">
                     <div className="space-y-2">
                       <h3 className="font-semibold text-lg">Have an account?</h3>
                       <p className="text-muted-foreground text-sm">
@@ -418,8 +343,7 @@ const GameSignup = () => {
                         <Button variant="outline" size="lg">Create Account</Button>
                       </Link>
                     </div>
-                  </div>
-                )}
+                  </div>}
 
                 {/* Guest Signup Section */}
                 <div className="border-t pt-6">
@@ -433,29 +357,16 @@ const GameSignup = () => {
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <Label htmlFor="guestName" className="sr-only">Guest Name</Label>
-                        <Input
-                          id="guestName"
-                          placeholder="Enter your name"
-                          value={playerName}
-                          onChange={(e) => setPlayerName(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && signUpAsGuest()}
-                          className="text-sm"
-                        />
+                        <Input id="guestName" placeholder="Enter your name" value={playerName} onChange={e => setPlayerName(e.target.value)} onKeyPress={e => e.key === 'Enter' && signUpAsGuest()} className="text-sm" />
                       </div>
-                      <Button 
-                        onClick={signUpAsGuest}
-                        disabled={!playerName.trim() || isSigningUp}
-                        size="sm"
-                        variant="outline"
-                      >
+                      <Button onClick={signUpAsGuest} disabled={!playerName.trim() || isSigningUp} size="sm" variant="outline">
                         Join as Guest
                       </Button>
                     </div>
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
 
           {/* Players List */}
           <Card>
@@ -466,46 +377,33 @@ const GameSignup = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {signups.length === 0 ? (
-                <p className="text-center text-muted-foreground py-6 text-sm">
+              {signups.length === 0 ? <p className="text-center text-muted-foreground py-6 text-sm">
                   No players yet. Be the first!
-                </p>
-              ) : (
-                <div className="space-y-2">
+                </p> : <div className="space-y-2">
                   {signups.map((signup, index) => {
-                    const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
-                    const isWaitlisted = index >= pitchCapacity;
-                    
-                    return (
-                      <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
-                        isWaitlisted ? 'bg-orange-50 border border-orange-200' : 'bg-muted/50'
-                      }`}>
+                const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
+                const isWaitlisted = index >= pitchCapacity;
+                return <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${isWaitlisted ? 'bg-orange-50 border border-orange-200' : 'bg-muted/50'}`}>
                         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                           <Badge variant="outline" className="shrink-0 text-xs">
                             {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
                           </Badge>
                           <span className="font-medium truncate text-sm sm:text-base">
-                            {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown')}
+                            {signup.is_guest ? signup.guest_name : signup.player?.name || 'Unknown'}
                           </span>
                           <div className="flex gap-1 shrink-0">
-                             {isWaitlisted && (
-                               <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                             {isWaitlisted && <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
                                  <Clock className="h-3 w-3 mr-1" />
                                  <span className="hidden sm:inline">Waitlist</span>
-                               </Badge>
-                             )}
-                            {signup.player?.user_id && (
-                              <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
+                               </Badge>}
+                            {signup.player?.user_id && <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Verified</span>
-                              </Badge>
-                            )}
-                            {signup.is_guest && (
-                              <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
+                              </Badge>}
+                            {signup.is_guest && <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Guest</span>
-                              </Badge>
-                            )}
+                              </Badge>}
                           </div>
                          </div>
                          <div className="flex items-center gap-2 shrink-0">
@@ -513,31 +411,17 @@ const GameSignup = () => {
                              {format(new Date(signup.signed_up_at), "MMM d")}
                            </span>
                             {/* Show remove button for own signups or guest signups created by current user */}
-                            {user && !isWithin24Hours && (
-                              (signup.player?.user_id === user.id) || 
-                              (signup.is_guest && signup.created_by_user_id === user.id)
-                            ) && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()}
-                                className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                              >
+                            {user && !isWithin24Hours && (signup.player?.user_id === user.id || signup.is_guest && signup.created_by_user_id === user.id) && <Button variant="ghost" size="sm" onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()} className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive">
                                 <UserMinus className="h-3 w-3" />
-                              </Button>
-                            )}
+                              </Button>}
                          </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                      </div>;
+              })}
+                </div>}
             </CardContent>
           </Card>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default GameSignup;
