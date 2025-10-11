@@ -60,8 +60,8 @@ export const getBadges = (player: Player, profile?: ProfileData): Badge[] => {
   
   if (player?.goal_difference >= 25) {
     badges.push({ icon: '⚡', name: 'Goal God', description: '25+ Goal Difference' });
-  } else if (player?.goal_difference >= 15) {
-    badges.push({ icon: '🚀', name: 'Goal Machine', description: '15+ Goal Difference' });
+  } else if (player?.goal_difference >= 20) {
+    badges.push({ icon: '🚀', name: 'Goal Machine', description: '20+ Goal Difference' });
   } else if (player?.goal_difference >= 10) {
     badges.push({ icon: '🎯', name: 'Sharp Shooter', description: '10+ Goal Difference' });
   }
