@@ -99,6 +99,7 @@ export type Database = {
           guest_name: string | null
           id: string
           is_guest: boolean | null
+          last_minute_dropout: boolean | null
           player_id: string | null
           signed_up_at: string
         }
@@ -109,6 +110,7 @@ export type Database = {
           guest_name?: string | null
           id?: string
           is_guest?: boolean | null
+          last_minute_dropout?: boolean | null
           player_id?: string | null
           signed_up_at?: string
         }
@@ -119,6 +121,7 @@ export type Database = {
           guest_name?: string | null
           id?: string
           is_guest?: boolean | null
+          last_minute_dropout?: boolean | null
           player_id?: string | null
           signed_up_at?: string
         }

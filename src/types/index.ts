@@ -66,4 +66,5 @@ export interface GameScheduleSignup {
   guest_name?: string;
   is_guest?: boolean;
   created_by_user_id?: string | null;
+  last_minute_dropout?: boolean;
 }

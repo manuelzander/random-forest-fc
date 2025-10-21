@@ -184,14 +184,35 @@ const GameSignup = () => {
     try {
       const userSignup = signups.find(signup => signup.player?.user_id === user.id);
       if (!userSignup) return;
-      const {
-        error
-      } = await supabase.from('games_schedule_signups').delete().eq('id', userSignup.id);
-      if (error) throw error;
-      toast({
-        title: "Success",
-        description: "Successfully removed from the game"
-      });
+
+      if (isWithin24Hours) {
+        // Within 24 hours: Mark as last minute dropout instead of deleting
+        const { error } = await supabase
+          .from('games_schedule_signups')
+          .update({ last_minute_dropout: true })
+          .eq('id', userSignup.id);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Marked as Last Minute Dropout",
+          description: "You still owe payment for this game. Please find a replacement."
+        });
+      } else {
+        // Before 24 hours: Delete normally
+        const { error } = await supabase
+          .from('games_schedule_signups')
+          .delete()
+          .eq('id', userSignup.id);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Success",
+          description: "Successfully removed from the game"
+        });
+      }
+      
       setConfirmReplacement(false);
       fetchGameData();
     } catch (error) {
@@ -217,14 +238,34 @@ const GameSignup = () => {
     }
     
     try {
-      const {
-        error
-      } = await supabase.from('games_schedule_signups').delete().eq('id', signupId);
-      if (error) throw error;
-      toast({
-        title: "Success",
-        description: "Successfully removed guest from the game"
-      });
+      if (isWithin24Hours) {
+        // Within 24 hours: Mark as last minute dropout instead of deleting
+        const { error } = await supabase
+          .from('games_schedule_signups')
+          .update({ last_minute_dropout: true })
+          .eq('id', signupId);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Marked as Last Minute Dropout",
+          description: "This guest still owes payment for this game. Please find a replacement."
+        });
+      } else {
+        // Before 24 hours: Delete normally
+        const { error } = await supabase
+          .from('games_schedule_signups')
+          .delete()
+          .eq('id', signupId);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "Success",
+          description: "Successfully removed guest from the game"
+        });
+      }
+      
       setConfirmReplacement(false);
       fetchGameData();
     } catch (error) {
@@ -395,24 +436,33 @@ const GameSignup = () => {
                   {signups.map((signup, index) => {
                 const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
                 const isWaitlisted = index >= pitchCapacity;
-                return <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${isWaitlisted ? 'bg-orange-50 border border-orange-200' : 'bg-muted/50'}`}>
+                const isLastMinuteDropout = signup.last_minute_dropout === true;
+                return <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
+                  isLastMinuteDropout ? 'bg-red-50 border border-red-300' :
+                  isWaitlisted ? 'bg-orange-50 border border-orange-200' : 
+                  'bg-muted/50'
+                }`}>
                         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                           <Badge variant="outline" className="shrink-0 text-xs">
                             {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
                           </Badge>
-                          <span className="font-medium truncate text-sm sm:text-base">
+                          <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-red-600' : ''}`}>
                             {signup.is_guest ? signup.guest_name : signup.player?.name || 'Unknown'}
                           </span>
                           <div className="flex gap-1 shrink-0">
-                             {isWaitlisted && <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                             {isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-red-100 text-red-700 border-0">
+                                 <AlertTriangle className="h-3 w-3 mr-1" />
+                                 <span className="hidden sm:inline">Dropout</span>
+                               </Badge>}
+                             {isWaitlisted && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
                                  <Clock className="h-3 w-3 mr-1" />
                                  <span className="hidden sm:inline">Waitlist</span>
                                </Badge>}
-                            {signup.player?.user_id && <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
+                            {signup.player?.user_id && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Verified</span>
                               </Badge>}
-                            {signup.is_guest && <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
+                            {signup.is_guest && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Guest</span>
                               </Badge>}
@@ -423,7 +473,7 @@ const GameSignup = () => {
                              {format(new Date(signup.signed_up_at), "MMM d")}
                            </span>
                             {/* Show remove button for own signups or guest signups created by current user */}
-                            {user && (signup.player?.user_id === user.id || signup.is_guest && signup.created_by_user_id === user.id) && <Button variant="ghost" size="sm" onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()} className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive">
+                            {user && !isLastMinuteDropout && (signup.player?.user_id === user.id || signup.is_guest && signup.created_by_user_id === user.id) && <Button variant="ghost" size="sm" onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()} className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive">
                                 <UserMinus className="h-3 w-3" />
                               </Button>}
                          </div>
