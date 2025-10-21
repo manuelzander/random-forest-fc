@@ -56,6 +56,16 @@ export interface ScheduledGame {
   pitch_size?: string | null;
 }
 
+export interface Guest {
+  id: string;
+  name: string;
+  credit: number;
+  phone?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface GameScheduleSignup {
   id: string;
   game_schedule_id: string;
@@ -67,4 +77,6 @@ export interface GameScheduleSignup {
   is_guest?: boolean;
   created_by_user_id?: string | null;
   last_minute_dropout?: boolean;
+  guest_id?: string | null;
+  guest?: Guest;
 }

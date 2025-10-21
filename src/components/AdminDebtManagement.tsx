@@ -3,27 +3,35 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { DollarSign, AlertCircle } from 'lucide-react';
-import { format } from 'date-fns';
-import type { ScheduledGame, GameScheduleSignup } from '@/types';
+import { DollarSign, AlertCircle, TrendingUp, TrendingDown, DollarSignIcon } from 'lucide-react';
+import type { ScheduledGame, GameScheduleSignup, Guest } from '@/types';
 
-interface DebtEntry {
-  gameId: string;
-  gameDate: string;
-  pitchSize: string;
+interface PlayerDebtSummary {
+  playerId?: string;
+  guestId?: string;
   playerName: string;
   isGuest: boolean;
   isVerified: boolean;
-  position: number;
-  owesDebt: boolean;
-  isLastMinuteDropout: boolean;
+  totalDebt: number;
+  credit: number;
+  netBalance: number;
+  gamesOwed: Array<{
+    gameDate: string;
+    pitchSize: string;
+    isDropout: boolean;
+  }>;
 }
+
+const GAME_COST = 5; // Cost per game
 
 const AdminDebtManagement = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [debtEntries, setDebtEntries] = useState<DebtEntry[]>([]);
+  const [playerSummaries, setPlayerSummaries] = useState<PlayerDebtSummary[]>([]);
+  const [editingCredit, setEditingCredit] = useState<{ id: string; value: string } | null>(null);
 
   useEffect(() => {
     fetchDebtData();
@@ -40,7 +48,7 @@ const AdminDebtManagement = () => {
 
       if (gamesError) throw gamesError;
 
-      // Fetch all signups with player details
+      // Fetch all signups with player and guest details
       const { data: signupsData, error: signupsError } = await supabase
         .from('games_schedule_signups')
         .select(`
@@ -49,14 +57,29 @@ const AdminDebtManagement = () => {
             id,
             name,
             user_id
+          ),
+          guests:guest_id (
+            id,
+            name,
+            credit
           )
         `)
         .order('signed_up_at', { ascending: true });
 
       if (signupsError) throw signupsError;
 
-      // Process debt entries
-      const entries: DebtEntry[] = [];
+      // Fetch all verified player profiles for credit info
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('user_id, credit');
+
+      if (profilesError) throw profilesError;
+
+      // Create a map of user_id to credit
+      const creditMap = new Map(profiles?.map(p => [p.user_id, p.credit]) || []);
+
+      // Calculate debt per player/guest
+      const debtMap = new Map<string, PlayerDebtSummary>();
 
       games?.forEach((game: ScheduledGame) => {
         const gameSignups = (signupsData || []).filter(
@@ -76,22 +99,52 @@ const AdminDebtManagement = () => {
           const owesDebt = isWithinCapacity || signup.last_minute_dropout === true;
 
           if (owesDebt) {
-            entries.push({
-              gameId: game.id,
+            const isGuest = signup.is_guest || false;
+            const playerId = isGuest ? signup.guest_id : signup.player_id;
+            const playerName = isGuest 
+              ? (signup.guests?.name || signup.guest_name || 'Unknown Guest')
+              : (signup.players?.name || 'Unknown Player');
+            const key = `${isGuest ? 'guest' : 'player'}-${playerId || playerName}`;
+
+            if (!debtMap.has(key)) {
+              const credit = isGuest 
+                ? (signup.guests?.credit || 0)
+                : (creditMap.get(signup.players?.user_id) || 0);
+
+              debtMap.set(key, {
+                playerId: isGuest ? undefined : playerId,
+                guestId: isGuest ? playerId : undefined,
+                playerName,
+                isGuest,
+                isVerified: !isGuest && !!signup.players?.user_id,
+                totalDebt: 0,
+                credit: Number(credit),
+                netBalance: 0,
+                gamesOwed: []
+              });
+            }
+
+            const summary = debtMap.get(key)!;
+            summary.totalDebt += GAME_COST;
+            summary.gamesOwed.push({
               gameDate: game.scheduled_at,
               pitchSize: game.pitch_size || 'big',
-              playerName: signup.is_guest ? signup.guest_name : signup.players?.name || 'Unknown',
-              isGuest: signup.is_guest || false,
-              isVerified: !!signup.players?.user_id,
-              position,
-              owesDebt: true,
-              isLastMinuteDropout: signup.last_minute_dropout === true
+              isDropout: signup.last_minute_dropout === true
             });
           }
         });
       });
 
-      setDebtEntries(entries);
+      // Calculate net balance for each player
+      const summaries = Array.from(debtMap.values()).map(summary => ({
+        ...summary,
+        netBalance: summary.credit - summary.totalDebt
+      }));
+
+      // Sort by net balance (most negative first)
+      summaries.sort((a, b) => a.netBalance - b.netBalance);
+
+      setPlayerSummaries(summaries);
     } catch (error) {
       console.error('Error fetching debt data:', error);
       toast({
@@ -104,6 +157,60 @@ const AdminDebtManagement = () => {
     }
   };
 
+  const updateCredit = async (summary: PlayerDebtSummary, newCredit: number) => {
+    try {
+      if (summary.isGuest && summary.guestId) {
+        // Update guest credit
+        const { error } = await supabase
+          .from('guests')
+          .update({ credit: newCredit })
+          .eq('id', summary.guestId);
+        
+        if (error) throw error;
+      } else if (summary.playerId) {
+        // Update player profile credit
+        const { data: player } = await supabase
+          .from('players')
+          .select('user_id')
+          .eq('id', summary.playerId)
+          .single();
+
+        if (player?.user_id) {
+          const { error } = await supabase
+            .from('profiles')
+            .update({ credit: newCredit })
+            .eq('user_id', player.user_id);
+          
+          if (error) throw error;
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: "Credit updated successfully"
+      });
+
+      setEditingCredit(null);
+      fetchDebtData();
+    } catch (error) {
+      console.error('Error updating credit:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update credit",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const totals = playerSummaries.reduce(
+    (acc, summary) => ({
+      debt: acc.debt + summary.totalDebt,
+      credit: acc.credit + summary.credit,
+      netBalance: acc.netBalance + summary.netBalance
+    }),
+    { debt: 0, credit: 0, netBalance: 0 }
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -114,19 +221,74 @@ const AdminDebtManagement = () => {
 
   return (
     <div className="space-y-6">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <TrendingDown className="h-4 w-4 text-red-500" />
+              Total Debt
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">
+              €{totals.debt.toFixed(2)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              From {playerSummaries.length} players
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-green-500" />
+              Total Credit
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              €{totals.credit.toFixed(2)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Available balance
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <DollarSignIcon className="h-4 w-4" />
+              Net Balance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${totals.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              €{totals.netBalance.toFixed(2)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {totals.netBalance >= 0 ? 'Surplus' : 'Outstanding'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Player Debt Table */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
             <DollarSign className="h-5 w-5" />
-            Debt Management
+            Player Debt & Credit
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Players who owe payment for scheduled games. Includes top {' '}
-            {12} (small pitch) or {14} (big pitch) players and last-minute dropouts.
+            Debt calculated from scheduled games (€{GAME_COST} per game). Top {' '}
+            12 (small pitch) or 14 (big pitch) players + last-minute dropouts owe payment.
           </p>
         </CardHeader>
         <CardContent>
-          {debtEntries.length === 0 ? (
+          {playerSummaries.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
               No debt entries found.
             </p>
@@ -135,54 +297,92 @@ const AdminDebtManagement = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Game Date</TableHead>
-                    <TableHead>Pitch Size</TableHead>
                     <TableHead>Player Name</TableHead>
-                    <TableHead>Position</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead className="text-right">Games Owed</TableHead>
+                    <TableHead className="text-right">Total Debt</TableHead>
+                    <TableHead className="text-right">Credit</TableHead>
+                    <TableHead className="text-right">Net Balance</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {debtEntries.map((entry, index) => (
-                    <TableRow key={`${entry.gameId}-${index}`}>
-                      <TableCell className="font-medium">
-                        {format(new Date(entry.gameDate), "MMM d, yyyy h:mm a")}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {entry.pitchSize === 'small' ? 'Small (12)' : 'Big (14)'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {entry.playerName}
-                          {entry.isLastMinuteDropout && (
-                            <Badge variant="destructive" className="text-xs">
-                              <AlertCircle className="h-3 w-3 mr-1" />
-                              Last Min Dropout
-                            </Badge>
+                  {playerSummaries.map((summary, index) => {
+                    const key = `${summary.isGuest ? 'guest' : 'player'}-${summary.guestId || summary.playerId || index}`;
+                    const isEditing = editingCredit?.id === key;
+                    
+                    return (
+                      <TableRow key={key}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            {summary.playerName}
+                            {summary.gamesOwed.some(g => g.isDropout) && (
+                              <Badge variant="destructive" className="text-xs">
+                                <AlertCircle className="h-3 w-3 mr-1" />
+                                Dropout
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            {summary.isVerified && (
+                              <Badge className="text-xs bg-green-100 text-green-700 border-0">
+                                Verified
+                              </Badge>
+                            )}
+                            {summary.isGuest && (
+                              <Badge className="text-xs bg-blue-100 text-blue-700 border-0">
+                                Guest
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {summary.gamesOwed.length}
+                        </TableCell>
+                        <TableCell className="text-right font-medium text-red-600">
+                          €{summary.totalDebt.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {isEditing ? (
+                            <div className="flex items-center gap-2 justify-end">
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={editingCredit.value}
+                                onChange={(e) => setEditingCredit({ ...editingCredit, value: e.target.value })}
+                                className="w-24 h-8 text-right"
+                                autoFocus
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => updateCredit(summary, parseFloat(editingCredit.value))}
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setEditingCredit(null)}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setEditingCredit({ id: key, value: summary.credit.toString() })}
+                              className="font-medium text-green-600 hover:underline"
+                            >
+                              €{summary.credit.toFixed(2)}
+                            </button>
                           )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">#{entry.position}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          {entry.isVerified && (
-                            <Badge className="text-xs bg-green-100 text-green-700 border-0">
-                              Verified
-                            </Badge>
-                          )}
-                          {entry.isGuest && (
-                            <Badge className="text-xs bg-blue-100 text-blue-700 border-0">
-                              Guest
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                        <TableCell className={`text-right font-bold ${summary.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          €{summary.netBalance.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>

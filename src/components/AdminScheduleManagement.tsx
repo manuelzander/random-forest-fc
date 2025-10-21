@@ -45,7 +45,7 @@ const AdminScheduleManagement = () => {
       if (gamesError) throw gamesError;
       setScheduledGames(games || []);
 
-      // Fetch signups for all games
+      // Fetch signups for all games with player and guest details
       const { data: signupsData, error: signupsError } = await supabase
         .from('games_schedule_signups')
         .select(`
@@ -55,6 +55,11 @@ const AdminScheduleManagement = () => {
             name,
             avatar_url,
             user_id
+          ),
+          guests:guest_id (
+            id,
+            name,
+            credit
           )
         `)
         .order('signed_up_at', { ascending: true });
@@ -69,7 +74,8 @@ const AdminScheduleManagement = () => {
         }
         groupedSignups[signup.game_schedule_id].push({
           ...signup,
-          player: signup.players
+          player: signup.players,
+          guest: signup.guests
         });
       });
       setSignups(groupedSignups);
@@ -209,12 +215,36 @@ const AdminScheduleManagement = () => {
     if (!guestName.trim()) return;
 
     try {
-      // Add guest directly without creating player record
+      const trimmedName = guestName.trim();
+      
+      // Check if guest already exists
+      let { data: existingGuest, error: guestError } = await supabase
+        .from('guests')
+        .select('id')
+        .eq('name', trimmedName)
+        .maybeSingle();
+
+      let guestId = existingGuest?.id;
+
+      // If guest doesn't exist, create new guest record
+      if (!guestId) {
+        const { data: newGuest, error: createError } = await supabase
+          .from('guests')
+          .insert({ name: trimmedName })
+          .select('id')
+          .single();
+        
+        if (createError) throw createError;
+        guestId = newGuest.id;
+      }
+
+      // Add guest to game
       const { error } = await supabase
         .from('games_schedule_signups')
         .insert({
           game_schedule_id: gameId,
-          guest_name: guestName.trim(),
+          guest_name: trimmedName,
+          guest_id: guestId,
           is_guest: true,
           player_id: null
         });
@@ -223,7 +253,7 @@ const AdminScheduleManagement = () => {
 
       toast({
         title: "Success",
-        description: `${guestName} added to game as guest`,
+        description: `${trimmedName} added to game as guest`,
       });
 
       // Clear the input and refresh data

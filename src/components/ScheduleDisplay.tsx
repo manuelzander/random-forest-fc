@@ -33,7 +33,7 @@ const ScheduleDisplay = () => {
       if (gamesError) throw gamesError;
       setScheduledGames(games || []);
 
-      // Fetch signups for all games
+      // Fetch signups for all games with player and guest details
       const { data: signupsData, error: signupsError } = await supabase
         .from('games_schedule_signups')
         .select(`
@@ -43,6 +43,11 @@ const ScheduleDisplay = () => {
             name,
             avatar_url,
             user_id
+          ),
+          guests:guest_id (
+            id,
+            name,
+            credit
           )
         `)
         .order('signed_up_at', { ascending: true });
@@ -57,7 +62,8 @@ const ScheduleDisplay = () => {
         }
         groupedSignups[signup.game_schedule_id].push({
           ...signup,
-          player: signup.players
+          player: signup.players,
+          guest: signup.guests
         });
       });
       setSignups(groupedSignups);

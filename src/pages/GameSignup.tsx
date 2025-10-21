@@ -49,7 +49,7 @@ const GameSignup = () => {
       if (gameError) throw gameError;
       setGame(gameData);
 
-      // Fetch signups
+      // Fetch signups with player and guest details
       const {
         data: signupsData,
         error: signupsError
@@ -60,6 +60,11 @@ const GameSignup = () => {
             name,
             avatar_url,
             user_id
+          ),
+          guests:guest_id (
+            id,
+            name,
+            credit
           )
         `).eq('game_schedule_id', gameId).order('signed_up_at', {
         ascending: true
@@ -67,7 +72,8 @@ const GameSignup = () => {
       if (signupsError) throw signupsError;
       const formattedSignups = (signupsData || []).map((signup: any) => ({
         ...signup,
-        player: signup.players
+        player: signup.players,
+        guest: signup.guests
       }));
       setSignups(formattedSignups);
 
@@ -141,20 +147,46 @@ const GameSignup = () => {
     if (!playerName.trim() || !gameId) return;
     setIsSigningUp(true);
     try {
-      // Sign up as guest directly without creating a player record
-      const {
-        error
-      } = await supabase.from('games_schedule_signups').insert({
-        game_schedule_id: gameId,
-        guest_name: playerName.trim(),
-        is_guest: true,
-        player_id: null,
-        created_by_user_id: user?.id || null
-      });
+      const guestName = playerName.trim();
+      
+      // Check if guest already exists
+      let { data: existingGuest, error: guestError } = await supabase
+        .from('guests')
+        .select('id')
+        .eq('name', guestName)
+        .maybeSingle();
+
+      let guestId = existingGuest?.id;
+
+      // If guest doesn't exist, create new guest record
+      if (!guestId) {
+        const { data: newGuest, error: createError } = await supabase
+          .from('guests')
+          .insert({ name: guestName })
+          .select('id')
+          .single();
+        
+        if (createError) throw createError;
+        guestId = newGuest.id;
+      }
+
+      // Sign up guest for the game
+      const { error } = await supabase
+        .from('games_schedule_signups')
+        .insert({
+          game_schedule_id: gameId,
+          guest_name: guestName,
+          guest_id: guestId,
+          is_guest: true,
+          player_id: null,
+          created_by_user_id: user?.id || null
+        });
+      
       if (error) throw error;
+      
       toast({
         title: "Success",
-        description: `${playerName} has been signed up for the game!`
+        description: `${guestName} has been signed up for the game!`
       });
       setPlayerName('');
       fetchGameData();

@@ -96,6 +96,7 @@ export type Database = {
           created_at: string
           created_by_user_id: string | null
           game_schedule_id: string
+          guest_id: string | null
           guest_name: string | null
           id: string
           is_guest: boolean | null
@@ -107,6 +108,7 @@ export type Database = {
           created_at?: string
           created_by_user_id?: string | null
           game_schedule_id: string
+          guest_id?: string | null
           guest_name?: string | null
           id?: string
           is_guest?: boolean | null
@@ -118,6 +120,7 @@ export type Database = {
           created_at?: string
           created_by_user_id?: string | null
           game_schedule_id?: string
+          guest_id?: string | null
           guest_name?: string | null
           id?: string
           is_guest?: boolean | null
@@ -134,6 +137,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "games_schedule_signups_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guests"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "games_schedule_signups_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
@@ -141,6 +151,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      guests: {
+        Row: {
+          created_at: string
+          credit: number
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credit?: number
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credit?: number
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       news: {
         Row: {
