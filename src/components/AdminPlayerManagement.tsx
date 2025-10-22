@@ -78,20 +78,38 @@ const AdminPlayerManagement = () => {
 
     if (gamesError) throw gamesError;
     
+    // Fetch scheduled games for debt calculation
+    const { data: scheduledGames, error: scheduledError } = await supabase
+      .from('games_schedule')
+      .select('*')
+      .order('scheduled_at', { ascending: false });
+
+    if (scheduledError) throw scheduledError;
+
+    // Fetch all signups for debt calculation
+    const { data: signupsData, error: signupsError } = await supabase
+      .from('games_schedule_signups')
+      .select(`
+        *,
+        players:player_id (id, user_id)
+      `)
+      .order('signed_up_at', { ascending: true });
+
+    if (signupsError) throw signupsError;
+    
     // Fetch all profiles to get credit info
     const { data: profilesData } = await supabase
       .from('profiles')
       .select('user_id, credit');
     
     const formattedPlayers = (playersData || []).map(player => {
-      // Calculate stats for this player
+      // Calculate stats for this player from completed games
       let points = 0;
       let wins = 0;
       let draws = 0;
       let losses = 0;
       let mvp_awards = 0;
       let goal_difference = 0;
-      let debt = 0;
       
       if (gamesData) {
         gamesData.forEach(game => {
@@ -99,10 +117,6 @@ const AdminPlayerManagement = () => {
           const isTeam2 = game.team2_players.includes(player.id);
           
           if (isTeam1 || isTeam2) {
-            // Calculate debt: £93.6 split among all players in this game
-            const totalPlayers = game.team1_players.length + game.team2_players.length;
-            debt += 93.6 / totalPlayers;
-            
             const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
             const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
             
@@ -124,6 +138,32 @@ const AdminPlayerManagement = () => {
           }
         });
       }
+
+      // Calculate debt from scheduled games
+      let debt = 0;
+      const TOTAL_GAME_COST = 93.6;
+
+      scheduledGames?.forEach((game) => {
+        const gameSignups = (signupsData || []).filter(
+          (s: any) => s.game_schedule_id === game.id && s.player_id === player.id
+        );
+
+        const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+        const allGameSignups = (signupsData || []).filter(
+          (s: any) => s.game_schedule_id === game.id
+        );
+
+        gameSignups.forEach((signup: any) => {
+          const position = allGameSignups.findIndex((s: any) => s.id === signup.id) + 1;
+          const isWithinCapacity = position <= pitchCapacity;
+          const owesDebt = isWithinCapacity || signup.last_minute_dropout === true;
+
+          if (owesDebt) {
+            const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
+            debt += costPerPlayer;
+          }
+        });
+      });
       
       // Get credit from profile
       const playerProfile = profilesData?.find(p => p.user_id === player.user_id);

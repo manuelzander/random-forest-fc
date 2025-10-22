@@ -25,7 +25,7 @@ interface PlayerDebtSummary {
   }>;
 }
 
-const GAME_COST = 5; // Cost per game
+const TOTAL_GAME_COST = 93.6; // Total cost per game to be split among players
 
 const AdminDebtManagement = () => {
   const { toast } = useToast();
@@ -106,6 +106,9 @@ const AdminDebtManagement = () => {
               : (signup.players?.name || 'Unknown Player');
             const key = `${isGuest ? 'guest' : 'player'}-${playerId || playerName}`;
 
+            // Calculate cost per player based on pitch capacity
+            const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
+
             if (!debtMap.has(key)) {
               const credit = isGuest 
                 ? (signup.guests?.credit || 0)
@@ -125,7 +128,7 @@ const AdminDebtManagement = () => {
             }
 
             const summary = debtMap.get(key)!;
-            summary.totalDebt += GAME_COST;
+            summary.totalDebt += costPerPlayer;
             summary.gamesOwed.push({
               gameDate: game.scheduled_at,
               pitchSize: game.pitch_size || 'big',
@@ -232,7 +235,7 @@ const AdminDebtManagement = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              €{totals.debt.toFixed(2)}
+              £{totals.debt.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               From {playerSummaries.length} players
@@ -249,7 +252,7 @@ const AdminDebtManagement = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              €{totals.credit.toFixed(2)}
+              £{totals.credit.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Available balance
@@ -266,7 +269,7 @@ const AdminDebtManagement = () => {
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${totals.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              €{totals.netBalance.toFixed(2)}
+              £{totals.netBalance.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {totals.netBalance >= 0 ? 'Surplus' : 'Outstanding'}
@@ -283,8 +286,8 @@ const AdminDebtManagement = () => {
             Player Debt & Credit
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Debt calculated from scheduled games (€{GAME_COST} per game). Top {' '}
-            12 (small pitch) or 14 (big pitch) players + last-minute dropouts owe payment.
+            Debt calculated from scheduled games (£{TOTAL_GAME_COST} split among players). Top {' '}
+            12 (small pitch, £{(TOTAL_GAME_COST / 12).toFixed(2)} each) or 14 (big pitch, £{(TOTAL_GAME_COST / 14).toFixed(2)} each) players + last-minute dropouts owe payment.
           </p>
         </CardHeader>
         <CardContent>
@@ -341,7 +344,7 @@ const AdminDebtManagement = () => {
                           {summary.gamesOwed.length}
                         </TableCell>
                         <TableCell className="text-right font-medium text-red-600">
-                          €{summary.totalDebt.toFixed(2)}
+                          £{summary.totalDebt.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right">
                           {isEditing ? (
@@ -373,12 +376,12 @@ const AdminDebtManagement = () => {
                               onClick={() => setEditingCredit({ id: key, value: summary.credit.toString() })}
                               className="font-medium text-green-600 hover:underline"
                             >
-                              €{summary.credit.toFixed(2)}
+                              £{summary.credit.toFixed(2)}
                             </button>
                           )}
                         </TableCell>
                         <TableCell className={`text-right font-bold ${summary.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          €{summary.netBalance.toFixed(2)}
+                          £{summary.netBalance.toFixed(2)}
                         </TableCell>
                       </TableRow>
                     );

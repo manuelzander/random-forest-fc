@@ -80,6 +80,25 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
         .select('*');
 
       if (gamesError) throw gamesError;
+
+      // Fetch scheduled games for debt calculation
+      const { data: scheduledGames, error: scheduledError } = await supabase
+        .from('games_schedule')
+        .select('*')
+        .order('scheduled_at', { ascending: false });
+
+      if (scheduledError) throw scheduledError;
+
+      // Fetch all signups for debt calculation
+      const { data: signupsData, error: signupsError } = await supabase
+        .from('games_schedule_signups')
+        .select(`
+          *,
+          players:player_id (id, user_id)
+        `)
+        .order('signed_up_at', { ascending: true });
+
+      if (signupsError) throw signupsError;
       
       const formattedPlayers: Player[] = (playersData || []).map(player => {
         // Calculate stats for this player
@@ -89,7 +108,6 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
         let losses = 0;
         let mvp_awards = 0;
         let goal_difference = 0;
-        let debt = 0;
         
         if (gamesData) {
           gamesData.forEach(game => {
@@ -97,10 +115,6 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
             const isTeam2 = game.team2_players.includes(player.id);
             
             if (isTeam1 || isTeam2) {
-              // Calculate debt: £93.6 split among all players in this game
-              const totalPlayers = game.team1_players.length + game.team2_players.length;
-              debt += 93.6 / totalPlayers;
-              
               const playerGoals = isTeam1 ? game.team1_goals : game.team2_goals;
               const opponentGoals = isTeam1 ? game.team2_goals : game.team1_goals;
               
@@ -122,6 +136,32 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
             }
           });
         }
+
+        // Calculate debt from scheduled games
+        let debt = 0;
+        const TOTAL_GAME_COST = 93.6;
+
+        scheduledGames?.forEach((game) => {
+          const gameSignups = (signupsData || []).filter(
+            (s: any) => s.game_schedule_id === game.id && s.player_id === player.id
+          );
+
+          const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+          const allGameSignups = (signupsData || []).filter(
+            (s: any) => s.game_schedule_id === game.id
+          );
+
+          gameSignups.forEach((signup: any) => {
+            const position = allGameSignups.findIndex((s: any) => s.id === signup.id) + 1;
+            const isWithinCapacity = position <= pitchCapacity;
+            const owesDebt = isWithinCapacity || signup.last_minute_dropout === true;
+
+            if (owesDebt) {
+              const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
+              debt += costPerPlayer;
+            }
+          });
+        });
         
         return {
           id: player.id,
