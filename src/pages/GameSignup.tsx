@@ -204,21 +204,28 @@ const GameSignup = () => {
   const removeSignup = async () => {
     if (!user || !gameId) return;
 
-    // Check if within 24 hours and confirmation not checked
-    if (isWithin24Hours && !confirmReplacement) {
-      toast({
-        title: "Confirmation Required",
-        description: "Please confirm that you will ask the group for a replacement",
-        variant: "destructive"
-      });
-      return;
-    }
     try {
       const userSignup = signups.find(signup => signup.player?.user_id === user.id);
       if (!userSignup) return;
 
-      if (isWithin24Hours) {
-        // Within 24 hours: Mark as last minute dropout instead of deleting
+      // Determine player's position in the signup list
+      const signupPosition = signups.findIndex(s => s.id === userSignup.id) + 1;
+      const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+      const isInTopPositions = signupPosition <= pitchCapacity;
+
+      // Check if within 24 hours and in top positions - confirmation required
+      if (isWithin24Hours && isInTopPositions && !confirmReplacement) {
+        toast({
+          title: "Confirmation Required",
+          description: "Please confirm that you will ask the group for a replacement",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Only mark as dropout if within 24 hours AND in top 12/14 positions
+      if (isWithin24Hours && isInTopPositions) {
+        // Mark as dropout instead of deleting
         const { error } = await supabase
           .from('games_schedule_signups')
           .update({ last_minute_dropout: true })
@@ -228,10 +235,10 @@ const GameSignup = () => {
         
         toast({
           title: "Marked as Last Minute Dropout",
-          description: "You still owe payment for this game. Please find a replacement."
+          description: "You were in the top players and still owe payment for this game."
         });
       } else {
-        // Before 24 hours: Delete normally
+        // Delete the signup (either outside 24h window or on waitlist)
         const { error } = await supabase
           .from('games_schedule_signups')
           .delete()
@@ -241,7 +248,9 @@ const GameSignup = () => {
         
         toast({
           title: "Success",
-          description: "Successfully removed from the game"
+          description: isWithin24Hours 
+            ? "You were on the waitlist and have been removed" 
+            : "Successfully removed from the game"
         });
       }
       
@@ -259,19 +268,28 @@ const GameSignup = () => {
   const removeGuestSignup = async (signupId: string) => {
     if (!user) return;
     
-    // Check if within 24 hours and confirmation not checked
-    if (isWithin24Hours && !confirmReplacement) {
-      toast({
-        title: "Confirmation Required",
-        description: "Please confirm that you will ask the group for a replacement",
-        variant: "destructive"
-      });
-      return;
-    }
-    
     try {
-      if (isWithin24Hours) {
-        // Within 24 hours: Mark as last minute dropout instead of deleting
+      const guestSignup = signups.find(s => s.id === signupId);
+      if (!guestSignup) return;
+
+      // Determine guest's position in the signup list
+      const signupPosition = signups.findIndex(s => s.id === signupId) + 1;
+      const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+      const isInTopPositions = signupPosition <= pitchCapacity;
+
+      // Check if within 24 hours and in top positions - confirmation required
+      if (isWithin24Hours && isInTopPositions && !confirmReplacement) {
+        toast({
+          title: "Confirmation Required",
+          description: "Please confirm that you will ask the group for a replacement",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Only mark as dropout if within 24 hours AND in top 12/14 positions
+      if (isWithin24Hours && isInTopPositions) {
+        // Mark as dropout instead of deleting
         const { error } = await supabase
           .from('games_schedule_signups')
           .update({ last_minute_dropout: true })
@@ -281,10 +299,10 @@ const GameSignup = () => {
         
         toast({
           title: "Marked as Last Minute Dropout",
-          description: "This guest still owes payment for this game. Please find a replacement."
+          description: "Guest was in the top players and still owes payment for this game."
         });
       } else {
-        // Before 24 hours: Delete normally
+        // Delete the guest signup (either outside 24h window or on waitlist)
         const { error } = await supabase
           .from('games_schedule_signups')
           .delete()
@@ -294,7 +312,9 @@ const GameSignup = () => {
         
         toast({
           title: "Success",
-          description: "Successfully removed guest from the game"
+          description: isWithin24Hours 
+            ? "Guest was on the waitlist and has been removed" 
+            : "Successfully removed guest from the game"
         });
       }
       
