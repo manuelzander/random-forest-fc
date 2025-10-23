@@ -105,8 +105,8 @@ const AdminDebtManagement = () => {
             ? (signup.guests?.name || signup.guest_name || 'Unknown Guest')
             : (signup.players?.name || 'Unknown Player');
           
-          // Normalize guest names for consistent grouping (remove extra spaces, case-insensitive)
-          const normalizedName = playerName.toLowerCase().replace(/\s+/g, ' ').trim();
+          // Normalize guest names for consistent grouping (remove ALL spaces, case-insensitive)
+          const normalizedName = playerName.toLowerCase().replace(/\s/g, '').trim();
           const key = `${isGuest ? 'guest' : 'player'}-${playerId || normalizedName}`;
 
             // Calculate cost per player based on pitch capacity
