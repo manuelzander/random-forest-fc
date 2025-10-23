@@ -149,6 +149,11 @@ const GameSignup = () => {
     try {
       const guestName = playerName.trim();
       
+      // Validate guest name is not empty
+      if (!guestName) {
+        throw new Error('Guest name cannot be empty');
+      }
+      
       // Check if guest already exists
       let { data: existingGuest, error: guestError } = await supabase
         .from('guests')
@@ -168,6 +173,11 @@ const GameSignup = () => {
         
         if (createError) throw createError;
         guestId = newGuest.id;
+      }
+
+      // Ensure we have both guest_id and guest_name before creating signup
+      if (!guestId || !guestName) {
+        throw new Error('Failed to create guest record properly');
       }
 
       // Sign up guest for the game

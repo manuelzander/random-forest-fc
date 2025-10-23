@@ -40,6 +40,7 @@ const AdminDebtManagement = () => {
   const fetchDebtData = async () => {
     setLoading(true);
     try {
+      console.log('Fetching debt data...');
       // Fetch all scheduled games
       const { data: games, error: gamesError } = await supabase
         .from('games_schedule')
@@ -105,6 +106,12 @@ const AdminDebtManagement = () => {
             ? (signup.guests?.name || signup.guest_name || 'Unknown Guest')
             : (signup.players?.name || 'Unknown Player');
           
+          // Skip if playerName is null or undefined (data integrity issue)
+          if (!playerName || playerName === null) {
+            console.warn('Skipping signup with null player name:', signup.id);
+            return;
+          }
+          
           // Normalize guest names for consistent grouping (remove ALL spaces, case-insensitive)
           const normalizedName = playerName.toLowerCase().replace(/\s/g, '').trim();
           const key = `${isGuest ? 'guest' : 'player'}-${playerId || normalizedName}`;
@@ -151,11 +158,12 @@ const AdminDebtManagement = () => {
       summaries.sort((a, b) => a.netBalance - b.netBalance);
 
       setPlayerSummaries(summaries);
+      console.log('Debt data loaded successfully:', summaries.length, 'entries');
     } catch (error) {
       console.error('Error fetching debt data:', error);
       toast({
         title: "Error",
-        description: "Failed to load debt information",
+        description: error instanceof Error ? error.message : "Failed to load debt information",
         variant: "destructive",
       });
     } finally {
