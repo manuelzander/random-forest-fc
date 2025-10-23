@@ -5,8 +5,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { PoundSterling, AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
+import { PoundSterling, AlertCircle, TrendingUp, TrendingDown, Calendar, Users } from 'lucide-react';
+import { format } from 'date-fns';
 import type { ScheduledGame, GameScheduleSignup, Guest } from '@/types';
 
 interface PlayerDebtSummary {
@@ -22,6 +24,9 @@ interface PlayerDebtSummary {
     gameDate: string;
     pitchSize: string;
     isDropout: boolean;
+    costPerPlayer: number;
+    position: number;
+    signupDate: string;
   }>;
 }
 
@@ -32,6 +37,8 @@ const AdminDebtManagement = () => {
   const [loading, setLoading] = useState(true);
   const [playerSummaries, setPlayerSummaries] = useState<PlayerDebtSummary[]>([]);
   const [editingCredit, setEditingCredit] = useState<{ id: string; value: string } | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerDebtSummary | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   useEffect(() => {
     fetchDebtData();
@@ -142,7 +149,10 @@ const AdminDebtManagement = () => {
             summary.gamesOwed.push({
               gameDate: game.scheduled_at,
               pitchSize: game.pitch_size || 'big',
-              isDropout: signup.last_minute_dropout === true
+              isDropout: signup.last_minute_dropout === true,
+              costPerPlayer: costPerPlayer,
+              position: position,
+              signupDate: signup.signed_up_at
             });
           }
         });
@@ -328,7 +338,15 @@ const AdminDebtManagement = () => {
                       <TableRow key={key}>
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
-                            {summary.playerName}
+                            <button
+                              onClick={() => {
+                                setSelectedPlayer(summary);
+                                setIsDetailsOpen(true);
+                              }}
+                              className="text-primary hover:underline cursor-pointer"
+                            >
+                              {summary.playerName}
+                            </button>
                             {summary.gamesOwed.some(g => g.isDropout) && (
                               <Badge variant="destructive" className="text-xs">
                                 <AlertCircle className="h-3 w-3 mr-1" />
@@ -403,6 +421,121 @@ const AdminDebtManagement = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Player Details Dialog */}
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <PoundSterling className="h-5 w-5" />
+              {selectedPlayer?.playerName} - Game Details
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedPlayer && (
+            <div className="space-y-4">
+              {/* Summary */}
+              <div className="flex flex-wrap gap-4 p-4 bg-muted rounded-lg">
+                <div>
+                  <p className="text-sm text-muted-foreground">Type</p>
+                  <div className="flex gap-1 mt-1">
+                    {selectedPlayer.isVerified && (
+                      <Badge className="text-xs bg-green-100 text-green-700 border-0">
+                        Verified
+                      </Badge>
+                    )}
+                    {selectedPlayer.isGuest && (
+                      <Badge className="text-xs bg-blue-100 text-blue-700 border-0">
+                        Guest
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Debt</p>
+                  <p className="text-lg font-bold text-red-600">£{selectedPlayer.totalDebt.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Credit</p>
+                  <p className="text-lg font-bold text-green-600">£{selectedPlayer.credit.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Net Balance</p>
+                  <p className={`text-lg font-bold ${selectedPlayer.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    £{selectedPlayer.netBalance.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Games Table */}
+              <div>
+                <h3 className="font-semibold mb-2">Game Breakdown</h3>
+                <div className="border rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Game Date</TableHead>
+                        <TableHead>Pitch</TableHead>
+                        <TableHead className="text-right">Cost</TableHead>
+                        <TableHead className="text-center">Position</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Signed Up</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {selectedPlayer.gamesOwed.map((game, index) => (
+                        <TableRow key={index} className={game.isDropout ? 'bg-red-50' : ''}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              {format(new Date(game.gameDate), 'PPP')}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="capitalize">
+                              {game.pitchSize}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            £{game.costPerPlayer.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-1">
+                              <Users className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-sm font-medium">#{game.position}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {game.isDropout ? (
+                              <Badge variant="destructive" className="text-xs">
+                                <AlertCircle className="h-3 w-3 mr-1" />
+                                Dropout
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                Played
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            {format(new Date(game.signupDate), 'PP p')}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="flex justify-between items-center p-4 bg-muted rounded-lg font-semibold">
+                <span>Total Games:</span>
+                <span>{selectedPlayer.gamesOwed.length}</span>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
