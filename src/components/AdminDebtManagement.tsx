@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { DollarSign, AlertCircle, TrendingUp, TrendingDown, DollarSignIcon } from 'lucide-react';
+import { PoundSterling, AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
 import type { ScheduledGame, GameScheduleSignup, Guest } from '@/types';
 
 interface PlayerDebtSummary {
@@ -266,7 +266,7 @@ const AdminDebtManagement = () => {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <DollarSignIcon className="h-4 w-4" />
+              <PoundSterling className="h-4 w-4" />
               Net Balance
             </CardTitle>
           </CardHeader>
@@ -285,7 +285,7 @@ const AdminDebtManagement = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <DollarSign className="h-5 w-5" />
+            <PoundSterling className="h-5 w-5" />
             Player Debt & Credit
           </CardTitle>
           <p className="text-sm text-muted-foreground">
