@@ -306,8 +306,8 @@ const AdminDebtManagement = () => {
             Player Debt & Credit
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Debt calculated from scheduled games (£{TOTAL_GAME_COST} split among players). Top {' '}
-            12 (small pitch, £{(TOTAL_GAME_COST / 12).toFixed(2)} each) or 14 (big pitch, £{(TOTAL_GAME_COST / 14).toFixed(2)} each) players + last-minute dropouts owe payment.
+            Debt calculated from scheduled games (£{TOTAL_GAME_COST} split among players). Only the top {' '}
+            12 (small pitch, £{(TOTAL_GAME_COST / 12).toFixed(2)} each) or 14 (big pitch, £{(TOTAL_GAME_COST / 14).toFixed(2)} each) players by signup position owe payment. Dropouts are marked but still pay for their spot.
           </p>
         </CardHeader>
         <CardContent>
