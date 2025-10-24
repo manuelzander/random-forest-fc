@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Shield, Users, History, LogOut, Loader2, Home, Newspaper, Calendar, DollarSign } from 'lucide-react';
+import { Shield, Users, History, LogOut, Loader2, Home, Newspaper, Calendar, PoundSterling } from 'lucide-react';
 import AdminPlayerManagement from '@/components/AdminPlayerManagement';
 import AdminGameManagement from '@/components/AdminGameManagement';
 import AdminNewsManagement from '@/components/AdminNewsManagement';
@@ -94,7 +94,7 @@ const Admin = () => {
               <span className="hidden sm:inline">Schedule</span>
             </TabsTrigger>
             <TabsTrigger value="debt" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <DollarSign className="h-4 w-4" />
+              <PoundSterling className="h-4 w-4" />
               <span className="hidden sm:inline">Debt</span>
             </TabsTrigger>
             <TabsTrigger value="news" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
