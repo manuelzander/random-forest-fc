@@ -149,17 +149,56 @@ const GameSignup = () => {
     try {
       const guestName = playerName.trim();
       
-      // Validate guest name is not empty
-      if (!guestName) {
-        throw new Error('Guest name cannot be empty');
+      // Validate guest name
+      if (!guestName || guestName.length < 2) {
+        toast({
+          title: "Invalid Name",
+          description: "Please enter a valid name (at least 2 characters)",
+          variant: "destructive"
+        });
+        setIsSigningUp(false);
+        return;
+      }
+
+      if (guestName.length > 50) {
+        toast({
+          title: "Name Too Long",
+          description: "Guest name must be less than 50 characters",
+          variant: "destructive"
+        });
+        setIsSigningUp(false);
+        return;
+      }
+
+      // Check if this guest is already signed up for this game
+      const { data: existingSignup } = await supabase
+        .from('games_schedule_signups')
+        .select('id, guest_name')
+        .eq('game_schedule_id', gameId)
+        .eq('is_guest', true)
+        .ilike('guest_name', guestName)
+        .maybeSingle();
+
+      if (existingSignup) {
+        toast({
+          title: "Already Signed Up",
+          description: `${guestName} is already signed up for this game`,
+          variant: "destructive"
+        });
+        setIsSigningUp(false);
+        return;
       }
       
-      // Check if guest already exists
+      // Check if guest already exists in guests table
       let { data: existingGuest, error: guestError } = await supabase
         .from('guests')
         .select('id')
-        .eq('name', guestName)
+        .ilike('name', guestName)
         .maybeSingle();
+
+      if (guestError) {
+        console.error('Error checking existing guest:', guestError);
+      }
 
       let guestId = existingGuest?.id;
 
@@ -171,28 +210,41 @@ const GameSignup = () => {
           .select('id')
           .single();
         
-        if (createError) throw createError;
+        if (createError) {
+          console.error('Error creating guest:', createError);
+          throw new Error(`Failed to create guest: ${createError.message}`);
+        }
         guestId = newGuest.id;
       }
 
-      // Ensure we have both guest_id and guest_name before creating signup
-      if (!guestId || !guestName) {
-        throw new Error('Failed to create guest record properly');
+      // Validate we have the required data
+      if (!guestId) {
+        throw new Error('Guest ID is missing after creation');
       }
 
-      // Sign up guest for the game
-      const { error } = await supabase
-        .from('games_schedule_signups')
-        .insert({
-          game_schedule_id: gameId,
-          guest_name: guestName,
-          guest_id: guestId,
-          is_guest: true,
-          player_id: null,
-          created_by_user_id: user?.id || null
-        });
+      // Sign up guest for the game with all required fields
+      const signupData = {
+        game_schedule_id: gameId,
+        guest_name: guestName,
+        guest_id: guestId,
+        is_guest: true,
+        player_id: null,
+        created_by_user_id: user?.id || null
+      };
+
+      console.log('Attempting guest signup with data:', signupData);
       
-      if (error) throw error;
+      const { error, data: signupResult } = await supabase
+        .from('games_schedule_signups')
+        .insert(signupData)
+        .select();
+      
+      if (error) {
+        console.error('Guest signup error:', error);
+        throw new Error(`Signup failed: ${error.message}`);
+      }
+
+      console.log('Guest signup successful:', signupResult);
       
       toast({
         title: "Success",
@@ -200,11 +252,11 @@ const GameSignup = () => {
       });
       setPlayerName('');
       fetchGameData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error signing up guest:', error);
       toast({
         title: "Error",
-        description: "Failed to sign up for the game",
+        description: error.message || "Failed to sign up for the game. Please try again.",
         variant: "destructive"
       });
     } finally {
