@@ -118,9 +118,12 @@ const AdminDebtManagement = () => {
             return;
           }
           
-          // Normalize guest names for consistent grouping (remove ALL spaces, case-insensitive)
-          const normalizedName = playerName.toLowerCase().replace(/\s/g, '').trim();
-          const key = `${isGuest ? 'guest' : 'player'}-${playerId || normalizedName}`;
+          // Normalize guest names for consistent grouping (remove ALL non-alphanumeric chars, case-insensitive)
+          // This groups "Jeezy (Alex+1)" and "Jeezy (Alex +1)" together as "jeezyalex1"
+          const normalizedName = playerName.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const key = isGuest 
+            ? `guest-${playerId || normalizedName}` 
+            : `player-${playerId}`;
 
             // Calculate cost per player based on pitch capacity
             const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
