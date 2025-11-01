@@ -122,7 +122,7 @@ const AdminDebtManagement = () => {
           // This groups "Jeezy (Alex+1)" and "Jeezy (Alex +1)" together as "jeezyalex1"
           const normalizedName = playerName.toLowerCase().replace(/[^a-z0-9]/g, '');
           const key = isGuest 
-            ? `guest-${playerId || normalizedName}` 
+            ? (playerId ? `guest-${playerId}` : `guest-${normalizedName}`)
             : `player-${playerId}`;
 
             // Calculate cost per player based on pitch capacity
