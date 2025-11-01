@@ -86,6 +86,30 @@ const AdminDebtManagement = () => {
       // Create a map of user_id to credit
       const creditMap = new Map(profiles?.map(p => [p.user_id, p.credit]) || []);
 
+      // Helper to normalize guest names
+      const normalize = (s?: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      // Fetch all guests to build a canonical name->guest mapping
+      const { data: guestsList, error: guestsError } = await supabase
+        .from('guests')
+        .select('id, name, credit');
+      
+      if (guestsError) throw guestsError;
+
+      const nameToGuest = new Map<string, { id: string; name: string; credit: number }>();
+      guestsList?.forEach(g => {
+        nameToGuest.set(normalize(g.name), { id: g.id, name: g.name, credit: Number(g.credit || 0) });
+      });
+
+      // Build supplemental mapping from signups that have guest_id (covers name variations)
+      const signupNameToId = new Map<string, string>();
+      (signupsData || []).forEach((s: any) => {
+        if (s.is_guest && s.guest_id) {
+          const nm = normalize(s.guests?.name || s.guest_name || '');
+          if (nm && !signupNameToId.has(nm)) signupNameToId.set(nm, s.guest_id);
+        }
+      });
+
       // Calculate debt per player/guest
       const debtMap = new Map<string, PlayerDebtSummary>();
 
@@ -108,39 +132,51 @@ const AdminDebtManagement = () => {
           if (owesDebt) {
           const isGuest = signup.is_guest || false;
           const playerId = isGuest ? signup.guest_id : signup.player_id;
-          const playerName = isGuest 
+          const rawGuestName = isGuest 
             ? (signup.guests?.name || signup.guest_name || 'Unknown Guest')
             : (signup.players?.name || 'Unknown Player');
           
           // Skip if playerName is null or undefined (data integrity issue)
-          if (!playerName || playerName === null) {
+          if (!rawGuestName || rawGuestName === null) {
             console.warn('Skipping signup with null player name:', signup.id);
             return;
           }
           
-          // Normalize guest names for consistent grouping (remove ALL non-alphanumeric chars, case-insensitive)
-          // This groups "Jeezy (Alex+1)" and "Jeezy (Alex +1)" together as "jeezyalex1"
-          const normalizedName = playerName.toLowerCase().replace(/[^a-z0-9]/g, '');
+          // Canonicalize guest identification
+          let canonicalGuestId = playerId;
+          let canonicalGuestName = rawGuestName;
+          let canonicalCredit = 0;
+          
+          if (isGuest) {
+            const nm = normalize(rawGuestName);
+            const mapped = nameToGuest.get(nm);
+            const mappedIdFromSignups = signupNameToId.get(nm);
+            
+            // Use the most authoritative guest ID we can find
+            canonicalGuestId = signup.guest_id || mapped?.id || mappedIdFromSignups;
+            // Prefer the saved guest name if available
+            canonicalGuestName = mapped?.name || rawGuestName;
+            canonicalCredit = signup.guests?.credit ?? mapped?.credit ?? 0;
+          } else {
+            canonicalCredit = creditMap.get(signup.players?.user_id) || 0;
+          }
+          
           const key = isGuest 
-            ? (playerId ? `guest-${playerId}` : `guest-${normalizedName}`)
+            ? (canonicalGuestId ? `guest-${canonicalGuestId}` : `guest-${normalize(rawGuestName)}`)
             : `player-${playerId}`;
 
             // Calculate cost per player based on pitch capacity
             const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
 
             if (!debtMap.has(key)) {
-              const credit = isGuest 
-                ? (signup.guests?.credit || 0)
-                : (creditMap.get(signup.players?.user_id) || 0);
-
               debtMap.set(key, {
                 playerId: isGuest ? undefined : playerId,
-                guestId: isGuest ? playerId : undefined,
-                playerName,
+                guestId: isGuest ? canonicalGuestId : undefined,
+                playerName: canonicalGuestName,
                 isGuest,
                 isVerified: !isGuest && !!signup.players?.user_id,
                 totalDebt: 0,
-                credit: Number(credit),
+                credit: Number(canonicalCredit),
                 netBalance: 0,
                 gamesOwed: []
               });
