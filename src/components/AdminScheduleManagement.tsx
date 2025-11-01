@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock } from 'lucide-react';
+import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 
@@ -529,29 +529,41 @@ const AdminScheduleManagement = () => {
                           {(signups[game.id] || []).map((signup, index) => {
                             const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
                             const isWaitlisted = index >= pitchCapacity;
+                            const isLastMinuteDropout = signup.last_minute_dropout === true;
                             
                             return (
-                              <TableRow key={signup.id} className={isWaitlisted ? 'bg-orange-50' : ''}>
+                              <TableRow key={signup.id} className={
+                                isLastMinuteDropout ? 'bg-red-50' :
+                                isWaitlisted ? 'bg-orange-50' : ''
+                              }>
                                 <TableCell className="font-medium">
                                   <div className="flex items-center gap-2">
                                     <Badge variant="outline" className="text-xs shrink-0">
                                       {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
                                     </Badge>
-                                    <span>{signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}</span>
+                                    <span className={isLastMinuteDropout ? 'line-through text-red-600' : ''}>
+                                      {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}
+                                    </span>
                                     <div className="flex gap-1">
-                                       {isWaitlisted && (
+                                       {isLastMinuteDropout && (
+                                         <Badge className="text-xs h-5 px-1.5 bg-red-100 text-red-700 border-0">
+                                           <AlertTriangle className="h-3 w-3 mr-1" />
+                                           <span className="hidden sm:inline">Dropout</span>
+                                         </Badge>
+                                       )}
+                                       {isWaitlisted && !isLastMinuteDropout && (
                                          <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
                                            <Clock className="h-3 w-3 mr-1" />
                                            <span className="hidden sm:inline">Waitlist</span>
                                          </Badge>
                                        )}
-                                       {signup.player?.user_id && (
+                                       {signup.player?.user_id && !isLastMinuteDropout && (
                                          <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
                                            <CheckCircle className="h-3 w-3 mr-1" />
                                            <span className="hidden sm:inline">Verified</span>
                                          </Badge>
                                        )}
-                                       {signup.is_guest && (
+                                       {signup.is_guest && !isLastMinuteDropout && (
                                          <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
                                            <User className="h-3 w-3 mr-1" />
                                            <span className="hidden sm:inline">Guest</span>
