@@ -518,11 +518,13 @@ const AdminDebtManagement = () => {
                     </TableHeader>
                     <TableBody>
                       {selectedPlayer.gamesOwed.map((game, index) => (
-                        <TableRow key={index} className={game.isDropout ? 'bg-red-50' : ''}>
+                        <TableRow key={index} className={game.isDropout ? 'bg-red-50 border-red-200' : ''}>
                           <TableCell className="font-medium">
                             <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
-                              {format(new Date(game.gameDate), 'PPP')}
+                              <Calendar className={`h-4 w-4 ${game.isDropout ? 'text-red-600' : 'text-muted-foreground'}`} />
+                              <span className={game.isDropout ? 'line-through text-red-600' : ''}>
+                                {format(new Date(game.gameDate), 'PPP')}
+                              </span>
                             </div>
                           </TableCell>
                           <TableCell>
