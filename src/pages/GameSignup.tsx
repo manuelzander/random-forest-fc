@@ -170,14 +170,32 @@ const GameSignup = () => {
         return;
       }
 
-      // Check if this guest is already signed up for this game
-      const { data: existingSignup } = await supabase
-        .from('games_schedule_signups')
-        .select('id, guest_name')
-        .eq('game_schedule_id', gameId)
-        .eq('is_guest', true)
-        .ilike('guest_name', guestName)
+      // Check if guest already exists in guests table first
+      let { data: existingGuest, error: guestError } = await supabase
+        .from('guests')
+        .select('id')
+        .ilike('name', guestName)
         .maybeSingle();
+
+      if (guestError) {
+        console.error('Error checking existing guest:', guestError);
+      }
+
+      // Check if this guest is already signed up for this game (check both guest_name and guest_id)
+      const signupQuery = supabase
+        .from('games_schedule_signups')
+        .select('id, guest_name, guest_id')
+        .eq('game_schedule_id', gameId)
+        .eq('is_guest', true);
+      
+      // Check by guest_id if guest exists, otherwise by guest_name
+      if (existingGuest?.id) {
+        signupQuery.eq('guest_id', existingGuest.id);
+      } else {
+        signupQuery.ilike('guest_name', guestName);
+      }
+
+      const { data: existingSignup } = await signupQuery.maybeSingle();
 
       if (existingSignup) {
         toast({
@@ -187,17 +205,6 @@ const GameSignup = () => {
         });
         setIsSigningUp(false);
         return;
-      }
-      
-      // Check if guest already exists in guests table
-      let { data: existingGuest, error: guestError } = await supabase
-        .from('guests')
-        .select('id')
-        .ilike('name', guestName)
-        .maybeSingle();
-
-      if (guestError) {
-        console.error('Error checking existing guest:', guestError);
       }
 
       let guestId = existingGuest?.id;
