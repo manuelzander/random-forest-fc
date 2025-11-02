@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { PoundSterling, AlertCircle, TrendingUp, TrendingDown, Calendar, Users } from 'lucide-react';
+import { PoundSterling, AlertCircle, TrendingUp, TrendingDown, Calendar, Users, CheckCircle, User, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import type { ScheduledGame, GameScheduleSignup, Guest } from '@/types';
 
@@ -375,34 +375,28 @@ const AdminDebtManagement = () => {
                     return (
                       <TableRow key={key}>
                         <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => {
-                                setSelectedPlayer(summary);
-                                setIsDetailsOpen(true);
-                              }}
-                              className="text-primary hover:underline cursor-pointer"
-                            >
-                              {summary.playerName}
-                            </button>
-                            {summary.gamesOwed.some(g => g.isDropout) && (
-                              <Badge variant="destructive" className="text-xs">
-                                <AlertCircle className="h-3 w-3 mr-1" />
-                                Dropout
-                              </Badge>
-                            )}
-                          </div>
+                          <button
+                            onClick={() => {
+                              setSelectedPlayer(summary);
+                              setIsDetailsOpen(true);
+                            }}
+                            className="text-primary hover:underline cursor-pointer"
+                          >
+                            {summary.playerName}
+                          </button>
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-1">
                             {summary.isVerified && (
-                              <Badge className="text-xs bg-green-100 text-green-700 border-0">
-                                Verified
+                              <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Verified</span>
                               </Badge>
                             )}
                             {summary.isGuest && (
-                              <Badge className="text-xs bg-blue-100 text-blue-700 border-0">
-                                Guest
+                              <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                                <User className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Guest</span>
                               </Badge>
                             )}
                           </div>
@@ -478,13 +472,15 @@ const AdminDebtManagement = () => {
                   <p className="text-sm text-muted-foreground">Type</p>
                   <div className="flex gap-1 mt-1">
                     {selectedPlayer.isVerified && (
-                      <Badge className="text-xs bg-green-100 text-green-700 border-0">
-                        Verified
+                      <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        <span className="hidden sm:inline">Verified</span>
                       </Badge>
                     )}
                     {selectedPlayer.isGuest && (
-                      <Badge className="text-xs bg-blue-100 text-blue-700 border-0">
-                        Guest
+                      <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                        <User className="h-3 w-3 mr-1" />
+                        <span className="hidden sm:inline">Guest</span>
                       </Badge>
                     )}
                   </div>
@@ -545,13 +541,14 @@ const AdminDebtManagement = () => {
                           </TableCell>
                           <TableCell>
                             {game.isDropout ? (
-                              <Badge variant="destructive" className="text-xs">
-                                <AlertCircle className="h-3 w-3 mr-1" />
-                                Dropout
+                              <Badge className="text-xs h-5 px-1.5 bg-red-100 text-red-700 border-0">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Dropout</span>
                               </Badge>
                             ) : (
-                              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                                Played
+                              <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Played</span>
                               </Badge>
                             )}
                           </TableCell>
