@@ -508,34 +508,35 @@ const AdminDebtManagement = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Game Date</TableHead>
-                        <TableHead>Pitch</TableHead>
-                        <TableHead className="text-right">Cost</TableHead>
-                        <TableHead className="text-center">Position</TableHead>
+                        <TableHead>
+                          <span className="sm:hidden">Date</span>
+                          <span className="hidden sm:inline">Game Date</span>
+                        </TableHead>
+                        <TableHead className="hidden sm:table-cell">Pitch</TableHead>
+                        <TableHead className="text-right hidden sm:table-cell">Cost</TableHead>
+                        <TableHead className="text-center hidden sm:table-cell">Position</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Signed Up</TableHead>
+                        <TableHead className="hidden sm:table-cell">Time</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {selectedPlayer.gamesOwed.map((game, index) => (
                         <TableRow key={index} className={game.isDropout ? 'bg-red-50 border-red-200' : ''}>
-                          <TableCell className="font-medium">
-                            <div className="flex items-center gap-2">
-                              <Calendar className={`h-4 w-4 ${game.isDropout ? 'text-red-600' : 'text-muted-foreground'}`} />
-                              <span className={game.isDropout ? 'line-through text-red-600' : ''}>
-                                {format(new Date(game.gameDate), 'PPP')}
-                              </span>
-                            </div>
+                          <TableCell className={`font-medium text-xs ${game.isDropout ? 'text-red-600' : 'text-muted-foreground'}`}>
+                            <span className={game.isDropout ? 'line-through' : ''}>
+                              <span className="sm:hidden">{format(new Date(game.gameDate), 'M/d h:mm a')}</span>
+                              <span className="hidden sm:inline">{format(new Date(game.gameDate), 'MMM d, h:mm a')}</span>
+                            </span>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="hidden sm:table-cell">
                             <Badge variant="outline" className="capitalize">
                               {game.pitchSize}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-right font-medium">
+                          <TableCell className="text-right font-medium hidden sm:table-cell">
                             £{game.costPerPlayer.toFixed(2)}
                           </TableCell>
-                          <TableCell className="text-center">
+                          <TableCell className="text-center hidden sm:table-cell">
                             <div className="flex items-center justify-center gap-1">
                               <Users className="h-3 w-3 text-muted-foreground" />
                               <span className="text-sm font-medium">#{game.position}</span>
@@ -554,8 +555,9 @@ const AdminDebtManagement = () => {
                               </Badge>
                             )}
                           </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {format(new Date(game.signupDate), 'PP p')}
+                          <TableCell className="text-xs text-muted-foreground hidden sm:table-cell">
+                            <span className="sm:hidden">{format(new Date(game.signupDate), 'M/d h:mm a')}</span>
+                            <span className="hidden sm:inline">{format(new Date(game.signupDate), 'MMM d, h:mm a')}</span>
                           </TableCell>
                         </TableRow>
                       ))}
