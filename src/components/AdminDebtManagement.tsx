@@ -359,11 +359,11 @@ const AdminDebtManagement = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Player Name</TableHead>
-                    <TableHead className="text-right">Games Owed</TableHead>
-                    <TableHead className="text-right">Total Debt</TableHead>
+                    <TableHead>Player</TableHead>
+                    <TableHead className="text-right">Games</TableHead>
+                    <TableHead className="text-right">Debt</TableHead>
                     <TableHead className="text-right">Credit</TableHead>
-                    <TableHead className="text-right">Net Balance</TableHead>
+                    <TableHead className="text-right">Balance</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -493,7 +493,7 @@ const AdminDebtManagement = () => {
                       <TableRow>
                         <TableHead>
                           <span className="sm:hidden">Date</span>
-                          <span className="hidden sm:inline">Game Date</span>
+                          <span className="hidden sm:inline">Date</span>
                         </TableHead>
                         <TableHead className="hidden sm:table-cell">Pitch</TableHead>
                         <TableHead className="text-right">Cost</TableHead>
