@@ -360,6 +360,7 @@ const AdminDebtManagement = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Player</TableHead>
+                    <TableHead>Type</TableHead>
                     <TableHead className="text-right">Games</TableHead>
                     <TableHead className="text-right">Debt</TableHead>
                     <TableHead className="text-right">Credit</TableHead>
@@ -383,6 +384,22 @@ const AdminDebtManagement = () => {
                           >
                             {summary.playerName}
                           </button>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            {summary.isVerified && (
+                              <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Verified</span>
+                              </Badge>
+                            )}
+                            {summary.isGuest && (
+                              <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                                <User className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Guest</span>
+                              </Badge>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell className="text-right">
                           {summary.gamesOwed.length}
