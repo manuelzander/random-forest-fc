@@ -452,23 +452,6 @@ const AdminDebtManagement = () => {
               {/* Summary */}
               <div className="flex flex-wrap gap-4 p-4 bg-muted rounded-lg">
                 <div>
-                  <p className="text-sm text-muted-foreground">Type</p>
-                  <div className="flex gap-1 mt-1">
-                    {selectedPlayer.isVerified && (
-                      <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        <span className="hidden sm:inline">Verified</span>
-                      </Badge>
-                    )}
-                    {selectedPlayer.isGuest && (
-                      <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
-                        <User className="h-3 w-3 mr-1" />
-                        <span className="hidden sm:inline">Guest</span>
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                <div>
                   <p className="text-sm text-muted-foreground">Total Debt</p>
                   <p className="text-lg font-bold text-red-600">£{selectedPlayer.totalDebt.toFixed(2)}</p>
                 </div>
