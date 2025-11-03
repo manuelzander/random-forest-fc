@@ -513,7 +513,7 @@ const AdminDebtManagement = () => {
                           <span className="hidden sm:inline">Game Date</span>
                         </TableHead>
                         <TableHead className="hidden sm:table-cell">Pitch</TableHead>
-                        <TableHead className="text-right hidden sm:table-cell">Cost</TableHead>
+                        <TableHead className="text-right">Cost</TableHead>
                         <TableHead className="text-center hidden sm:table-cell">Position</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="hidden sm:table-cell">Time</TableHead>
@@ -533,7 +533,7 @@ const AdminDebtManagement = () => {
                               {game.pitchSize}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-right font-medium hidden sm:table-cell">
+                          <TableCell className="text-right font-medium text-xs">
                             £{game.costPerPlayer.toFixed(2)}
                           </TableCell>
                           <TableCell className="text-center hidden sm:table-cell">
