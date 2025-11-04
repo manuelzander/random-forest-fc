@@ -154,6 +154,7 @@ export type Database = {
       }
       guests: {
         Row: {
+          claimed_by: string | null
           created_at: string
           credit: number
           id: string
@@ -163,6 +164,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          claimed_by?: string | null
           created_at?: string
           credit?: number
           id?: string
@@ -172,6 +174,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          claimed_by?: string | null
           created_at?: string
           credit?: number
           id?: string
