@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -40,9 +40,9 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
   });
 
   // Fetch guests on component mount
-  useState(() => {
+  useEffect(() => {
     fetchGuests();
-  });
+  }, []);
 
   const fetchGuests = async () => {
     try {
