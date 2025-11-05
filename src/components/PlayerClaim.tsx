@@ -561,22 +561,6 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
                         </span>
                       </li>
                     )}
-                    {guestToConfirm?.phone && (
-                      <li className="flex items-start gap-2">
-                        <span className="text-primary mt-0.5">•</span>
-                        <span>
-                          <strong className="text-foreground">Phone:</strong> {guestToConfirm.phone}
-                        </span>
-                      </li>
-                    )}
-                    {guestToConfirm?.notes && (
-                      <li className="flex items-start gap-2">
-                        <span className="text-primary mt-0.5">•</span>
-                        <span>
-                          <strong className="text-foreground">Notes:</strong> {guestToConfirm.notes}
-                        </span>
-                      </li>
-                    )}
                   </ul>
                 </div>
 
