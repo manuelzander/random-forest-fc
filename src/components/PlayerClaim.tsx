@@ -31,6 +31,8 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
   const [isDeleting, setIsDeleting] = useState(false);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [claimingGuestId, setClaimingGuestId] = useState<string | null>(null);
+  const [guestToConfirm, setGuestToConfirm] = useState<Guest | null>(null);
+  const [guestSignupsCount, setGuestSignupsCount] = useState(0);
 
   // Use default avatar for current user's player
   const { avatarUrl } = useDefaultAvatar({
@@ -206,11 +208,25 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
     }
   };
 
-  const handleClaimGuest = async (guest: Guest) => {
-    if (!user) return;
+  const handleShowClaimConfirmation = async (guest: Guest) => {
+    // Fetch signup count for this guest
+    const { count } = await supabase
+      .from('games_schedule_signups')
+      .select('*', { count: 'exact', head: true })
+      .eq('guest_id', guest.id);
+    
+    setGuestSignupsCount(count || 0);
+    setGuestToConfirm(guest);
+  };
 
-    setClaimingGuestId(guest.id);
+  const handleClaimGuest = async () => {
+    if (!user || !guestToConfirm) return;
+
+    setClaimingGuestId(guestToConfirm.id);
+    setGuestToConfirm(null);
+    
     try {
+      const guest = guestToConfirm;
       // Step 1: Create or update player
       let playerId: string;
       
@@ -419,7 +435,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleClaimGuest(guest)}
+                            onClick={() => handleShowClaimConfirmation(guest)}
                             disabled={claimingGuestId === guest.id}
                           >
                             {claimingGuestId === guest.id ? 'Claiming...' : 'Claim'}
@@ -509,6 +525,71 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
               disabled={isDeleting}
             >
               {isDeleting ? 'Deleting...' : 'Delete Player'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Claim Guest Confirmation Dialog */}
+      <AlertDialog open={!!guestToConfirm} onOpenChange={(open) => !open && setGuestToConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Claim Guest Player</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  You are about to claim the guest player <strong>"{guestToConfirm?.name}"</strong>.
+                  {currentUserPlayer 
+                    ? " Their data will be merged with your existing player profile."
+                    : " A new player profile will be created for you."}
+                </p>
+                
+                <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-sm">
+                  <h4 className="font-semibold text-foreground">What will be merged:</h4>
+                  <ul className="space-y-1 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">•</span>
+                      <span>
+                        <strong className="text-foreground">Game signups:</strong> {guestSignupsCount} {guestSignupsCount === 1 ? 'signup' : 'signups'} will be transferred to {currentUserPlayer ? 'your player' : 'the new player'}
+                      </span>
+                    </li>
+                    {guestToConfirm && guestToConfirm.credit !== 0 && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span>
+                          <strong className="text-foreground">Credit balance:</strong> {guestToConfirm.credit > 0 ? '+' : ''}{guestToConfirm.credit} will be added to your account
+                        </span>
+                      </li>
+                    )}
+                    {guestToConfirm?.phone && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span>
+                          <strong className="text-foreground">Phone:</strong> {guestToConfirm.phone}
+                        </span>
+                      </li>
+                    )}
+                    {guestToConfirm?.notes && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span>
+                          <strong className="text-foreground">Notes:</strong> {guestToConfirm.notes}
+                        </span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  This action cannot be undone. The guest profile will be marked as claimed.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClaimGuest}>
+              Claim Guest
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
