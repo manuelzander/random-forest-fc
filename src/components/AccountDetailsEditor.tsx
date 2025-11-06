@@ -154,7 +154,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
     }
   };
 
-  const netBalance = debt - credit;
+  const netBalance = credit - debt;
 
   return (
     <div className="space-y-6">
