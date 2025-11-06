@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Settings, Mail, Lock, Eye, EyeOff, Banknote } from 'lucide-react';
+import { Settings, Mail, Lock, Eye, EyeOff, Banknote, TrendingDown, TrendingUp, PoundSterling } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -157,37 +157,70 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
   const netBalance = debt - credit;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
-          Account Details
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Balance Overview */}
-        <div className="rounded-lg border bg-muted/50 p-4 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Total Debt</Label>
-              <p className="text-lg font-semibold text-destructive">
-                £{debt.toFixed(2)}
-              </p>
+    <div className="space-y-6">
+      {/* Balance Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <TrendingDown className="h-4 w-4 text-red-500" />
+              Total Debt
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">
+              £{debt.toFixed(2)}
             </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Credit Balance</Label>
-              <p className="text-lg font-semibold text-green-600">
-                £{credit.toFixed(2)}
-              </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Amount owed
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-green-500" />
+              Credit Balance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              £{credit.toFixed(2)}
             </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Net Balance</Label>
-              <p className={`text-lg font-bold ${netBalance > 0 ? 'text-destructive' : netBalance < 0 ? 'text-green-600' : 'text-muted-foreground'}`}>
-                {netBalance > 0 ? '-' : netBalance < 0 ? '+' : ''}£{Math.abs(netBalance).toFixed(2)}
-              </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Available balance
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <PoundSterling className="h-4 w-4" />
+              Net Balance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              £{Math.abs(netBalance).toFixed(2)}
             </div>
-          </div>
-        </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {netBalance >= 0 ? 'Surplus' : 'Outstanding'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Account Settings Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5" />
+            Account Settings
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
 
         {/* Add Credit Section */}
         <div className="space-y-3">
@@ -297,8 +330,9 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
             Password must be at least 6 characters long
           </p>
         </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
