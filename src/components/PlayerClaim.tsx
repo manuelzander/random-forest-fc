@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { UserCheck, UserPlus, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
+import { format } from 'date-fns';
 
 import { Player, Guest } from '@/types';
 
@@ -547,6 +548,12 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
                 <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-sm">
                   <h4 className="font-semibold text-foreground">What will be merged:</h4>
                   <ul className="space-y-1 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-0.5">•</span>
+                      <span>
+                        <strong className="text-foreground">Created:</strong> {guestToConfirm && format(new Date(guestToConfirm.created_at), 'PPP')}
+                      </span>
+                    </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
                       <span>
