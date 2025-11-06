@@ -10,7 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Player {
@@ -38,28 +38,48 @@ interface Profile {
   credit?: number;
 }
 
+interface Guest {
+  id: string;
+  name: string;
+  credit: number;
+  phone?: string;
+  notes?: string;
+  created_at: string;
+  signupsCount?: number;
+}
+
 const AdminPlayerManagement = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [guests, setGuests] = useState<Guest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isGuestDialogOpen, setIsGuestDialogOpen] = useState(false);
   const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [generatingAvatarFor, setGeneratingAvatarFor] = useState<string | null>(null);
   const [removingAvatarFor, setRemovingAvatarFor] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteGuestDialogOpen, setDeleteGuestDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [removeAvatarDialogOpen, setRemoveAvatarDialogOpen] = useState(false);
   const [playerToDelete, setPlayerToDelete] = useState<Player | null>(null);
+  const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
   const [playerToDisconnect, setPlayerToDisconnect] = useState<Player | null>(null);
   const [playerToRemoveAvatar, setPlayerToRemoveAvatar] = useState<Player | null>(null);
   const [isSavingPlayer, setIsSavingPlayer] = useState(false);
+  const [isSavingGuest, setIsSavingGuest] = useState(false);
+  const [mergeDialogOpen, setMergeDialogOpen] = useState(false);
+  const [guestToMerge, setGuestToMerge] = useState<Guest | null>(null);
+  const [selectedMergePlayer, setSelectedMergePlayer] = useState<string>('');
   const { toast } = useToast();
 
   useEffect(() => {
     fetchPlayers();
     fetchProfiles();
+    fetchGuests();
   }, []);
 
   const fetchPlayers = async () => {
@@ -213,6 +233,46 @@ const AdminPlayerManagement = () => {
       setProfiles(data || []);
     } catch (error) {
       console.error('Error fetching profiles:', error);
+    }
+  };
+
+  const fetchGuests = async () => {
+    try {
+      const { data: guestsData, error: guestsError } = await supabase
+        .from('guests')
+        .select('*')
+        .order('name');
+
+      if (guestsError) throw guestsError;
+
+      // Fetch signups count for each guest
+      const { data: signupsData, error: signupsError } = await supabase
+        .from('games_schedule_signups')
+        .select('guest_id');
+
+      if (signupsError) throw signupsError;
+
+      const signupsCounts = signupsData.reduce((acc, signup) => {
+        if (signup.guest_id) {
+          acc[signup.guest_id] = (acc[signup.guest_id] || 0) + 1;
+        }
+        return acc;
+      }, {} as Record<string, number>);
+
+      const formattedGuests = (guestsData || []).map(guest => ({
+        ...guest,
+        credit: Number(guest.credit || 0),
+        signupsCount: signupsCounts[guest.id] || 0
+      }));
+
+      setGuests(formattedGuests);
+    } catch (error) {
+      console.error('Error fetching guests:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch guests",
+        variant: "destructive",
+      });
     }
   };
 
@@ -458,6 +518,156 @@ const AdminPlayerManagement = () => {
     }
   };
 
+  const handleGuestSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isSavingGuest) return;
+    
+    const formData = new FormData(e.currentTarget);
+    
+    const guestData = {
+      name: formData.get('name') as string,
+      phone: formData.get('phone') as string || null,
+      notes: formData.get('notes') as string || null,
+      credit: parseFloat(formData.get('credit') as string) || 0,
+    };
+
+    try {
+      setIsSavingGuest(true);
+      
+      if (editingGuest) {
+        const { error } = await supabase
+          .from('guests')
+          .update(guestData)
+          .eq('id', editingGuest.id);
+
+        if (error) throw error;
+        toast({
+          title: "Success",
+          description: "Guest updated successfully",
+        });
+      }
+
+      setIsGuestDialogOpen(false);
+      setEditingGuest(null);
+      fetchGuests();
+    } catch (error) {
+      console.error('Error saving guest:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save guest",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingGuest(false);
+    }
+  };
+
+  const openDeleteGuestDialog = (guest: Guest) => {
+    setGuestToDelete(guest);
+    setDeleteGuestDialogOpen(true);
+  };
+
+  const handleDeleteGuest = async () => {
+    if (!guestToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('guests')
+        .delete()
+        .eq('id', guestToDelete.id);
+
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Guest deleted successfully",
+      });
+      fetchGuests();
+      setDeleteGuestDialogOpen(false);
+      setGuestToDelete(null);
+    } catch (error) {
+      console.error('Error deleting guest:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete guest",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const openMergeDialog = (guest: Guest) => {
+    setGuestToMerge(guest);
+    setSelectedMergePlayer('');
+    setMergeDialogOpen(true);
+  };
+
+  const handleMergeGuest = async () => {
+    if (!guestToMerge || !selectedMergePlayer) return;
+
+    try {
+      // Update all signups from guest to player
+      const { error: signupsError } = await supabase
+        .from('games_schedule_signups')
+        .update({ 
+          player_id: selectedMergePlayer,
+          guest_id: null,
+          is_guest: false,
+          guest_name: null
+        })
+        .eq('guest_id', guestToMerge.id);
+
+      if (signupsError) throw signupsError;
+
+      // Transfer credit to player's profile
+      const { data: playerData } = await supabase
+        .from('players')
+        .select('user_id')
+        .eq('id', selectedMergePlayer)
+        .single();
+
+      if (playerData?.user_id && guestToMerge.credit > 0) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('credit')
+          .eq('user_id', playerData.user_id)
+          .single();
+
+        if (profileData) {
+          await supabase
+            .from('profiles')
+            .update({ credit: Number(profileData.credit || 0) + guestToMerge.credit })
+            .eq('user_id', playerData.user_id);
+        }
+      }
+
+      // Delete the guest
+      const { error: deleteError } = await supabase
+        .from('guests')
+        .delete()
+        .eq('id', guestToMerge.id);
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: "Success",
+        description: `Guest "${guestToMerge.name}" merged into player successfully`,
+      });
+
+      setMergeDialogOpen(false);
+      setGuestToMerge(null);
+      setSelectedMergePlayer('');
+      fetchGuests();
+      fetchPlayers();
+    } catch (error) {
+      console.error('Error merging guest:', error);
+      toast({
+        title: "Error",
+        description: "Failed to merge guest into player",
+        variant: "destructive",
+      });
+    }
+  };
+
   const removeAvatar = async () => {
     if (!playerToRemoveAvatar) return;
 
@@ -618,13 +828,11 @@ const AdminPlayerManagement = () => {
                       </p>
                       <p>
                         Net: <span className={`font-bold ${
-                          (player.debt - player.credit) > 0 
-                            ? 'text-destructive' 
-                            : (player.debt - player.credit) < 0 
+                          (player.credit - player.debt) >= 0 
                             ? 'text-green-600' 
-                            : 'text-muted-foreground'
+                            : 'text-red-600'
                         }`}>
-                          {(player.debt - player.credit) > 0 ? '-' : (player.debt - player.credit) < 0 ? '+' : ''}£{Math.abs(player.debt - player.credit).toFixed(2)}
+                          £{Math.abs(player.credit - player.debt).toFixed(2)}
                         </span>
                       </p>
                     </div>
@@ -689,6 +897,211 @@ const AdminPlayerManagement = () => {
             </Alert>
           )}
         </div>
+
+        {/* Guest Management Section */}
+        <div className="mt-8 pt-8 border-t">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+            <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+              <UserCog className="h-4 w-4 sm:h-5 sm:w-5" />
+              Guests ({guests.length})
+            </h3>
+          </div>
+
+          <div className="space-y-2">
+            {guests.map((guest) => (
+              <div key={guest.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
+                <div className="flex items-center gap-3 flex-1">
+                  <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 bg-muted">
+                    <AvatarFallback>
+                      {guest.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-semibold text-sm sm:text-base truncate">{guest.name}</h4>
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
+                      <p>
+                        Signups: <span className="font-medium">{guest.signupsCount || 0}</span>
+                      </p>
+                      <p>
+                        Credit: <span className="font-medium text-green-600">£{guest.credit.toFixed(2)}</span>
+                      </p>
+                    </div>
+                    {guest.phone && (
+                      <p className="text-xs text-muted-foreground truncate">
+                        Phone: {guest.phone}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-center gap-1 sm:gap-2 flex-shrink-0">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => {
+                      setEditingGuest(guest);
+                      setIsGuestDialogOpen(true);
+                    }}
+                  >
+                    <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => openMergeDialog(guest)}
+                    title="Merge into Player"
+                  >
+                    <GitMerge className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => openDeleteGuestDialog(guest)}
+                  >
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {guests.length === 0 && (
+              <Alert>
+                <AlertDescription>
+                  No guests found.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </div>
+
+        {/* Guest Edit Dialog */}
+        <Dialog open={isGuestDialogOpen} onOpenChange={setIsGuestDialogOpen}>
+          <DialogContent className="max-w-md mx-2 sm:mx-auto">
+            <DialogHeader>
+              <DialogTitle className="text-base sm:text-lg">
+                Edit Guest
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleGuestSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="guest-name">Name</Label>
+                <Input
+                  id="guest-name"
+                  name="name"
+                  defaultValue={editingGuest?.name || ''}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="guest-phone">Phone</Label>
+                <Input
+                  id="guest-phone"
+                  name="phone"
+                  defaultValue={editingGuest?.phone || ''}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="guest-credit">Credit</Label>
+                <Input
+                  id="guest-credit"
+                  name="credit"
+                  type="number"
+                  step="0.01"
+                  defaultValue={editingGuest?.credit || 0}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="guest-notes">Notes</Label>
+                <Input
+                  id="guest-notes"
+                  name="notes"
+                  defaultValue={editingGuest?.notes || ''}
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setIsGuestDialogOpen(false)} disabled={isSavingGuest}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSavingGuest}>
+                  {isSavingGuest ? 'Saving...' : 'Update Guest'}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Guest Confirmation Dialog */}
+        <AlertDialog open={deleteGuestDialogOpen} onOpenChange={setDeleteGuestDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Guest</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete "{guestToDelete?.name}"? This will also remove all their game signups. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteGuest} className="bg-red-600 hover:bg-red-700">
+                Delete Guest
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Merge Guest Dialog */}
+        <Dialog open={mergeDialogOpen} onOpenChange={setMergeDialogOpen}>
+          <DialogContent className="max-w-md mx-2 sm:mx-auto">
+            <DialogHeader>
+              <DialogTitle className="text-base sm:text-lg">
+                Merge Guest into Player
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Alert>
+                <AlertDescription>
+                  <strong>Guest to merge:</strong> {guestToMerge?.name}
+                </AlertDescription>
+              </Alert>
+              
+              <div className="rounded-lg border bg-muted/50 p-4 space-y-2">
+                <p className="text-sm font-semibold">Preview of changes:</p>
+                <ul className="text-sm space-y-1 text-muted-foreground">
+                  <li>• {guestToMerge?.signupsCount || 0} game signup(s) will be transferred</li>
+                  <li>• £{guestToMerge?.credit.toFixed(2)} credit will be transferred to player's profile</li>
+                  <li>• Guest "{guestToMerge?.name}" will be deleted</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Select Player to merge into:</Label>
+                <Select value={selectedMergePlayer} onValueChange={setSelectedMergePlayer}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a player" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {players.map((player) => (
+                      <SelectItem key={player.id} value={player.id}>
+                        {player.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setMergeDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleMergeGuest}
+                  disabled={!selectedMergePlayer}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  <GitMerge className="h-4 w-4 mr-2" />
+                  Merge Guest
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Player-User Connection Dialog */}
         <Dialog open={isClaimDialogOpen} onOpenChange={setIsClaimDialogOpen}>
