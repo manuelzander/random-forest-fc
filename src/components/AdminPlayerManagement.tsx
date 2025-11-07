@@ -901,10 +901,7 @@ const AdminPlayerManagement = () => {
         {/* Guest Management Section */}
         <div className="mt-8 pt-8 border-t">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-            <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
-              <UserCog className="h-4 w-4 sm:h-5 sm:w-5" />
-              Guests ({guests.length})
-            </h3>
+            <h3 className="text-base sm:text-lg font-semibold">Guests ({guests.length})</h3>
           </div>
 
           <div className="space-y-2">
@@ -918,19 +915,31 @@ const AdminPlayerManagement = () => {
                   </Avatar>
                   <div className="min-w-0 flex-1">
                     <h4 className="font-semibold text-sm sm:text-base truncate">{guest.name}</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {guest.signupsCount || 0} signups
+                    </p>
+                    {guest.phone && (
+                      <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                        Phone: {guest.phone}
+                      </p>
+                    )}
                     <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
                       <p>
-                        Signups: <span className="font-medium">{guest.signupsCount || 0}</span>
+                        Debt: <span className="font-medium text-destructive">£0.00</span>
                       </p>
                       <p>
                         Credit: <span className="font-medium text-green-600">£{guest.credit.toFixed(2)}</span>
                       </p>
-                    </div>
-                    {guest.phone && (
-                      <p className="text-xs text-muted-foreground truncate">
-                        Phone: {guest.phone}
+                      <p>
+                        Net: <span className={`font-bold ${
+                          guest.credit >= 0 
+                            ? 'text-green-600' 
+                            : 'text-red-600'
+                        }`}>
+                          £{guest.credit.toFixed(2)}
+                        </span>
                       </p>
-                    )}
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-center gap-1 sm:gap-2 flex-shrink-0">
