@@ -10,7 +10,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Player {
@@ -1100,35 +1101,94 @@ const AdminPlayerManagement = () => {
             </DialogHeader>
             <div className="space-y-4">
               <Alert>
-                <AlertDescription>
-                  <strong>Guest to merge:</strong> {guestToMerge?.name}
+                <AlertDescription className="space-y-1">
+                  <div><strong>Guest to merge:</strong> {guestToMerge?.name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {guestToMerge?.signupsCount || 0} signups • £{guestToMerge?.debt.toFixed(2)} debt • £{guestToMerge?.credit.toFixed(2)} credit
+                  </div>
                 </AlertDescription>
               </Alert>
-              
-              <div className="rounded-lg border bg-muted/50 p-4 space-y-2">
-                <p className="text-sm font-semibold">Preview of changes:</p>
-                <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• {guestToMerge?.signupsCount || 0} game signup(s) will be transferred</li>
-                  <li>• £{guestToMerge?.credit.toFixed(2)} credit will be transferred to player's profile</li>
-                  <li>• Guest "{guestToMerge?.name}" will be deleted</li>
-                </ul>
-              </div>
 
               <div className="space-y-2">
                 <Label>Select Player to merge into:</Label>
                 <Select value={selectedMergePlayer} onValueChange={setSelectedMergePlayer}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a player" />
+                    <SelectValue placeholder="Search and select a player..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {players.map((player) => (
-                      <SelectItem key={player.id} value={player.id}>
-                        {player.name}
-                      </SelectItem>
-                    ))}
+                    {players
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((player) => {
+                        const profile = getProfileByUserId(player.user_id);
+                        return (
+                          <SelectItem key={player.id} value={player.id}>
+                            <div className="flex items-center justify-between gap-2">
+                              <span>{player.name}</span>
+                              {!player.user_id && (
+                                <Badge variant="outline" className="text-xs ml-2">No Profile</Badge>
+                              )}
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
                   </SelectContent>
                 </Select>
               </div>
+              
+              {selectedMergePlayer && guestToMerge && (() => {
+                const targetPlayer = players.find(p => p.id === selectedMergePlayer);
+                const newCredit = (targetPlayer?.credit || 0) + guestToMerge.credit;
+                const newDebt = (targetPlayer?.debt || 0) + guestToMerge.debt;
+                const newNetBalance = newCredit - newDebt;
+                
+                return (
+                  <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+                    <p className="text-sm font-semibold">Merge Preview:</p>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Game signups:</span>
+                        <span className="font-medium">+{guestToMerge.signupsCount || 0}</span>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Debt transfer:</span>
+                        <span className="font-medium text-red-600">+£{guestToMerge.debt.toFixed(2)}</span>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Credit transfer:</span>
+                        <span className="font-medium text-green-600">+£{guestToMerge.credit.toFixed(2)}</span>
+                      </div>
+                      
+                      <div className="pt-2 border-t">
+                        <div className="flex justify-between font-semibold">
+                          <span>Player's new balance:</span>
+                          <span className={newNetBalance >= 0 ? 'text-green-600' : 'text-red-600'}>
+                            £{Math.abs(newNetBalance).toFixed(2)} {newNetBalance >= 0 ? 'credit' : 'owed'}
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          (Debt: £{newDebt.toFixed(2)} - Credit: £{newCredit.toFixed(2)})
+                        </div>
+                      </div>
+                    </div>
+
+                    {!targetPlayer?.user_id && guestToMerge.credit > 0 && (
+                      <Alert className="py-2">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription className="text-xs">
+                          Player has no profile. Credit (£{guestToMerge.credit.toFixed(2)}) cannot be transferred. Connect player to a user first or credit will be lost.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    
+                    <p className="text-xs text-muted-foreground pt-2 border-t">
+                      After merge, guest "{guestToMerge.name}" will be permanently deleted.
+                    </p>
+                  </div>
+                );
+              })()}
 
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setMergeDialogOpen(false)}>
@@ -1140,7 +1200,7 @@ const AdminPlayerManagement = () => {
                   className="bg-primary hover:bg-primary/90"
                 >
                   <GitMerge className="h-4 w-4 mr-2" />
-                  Merge Guest
+                  Confirm Merge
                 </Button>
               </div>
             </div>
