@@ -13,6 +13,12 @@ serve(async (req) => {
   }
 
   try {
+    // Get the authorization header
+    const authHeader = req.headers.get('authorization')
+    if (!authHeader) {
+      throw new Error('Missing authorization header')
+    }
+
     const { playerName, playerId, imageToImage, baseImageData, favoriteClub } = await req.json()
     
     if (!playerName || !playerId) {
@@ -28,6 +34,29 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Verify the user's JWT token and get user
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    
+    if (authError || !user) {
+      throw new Error('Unauthorized: Invalid token')
+    }
+
+    // Verify that the player belongs to the authenticated user
+    const { data: player, error: playerError } = await supabase
+      .from('players')
+      .select('user_id')
+      .eq('id', playerId)
+      .single()
+
+    if (playerError || !player) {
+      throw new Error('Player not found')
+    }
+
+    if (player.user_id !== user.id) {
+      throw new Error('Unauthorized: You can only generate avatars for your own player')
+    }
 
     console.log(`Generating avatar for player: ${playerName}`, imageToImage ? 'with base image' : 'random', favoriteClub ? `for ${favoriteClub}` : '')
 
