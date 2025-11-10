@@ -46,6 +46,7 @@ interface Guest {
   notes?: string;
   created_at: string;
   signupsCount?: number;
+  debt: number;
 }
 
 const AdminPlayerManagement = () => {
@@ -245,25 +246,59 @@ const AdminPlayerManagement = () => {
 
       if (guestsError) throw guestsError;
 
-      // Fetch signups count for each guest
+      // Fetch scheduled games for debt calculation
+      const { data: scheduledGames, error: scheduledError } = await supabase
+        .from('games_schedule')
+        .select('*')
+        .order('scheduled_at', { ascending: false });
+
+      if (scheduledError) throw scheduledError;
+
+      // Fetch all signups for debt calculation
       const { data: signupsData, error: signupsError } = await supabase
         .from('games_schedule_signups')
-        .select('guest_id');
+        .select('*')
+        .order('signed_up_at', { ascending: true });
 
       if (signupsError) throw signupsError;
 
-      const signupsCounts = signupsData.reduce((acc, signup) => {
-        if (signup.guest_id) {
-          acc[signup.guest_id] = (acc[signup.guest_id] || 0) + 1;
-        }
-        return acc;
-      }, {} as Record<string, number>);
+      const TOTAL_GAME_COST = 93.6;
 
-      const formattedGuests = (guestsData || []).map(guest => ({
-        ...guest,
-        credit: Number(guest.credit || 0),
-        signupsCount: signupsCounts[guest.id] || 0
-      }));
+      const formattedGuests = (guestsData || []).map(guest => {
+        // Calculate debt from scheduled games
+        let debt = 0;
+        let signupsCount = 0;
+
+        scheduledGames?.forEach((game) => {
+          const gameSignups = (signupsData || []).filter(
+            (s: any) => s.game_schedule_id === game.id && s.guest_id === guest.id
+          );
+
+          const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+          const allGameSignups = (signupsData || []).filter(
+            (s: any) => s.game_schedule_id === game.id
+          );
+
+          gameSignups.forEach((signup: any) => {
+            signupsCount++;
+            const position = allGameSignups.findIndex((s: any) => s.id === signup.id) + 1;
+            const isWithinCapacity = position <= pitchCapacity;
+            const owesDebt = isWithinCapacity || signup.last_minute_dropout === true;
+
+            if (owesDebt) {
+              const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
+              debt += costPerPlayer;
+            }
+          });
+        });
+
+        return {
+          ...guest,
+          credit: Number(guest.credit || 0),
+          signupsCount,
+          debt
+        };
+      });
 
       setGuests(formattedGuests);
     } catch (error) {
@@ -925,18 +960,18 @@ const AdminPlayerManagement = () => {
                     )}
                     <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
                       <p>
-                        Debt: <span className="font-medium text-destructive">£0.00</span>
+                        Debt: <span className="font-medium text-destructive">£{guest.debt.toFixed(2)}</span>
                       </p>
                       <p>
                         Credit: <span className="font-medium text-green-600">£{guest.credit.toFixed(2)}</span>
                       </p>
                       <p>
                         Net: <span className={`font-bold ${
-                          guest.credit >= 0 
+                          (guest.credit - guest.debt) >= 0 
                             ? 'text-green-600' 
                             : 'text-red-600'
                         }`}>
-                          £{guest.credit.toFixed(2)}
+                          £{Math.abs(guest.credit - guest.debt).toFixed(2)}
                         </span>
                       </p>
                     </div>
