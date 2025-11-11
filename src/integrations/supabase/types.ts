@@ -367,6 +367,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      merge_guest_to_player: {
+        Args: { p_guest_id: string; p_player_id: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "user"

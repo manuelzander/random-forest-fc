@@ -641,52 +641,23 @@ const AdminPlayerManagement = () => {
     if (!guestToMerge || !selectedMergePlayer) return;
 
     try {
-      // Update all signups from guest to player
-      const { error: signupsError } = await supabase
-        .from('games_schedule_signups')
-        .update({ 
-          player_id: selectedMergePlayer,
-          guest_id: null,
-          is_guest: false,
-          guest_name: null
-        })
-        .eq('guest_id', guestToMerge.id);
+      // Use atomic RPC function for transaction safety
+      const { data, error } = await supabase.rpc('merge_guest_to_player', {
+        p_guest_id: guestToMerge.id,
+        p_player_id: selectedMergePlayer
+      });
 
-      if (signupsError) throw signupsError;
+      if (error) throw error;
 
-      // Transfer credit to player's profile
-      const { data: playerData } = await supabase
-        .from('players')
-        .select('user_id')
-        .eq('id', selectedMergePlayer)
-        .single();
-
-      if (playerData?.user_id && guestToMerge.credit > 0) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('credit')
-          .eq('user_id', playerData.user_id)
-          .single();
-
-        if (profileData) {
-          await supabase
-            .from('profiles')
-            .update({ credit: Number(profileData.credit || 0) + guestToMerge.credit })
-            .eq('user_id', playerData.user_id);
-        }
+      const result = data as { success: boolean; error?: string; signups_transferred?: number };
+      
+      if (!result?.success) {
+        throw new Error(result?.error || 'Merge failed');
       }
-
-      // Delete the guest
-      const { error: deleteError } = await supabase
-        .from('guests')
-        .delete()
-        .eq('id', guestToMerge.id);
-
-      if (deleteError) throw deleteError;
 
       toast({
         title: "Success",
-        description: `Guest "${guestToMerge.name}" merged into player successfully`,
+        description: `Guest "${guestToMerge.name}" merged into player successfully. ${result.signups_transferred || 0} signups transferred.`,
       });
 
       setMergeDialogOpen(false);
@@ -698,7 +669,7 @@ const AdminPlayerManagement = () => {
       console.error('Error merging guest:', error);
       toast({
         title: "Error",
-        description: "Failed to merge guest into player",
+        description: error instanceof Error ? error.message : "Failed to merge guest into player",
         variant: "destructive",
       });
     }
