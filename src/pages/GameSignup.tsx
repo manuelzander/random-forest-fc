@@ -473,28 +473,54 @@ const GameSignup = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {user ? <div className="space-y-3">
-                    {isSignedUp ? <div className="space-y-3">
-                        {isWithin24Hours && <Alert>
-                            <AlertTriangle className="h-4 w-4" />
-                            <AlertDescription>Game is within 24 hours. If you cancel, please ask for a replacement player.</AlertDescription>
-                          </Alert>}
-                        <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle className="h-5 w-5 text-green-600" />
-                            <span className="text-green-800 font-medium text-sm sm:text-base">You're signed up for this game!</span>
+                {user ? (() => {
+                    // Calculate user's position
+                    const userSignup = signups.find(signup => signup.player?.user_id === user.id);
+                    const userPosition = userSignup ? signups.findIndex(s => s.id === userSignup.id) + 1 : 0;
+                    const pitchCapacity = game?.pitch_size === 'small' ? 12 : 14;
+                    const isUserInTopPositions = userPosition > 0 && userPosition <= pitchCapacity;
+                    const isUserWaitlisted = userPosition > pitchCapacity;
+
+                    return <div className="space-y-3">
+                      {isSignedUp ? <div className="space-y-3">
+                          {/* Alert based on position */}
+                          {isWithin24Hours && isUserInTopPositions && <Alert>
+                              <AlertTriangle className="h-4 w-4" />
+                              <AlertDescription>
+                                You're in the playing lineup. If you cancel within 24 hours, you'll be marked as a dropout and still owe payment.
+                              </AlertDescription>
+                            </Alert>}
+                          
+                          {isWithin24Hours && isUserWaitlisted && <Alert className="border-green-200 bg-green-50">
+                              <AlertDescription className="text-green-800">
+                                You're on the waitlist. You can cancel anytime without penalty.
+                              </AlertDescription>
+                            </Alert>}
+                          
+                          <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="h-5 w-5 text-green-600" />
+                              <span className="text-green-800 font-medium text-sm sm:text-base">
+                                You're signed up for this game!
+                                {isUserWaitlisted && <Badge variant="outline" className="ml-2 text-xs">
+                                    Waitlist Position {userPosition - pitchCapacity}
+                                  </Badge>}
+                              </span>
+                            </div>
+                            
+                            {/* Confirmation checkbox only for top positions within 24h */}
+                            {isWithin24Hours && isUserInTopPositions && <div className="flex items-start gap-2 pt-2">
+                                <Checkbox id="confirm-replacement" checked={confirmReplacement} onCheckedChange={checked => setConfirmReplacement(checked as boolean)} />
+                                <label htmlFor="confirm-replacement" className="text-sm text-muted-foreground cursor-pointer leading-tight">
+                                  I confirm I will ask the group for a replacement player
+                                </label>
+                              </div>}
+                            
+                            <Button variant="outline" size="sm" onClick={removeSignup} disabled={isWithin24Hours && isUserInTopPositions && !confirmReplacement}>
+                              {isWithin24Hours && isUserInTopPositions ? "Cancel (Will Mark as Dropout)" : isUserWaitlisted ? "Remove from Waitlist" : "Cancel Signup"}
+                            </Button>
                           </div>
-                          {isWithin24Hours && <div className="flex items-start gap-2 pt-2">
-                              <Checkbox id="confirm-replacement" checked={confirmReplacement} onCheckedChange={checked => setConfirmReplacement(checked as boolean)} />
-                              <label htmlFor="confirm-replacement" className="text-sm text-muted-foreground cursor-pointer leading-tight">
-                                I confirm I will ask the group for a replacement player
-                              </label>
-                            </div>}
-                          <Button variant="outline" size="sm" onClick={removeSignup} disabled={isWithin24Hours && !confirmReplacement}>
-                            Cancel Signup
-                          </Button>
-                        </div>
-                      </div> : <div className="text-center space-y-3">
+                        </div> : <div className="text-center space-y-3">
                         <p className="text-muted-foreground text-sm">
                           Ready to play? Sign up now!
                         </p>
@@ -502,7 +528,8 @@ const GameSignup = () => {
                           {isSigningUp ? "Signing up..." : "Sign Me Up"}
                         </Button>
                       </div>}
-                  </div> : <div className="text-center space-y-4 p-6 bg-muted/30 rounded-lg">
+                  </div>;
+                })() : <div className="text-center space-y-4 p-6 bg-muted/30 rounded-lg">
                     <div className="space-y-2">
                       <h3 className="font-semibold text-lg">Have an account?</h3>
                       <p className="text-muted-foreground text-sm">
