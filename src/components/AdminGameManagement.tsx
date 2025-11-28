@@ -307,7 +307,7 @@ const AdminGameManagement = () => {
                   </div>
                 </div>
                 
-                <div className="flex sm:flex-col gap-2 justify-center sm:ml-4">
+                <div className="flex gap-2 flex-shrink-0 justify-center sm:ml-4">
                   <Button size="sm" variant="outline" onClick={() => openDialog(game)}>
                     <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>

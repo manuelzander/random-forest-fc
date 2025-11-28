@@ -412,7 +412,7 @@ const AdminScheduleManagement = () => {
           ) : (
             <div className="space-y-6">
               {scheduledGames.map((game) => (
-                <div key={game.id} className="border rounded-lg p-4 space-y-4">
+                <div key={game.id} className="border rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <div className="flex items-center justify-between">

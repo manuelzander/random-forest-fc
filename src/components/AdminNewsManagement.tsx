@@ -322,7 +322,7 @@ const AdminNewsManagement = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex sm:flex-col gap-2 justify-center sm:ml-4">
+                  <div className="flex gap-2 flex-shrink-0 justify-center sm:ml-4">
                     <Button
                       variant="outline"
                       size="sm"
