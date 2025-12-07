@@ -5,3 +5,6 @@ verify_jwt = true
 
 [functions.telegram-notify]
 verify_jwt = false
+
+[functions.check-low-signups]
+verify_jwt = false

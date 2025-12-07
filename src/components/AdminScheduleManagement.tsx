@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { sendTelegramNotification } from '@/utils/telegramNotify';
+import { sendTelegramNotification, sendNewGameNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 
 const AdminScheduleManagement = () => {
@@ -146,6 +146,12 @@ const AdminScheduleManagement = () => {
         .insert(gameData);
 
       if (error) throw error;
+
+      // Send Telegram notification for new game
+      sendNewGameNotification(
+        scheduledAt,
+        newPitchSize === 'none' ? null : newPitchSize
+      );
 
       toast({
         title: "Success",

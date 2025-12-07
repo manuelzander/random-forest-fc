@@ -6,7 +6,7 @@ const corsHeaders = {
 };
 
 interface NotificationPayload {
-  playerName: string;
+  playerName?: string;
   gameDate: string;
   signupCount: number;
   pitchSize: string | null;
@@ -16,6 +16,8 @@ interface NotificationPayload {
   isAdmin?: boolean;
   addedBy?: string;
   removedBy?: string;
+  // New notification types
+  type?: 'signup' | 'new_game' | 'low_signup_warning';
 }
 
 serve(async (req) => {
@@ -37,47 +39,70 @@ serve(async (req) => {
     }
 
     const payload: NotificationPayload = await req.json();
-    const { playerName, gameDate, signupCount, pitchSize, isRemoval, isDropout, isRejoin, isAdmin, addedBy, removedBy } = payload;
+    const { 
+      playerName, 
+      gameDate, 
+      signupCount, 
+      pitchSize, 
+      isRemoval, 
+      isDropout, 
+      isRejoin, 
+      isAdmin, 
+      addedBy, 
+      removedBy,
+      type = 'signup'
+    } = payload;
 
     console.log("Received notification request:", payload);
 
     // Calculate capacity based on pitch size
     const capacity = pitchSize === 'small' ? 12 : 14;
     
-    // Build the message based on action type
-    let emoji: string;
-    let action: string;
-    let suffix = '';
+    let message: string;
     
-    if (isRejoin) {
-      emoji = '🔄';
-      action = 're-joined';
-    } else if (isDropout) {
-      emoji = '⚠️';
-      action = 'dropped out from';
-    } else if (isRemoval) {
-      emoji = '❌';
-      action = 'left';
+    if (type === 'new_game') {
+      // New game scheduled notification
+      message = `📅 *New game scheduled!*\n🗓️ *${gameDate}*\n⚽ ${pitchSize === 'small' ? 'Small pitch (12 players)' : pitchSize === 'big' ? 'Big pitch (14 players)' : 'Pitch TBD'}\n\nSign up now!`;
+    } else if (type === 'low_signup_warning') {
+      // Low signup warning (24 hours before)
+      const spotsLeft = capacity - signupCount;
+      message = `⚠️ *Game tomorrow needs players!*\n🗓️ *${gameDate}*\n📊 Only ${signupCount}/${capacity} signed up\n🔴 ${spotsLeft} more players needed!\n\nSign up now to avoid cancellation!`;
     } else {
-      emoji = '✅';
-      action = 'signed up for';
+      // Regular signup/removal notification
+      let emoji: string;
+      let action: string;
+      let suffix = '';
+      
+      if (isRejoin) {
+        emoji = '🔄';
+        action = 're-joined';
+      } else if (isDropout) {
+        emoji = '⚠️';
+        action = 'dropped out from';
+      } else if (isRemoval) {
+        emoji = '❌';
+        action = 'left';
+      } else {
+        emoji = '✅';
+        action = 'signed up for';
+      }
+      
+      // Add context about who performed the action
+      if (isAdmin) {
+        suffix = ' _(by admin)_';
+      } else if (addedBy) {
+        suffix = ` _(added by ${addedBy})_`;
+      } else if (removedBy) {
+        suffix = ` _(removed by ${removedBy})_`;
+      }
+      
+      // Format the spots info
+      const spotsInfo = signupCount <= capacity 
+        ? `${signupCount}/${capacity} spots filled`
+        : `${capacity}/${capacity} + ${signupCount - capacity} waitlist`;
+      
+      message = `${emoji} *${playerName}* ${action} the game on *${gameDate}*${suffix}\n📊 ${spotsInfo}`;
     }
-    
-    // Add context about who performed the action
-    if (isAdmin) {
-      suffix = ' _(by admin)_';
-    } else if (addedBy) {
-      suffix = ` _(added by ${addedBy})_`;
-    } else if (removedBy) {
-      suffix = ` _(removed by ${removedBy})_`;
-    }
-    
-    // Format the spots info
-    const spotsInfo = signupCount <= capacity 
-      ? `${signupCount}/${capacity} spots filled`
-      : `${capacity}/${capacity} + ${signupCount - capacity} waitlist`;
-    
-    const message = `${emoji} *${playerName}* ${action} the game on *${gameDate}*${suffix}\n📊 ${spotsInfo}`;
 
     // Send message using Telegram Bot API directly
     const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
