@@ -751,13 +751,21 @@ const GameSignup = () => {
                           </div>
                          </div>
                          <div className="flex items-center gap-2 shrink-0">
-                           <span className="text-xs text-muted-foreground">
+                           <span className="text-xs text-muted-foreground hidden sm:inline">
                              {format(new Date(signup.signed_up_at), "MMM d")}
                            </span>
-                            {/* Show remove button for own signups or guest signups created by current user */}
-                            {user && !isLastMinuteDropout && (signup.player?.user_id === user.id || (signup.is_guest && signup.created_by_user_id === user.id)) && <Button variant="ghost" size="sm" onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()} className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive">
-                                <UserMinus className="h-3 w-3" />
-                              </Button>}
+                           {/* Show remove button for guest signups created by current user */}
+                           {user && !isLastMinuteDropout && signup.is_guest && signup.created_by_user_id === user.id && (
+                             <Button 
+                               variant="outline" 
+                               size="sm" 
+                               onClick={() => removeGuestSignup(signup.id)} 
+                               className="h-7 px-2 text-xs text-destructive border-destructive/50 hover:bg-destructive hover:text-destructive-foreground"
+                             >
+                               <UserMinus className="h-3 w-3 mr-1" />
+                               Remove
+                             </Button>
+                           )}
                          </div>
                       </div>;
               })}
