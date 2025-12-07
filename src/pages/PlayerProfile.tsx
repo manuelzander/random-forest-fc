@@ -379,20 +379,25 @@ const PlayerProfile = () => {
                  {profile?.bio && (
                    <p className="text-muted-foreground mb-3 text-sm sm:text-base">{profile.bio}</p>
                  )}
-                 {badges.length > 0 && (
-                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                      {badges.map((badge, index) => (
-                        <Badge key={index} className={`${
-                          badge.name === 'Verified Player' 
-                            ? 'bg-green-100 text-green-800 border-green-200' 
-                            : 'bg-yellow-100 text-yellow-800'
-                        } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap`}>
-                          {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
-                          <span className="hidden sm:inline">{badge.name}</span>
-                        </Badge>
-                      ))}
-                   </div>
-                 )}
+                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    {/* Guest badge for unclaimed players */}
+                    {!player.user_id && (
+                      <Badge className="bg-blue-100 text-blue-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                        <User className="h-3 w-3" />
+                        <span className="hidden sm:inline">Guest</span>
+                      </Badge>
+                    )}
+                    {badges.map((badge, index) => (
+                      <Badge key={index} className={`${
+                        badge.name === 'Verified Player' 
+                          ? 'bg-green-100 text-green-800 border-green-200' 
+                          : 'bg-yellow-100 text-yellow-800'
+                      } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap`}>
+                        {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
+                        <span className="hidden sm:inline">{badge.name}</span>
+                      </Badge>
+                    ))}
+                 </div>
               </div>
             </div>
           </CardContent>
