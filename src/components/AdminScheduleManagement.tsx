@@ -37,6 +37,7 @@ const AdminScheduleManagement = () => {
   const [editGameTime, setEditGameTime] = useState('');
   const [editPitchSize, setEditPitchSize] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [editDatePopoverOpen, setEditDatePopoverOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -720,7 +721,7 @@ const AdminScheduleManagement = () => {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Date</Label>
-              <Popover>
+              <Popover open={editDatePopoverOpen} onOpenChange={setEditDatePopoverOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -737,7 +738,10 @@ const AdminScheduleManagement = () => {
                   <Calendar
                     mode="single"
                     selected={editGameDate}
-                    onSelect={setEditGameDate}
+                    onSelect={(date) => {
+                      setEditGameDate(date);
+                      setEditDatePopoverOpen(false);
+                    }}
                     initialFocus
                     className="p-3 pointer-events-auto"
                   />
