@@ -440,17 +440,16 @@ const GameSignup = () => {
 
       // Determine guest's position in the signup list
       const signupPosition = signups.findIndex(s => s.id === signupId) + 1;
-      const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+      const pitchCapacity = game?.pitch_size === 'small' ? 12 : 14;
       const isInTopPositions = signupPosition <= pitchCapacity;
 
-      // Check if within 24 hours and in top positions - confirmation required
-      if (isWithin24Hours && isInTopPositions && !confirmReplacement) {
-        toast({
-          title: "Confirmation Required",
-          description: "Please confirm that you will ask the group for a replacement",
-          variant: "destructive"
-        });
-        return;
+      // For guests in top positions within 24h, show a browser confirm dialog
+      if (isWithin24Hours && isInTopPositions) {
+        const confirmed = window.confirm(
+          "This guest is in the playing lineup and it's within 24 hours of the game. " +
+          "They will be marked as a dropout and still owe payment. Continue?"
+        );
+        if (!confirmed) return;
       }
 
       // Only mark as dropout if within 24 hours AND in top 12/14 positions
