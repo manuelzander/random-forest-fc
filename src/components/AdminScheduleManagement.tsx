@@ -293,14 +293,33 @@ const AdminScheduleManagement = () => {
     }
   };
 
-  const removePlayerFromGame = async (signupId: string) => {
+  const removePlayerFromGame = async (signupId: string, gameId: string) => {
     try {
+      // Find the signup details before deleting
+      const gameSignups = signups[gameId] || [];
+      const signup = gameSignups.find(s => s.id === signupId);
+      const game = scheduledGames.find(g => g.id === gameId);
+      
       const { error } = await supabase
         .from('games_schedule_signups')
         .delete()
         .eq('id', signupId);
 
       if (error) throw error;
+
+      // Send Telegram notification
+      if (signup && game) {
+        const playerName = signup.is_guest 
+          ? `Guest: ${signup.guest?.name || signup.guest_name}` 
+          : signup.player?.name || 'Unknown';
+        sendTelegramNotification({
+          playerName,
+          gameDate: game.scheduled_at,
+          signupCount: gameSignups.length - 1,
+          pitchSize: game.pitch_size,
+          isRemoval: true,
+        });
+      }
 
       toast({
         title: "Success",
@@ -604,7 +623,7 @@ const AdminScheduleManagement = () => {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => removePlayerFromGame(signup.id)}
+                                  onClick={() => removePlayerFromGame(signup.id, game.id)}
                                 >
                                   <UserMinus className="h-4 w-4" />
                                 </Button>
