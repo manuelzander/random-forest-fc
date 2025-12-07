@@ -1,4 +1,3 @@
-import { Bot } from "https://deno.land/x/grammy@v1.21.1/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -38,8 +37,6 @@ serve(async (req) => {
 
     console.log("Received notification request:", payload);
 
-    const bot = new Bot(botToken);
-    
     // Calculate capacity based on pitch size
     const capacity = pitchSize === 'small' ? 12 : 14;
     
@@ -65,9 +62,31 @@ serve(async (req) => {
     
     const message = `${emoji} *${playerName}* ${action} the game on *${gameDate}*\n📊 ${spotsInfo}`;
 
-    await bot.api.sendMessage(chatId, message, { parse_mode: "Markdown" });
+    // Send message using Telegram Bot API directly
+    const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    const response = await fetch(telegramUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'Markdown',
+      }),
+    });
 
-    console.log("Telegram notification sent successfully");
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error("Telegram API error:", result);
+      return new Response(
+        JSON.stringify({ error: result.description || "Telegram API error" }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log("Telegram notification sent successfully:", result);
 
     return new Response(
       JSON.stringify({ success: true }),
