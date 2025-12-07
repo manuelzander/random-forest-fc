@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMinus, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { sendTelegramNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 const GameSignup = () => {
   const {
@@ -127,6 +128,16 @@ const GameSignup = () => {
         is_guest: false
       });
       if (error) throw error;
+      
+      // Send Telegram notification
+      const playerName = user.email?.split('@')[0] || 'Anonymous Player';
+      sendTelegramNotification({
+        playerName,
+        gameDate: game!.scheduled_at,
+        signupCount: signups.length + 1,
+        pitchSize: game!.pitch_size,
+      });
+      
       toast({
         title: "Success",
         description: "Successfully signed up for the game!"
@@ -253,6 +264,14 @@ const GameSignup = () => {
 
       console.log('Guest signup successful:', signupResult);
       
+      // Send Telegram notification
+      sendTelegramNotification({
+        playerName: `Guest: ${guestName}`,
+        gameDate: game!.scheduled_at,
+        signupCount: signups.length + 1,
+        pitchSize: game!.pitch_size,
+      });
+      
       toast({
         title: "Success",
         description: `${guestName} has been signed up for the game!`
@@ -302,6 +321,17 @@ const GameSignup = () => {
         
         if (error) throw error;
         
+        // Send Telegram notification for dropout
+        const playerName = userSignup.player?.name || user.email?.split('@')[0] || 'Unknown';
+        sendTelegramNotification({
+          playerName,
+          gameDate: game!.scheduled_at,
+          signupCount: signups.length,
+          pitchSize: game!.pitch_size,
+          isRemoval: true,
+          isDropout: true,
+        });
+        
         toast({
           title: "Marked as Last Minute Dropout",
           description: "You were in the top players and still owe payment for this game."
@@ -314,6 +344,16 @@ const GameSignup = () => {
           .eq('id', userSignup.id);
         
         if (error) throw error;
+        
+        // Send Telegram notification for removal
+        const playerName = userSignup.player?.name || user.email?.split('@')[0] || 'Unknown';
+        sendTelegramNotification({
+          playerName,
+          gameDate: game!.scheduled_at,
+          signupCount: signups.length - 1,
+          pitchSize: game!.pitch_size,
+          isRemoval: true,
+        });
         
         toast({
           title: "Success",
@@ -366,6 +406,17 @@ const GameSignup = () => {
         
         if (error) throw error;
         
+        // Send Telegram notification for guest dropout
+        const guestName = guestSignup.guest?.name || guestSignup.guest_name || 'Guest';
+        sendTelegramNotification({
+          playerName: `Guest: ${guestName}`,
+          gameDate: game!.scheduled_at,
+          signupCount: signups.length,
+          pitchSize: game!.pitch_size,
+          isRemoval: true,
+          isDropout: true,
+        });
+        
         toast({
           title: "Marked as Last Minute Dropout",
           description: "Guest was in the top players and still owes payment for this game."
@@ -378,6 +429,16 @@ const GameSignup = () => {
           .eq('id', signupId);
         
         if (error) throw error;
+        
+        // Send Telegram notification for guest removal
+        const guestName = guestSignup.guest?.name || guestSignup.guest_name || 'Guest';
+        sendTelegramNotification({
+          playerName: `Guest: ${guestName}`,
+          gameDate: game!.scheduled_at,
+          signupCount: signups.length - 1,
+          pitchSize: game!.pitch_size,
+          isRemoval: true,
+        });
         
         toast({
           title: "Success",

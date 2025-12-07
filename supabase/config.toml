@@ -2,3 +2,6 @@ project_id = "prnauaeqflapasesrnen"
 
 [functions.generate-avatar]
 verify_jwt = true
+
+[functions.telegram-notify]
+verify_jwt = false
