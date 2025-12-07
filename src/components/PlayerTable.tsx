@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle } from 'lucide-react';
+import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle, User } from 'lucide-react';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -268,10 +268,15 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                               {player.name}
                             </Button>
                           </Link>
-                            {(player as any).user_id && (
+                            {(player as any).user_id ? (
                                <Badge variant="secondary" className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
                                  <CheckCircle className="h-3 w-3 sm:mr-1" />
                                  <span className="hidden sm:inline">Verified</span>
+                               </Badge>
+                             ) : (
+                               <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                                 <User className="h-3 w-3 sm:mr-1" />
+                                 <span className="hidden sm:inline">Guest</span>
                                </Badge>
                              )}
                             {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
