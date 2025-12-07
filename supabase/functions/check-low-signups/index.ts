@@ -56,69 +56,124 @@ serve(async (req) => {
       );
     }
 
-    const warnings: string[] = [];
+    const notifications: string[] = [];
 
     for (const game of games) {
-      // Count signups for this game (excluding last_minute_dropout)
-      const { count, error: countError } = await supabase
+      // Fetch signups with player/guest details (excluding dropouts)
+      const { data: signups, error: signupsError } = await supabase
         .from('games_schedule_signups')
-        .select('*', { count: 'exact', head: true })
+        .select(`
+          id,
+          is_guest,
+          guest_name,
+          signed_up_at,
+          players:player_id (id, name),
+          guests:guest_id (id, name)
+        `)
         .eq('game_schedule_id', game.id)
-        .or('last_minute_dropout.is.null,last_minute_dropout.eq.false');
+        .or('last_minute_dropout.is.null,last_minute_dropout.eq.false')
+        .order('signed_up_at', { ascending: true });
 
-      if (countError) {
-        console.error(`Error counting signups for game ${game.id}:`, countError);
+      if (signupsError) {
+        console.error(`Error fetching signups for game ${game.id}:`, signupsError);
         continue;
       }
 
-      const signupCount = count || 0;
+      const signupCount = signups?.length || 0;
       const capacity = game.pitch_size === 'small' ? 12 : 14;
-      const minimumPlayers = Math.floor(capacity * 0.7); // 70% minimum (8 for small, 10 for big)
+      const isUnderCapacity = signupCount < capacity;
 
-      console.log(`Game ${game.id}: ${signupCount}/${capacity} signups (minimum: ${minimumPlayers})`);
+      console.log(`Game ${game.id}: ${signupCount}/${capacity} signups, under capacity: ${isUnderCapacity}`);
 
-      // Only send warning if below minimum threshold
-      if (signupCount < minimumPlayers) {
-        const gameDate = new Date(game.scheduled_at);
-        const formattedDate = gameDate.toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          year: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true
-        });
+      // Format game date
+      const gameDate = new Date(game.scheduled_at);
+      const formattedDate = gameDate.toLocaleDateString('en-US', { 
+        weekday: 'long',
+        month: 'short', 
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
 
-        const spotsLeft = capacity - signupCount;
-        const message = `⚠️ *Game tomorrow needs players!*\n🗓️ *${formattedDate}*\n📊 Only ${signupCount}/${capacity} signed up\n🔴 ${spotsLeft} more players needed!\n\nSign up now to avoid cancellation!`;
-
-        // Send Telegram notification
-        const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-        const response = await fetch(telegramUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: message,
-            parse_mode: 'Markdown',
-          }),
-        });
-
-        const result = await response.json();
-        
-        if (response.ok) {
-          console.log(`Warning sent for game ${game.id}`);
-          warnings.push(game.id);
+      // Build player list
+      const playerNames: string[] = [];
+      const waitlistNames: string[] = [];
+      
+      (signups || []).forEach((signup: any, index: number) => {
+        let name = '';
+        if (signup.is_guest) {
+          name = signup.guests?.name || signup.guest_name || 'Unknown Guest';
+          name = `👤 ${name} (guest)`;
         } else {
-          console.error(`Failed to send warning for game ${game.id}:`, result);
+          name = signup.players?.name || 'Unknown';
         }
+        
+        if (index < capacity) {
+          playerNames.push(`${index + 1}. ${name}`);
+        } else {
+          waitlistNames.push(`${index - capacity + 1}. ${name}`);
+        }
+      });
+
+      // Build message
+      let message: string;
+      const pitchInfo = game.pitch_size === 'small' ? 'Small pitch' : game.pitch_size === 'big' ? 'Big pitch' : 'Pitch TBD';
+      
+      if (isUnderCapacity) {
+        // Warning style - under capacity
+        const spotsNeeded = capacity - signupCount;
+        message = `⚠️ *TOMORROW'S GAME NEEDS PLAYERS!*\n`;
+        message += `🗓️ ${formattedDate}\n`;
+        message += `⚽ ${pitchInfo}\n`;
+        message += `📊 *${signupCount}/${capacity}* signed up\n`;
+        message += `🔴 *${spotsNeeded} more needed!*\n\n`;
+      } else {
+        // Normal style - at or over capacity
+        message = `📋 *Tomorrow's Game Summary*\n`;
+        message += `🗓️ ${formattedDate}\n`;
+        message += `⚽ ${pitchInfo}\n`;
+        message += `✅ *${signupCount >= capacity ? 'Full' : signupCount + '/' + capacity}*\n\n`;
+      }
+
+      // Add player list
+      if (playerNames.length > 0) {
+        message += `*Playing:*\n${playerNames.join('\n')}\n`;
+      } else {
+        message += `_No players signed up yet_\n`;
+      }
+
+      // Add waitlist if any
+      if (waitlistNames.length > 0) {
+        message += `\n*Waitlist:*\n${waitlistNames.join('\n')}`;
+      }
+
+      // Send Telegram notification
+      const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+      const response = await fetch(telegramUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: 'Markdown',
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        console.log(`Summary sent for game ${game.id}`);
+        notifications.push(game.id);
+      } else {
+        console.error(`Failed to send summary for game ${game.id}:`, result);
       }
     }
 
     return new Response(
       JSON.stringify({ 
-        message: `Checked ${games.length} games, sent ${warnings.length} warnings`,
-        warnings 
+        message: `Checked ${games.length} games, sent ${notifications.length} summaries`,
+        notifications 
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
