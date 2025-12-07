@@ -32,6 +32,8 @@ const GameSignup = () => {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [playerName, setPlayerName] = useState('');
   const [isSignedUp, setIsSignedUp] = useState(false);
+  const [isDropout, setIsDropout] = useState(false);
+  const [dropoutSignupId, setDropoutSignupId] = useState<string | null>(null);
   const [confirmReplacement, setConfirmReplacement] = useState(false);
   useEffect(() => {
     if (gameId) {
@@ -81,7 +83,21 @@ const GameSignup = () => {
       // Check if current user is already signed up
       if (user) {
         const userSignup = formattedSignups.find(signup => signup.player?.user_id === user.id);
-        setIsSignedUp(!!userSignup);
+        if (userSignup) {
+          if (userSignup.last_minute_dropout) {
+            setIsSignedUp(false);
+            setIsDropout(true);
+            setDropoutSignupId(userSignup.id);
+          } else {
+            setIsSignedUp(true);
+            setIsDropout(false);
+            setDropoutSignupId(null);
+          }
+        } else {
+          setIsSignedUp(false);
+          setIsDropout(false);
+          setDropoutSignupId(null);
+        }
       }
     } catch (error) {
       console.error('Error fetching game data:', error);
@@ -148,6 +164,79 @@ const GameSignup = () => {
       toast({
         title: "Error",
         description: "Failed to sign up for the game",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSigningUp(false);
+    }
+  };
+  
+  const rejoinAfterDropout = async () => {
+    if (!user || !gameId || !dropoutSignupId) return;
+    setIsSigningUp(true);
+    try {
+      // Delete the dropout record
+      const { error: deleteError } = await supabase
+        .from('games_schedule_signups')
+        .delete()
+        .eq('id', dropoutSignupId);
+      
+      if (deleteError) throw deleteError;
+
+      // Get or create player profile
+      let { data: existingPlayer } = await supabase
+        .from('players')
+        .select('id, name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      let playerId = existingPlayer?.id;
+      let playerName = existingPlayer?.name;
+
+      if (!playerId) {
+        const { data: newPlayer, error: createError } = await supabase
+          .from('players')
+          .insert({
+            name: user.email?.split('@')[0] || 'Anonymous Player',
+            user_id: user.id,
+            created_by: user.id
+          })
+          .select('id, name')
+          .single();
+        if (createError) throw createError;
+        playerId = newPlayer.id;
+        playerName = newPlayer.name;
+      }
+
+      // Create new signup (will be at the end of the list)
+      const { error } = await supabase
+        .from('games_schedule_signups')
+        .insert({
+          game_schedule_id: gameId,
+          player_id: playerId,
+          is_guest: false
+        });
+
+      if (error) throw error;
+      
+      // Send Telegram notification
+      sendTelegramNotification({
+        playerName: playerName || user.email?.split('@')[0] || 'Unknown',
+        gameDate: game!.scheduled_at,
+        signupCount: signups.filter(s => !s.last_minute_dropout).length + 1,
+        pitchSize: game!.pitch_size,
+      });
+      
+      toast({
+        title: "Welcome back!",
+        description: "You've rejoined the game. Note: You'll be added to the end of the list."
+      });
+      fetchGameData();
+    } catch (error) {
+      console.error('Error rejoining:', error);
+      toast({
+        title: "Error",
+        description: "Failed to rejoin the game",
         variant: "destructive"
       });
     } finally {
@@ -543,7 +632,23 @@ const GameSignup = () => {
                     const isUserWaitlisted = userPosition > pitchCapacity;
 
                     return <div className="space-y-3">
-                      {isSignedUp ? <div className="space-y-3">
+                      {isDropout ? (
+                        // Dropout state - show rejoin option
+                        <div className="flex flex-col gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-amber-600" />
+                            <span className="text-amber-800 font-medium text-sm sm:text-base">
+                              You dropped out of this game
+                            </span>
+                          </div>
+                          <p className="text-sm text-amber-700">
+                            You still owe payment for the spot you took. You can rejoin, but you'll be added to the end of the signup list.
+                          </p>
+                          <Button onClick={rejoinAfterDropout} disabled={isSigningUp} className="w-full">
+                            {isSigningUp ? "Rejoining..." : "Rejoin Game"}
+                          </Button>
+                        </div>
+                      ) : isSignedUp ? <div className="space-y-3">
                           {/* Alert based on position */}
                           {isWithin24Hours && isUserInTopPositions && <Alert>
                               <AlertTriangle className="h-4 w-4" />
