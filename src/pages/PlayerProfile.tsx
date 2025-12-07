@@ -380,6 +380,13 @@ const PlayerProfile = () => {
                    <p className="text-muted-foreground mb-3 text-sm sm:text-base">{profile.bio}</p>
                  )}
                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    {/* Verified badge for claimed players */}
+                    {player.user_id && (
+                      <Badge className="bg-green-100 text-green-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                        <CheckCircle className="h-3 w-3" />
+                        <span className="hidden sm:inline">Verified</span>
+                      </Badge>
+                    )}
                     {/* Guest badge for unclaimed players */}
                     {!player.user_id && (
                       <Badge className="bg-blue-100 text-blue-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
@@ -387,12 +394,8 @@ const PlayerProfile = () => {
                         <span className="hidden sm:inline">Guest</span>
                       </Badge>
                     )}
-                    {badges.map((badge, index) => (
-                      <Badge key={index} className={`${
-                        badge.name === 'Verified Player' 
-                          ? 'bg-green-100 text-green-800 border-green-200' 
-                          : 'bg-yellow-100 text-yellow-800'
-                      } flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap`}>
+                    {badges.filter(b => b.name !== 'Verified Player').map((badge, index) => (
+                      <Badge key={index} className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
                         {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
                         <span className="hidden sm:inline">{badge.name}</span>
                       </Badge>
