@@ -755,7 +755,7 @@ const GameSignup = () => {
                              {format(new Date(signup.signed_up_at), "MMM d")}
                            </span>
                             {/* Show remove button for own signups or guest signups created by current user */}
-                            {user && !isLastMinuteDropout && (signup.player?.user_id === user.id || signup.is_guest && signup.created_by_user_id === user.id) && <Button variant="ghost" size="sm" onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()} className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive">
+                            {user && !isLastMinuteDropout && (signup.player?.user_id === user.id || (signup.is_guest && signup.created_by_user_id === user.id)) && <Button variant="ghost" size="sm" onClick={() => signup.is_guest ? removeGuestSignup(signup.id) : removeSignup()} className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive">
                                 <UserMinus className="h-3 w-3" />
                               </Button>}
                          </div>
