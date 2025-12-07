@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMinus, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { sendTelegramNotification } from '@/utils/telegramNotify';
+import { sendTelegramNotification, sendGameFullNotification, sendWaitlistPromotedNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 const GameSignup = () => {
   const {
@@ -148,13 +148,21 @@ const GameSignup = () => {
       });
       if (error) throw error;
       
-      // Send Telegram notification
+      const newSignupCount = signups.length + 1;
+      const pitchCapacity = game!.pitch_size === 'small' ? 12 : 14;
+      
+      // Send regular signup notification
       sendTelegramNotification({
         playerName: playerName || 'Unknown',
         gameDate: game!.scheduled_at,
-        signupCount: signups.length + 1,
+        signupCount: newSignupCount,
         pitchSize: game!.pitch_size,
       });
+      
+      // Check if game just became full
+      if (newSignupCount === pitchCapacity) {
+        sendGameFullNotification(game!.scheduled_at, game!.pitch_size);
+      }
       
       toast({
         title: "Success",
@@ -324,6 +332,9 @@ const GameSignup = () => {
 
       console.log('Guest signup successful:', signupResult);
       
+      const newSignupCount = signups.length + 1;
+      const pitchCapacity = game!.pitch_size === 'small' ? 12 : 14;
+      
       // Get current user's player name for context
       const currentUserSignup = signups.find(s => s.player?.user_id === user?.id);
       const addedByName = currentUserSignup?.player?.name;
@@ -332,10 +343,15 @@ const GameSignup = () => {
       sendTelegramNotification({
         playerName: `Guest: ${guestName}`,
         gameDate: game!.scheduled_at,
-        signupCount: signups.length + 1,
+        signupCount: newSignupCount,
         pitchSize: game!.pitch_size,
         addedBy: addedByName,
       });
+      
+      // Check if game just became full
+      if (newSignupCount === pitchCapacity) {
+        sendGameFullNotification(game!.scheduled_at, game!.pitch_size);
+      }
       
       toast({
         title: "Success",
@@ -376,6 +392,10 @@ const GameSignup = () => {
         return;
       }
 
+      // Get the active signups (non-dropouts) for waitlist promotion check
+      const activeSignups = signups.filter(s => !s.last_minute_dropout);
+      const droppingPlayerName = userSignup.player?.name || user.email?.split('@')[0] || 'Unknown';
+
       // Only mark as dropout if within 24 hours AND in top 12/14 positions
       if (isWithin24Hours && isInTopPositions) {
         // Mark as dropout instead of deleting
@@ -387,15 +407,31 @@ const GameSignup = () => {
         if (error) throw error;
         
         // Send Telegram notification for dropout
-        const playerName = userSignup.player?.name || user.email?.split('@')[0] || 'Unknown';
         sendTelegramNotification({
-          playerName,
+          playerName: droppingPlayerName,
           gameDate: game!.scheduled_at,
           signupCount: signups.length,
           pitchSize: game!.pitch_size,
           isRemoval: true,
           isDropout: true,
         });
+        
+        // Check if there's a waitlist player who gets promoted
+        // Find the first waitlist player (position > capacity in active signups)
+        const waitlistPlayer = activeSignups[pitchCapacity];
+        if (waitlistPlayer && !waitlistPlayer.last_minute_dropout) {
+          const promotedName = waitlistPlayer.player?.name || 
+                               waitlistPlayer.guest?.name || 
+                               waitlistPlayer.guest_name || 
+                               'Unknown';
+          sendWaitlistPromotedNotification(
+            game!.scheduled_at,
+            activeSignups.length - 1, // After dropout
+            game!.pitch_size,
+            promotedName,
+            droppingPlayerName
+          );
+        }
         
         toast({
           title: "Marked as Last Minute Dropout",
@@ -410,10 +446,27 @@ const GameSignup = () => {
         
         if (error) throw error;
         
+        // Check if this removal promotes a waitlist player (only if removing from top positions)
+        if (isInTopPositions) {
+          const waitlistPlayer = activeSignups[pitchCapacity];
+          if (waitlistPlayer && !waitlistPlayer.last_minute_dropout) {
+            const promotedName = waitlistPlayer.player?.name || 
+                                 waitlistPlayer.guest?.name || 
+                                 waitlistPlayer.guest_name || 
+                                 'Unknown';
+            sendWaitlistPromotedNotification(
+              game!.scheduled_at,
+              activeSignups.length - 1, // After removal
+              game!.pitch_size,
+              promotedName,
+              droppingPlayerName
+            );
+          }
+        }
+        
         // Send Telegram notification for removal
-        const playerName = userSignup.player?.name || user.email?.split('@')[0] || 'Unknown';
         sendTelegramNotification({
-          playerName,
+          playerName: droppingPlayerName,
           gameDate: game!.scheduled_at,
           signupCount: signups.length - 1,
           pitchSize: game!.pitch_size,
@@ -460,6 +513,12 @@ const GameSignup = () => {
         if (!confirmed) return;
       }
 
+      // Get the active signups (non-dropouts) for waitlist promotion check
+      const activeSignups = signups.filter(s => !s.last_minute_dropout);
+      const guestName = guestSignup.guest?.name || guestSignup.guest_name || 'Guest';
+      const currentUserSignup = signups.find(s => s.player?.user_id === user?.id);
+      const removedByName = currentUserSignup?.player?.name;
+
       // Only mark as dropout if within 24 hours AND in top 12/14 positions
       if (isWithin24Hours && isInTopPositions) {
         // Mark as dropout instead of deleting
@@ -471,9 +530,6 @@ const GameSignup = () => {
         if (error) throw error;
         
         // Send Telegram notification for guest dropout
-        const guestName = guestSignup.guest?.name || guestSignup.guest_name || 'Guest';
-        const currentUserSignup = signups.find(s => s.player?.user_id === user?.id);
-        const removedByName = currentUserSignup?.player?.name;
         sendTelegramNotification({
           playerName: `Guest: ${guestName}`,
           gameDate: game!.scheduled_at,
@@ -483,6 +539,22 @@ const GameSignup = () => {
           isDropout: true,
           removedBy: removedByName,
         });
+        
+        // Check if there's a waitlist player who gets promoted
+        const waitlistPlayer = activeSignups[pitchCapacity];
+        if (waitlistPlayer && !waitlistPlayer.last_minute_dropout) {
+          const promotedName = waitlistPlayer.player?.name || 
+                               waitlistPlayer.guest?.name || 
+                               waitlistPlayer.guest_name || 
+                               'Unknown';
+          sendWaitlistPromotedNotification(
+            game!.scheduled_at,
+            activeSignups.length - 1,
+            game!.pitch_size,
+            promotedName,
+            `Guest: ${guestName}`
+          );
+        }
         
         toast({
           title: "Marked as Last Minute Dropout",
@@ -497,10 +569,25 @@ const GameSignup = () => {
         
         if (error) throw error;
         
+        // Check if this removal promotes a waitlist player (only if removing from top positions)
+        if (isInTopPositions) {
+          const waitlistPlayer = activeSignups[pitchCapacity];
+          if (waitlistPlayer && !waitlistPlayer.last_minute_dropout) {
+            const promotedName = waitlistPlayer.player?.name || 
+                                 waitlistPlayer.guest?.name || 
+                                 waitlistPlayer.guest_name || 
+                                 'Unknown';
+            sendWaitlistPromotedNotification(
+              game!.scheduled_at,
+              activeSignups.length - 1,
+              game!.pitch_size,
+              promotedName,
+              `Guest: ${guestName}`
+            );
+          }
+        }
+        
         // Send Telegram notification for guest removal
-        const guestName = guestSignup.guest?.name || guestSignup.guest_name || 'Guest';
-        const currentUserSignup = signups.find(s => s.player?.user_id === user?.id);
-        const removedByName = currentUserSignup?.player?.name;
         sendTelegramNotification({
           playerName: `Guest: ${guestName}`,
           gameDate: game!.scheduled_at,

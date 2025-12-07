@@ -16,8 +16,11 @@ interface NotificationPayload {
   isAdmin?: boolean;
   addedBy?: string;
   removedBy?: string;
-  // New notification types
-  type?: 'signup' | 'new_game' | 'low_signup_warning';
+  // Notification types
+  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted';
+  // For waitlist promotion
+  promotedPlayerName?: string;
+  droppedPlayerName?: string;
 }
 
 serve(async (req) => {
@@ -67,6 +70,13 @@ serve(async (req) => {
       // Low signup warning (24 hours before)
       const spotsLeft = capacity - signupCount;
       message = `⚠️ *Game tomorrow needs players!*\n🗓️ *${gameDate}*\n📊 Only ${signupCount}/${capacity} signed up\n🔴 ${spotsLeft} more players needed!\n\nSign up now to avoid cancellation!`;
+    } else if (type === 'game_full') {
+      // Game reached capacity
+      message = `🎉 *Game is now FULL!*\n🗓️ *${gameDate}*\n✅ ${capacity}/${capacity} players signed up\n\nAny new signups will be on the waitlist.`;
+    } else if (type === 'waitlist_promoted') {
+      // Waitlist player promoted to main roster
+      const { promotedPlayerName, droppedPlayerName } = payload;
+      message = `📢 *Spot opened up!*\n🗓️ *${gameDate}*\n\n🆙 *${promotedPlayerName}* moved from waitlist to the main roster${droppedPlayerName ? `\n👋 (${droppedPlayerName} dropped out)` : ''}\n📊 ${signupCount}/${capacity} spots filled`;
     } else {
       // Regular signup/removal notification
       let emoji: string;

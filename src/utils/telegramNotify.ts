@@ -12,7 +12,9 @@ interface NotifyParams {
   isAdmin?: boolean;
   addedBy?: string;
   removedBy?: string;
-  type?: 'signup' | 'new_game' | 'low_signup_warning';
+  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted';
+  promotedPlayerName?: string;
+  droppedPlayerName?: string;
 }
 
 export const sendTelegramNotification = async ({
@@ -27,6 +29,8 @@ export const sendTelegramNotification = async ({
   addedBy,
   removedBy,
   type = 'signup',
+  promotedPlayerName,
+  droppedPlayerName,
 }: NotifyParams): Promise<void> => {
   try {
     const formattedDate = format(
@@ -47,6 +51,8 @@ export const sendTelegramNotification = async ({
         addedBy,
         removedBy,
         type,
+        promotedPlayerName,
+        droppedPlayerName,
       },
     });
 
@@ -83,5 +89,37 @@ export const sendLowSignupWarning = async (
     signupCount,
     pitchSize,
     type: 'low_signup_warning',
+  });
+};
+
+// Convenience function for game full notification
+export const sendGameFullNotification = async (
+  gameDate: Date | string,
+  pitchSize: string | null
+): Promise<void> => {
+  const capacity = pitchSize === 'small' ? 12 : 14;
+  return sendTelegramNotification({
+    gameDate,
+    signupCount: capacity,
+    pitchSize,
+    type: 'game_full',
+  });
+};
+
+// Convenience function for waitlist promotion
+export const sendWaitlistPromotedNotification = async (
+  gameDate: Date | string,
+  signupCount: number,
+  pitchSize: string | null,
+  promotedPlayerName: string,
+  droppedPlayerName?: string
+): Promise<void> => {
+  return sendTelegramNotification({
+    gameDate,
+    signupCount,
+    pitchSize,
+    type: 'waitlist_promoted',
+    promotedPlayerName,
+    droppedPlayerName,
   });
 };
