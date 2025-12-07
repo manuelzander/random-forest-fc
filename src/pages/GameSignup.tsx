@@ -118,21 +118,24 @@ const GameSignup = () => {
       let {
         data: existingPlayer,
         error: playerError
-      } = await supabase.from('players').select('id').eq('user_id', user.id).maybeSingle();
+      } = await supabase.from('players').select('id, name').eq('user_id', user.id).maybeSingle();
       let playerId = existingPlayer?.id;
+      let playerName = existingPlayer?.name;
 
       // If no claimed player exists, create one
       if (!playerId) {
+        const newPlayerName = user.email?.split('@')[0] || 'Anonymous Player';
         const {
           data: newPlayer,
           error: createError
         } = await supabase.from('players').insert({
-          name: user.email?.split('@')[0] || 'Anonymous Player',
+          name: newPlayerName,
           user_id: user.id,
           created_by: user.id
-        }).select('id').single();
+        }).select('id, name').single();
         if (createError) throw createError;
         playerId = newPlayer.id;
+        playerName = newPlayer.name;
       }
 
       // Sign up for the game
@@ -146,9 +149,8 @@ const GameSignup = () => {
       if (error) throw error;
       
       // Send Telegram notification
-      const playerName = user.email?.split('@')[0] || 'Anonymous Player';
       sendTelegramNotification({
-        playerName,
+        playerName: playerName || 'Unknown',
         gameDate: game!.scheduled_at,
         signupCount: signups.length + 1,
         pitchSize: game!.pitch_size,
