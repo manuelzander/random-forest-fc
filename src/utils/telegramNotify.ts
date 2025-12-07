@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 
 interface NotifyParams {
-  playerName: string;
+  playerName?: string;
   gameDate: Date | string;
   signupCount: number;
   pitchSize: string | null;
@@ -10,8 +10,9 @@ interface NotifyParams {
   isDropout?: boolean;
   isRejoin?: boolean;
   isAdmin?: boolean;
-  addedBy?: string; // Name of player who added a guest
-  removedBy?: string; // Name of player who removed a guest
+  addedBy?: string;
+  removedBy?: string;
+  type?: 'signup' | 'new_game' | 'low_signup_warning';
 }
 
 export const sendTelegramNotification = async ({
@@ -25,6 +26,7 @@ export const sendTelegramNotification = async ({
   isAdmin = false,
   addedBy,
   removedBy,
+  type = 'signup',
 }: NotifyParams): Promise<void> => {
   try {
     const formattedDate = format(
@@ -44,6 +46,7 @@ export const sendTelegramNotification = async ({
         isAdmin,
         addedBy,
         removedBy,
+        type,
       },
     });
 
@@ -54,4 +57,31 @@ export const sendTelegramNotification = async ({
     console.error('Telegram notification error:', error);
     // Don't throw - notifications shouldn't block the main flow
   }
+};
+
+// Convenience function for new game notifications
+export const sendNewGameNotification = async (
+  gameDate: Date | string,
+  pitchSize: string | null
+): Promise<void> => {
+  return sendTelegramNotification({
+    gameDate,
+    signupCount: 0,
+    pitchSize,
+    type: 'new_game',
+  });
+};
+
+// Convenience function for low signup warning
+export const sendLowSignupWarning = async (
+  gameDate: Date | string,
+  signupCount: number,
+  pitchSize: string | null
+): Promise<void> => {
+  return sendTelegramNotification({
+    gameDate,
+    signupCount,
+    pitchSize,
+    type: 'low_signup_warning',
+  });
 };
