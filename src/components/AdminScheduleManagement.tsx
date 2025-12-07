@@ -10,9 +10,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle } from 'lucide-react';
+import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { sendTelegramNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
@@ -29,6 +30,13 @@ const AdminScheduleManagement = () => {
   const [newGameTime, setNewGameTime] = useState('');
   const [newPitchSize, setNewPitchSize] = useState<string>('');
   const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
+  
+  // Edit game state
+  const [editingGame, setEditingGame] = useState<ScheduledGame | null>(null);
+  const [editGameDate, setEditGameDate] = useState<Date>();
+  const [editGameTime, setEditGameTime] = useState('');
+  const [editPitchSize, setEditPitchSize] = useState<string>('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -156,6 +164,52 @@ const AdminScheduleManagement = () => {
       });
     } finally {
       setIsCreating(false);
+    }
+  };
+
+  const openEditDialog = (game: ScheduledGame) => {
+    const gameDate = new Date(game.scheduled_at);
+    setEditingGame(game);
+    setEditGameDate(gameDate);
+    setEditGameTime(format(gameDate, 'HH:mm'));
+    setEditPitchSize(game.pitch_size || 'none');
+  };
+
+  const updateScheduledGame = async () => {
+    if (!editingGame || !editGameDate || !editGameTime) return;
+
+    setIsUpdating(true);
+    try {
+      const scheduledAt = new Date(editGameDate);
+      const [hours, minutes] = editGameTime.split(':');
+      scheduledAt.setHours(parseInt(hours), parseInt(minutes));
+
+      const { error } = await supabase
+        .from('games_schedule')
+        .update({
+          scheduled_at: scheduledAt.toISOString(),
+          pitch_size: editPitchSize === 'none' ? null : editPitchSize
+        })
+        .eq('id', editingGame.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Game updated successfully",
+      });
+
+      setEditingGame(null);
+      fetchData();
+    } catch (error) {
+      console.error('Error updating scheduled game:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update game",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -495,6 +549,14 @@ const AdminScheduleManagement = () => {
                         <span className="sm:hidden">Copy URL</span>
                       </Button>
                       <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openEditDialog(game)}
+                        className="flex-none"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
                         variant="destructive"
                         size="sm"
                         onClick={() => deleteScheduledGame(game.id)}
@@ -648,6 +710,74 @@ const AdminScheduleManagement = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Game Dialog */}
+      <Dialog open={!!editingGame} onOpenChange={(open) => !open && setEditingGame(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Scheduled Game</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !editGameDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {editGameDate ? format(editGameDate, "PPP") : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={editGameDate}
+                    onSelect={setEditGameDate}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Time</Label>
+              <Input
+                type="time"
+                value={editGameTime}
+                onChange={(e) => setEditGameTime(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Pitch Size</Label>
+              <Select value={editPitchSize} onValueChange={setEditPitchSize}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select pitch size" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border shadow-lg z-50">
+                  <SelectItem value="none">No preference</SelectItem>
+                  <SelectItem value="small">Small pitch</SelectItem>
+                  <SelectItem value="big">Big pitch</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingGame(null)}>
+              Cancel
+            </Button>
+            <Button onClick={updateScheduledGame} disabled={!editGameDate || !editGameTime || isUpdating}>
+              {isUpdating ? "Saving..." : "Save Changes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
