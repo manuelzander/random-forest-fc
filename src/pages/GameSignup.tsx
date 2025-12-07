@@ -175,53 +175,21 @@ const GameSignup = () => {
     if (!user || !gameId || !dropoutSignupId) return;
     setIsSigningUp(true);
     try {
-      // Delete the dropout record
-      const { error: deleteError } = await supabase
-        .from('games_schedule_signups')
-        .delete()
-        .eq('id', dropoutSignupId);
-      
-      if (deleteError) throw deleteError;
-
-      // Get or create player profile
-      let { data: existingPlayer } = await supabase
-        .from('players')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      let playerId = existingPlayer?.id;
-      let playerName = existingPlayer?.name;
-
-      if (!playerId) {
-        const { data: newPlayer, error: createError } = await supabase
-          .from('players')
-          .insert({
-            name: user.email?.split('@')[0] || 'Anonymous Player',
-            user_id: user.id,
-            created_by: user.id
-          })
-          .select('id, name')
-          .single();
-        if (createError) throw createError;
-        playerId = newPlayer.id;
-        playerName = newPlayer.name;
-      }
-
-      // Create new signup (will be at the end of the list)
+      // Just clear the dropout flag - keep the original slot
       const { error } = await supabase
         .from('games_schedule_signups')
-        .insert({
-          game_schedule_id: gameId,
-          player_id: playerId,
-          is_guest: false
-        });
-
+        .update({ last_minute_dropout: false })
+        .eq('id', dropoutSignupId);
+      
       if (error) throw error;
+
+      // Get player name for notification
+      const userSignup = signups.find(s => s.id === dropoutSignupId);
+      const playerName = userSignup?.player?.name || user.email?.split('@')[0] || 'Unknown';
       
       // Send Telegram notification
       sendTelegramNotification({
-        playerName: playerName || user.email?.split('@')[0] || 'Unknown',
+        playerName,
         gameDate: game!.scheduled_at,
         signupCount: signups.filter(s => !s.last_minute_dropout).length + 1,
         pitchSize: game!.pitch_size,
@@ -229,7 +197,7 @@ const GameSignup = () => {
       
       toast({
         title: "Welcome back!",
-        description: "You've rejoined the game. Note: You'll be added to the end of the list."
+        description: "You've rejoined the game in your original slot."
       });
       fetchGameData();
     } catch (error) {
@@ -642,7 +610,7 @@ const GameSignup = () => {
                             </span>
                           </div>
                           <p className="text-sm text-amber-700">
-                            You still owe payment for the spot you took. You can rejoin, but you'll be added to the end of the signup list.
+                            You still owe payment for the spot. Click rejoin to reclaim your original position.
                           </p>
                           <Button onClick={rejoinAfterDropout} disabled={isSigningUp} className="w-full">
                             {isSigningUp ? "Rejoining..." : "Rejoin Game"}
