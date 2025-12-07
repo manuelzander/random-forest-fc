@@ -187,12 +187,13 @@ const GameSignup = () => {
       const userSignup = signups.find(s => s.id === dropoutSignupId);
       const playerName = userSignup?.player?.name || user.email?.split('@')[0] || 'Unknown';
       
-      // Send Telegram notification
+      // Send Telegram notification for rejoin
       sendTelegramNotification({
         playerName,
         gameDate: game!.scheduled_at,
         signupCount: signups.filter(s => !s.last_minute_dropout).length + 1,
         pitchSize: game!.pitch_size,
+        isRejoin: true,
       });
       
       toast({
@@ -321,12 +322,17 @@ const GameSignup = () => {
 
       console.log('Guest signup successful:', signupResult);
       
+      // Get current user's player name for context
+      const currentUserSignup = signups.find(s => s.player?.user_id === user?.id);
+      const addedByName = currentUserSignup?.player?.name;
+      
       // Send Telegram notification
       sendTelegramNotification({
         playerName: `Guest: ${guestName}`,
         gameDate: game!.scheduled_at,
         signupCount: signups.length + 1,
         pitchSize: game!.pitch_size,
+        addedBy: addedByName,
       });
       
       toast({
@@ -464,6 +470,8 @@ const GameSignup = () => {
         
         // Send Telegram notification for guest dropout
         const guestName = guestSignup.guest?.name || guestSignup.guest_name || 'Guest';
+        const currentUserSignup = signups.find(s => s.player?.user_id === user?.id);
+        const removedByName = currentUserSignup?.player?.name;
         sendTelegramNotification({
           playerName: `Guest: ${guestName}`,
           gameDate: game!.scheduled_at,
@@ -471,6 +479,7 @@ const GameSignup = () => {
           pitchSize: game!.pitch_size,
           isRemoval: true,
           isDropout: true,
+          removedBy: removedByName,
         });
         
         toast({
@@ -488,12 +497,15 @@ const GameSignup = () => {
         
         // Send Telegram notification for guest removal
         const guestName = guestSignup.guest?.name || guestSignup.guest_name || 'Guest';
+        const currentUserSignup = signups.find(s => s.player?.user_id === user?.id);
+        const removedByName = currentUserSignup?.player?.name;
         sendTelegramNotification({
           playerName: `Guest: ${guestName}`,
           gameDate: game!.scheduled_at,
           signupCount: signups.length - 1,
           pitchSize: game!.pitch_size,
           isRemoval: true,
+          removedBy: removedByName,
         });
         
         toast({

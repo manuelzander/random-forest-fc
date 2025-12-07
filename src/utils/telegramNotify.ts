@@ -8,6 +8,10 @@ interface NotifyParams {
   pitchSize: string | null;
   isRemoval?: boolean;
   isDropout?: boolean;
+  isRejoin?: boolean;
+  isAdmin?: boolean;
+  addedBy?: string; // Name of player who added a guest
+  removedBy?: string; // Name of player who removed a guest
 }
 
 export const sendTelegramNotification = async ({
@@ -17,6 +21,10 @@ export const sendTelegramNotification = async ({
   pitchSize,
   isRemoval = false,
   isDropout = false,
+  isRejoin = false,
+  isAdmin = false,
+  addedBy,
+  removedBy,
 }: NotifyParams): Promise<void> => {
   try {
     const formattedDate = format(
@@ -32,6 +40,10 @@ export const sendTelegramNotification = async ({
         pitchSize,
         isRemoval,
         isDropout,
+        isRejoin,
+        isAdmin,
+        addedBy,
+        removedBy,
       },
     });
 

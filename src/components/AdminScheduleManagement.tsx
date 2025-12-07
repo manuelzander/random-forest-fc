@@ -196,7 +196,7 @@ const AdminScheduleManagement = () => {
 
       if (error) throw error;
 
-      // Send Telegram notification
+      // Send Telegram notification (admin action)
       const player = players.find(p => p.id === playerId);
       const game = scheduledGames.find(g => g.id === gameId);
       if (player && game) {
@@ -205,6 +205,7 @@ const AdminScheduleManagement = () => {
           gameDate: game.scheduled_at,
           signupCount: (signups[gameId]?.length || 0) + 1,
           pitchSize: game.pitch_size,
+          isAdmin: true,
         });
       }
 
@@ -264,7 +265,7 @@ const AdminScheduleManagement = () => {
 
       if (error) throw error;
 
-      // Send Telegram notification
+      // Send Telegram notification (admin action)
       const game = scheduledGames.find(g => g.id === gameId);
       if (game) {
         sendTelegramNotification({
@@ -272,6 +273,7 @@ const AdminScheduleManagement = () => {
           gameDate: game.scheduled_at,
           signupCount: (signups[gameId]?.length || 0) + 1,
           pitchSize: game.pitch_size,
+          isAdmin: true,
         });
       }
 
@@ -307,7 +309,7 @@ const AdminScheduleManagement = () => {
 
       if (error) throw error;
 
-      // Send Telegram notification
+      // Send Telegram notification (admin action)
       if (signup && game) {
         const playerName = signup.is_guest 
           ? `Guest: ${signup.guest?.name || signup.guest_name}` 
@@ -318,6 +320,7 @@ const AdminScheduleManagement = () => {
           signupCount: gameSignups.length - 1,
           pitchSize: game.pitch_size,
           isRemoval: true,
+          isAdmin: true,
         });
       }
 
