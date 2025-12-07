@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { sendTelegramNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 
 const AdminScheduleManagement = () => {
@@ -195,6 +196,18 @@ const AdminScheduleManagement = () => {
 
       if (error) throw error;
 
+      // Send Telegram notification
+      const player = players.find(p => p.id === playerId);
+      const game = scheduledGames.find(g => g.id === gameId);
+      if (player && game) {
+        sendTelegramNotification({
+          playerName: player.name,
+          gameDate: game.scheduled_at,
+          signupCount: (signups[gameId]?.length || 0) + 1,
+          pitchSize: game.pitch_size,
+        });
+      }
+
       toast({
         title: "Success",
         description: "Player added to game",
@@ -250,6 +263,17 @@ const AdminScheduleManagement = () => {
         });
 
       if (error) throw error;
+
+      // Send Telegram notification
+      const game = scheduledGames.find(g => g.id === gameId);
+      if (game) {
+        sendTelegramNotification({
+          playerName: `Guest: ${trimmedName}`,
+          gameDate: game.scheduled_at,
+          signupCount: (signups[gameId]?.length || 0) + 1,
+          pitchSize: game.pitch_size,
+        });
+      }
 
       toast({
         title: "Success",
