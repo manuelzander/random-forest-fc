@@ -125,9 +125,8 @@ const AdminDebtManagement = () => {
           const position = index + 1;
           const isWithinCapacity = position <= pitchCapacity;
           
-          // Only top 12/14 players (by signup position) owe debt
-          // Dropouts stay in their position and pay, waitlist players who move up don't pay
-          const owesDebt = position <= pitchCapacity;
+          // Players owe debt if they're within capacity OR if they dropped out last minute
+          const owesDebt = isWithinCapacity || signup.last_minute_dropout === true;
 
           if (owesDebt) {
           const isGuest = signup.is_guest || false;
