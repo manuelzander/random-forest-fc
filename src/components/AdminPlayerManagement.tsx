@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { calculatePlayerDebt, calculateGuestDebt, type GameScheduleForDebt, type SignupForDebt } from '@/utils/debtCalculation';
 
 interface Player {
   id: string;
@@ -161,31 +162,19 @@ const AdminPlayerManagement = () => {
         });
       }
 
-      // Calculate debt from scheduled games
-      let debt = 0;
-      const TOTAL_GAME_COST = 93.6;
-
-      scheduledGames?.forEach((game) => {
-        const gameSignups = (signupsData || []).filter(
-          (s: any) => s.game_schedule_id === game.id && s.player_id === player.id
-        );
-
-        const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
-        const allGameSignups = (signupsData || []).filter(
-          (s: any) => s.game_schedule_id === game.id
-        );
-
-        gameSignups.forEach((signup: any) => {
-          const position = allGameSignups.findIndex((s: any) => s.id === signup.id) + 1;
-          const isWithinCapacity = position <= pitchCapacity;
-          const owesDebt = isWithinCapacity || signup.last_minute_dropout === true;
-
-          if (owesDebt) {
-            const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
-            debt += costPerPlayer;
-          }
-        });
-      });
+      // Calculate debt using shared logic
+      const gamesForDebt: GameScheduleForDebt[] = (scheduledGames || []).map(g => ({
+        id: g.id,
+        pitch_size: g.pitch_size
+      }));
+      const signupsForDebt: SignupForDebt[] = (signupsData || []).map((s: any) => ({
+        id: s.id,
+        game_schedule_id: s.game_schedule_id,
+        player_id: s.player_id,
+        guest_id: s.guest_id,
+        signed_up_at: s.signed_up_at
+      }));
+      const debt = calculatePlayerDebt(player.id, gamesForDebt, signupsForDebt);
       
       // Get credit from profile
       const playerProfile = profilesData?.find(p => p.user_id === player.user_id);
@@ -263,35 +252,25 @@ const AdminPlayerManagement = () => {
 
       if (signupsError) throw signupsError;
 
-      const TOTAL_GAME_COST = 93.6;
+      // Prepare data for shared debt calculation
+      const gamesForDebt: GameScheduleForDebt[] = (scheduledGames || []).map(g => ({
+        id: g.id,
+        pitch_size: g.pitch_size
+      }));
+      const signupsForDebt: SignupForDebt[] = (signupsData || []).map((s: any) => ({
+        id: s.id,
+        game_schedule_id: s.game_schedule_id,
+        player_id: s.player_id,
+        guest_id: s.guest_id,
+        signed_up_at: s.signed_up_at
+      }));
 
       const formattedGuests = (guestsData || []).map(guest => {
-        // Calculate debt from scheduled games
-        let debt = 0;
-        let signupsCount = 0;
-
-        scheduledGames?.forEach((game) => {
-          const gameSignups = (signupsData || []).filter(
-            (s: any) => s.game_schedule_id === game.id && s.guest_id === guest.id
-          );
-
-          const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
-          const allGameSignups = (signupsData || []).filter(
-            (s: any) => s.game_schedule_id === game.id
-          );
-
-          gameSignups.forEach((signup: any) => {
-            signupsCount++;
-            const position = allGameSignups.findIndex((s: any) => s.id === signup.id) + 1;
-            const isWithinCapacity = position <= pitchCapacity;
-            const owesDebt = isWithinCapacity || signup.last_minute_dropout === true;
-
-            if (owesDebt) {
-              const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
-              debt += costPerPlayer;
-            }
-          });
-        });
+        // Calculate debt using shared logic
+        const debt = calculateGuestDebt(guest.id, gamesForDebt, signupsForDebt);
+        
+        // Count signups for this guest
+        const signupsCount = signupsForDebt.filter(s => s.guest_id === guest.id).length;
 
         return {
           ...guest,
