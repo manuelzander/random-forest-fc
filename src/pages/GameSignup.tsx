@@ -848,6 +848,10 @@ const GameSignup = () => {
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Guest</span>
                               </Badge>}
+                            {!signup.is_guest && !signup.player?.user_id && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                                <User className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Unverified</span>
+                              </Badge>}
                           </div>
                          </div>
                          <div className="flex items-center gap-2 shrink-0">
