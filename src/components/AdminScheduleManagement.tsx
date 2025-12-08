@@ -678,10 +678,16 @@ const AdminScheduleManagement = () => {
                                            <span className="hidden sm:inline">Verified</span>
                                          </Badge>
                                        )}
-                                       {(signup.is_guest || (!signup.player?.user_id && !isLastMinuteDropout)) && (
+                                       {signup.is_guest && !isLastMinuteDropout && (
                                          <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
                                            <User className="h-3 w-3 mr-1" />
                                            <span className="hidden sm:inline">Guest</span>
+                                         </Badge>
+                                       )}
+                                       {!signup.is_guest && !signup.player?.user_id && !isLastMinuteDropout && (
+                                         <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                                           <User className="h-3 w-3 mr-1" />
+                                           <span className="hidden sm:inline">Unverified</span>
                                          </Badge>
                                        )}
                                     </div>

@@ -387,11 +387,11 @@ const PlayerProfile = () => {
                         <span className="hidden sm:inline">Verified</span>
                       </Badge>
                     )}
-                    {/* Guest badge for unclaimed players */}
+                    {/* Unverified badge for unclaimed players */}
                     {!player.user_id && (
-                      <Badge className="bg-blue-100 text-blue-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge className="bg-orange-100 text-orange-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
                         <User className="h-3 w-3" />
-                        <span className="hidden sm:inline">Guest</span>
+                        <span className="hidden sm:inline">Unverified</span>
                       </Badge>
                     )}
                     {badges.filter(b => b.name !== 'Verified Player').map((badge, index) => (
