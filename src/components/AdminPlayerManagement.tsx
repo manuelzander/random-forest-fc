@@ -262,15 +262,20 @@ const AdminPlayerManagement = () => {
         game_schedule_id: s.game_schedule_id,
         player_id: s.player_id,
         guest_id: s.guest_id,
+        guest_name: s.guest_name,
         signed_up_at: s.signed_up_at
       }));
 
       const formattedGuests = (guestsData || []).map(guest => {
-        // Calculate debt using shared logic
-        const debt = calculateGuestDebt(guest.id, gamesForDebt, signupsForDebt);
+        // Calculate debt using shared logic - pass guest name for fallback matching
+        const debt = calculateGuestDebt(guest.id, gamesForDebt, signupsForDebt, guest.name);
         
-        // Count signups for this guest
-        const signupsCount = signupsForDebt.filter(s => s.guest_id === guest.id).length;
+        // Count signups for this guest (by guest_id or by name)
+        const normalizedName = guest.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const signupsCount = signupsForDebt.filter(s => 
+          s.guest_id === guest.id || 
+          (!s.guest_id && s.guest_name && s.guest_name.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedName)
+        ).length;
 
         return {
           ...guest,
