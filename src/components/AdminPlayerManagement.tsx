@@ -795,12 +795,25 @@ const AdminPlayerManagement = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <Link 
-                      to={`/player/${player.id}`} 
-                      className="hover:text-primary transition-colors"
-                    >
-                      <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link 
+                        to={`/player/${player.id}`} 
+                        className="hover:text-primary transition-colors"
+                      >
+                        <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
+                      </Link>
+                      {player.user_id ? (
+                        <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                          <UserCheck className="h-3 w-3 mr-1" />
+                          <span className="hidden sm:inline">Verified</span>
+                        </Badge>
+                      ) : (
+                        <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                          <AlertTriangle className="h-3 w-3 mr-1" />
+                          <span className="hidden sm:inline">Unverified</span>
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-xs sm:text-sm text-muted-foreground">
                       {player.games_played} games played
                     </p>
@@ -905,7 +918,13 @@ const AdminPlayerManagement = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <h4 className="font-semibold text-sm sm:text-base truncate">{guest.name}</h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-semibold text-sm sm:text-base truncate">{guest.name}</h4>
+                      <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                        <Users className="h-3 w-3 mr-1" />
+                        <span className="hidden sm:inline">Guest</span>
+                      </Badge>
+                    </div>
                     <p className="text-xs sm:text-sm text-muted-foreground">
                       {guest.signupsCount || 0} signups
                     </p>
