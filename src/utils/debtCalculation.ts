@@ -10,6 +10,7 @@ export interface SignupForDebt {
   game_schedule_id: string;
   player_id: string | null;
   guest_id: string | null;
+  guest_name?: string | null;
   signed_up_at: string;
 }
 
@@ -49,15 +50,25 @@ export function calculatePlayerDebt(
 }
 
 /**
+ * Helper to normalize guest names for matching
+ */
+function normalizeGuestName(name?: string | null): string {
+  return (name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/**
  * Calculate debt for a guest across all scheduled games.
+ * Matches by guest_id first, then by guest_name if guest_id is null.
  * Only the top 12 (small pitch) or 14 (big pitch) signups by position owe payment.
  */
 export function calculateGuestDebt(
   guestId: string,
   scheduledGames: GameScheduleForDebt[],
-  allSignups: SignupForDebt[]
+  allSignups: SignupForDebt[],
+  guestName?: string
 ): number {
   let debt = 0;
+  const normalizedName = guestName ? normalizeGuestName(guestName) : '';
 
   scheduledGames.forEach((game) => {
     const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
@@ -68,8 +79,16 @@ export function calculateGuestDebt(
       .filter((s) => s.game_schedule_id === game.id)
       .sort((a, b) => new Date(a.signed_up_at).getTime() - new Date(b.signed_up_at).getTime());
 
-    // Find the guest's signup position
-    const guestSignupIndex = gameSignups.findIndex((s) => s.guest_id === guestId);
+    // Find the guest's signup position - match by guest_id OR by guest_name
+    const guestSignupIndex = gameSignups.findIndex((s) => {
+      // Match by guest_id if available
+      if (s.guest_id === guestId) return true;
+      // Match by normalized guest_name if guest_id is null and we have a name to match
+      if (!s.guest_id && normalizedName && normalizeGuestName(s.guest_name) === normalizedName) {
+        return true;
+      }
+      return false;
+    });
     
     if (guestSignupIndex !== -1) {
       const position = guestSignupIndex + 1;
