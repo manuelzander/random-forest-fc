@@ -14,6 +14,7 @@ import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import ProfileSkillsEditor from '@/components/ProfileSkillsEditor';
 import AccountDetailsEditor from '@/components/AccountDetailsEditor';
 import { Player } from '@/types';
+import { calculatePlayerDebt, GameScheduleForDebt, SignupForDebt } from '@/utils/debtCalculation';
 
 interface StreamlinedProfileProps {
   user: any;
@@ -137,31 +138,20 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           });
         }
 
-        // Calculate debt from scheduled games
-        let debt = 0;
-        const TOTAL_GAME_COST = 93.6;
-
-        scheduledGames?.forEach((game) => {
-          const gameSignups = (signupsData || []).filter(
-            (s: any) => s.game_schedule_id === game.id && s.player_id === player.id
-          );
-
-          const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
-          const allGameSignups = (signupsData || []).filter(
-            (s: any) => s.game_schedule_id === game.id
-          );
-
-          gameSignups.forEach((signup: any) => {
-            const position = allGameSignups.findIndex((s: any) => s.id === signup.id) + 1;
-            const isWithinCapacity = position <= pitchCapacity;
-            const owesDebt = isWithinCapacity || signup.last_minute_dropout === true;
-
-            if (owesDebt) {
-              const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
-              debt += costPerPlayer;
-            }
-          });
-        });
+        // Calculate debt using shared logic
+        const gamesForDebt: GameScheduleForDebt[] = (scheduledGames || []).map(g => ({
+          id: g.id,
+          pitch_size: g.pitch_size
+        }));
+        const signupsForDebt: SignupForDebt[] = (signupsData || []).map((s: any) => ({
+          id: s.id,
+          game_schedule_id: s.game_schedule_id,
+          player_id: s.player_id,
+          guest_id: s.guest_id,
+          guest_name: s.guest_name,
+          signed_up_at: s.signed_up_at
+        }));
+        const debt = calculatePlayerDebt(player.id, gamesForDebt, signupsForDebt);
         
         return {
           id: player.id,
