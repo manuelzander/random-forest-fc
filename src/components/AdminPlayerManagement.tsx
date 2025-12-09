@@ -779,8 +779,7 @@ const AdminPlayerManagement = () => {
 
       if (insertError) throw insertError;
 
-      // Update all orphaned signups with this guest_name to link to new guest_id
-      const normalizedName = orphan.guest_name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      // Update all orphaned signups to link to new guest_id
       const { error: updateError } = await supabase
         .from('games_schedule_signups')
         .update({ guest_id: newGuest.id })
@@ -1430,8 +1429,14 @@ const AdminPlayerManagement = () => {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Guest</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete "{guestToDelete?.name}"? This will also remove all their game signups. This action cannot be undone.
+              <AlertDialogDescription className="space-y-2">
+                <span className="block">Are you sure you want to delete "{guestToDelete?.name}"?</span>
+                {(guestToDelete?.signupsCount || 0) > 0 && (
+                  <span className="block text-orange-600 font-medium">
+                    ⚠️ This guest has {guestToDelete?.signupsCount} signup(s) which will become orphaned.
+                  </span>
+                )}
+                <span className="block">This action cannot be undone.</span>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
