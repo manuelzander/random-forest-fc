@@ -27,9 +27,20 @@ const AdminScheduleManagement = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-  const [newGameDate, setNewGameDate] = useState<Date>();
+  
+  // Calculate next Tuesday
+  const getNextTuesday = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const daysUntilTuesday = (2 - dayOfWeek + 7) % 7 || 7; // 2 = Tuesday, ensure at least 1 day ahead
+    const nextTuesday = new Date(today);
+    nextTuesday.setDate(today.getDate() + daysUntilTuesday);
+    return nextTuesday;
+  };
+  
+  const [newGameDate, setNewGameDate] = useState<Date>(getNextTuesday());
   const [newGameTime, setNewGameTime] = useState('18:15');
-  const [newPitchSize, setNewPitchSize] = useState<string>('');
+  const [newPitchSize, setNewPitchSize] = useState<string>('small');
   const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
   
   // Edit game state
