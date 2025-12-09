@@ -17,6 +17,7 @@ import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, Use
 import { cn } from '@/lib/utils';
 import { sendTelegramNotification, sendNewGameNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
+import GuestNameAutocomplete from './GuestNameAutocomplete';
 
 const AdminScheduleManagement = () => {
   const { user } = useAuth();
@@ -613,12 +614,11 @@ const AdminScheduleManagement = () => {
                       <div className="space-y-2">
                         <Label className="text-sm font-medium text-muted-foreground">Add Guest</Label>
                         <div className="flex gap-2">
-                          <Input
-                            placeholder="Guest name"
+                          <GuestNameAutocomplete
                             value={newPlayerNames[game.id] || ''}
-                            onChange={(e) => setNewPlayerNames(prev => ({ ...prev, [game.id]: e.target.value }))}
+                            onChange={(value) => setNewPlayerNames(prev => ({ ...prev, [game.id]: value }))}
                             onKeyPress={(e) => e.key === 'Enter' && addGuestToGame(game.id, newPlayerNames[game.id] || '')}
-                            className="flex-1"
+                            gameId={game.id}
                           />
                           <Button
                             variant="outline"

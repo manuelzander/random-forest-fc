@@ -4,7 +4,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,6 +13,7 @@ import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMin
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { sendTelegramNotification, sendGameFullNotification, sendWaitlistPromotedNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
+import GuestNameAutocomplete from '@/components/GuestNameAutocomplete';
 const GameSignup = () => {
   const {
     gameId
@@ -792,7 +792,14 @@ const GameSignup = () => {
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <Label htmlFor="guestName" className="sr-only">Guest Name</Label>
-                        <Input id="guestName" placeholder="Enter your name" value={playerName} onChange={e => setPlayerName(e.target.value)} onKeyPress={e => e.key === 'Enter' && signUpAsGuest()} className="text-sm" />
+                        <GuestNameAutocomplete
+                          value={playerName}
+                          onChange={setPlayerName}
+                          onKeyPress={e => e.key === 'Enter' && signUpAsGuest()}
+                          placeholder="Enter your name"
+                          className="text-sm"
+                          gameId={gameId}
+                        />
                       </div>
                       <Button onClick={signUpAsGuest} disabled={!playerName.trim() || isSigningUp} size="sm" variant="outline">
                         Join as Guest
