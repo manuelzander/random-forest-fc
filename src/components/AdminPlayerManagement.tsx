@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { calculatePlayerDebt, calculateGuestDebt, type GameScheduleForDebt, type SignupForDebt } from '@/utils/debtCalculation';
 
@@ -717,6 +717,54 @@ const AdminPlayerManagement = () => {
     }
   };
 
+  const [creatingPlayerFromGuest, setCreatingPlayerFromGuest] = useState<string | null>(null);
+
+  const handleCreatePlayerFromGuest = async (guest: Guest) => {
+    try {
+      setCreatingPlayerFromGuest(guest.id);
+
+      // Create new player with the guest's name
+      const { data: newPlayer, error: playerError } = await supabase
+        .from('players')
+        .insert({ name: guest.name })
+        .select()
+        .single();
+
+      if (playerError) throw playerError;
+
+      // Use atomic RPC function to merge guest into the new player
+      const { data, error } = await supabase.rpc('merge_guest_to_player', {
+        p_guest_id: guest.id,
+        p_player_id: newPlayer.id
+      });
+
+      if (error) throw error;
+
+      const result = data as { success: boolean; error?: string; signups_transferred?: number; credit_transferred?: number };
+      
+      if (!result?.success) {
+        throw new Error(result?.error || 'Merge failed');
+      }
+
+      toast({
+        title: "Player created",
+        description: `Created player "${guest.name}" from guest. ${result.signups_transferred || 0} signups and £${(result.credit_transferred || 0).toFixed(2)} credit transferred.`,
+      });
+
+      fetchGuests();
+      fetchPlayers();
+    } catch (error) {
+      console.error('Error creating player from guest:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create player from guest",
+        variant: "destructive",
+      });
+    } finally {
+      setCreatingPlayerFromGuest(null);
+    }
+  };
+
   // Orphan actions
   const handleCreateGuestFromOrphan = async (orphan: OrphanedGuestSignup) => {
     try {
@@ -1133,14 +1181,28 @@ const AdminPlayerManagement = () => {
                       setEditingGuest(guest);
                       setIsGuestDialogOpen(true);
                     }}
+                    title="Edit guest"
                   >
                     <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                   <Button 
                     size="sm" 
                     variant="outline" 
+                    onClick={() => handleCreatePlayerFromGuest(guest)}
+                    disabled={creatingPlayerFromGuest === guest.id}
+                    title="Create player from guest"
+                  >
+                    {creatingPlayerFromGuest === guest.id ? (
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                    ) : (
+                      <UserPlus className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
                     onClick={() => openMergeDialog(guest)}
-                    title="Merge into Player"
+                    title="Merge into existing player"
                   >
                     <GitMerge className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
@@ -1148,6 +1210,7 @@ const AdminPlayerManagement = () => {
                     size="sm" 
                     variant="outline" 
                     onClick={() => openDeleteGuestDialog(guest)}
+                    title="Delete guest"
                   >
                     <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
