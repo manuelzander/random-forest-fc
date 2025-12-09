@@ -55,6 +55,7 @@ interface OrphanedGuestSignup {
   guest_name: string;
   signupsCount: number;
   gameScheduleIds: string[];
+  debt: number;
 }
 
 const AdminPlayerManagement = () => {
@@ -298,7 +299,7 @@ const AdminPlayerManagement = () => {
       });
 
       // Find orphaned guest signups (is_guest=true, guest_id=null, guest_name not matching any guest)
-      const orphanedMap = new Map<string, { count: number; gameScheduleIds: string[]; originalName: string }>();
+      const orphanedMap = new Map<string, { count: number; gameScheduleIds: string[]; originalName: string; signupIds: string[] }>();
       (signupsData || []).forEach((s: any) => {
         if (s.is_guest && !s.guest_id && s.guest_name) {
           const normalizedName = s.guest_name.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -307,6 +308,7 @@ const AdminPlayerManagement = () => {
             const existing = orphanedMap.get(normalizedName);
             if (existing) {
               existing.count++;
+              existing.signupIds.push(s.id);
               if (!existing.gameScheduleIds.includes(s.game_schedule_id)) {
                 existing.gameScheduleIds.push(s.game_schedule_id);
               }
@@ -314,18 +316,24 @@ const AdminPlayerManagement = () => {
               orphanedMap.set(normalizedName, {
                 count: 1,
                 gameScheduleIds: [s.game_schedule_id],
-                originalName: s.guest_name
+                originalName: s.guest_name,
+                signupIds: [s.id]
               });
             }
           }
         }
       });
 
-      const orphanedList: OrphanedGuestSignup[] = Array.from(orphanedMap.entries()).map(([_, data]) => ({
-        guest_name: data.originalName,
-        signupsCount: data.count,
-        gameScheduleIds: data.gameScheduleIds
-      }));
+      const orphanedList: OrphanedGuestSignup[] = Array.from(orphanedMap.entries()).map(([normalizedName, data]) => {
+        // Calculate debt for this orphaned guest using the shared logic with guest_name fallback
+        const debt = calculateGuestDebt('orphaned-placeholder', gamesForDebt, signupsForDebt, data.originalName);
+        return {
+          guest_name: data.originalName,
+          signupsCount: data.count,
+          gameScheduleIds: data.gameScheduleIds,
+          debt
+        };
+      });
 
       setGuests(formattedGuests);
       setOrphanedSignups(orphanedList);
@@ -1041,10 +1049,9 @@ const AdminPlayerManagement = () => {
           {/* Orphaned Guest Signups */}
           {orphanedSignups.length > 0 && (
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-orange-600 mb-3 flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
+              <h3 className="text-base sm:text-lg font-semibold text-orange-600 mb-2">
                 Orphaned Guest Signups ({orphanedSignups.length})
-              </h4>
+              </h3>
               <p className="text-xs text-muted-foreground mb-3">
                 These signups have no linked guest record. Create a guest or merge them with an existing player.
               </p>
@@ -1052,8 +1059,8 @@ const AdminPlayerManagement = () => {
                 {orphanedSignups.map((orphan) => (
                   <div key={orphan.guest_name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-orange-200 bg-orange-50/50 rounded-lg">
                     <div className="flex items-center gap-3 flex-1">
-                      <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 bg-orange-100">
-                        <AvatarFallback className="text-orange-700">
+                      <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 bg-orange-100">
+                        <AvatarFallback className="text-orange-700 text-lg">
                           {orphan.guest_name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -1068,6 +1075,17 @@ const AdminPlayerManagement = () => {
                         <p className="text-xs sm:text-sm text-muted-foreground">
                           {orphan.signupsCount} signup{orphan.signupsCount !== 1 ? 's' : ''}
                         </p>
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
+                          <p>
+                            Debt: <span className="font-medium text-destructive">£{orphan.debt.toFixed(2)}</span>
+                          </p>
+                          <p>
+                            Credit: <span className="font-medium text-green-600">£0.00</span>
+                          </p>
+                          <p>
+                            Net: <span className="font-bold text-red-600">£{orphan.debt.toFixed(2)}</span>
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
