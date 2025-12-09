@@ -1078,9 +1078,6 @@ const AdminPlayerManagement = () => {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
             <h3 className="text-base sm:text-lg font-semibold">
               Guests ({guests.length})
-              {orphanedSignups.length > 0 && (
-                <span className="text-orange-600 ml-2">+ {orphanedSignups.length} orphaned</span>
-              )}
             </h3>
           </div>
 
