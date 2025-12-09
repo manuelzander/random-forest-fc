@@ -1053,7 +1053,7 @@ const AdminPlayerManagement = () => {
             return (
               <div key={player.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
                 <div className="flex items-center gap-3 flex-1">
-                  <Avatar key={`${player.id}-${player.avatar_url}`} className="h-14 w-14 sm:h-16 sm:w-16 flex-shrink-0">
+                  <Avatar key={`${player.id}-${player.avatar_url}`} className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0">
                     <AvatarImage src={player.avatar_url || undefined} />
                     <AvatarFallback>
                       {player.name.substring(0, 2).toUpperCase()}
@@ -1179,7 +1179,7 @@ const AdminPlayerManagement = () => {
             {guests.map((guest) => (
               <div key={guest.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
                 <div className="flex items-center gap-3 flex-1">
-                  <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 bg-muted">
+                  <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 bg-muted">
                     <AvatarFallback>
                       {guest.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
