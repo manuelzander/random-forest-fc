@@ -17,12 +17,20 @@ interface NotificationPayload {
   addedBy?: string;
   removedBy?: string;
   // Notification types
-  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted';
+  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted' | 'game_result';
   // For waitlist promotion
   promotedPlayerName?: string;
   droppedPlayerName?: string;
   // For new game notification
   signupUrl?: string;
+  // For game result notification
+  team1Goals?: number;
+  team2Goals?: number;
+  team1Players?: string[];
+  team2Players?: string[];
+  team1Captain?: string;
+  team2Captain?: string;
+  mvpPlayerName?: string;
 }
 
 serve(async (req) => {
@@ -65,7 +73,43 @@ serve(async (req) => {
     
     let message: string;
     
-    if (type === 'new_game') {
+    if (type === 'game_result') {
+      // Game result notification
+      const { team1Goals, team2Goals, team1Players, team2Players, team1Captain, team2Captain, mvpPlayerName } = payload;
+      
+      const team1Count = team1Players?.length || 0;
+      const team2Count = team2Players?.length || 0;
+      
+      // Determine winner
+      let resultEmoji = '🤝'; // Draw
+      let resultText = 'Draw!';
+      if ((team1Goals || 0) > (team2Goals || 0)) {
+        resultEmoji = '🏆';
+        resultText = 'Team 1 wins!';
+      } else if ((team2Goals || 0) > (team1Goals || 0)) {
+        resultEmoji = '🏆';
+        resultText = 'Team 2 wins!';
+      }
+      
+      // Build team lists
+      const team1List = team1Players?.map(p => {
+        let name = p;
+        if (team1Captain && p === team1Captain) name += ' (C)';
+        if (mvpPlayerName && p === mvpPlayerName) name += ' 👑';
+        return name;
+      }).join(', ') || 'Unknown';
+      
+      const team2List = team2Players?.map(p => {
+        let name = p;
+        if (team2Captain && p === team2Captain) name += ' (C)';
+        if (mvpPlayerName && p === mvpPlayerName) name += ' 👑';
+        return name;
+      }).join(', ') || 'Unknown';
+      
+      const mvpLine = mvpPlayerName ? `\n👑 *MVP:* ${mvpPlayerName}` : '';
+      
+      message = `⚽ *Game Result Added!*\n\n${resultEmoji} *${resultText}*\n\n🔵 *Team 1* (${team1Count}): ${team1Goals || 0}\n${team1List}\n\n🔴 *Team 2* (${team2Count}): ${team2Goals || 0}\n${team2List}${mvpLine}`;
+    } else if (type === 'new_game') {
       // New game scheduled notification
       const { signupUrl } = payload;
       const urlLine = signupUrl ? `\n\n🔗 [Sign up here](${signupUrl})` : '\n\nSign up now!';
