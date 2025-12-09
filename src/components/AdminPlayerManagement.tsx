@@ -806,6 +806,53 @@ const AdminPlayerManagement = () => {
     }
   };
 
+  const [creatingPlayerFromOrphan, setCreatingPlayerFromOrphan] = useState<string | null>(null);
+
+  const handleCreatePlayerFromOrphan = async (orphan: OrphanedGuestSignup) => {
+    try {
+      setCreatingPlayerFromOrphan(orphan.guest_name);
+
+      // Create new player with the orphan's name
+      const { data: newPlayer, error: playerError } = await supabase
+        .from('players')
+        .insert({ name: orphan.guest_name })
+        .select()
+        .single();
+
+      if (playerError) throw playerError;
+
+      // Update all orphaned signups to reference the new player
+      const { error: updateError } = await supabase
+        .from('games_schedule_signups')
+        .update({ 
+          player_id: newPlayer.id, 
+          guest_id: null, 
+          is_guest: false, 
+          guest_name: null 
+        })
+        .in('id', orphan.signupIds);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Player created",
+        description: `Created player "${orphan.guest_name}" and transferred ${orphan.signupsCount} signup(s).`,
+      });
+
+      fetchGuests();
+      fetchPlayers();
+    } catch (error) {
+      console.error('Error creating player from orphan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create player from orphaned signups",
+        variant: "destructive",
+      });
+    } finally {
+      setCreatingPlayerFromOrphan(null);
+    }
+  };
+
   const openOrphanMergeDialog = (orphan: OrphanedGuestSignup) => {
     setOrphanToMerge(orphan);
     setSelectedMergePlayer('');
@@ -1285,8 +1332,21 @@ const AdminPlayerManagement = () => {
                       <Button
                         size="sm"
                         variant="outline"
+                        onClick={() => handleCreatePlayerFromOrphan(orphan)}
+                        disabled={creatingPlayerFromOrphan === orphan.guest_name}
+                        title="Create player from orphan"
+                      >
+                        {creatingPlayerFromOrphan === orphan.guest_name ? (
+                          <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                        ) : (
+                          <UserPlus className="h-3 w-3 sm:h-4 sm:w-4" />
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => openOrphanMergeDialog(orphan)}
-                        title="Merge to player"
+                        title="Merge into existing player"
                       >
                         <GitMerge className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
