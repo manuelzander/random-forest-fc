@@ -1042,7 +1042,7 @@ const AdminPlayerManagement = () => {
                         {profile.email}
                       </p>
                     )}
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
                       <p>
                         Debt: <span className="font-medium text-destructive">£{player.debt.toFixed(2)}</span>
                       </p>
@@ -1154,7 +1154,7 @@ const AdminPlayerManagement = () => {
                         Phone: {guest.phone}
                       </p>
                     )}
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
                       <p>
                         Debt: <span className="font-medium text-destructive">£{guest.debt.toFixed(2)}</span>
                       </p>
@@ -1255,7 +1255,7 @@ const AdminPlayerManagement = () => {
                         <p className="text-xs sm:text-sm text-muted-foreground">
                           {orphan.signupsCount} signup{orphan.signupsCount !== 1 ? 's' : ''}
                         </p>
-                        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm text-muted-foreground">
+                        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
                           <p>
                             Debt: <span className="font-medium text-destructive">£{orphan.debt.toFixed(2)}</span>
                           </p>
