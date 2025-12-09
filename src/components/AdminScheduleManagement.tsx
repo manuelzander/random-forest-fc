@@ -28,7 +28,7 @@ const AdminScheduleManagement = () => {
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [newGameDate, setNewGameDate] = useState<Date>();
-  const [newGameTime, setNewGameTime] = useState('');
+  const [newGameTime, setNewGameTime] = useState('18:15');
   const [newPitchSize, setNewPitchSize] = useState<string>('');
   const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
   
