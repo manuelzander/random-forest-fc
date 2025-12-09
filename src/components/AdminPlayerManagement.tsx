@@ -55,6 +55,7 @@ interface OrphanedGuestSignup {
   guest_name: string;
   signupsCount: number;
   gameScheduleIds: string[];
+  signupIds: string[];
   debt: number;
 }
 
@@ -85,6 +86,11 @@ const AdminPlayerManagement = () => {
   const [mergeDialogOpen, setMergeDialogOpen] = useState(false);
   const [guestToMerge, setGuestToMerge] = useState<Guest | null>(null);
   const [selectedMergePlayer, setSelectedMergePlayer] = useState<string>('');
+  const [orphanToMerge, setOrphanToMerge] = useState<OrphanedGuestSignup | null>(null);
+  const [orphanMergeDialogOpen, setOrphanMergeDialogOpen] = useState(false);
+  const [orphanToDelete, setOrphanToDelete] = useState<OrphanedGuestSignup | null>(null);
+  const [deleteOrphanDialogOpen, setDeleteOrphanDialogOpen] = useState(false);
+  const [creatingGuestFromOrphan, setCreatingGuestFromOrphan] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -331,6 +337,7 @@ const AdminPlayerManagement = () => {
           guest_name: data.originalName,
           signupsCount: data.count,
           gameScheduleIds: data.gameScheduleIds,
+          signupIds: data.signupIds,
           debt
         };
       });
@@ -705,6 +712,119 @@ const AdminPlayerManagement = () => {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to merge guest into player",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Orphan actions
+  const handleCreateGuestFromOrphan = async (orphan: OrphanedGuestSignup) => {
+    try {
+      setCreatingGuestFromOrphan(orphan.guest_name);
+      
+      // Create new guest record
+      const { data: newGuest, error: insertError } = await supabase
+        .from('guests')
+        .insert({ name: orphan.guest_name })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      // Update all orphaned signups with this guest_name to link to new guest_id
+      const normalizedName = orphan.guest_name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const { error: updateError } = await supabase
+        .from('games_schedule_signups')
+        .update({ guest_id: newGuest.id })
+        .in('id', orphan.signupIds);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Guest created",
+        description: `Created guest "${orphan.guest_name}" and linked ${orphan.signupsCount} signup(s).`,
+      });
+
+      fetchGuests();
+    } catch (error) {
+      console.error('Error creating guest from orphan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create guest from orphaned signups",
+        variant: "destructive",
+      });
+    } finally {
+      setCreatingGuestFromOrphan(null);
+    }
+  };
+
+  const openOrphanMergeDialog = (orphan: OrphanedGuestSignup) => {
+    setOrphanToMerge(orphan);
+    setSelectedMergePlayer('');
+    setOrphanMergeDialogOpen(true);
+  };
+
+  const handleMergeOrphan = async () => {
+    if (!orphanToMerge || !selectedMergePlayer) return;
+
+    try {
+      // Update all orphaned signups to reference the target player
+      const { error: updateError } = await supabase
+        .from('games_schedule_signups')
+        .update({ 
+          player_id: selectedMergePlayer, 
+          guest_id: null, 
+          is_guest: false, 
+          guest_name: null 
+        })
+        .in('id', orphanToMerge.signupIds);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Success",
+        description: `Merged ${orphanToMerge.signupsCount} signup(s) from "${orphanToMerge.guest_name}" into player.`,
+      });
+
+      setOrphanMergeDialogOpen(false);
+      setOrphanToMerge(null);
+      setSelectedMergePlayer('');
+      fetchGuests();
+      fetchPlayers();
+    } catch (error) {
+      console.error('Error merging orphan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to merge orphaned signups into player",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteOrphanSignups = async () => {
+    if (!orphanToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('games_schedule_signups')
+        .delete()
+        .in('id', orphanToDelete.signupIds);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Deleted ${orphanToDelete.signupsCount} orphaned signup(s) for "${orphanToDelete.guest_name}".`,
+      });
+
+      setDeleteOrphanDialogOpen(false);
+      setOrphanToDelete(null);
+      fetchGuests();
+    } catch (error) {
+      console.error('Error deleting orphan signups:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete orphaned signups",
         variant: "destructive",
       });
     }
@@ -1088,6 +1208,40 @@ const AdminPlayerManagement = () => {
                         </div>
                       </div>
                     </div>
+                    <div className="flex gap-2 mt-2 sm:mt-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleCreateGuestFromOrphan(orphan)}
+                        disabled={creatingGuestFromOrphan === orphan.guest_name}
+                        title="Create guest record"
+                      >
+                        {creatingGuestFromOrphan === orphan.guest_name ? (
+                          <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                        ) : (
+                          <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openOrphanMergeDialog(orphan)}
+                        title="Merge to player"
+                      >
+                        <GitMerge className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setOrphanToDelete(orphan);
+                          setDeleteOrphanDialogOpen(true);
+                        }}
+                        title="Delete signups"
+                      >
+                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1371,6 +1525,116 @@ const AdminPlayerManagement = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Delete Orphan Signups Confirmation Dialog */}
+        <AlertDialog open={deleteOrphanDialogOpen} onOpenChange={setDeleteOrphanDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Orphaned Signups</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete all {orphanToDelete?.signupsCount} signup(s) for "{orphanToDelete?.guest_name}"? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteOrphanSignups} className="bg-red-600 hover:bg-red-700">
+                Delete Signups
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Merge Orphan Dialog */}
+        <Dialog open={orphanMergeDialogOpen} onOpenChange={setOrphanMergeDialogOpen}>
+          <DialogContent className="max-w-md mx-2 sm:mx-auto">
+            <DialogHeader>
+              <DialogTitle className="text-base sm:text-lg">
+                Merge Orphaned Signups into Player
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Alert>
+                <AlertDescription className="space-y-1">
+                  <div><strong>Orphan to merge:</strong> {orphanToMerge?.guest_name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {orphanToMerge?.signupsCount || 0} signups • £{orphanToMerge?.debt.toFixed(2)} debt
+                  </div>
+                </AlertDescription>
+              </Alert>
+
+              <div className="space-y-2">
+                <Label>Select Player to merge into:</Label>
+                <Select value={selectedMergePlayer} onValueChange={setSelectedMergePlayer}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Search and select a player..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {players
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((player) => (
+                        <SelectItem key={player.id} value={player.id}>
+                          <div className="flex items-center justify-between gap-2">
+                            <span>{player.name}</span>
+                            {!player.user_id && (
+                              <Badge variant="outline" className="text-xs ml-2">No Profile</Badge>
+                            )}
+                          </div>
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {selectedMergePlayer && orphanToMerge && (() => {
+                const targetPlayer = players.find(p => p.id === selectedMergePlayer);
+                const newDebt = (targetPlayer?.debt || 0) + orphanToMerge.debt;
+                const newCredit = targetPlayer?.credit || 0;
+                const newNetBalance = newCredit - newDebt;
+                
+                return (
+                  <div className="rounded-lg border bg-muted/50 p-4 space-y-3">
+                    <p className="text-sm font-semibold">Merge Preview:</p>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Game signups:</span>
+                        <span className="font-medium">+{orphanToMerge.signupsCount}</span>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Debt transfer:</span>
+                        <span className="font-medium text-red-600">+£{orphanToMerge.debt.toFixed(2)}</span>
+                      </div>
+                      
+                      <div className="pt-2 border-t">
+                        <div className="flex justify-between font-semibold">
+                          <span>Player's new balance:</span>
+                          <span className={newNetBalance >= 0 ? 'text-green-600' : 'text-red-600'}>
+                            £{Math.abs(newNetBalance).toFixed(2)} {newNetBalance >= 0 ? 'credit' : 'owed'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setOrphanMergeDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleMergeOrphan}
+                  disabled={!selectedMergePlayer}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  <GitMerge className="h-4 w-4 mr-2" />
+                  Confirm Merge
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
