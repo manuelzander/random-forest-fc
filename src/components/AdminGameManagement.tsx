@@ -9,6 +9,7 @@ import { Edit2, Trash2, History, Plus, Crown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import GameInput from '@/components/GameInput';
+import { sendGameResultNotification } from '@/utils/telegramNotify';
 
 interface Game {
   id: string;
@@ -152,6 +153,24 @@ const AdminGameManagement = () => {
           }]);
 
         if (error) throw error;
+        
+        // Send Telegram notification for new game result
+        const team1PlayerNames = gameData.team1Players.map((id: string) => getPlayerName(id));
+        const team2PlayerNames = gameData.team2Players.map((id: string) => getPlayerName(id));
+        const team1CaptainName = gameData.team1Captain ? getPlayerName(gameData.team1Captain) : undefined;
+        const team2CaptainName = gameData.team2Captain ? getPlayerName(gameData.team2Captain) : undefined;
+        const mvpName = gameData.mvpPlayer ? getPlayerName(gameData.mvpPlayer) : undefined;
+        
+        sendGameResultNotification(
+          gameData.team1Goals,
+          gameData.team2Goals,
+          team1PlayerNames,
+          team2PlayerNames,
+          team1CaptainName,
+          team2CaptainName,
+          mvpName
+        );
+        
         toast({
           title: "Success",
           description: "Game added successfully",

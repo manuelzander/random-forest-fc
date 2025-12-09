@@ -12,10 +12,18 @@ interface NotifyParams {
   isAdmin?: boolean;
   addedBy?: string;
   removedBy?: string;
-  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted';
+  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted' | 'game_result';
   promotedPlayerName?: string;
   droppedPlayerName?: string;
   signupUrl?: string;
+  // For game result notification
+  team1Goals?: number;
+  team2Goals?: number;
+  team1Players?: string[];
+  team2Players?: string[];
+  team1Captain?: string;
+  team2Captain?: string;
+  mvpPlayerName?: string;
 }
 
 export const sendTelegramNotification = async ({
@@ -33,6 +41,13 @@ export const sendTelegramNotification = async ({
   promotedPlayerName,
   droppedPlayerName,
   signupUrl,
+  team1Goals,
+  team2Goals,
+  team1Players,
+  team2Players,
+  team1Captain,
+  team2Captain,
+  mvpPlayerName,
 }: NotifyParams): Promise<void> => {
   try {
     const formattedDate = format(
@@ -56,6 +71,13 @@ export const sendTelegramNotification = async ({
         promotedPlayerName,
         droppedPlayerName,
         signupUrl,
+        team1Goals,
+        team2Goals,
+        team1Players,
+        team2Players,
+        team1Captain,
+        team2Captain,
+        mvpPlayerName,
       },
     });
 
@@ -126,5 +148,30 @@ export const sendWaitlistPromotedNotification = async (
     type: 'waitlist_promoted',
     promotedPlayerName,
     droppedPlayerName,
+  });
+};
+
+// Convenience function for game result notification
+export const sendGameResultNotification = async (
+  team1Goals: number,
+  team2Goals: number,
+  team1PlayerNames: string[],
+  team2PlayerNames: string[],
+  team1CaptainName?: string,
+  team2CaptainName?: string,
+  mvpPlayerName?: string
+): Promise<void> => {
+  return sendTelegramNotification({
+    gameDate: new Date(),
+    signupCount: 0,
+    pitchSize: null,
+    type: 'game_result',
+    team1Goals,
+    team2Goals,
+    team1Players: team1PlayerNames,
+    team2Players: team2PlayerNames,
+    team1Captain: team1CaptainName,
+    team2Captain: team2CaptainName,
+    mvpPlayerName,
   });
 };
