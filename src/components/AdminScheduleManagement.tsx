@@ -462,6 +462,12 @@ const AdminScheduleManagement = () => {
                     disabled={(date) => date < new Date()}
                     initialFocus
                     className="p-3 pointer-events-auto"
+                    modifiers={{
+                      tuesday: (date) => date.getDay() === 2,
+                    }}
+                    modifiersClassNames={{
+                      tuesday: "bg-orange-100 text-orange-700 hover:bg-orange-200 hover:text-orange-800",
+                    }}
                   />
                 </PopoverContent>
               </Popover>
