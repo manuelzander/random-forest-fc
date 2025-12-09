@@ -15,6 +15,7 @@ interface NotifyParams {
   type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted';
   promotedPlayerName?: string;
   droppedPlayerName?: string;
+  signupUrl?: string;
 }
 
 export const sendTelegramNotification = async ({
@@ -31,6 +32,7 @@ export const sendTelegramNotification = async ({
   type = 'signup',
   promotedPlayerName,
   droppedPlayerName,
+  signupUrl,
 }: NotifyParams): Promise<void> => {
   try {
     const formattedDate = format(
@@ -53,6 +55,7 @@ export const sendTelegramNotification = async ({
         type,
         promotedPlayerName,
         droppedPlayerName,
+        signupUrl,
       },
     });
 
@@ -68,13 +71,15 @@ export const sendTelegramNotification = async ({
 // Convenience function for new game notifications
 export const sendNewGameNotification = async (
   gameDate: Date | string,
-  pitchSize: string | null
+  pitchSize: string | null,
+  signupUrl?: string
 ): Promise<void> => {
   return sendTelegramNotification({
     gameDate,
     signupCount: 0,
     pitchSize,
     type: 'new_game',
+    signupUrl,
   });
 };
 

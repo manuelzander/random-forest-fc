@@ -21,6 +21,8 @@ interface NotificationPayload {
   // For waitlist promotion
   promotedPlayerName?: string;
   droppedPlayerName?: string;
+  // For new game notification
+  signupUrl?: string;
 }
 
 serve(async (req) => {
@@ -65,7 +67,9 @@ serve(async (req) => {
     
     if (type === 'new_game') {
       // New game scheduled notification
-      message = `📅 *New game scheduled!*\n🗓️ *${gameDate}*\n⚽ ${pitchSize === 'small' ? 'Small pitch (12 players)' : pitchSize === 'big' ? 'Big pitch (14 players)' : 'Pitch TBD'}\n\nSign up now!`;
+      const { signupUrl } = payload;
+      const urlLine = signupUrl ? `\n\n🔗 [Sign up here](${signupUrl})` : '\n\nSign up now!';
+      message = `📅 *New game scheduled!*\n🗓️ *${gameDate}*\n⚽ ${pitchSize === 'small' ? 'Small pitch (12 players)' : pitchSize === 'big' ? 'Big pitch (14 players)' : 'Pitch TBD'}${urlLine}`;
     } else if (type === 'low_signup_warning') {
       // Low signup warning (24 hours before)
       const spotsLeft = capacity - signupCount;
