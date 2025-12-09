@@ -28,37 +28,68 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get games scheduled between 23 and 25 hours from now (to catch the ~24 hour window)
+    // Define time windows to check
     const now = new Date();
+    
+    // 24-hour window (23-25 hours from now)
     const in23Hours = new Date(now.getTime() + 23 * 60 * 60 * 1000);
     const in25Hours = new Date(now.getTime() + 25 * 60 * 60 * 1000);
+    
+    // 2-hour window (1-3 hours from now)
+    const in1Hour = new Date(now.getTime() + 1 * 60 * 60 * 1000);
+    const in3Hours = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
-    console.log(`Checking for games between ${in23Hours.toISOString()} and ${in25Hours.toISOString()}`);
+    console.log(`Checking for games in 24h window: ${in23Hours.toISOString()} to ${in25Hours.toISOString()}`);
+    console.log(`Checking for games in 2h window: ${in1Hour.toISOString()} to ${in3Hours.toISOString()}`);
 
     // Fetch games in the 24-hour window
-    const { data: games, error: gamesError } = await supabase
+    const { data: games24h, error: games24hError } = await supabase
       .from('games_schedule')
       .select('id, scheduled_at, pitch_size')
       .gte('scheduled_at', in23Hours.toISOString())
       .lte('scheduled_at', in25Hours.toISOString());
 
-    if (gamesError) {
-      console.error("Error fetching games:", gamesError);
-      throw gamesError;
+    if (games24hError) {
+      console.error("Error fetching 24h games:", games24hError);
     }
 
-    console.log(`Found ${games?.length || 0} games in 24-hour window`);
+    // Fetch games in the 2-hour window
+    const { data: games2h, error: games2hError } = await supabase
+      .from('games_schedule')
+      .select('id, scheduled_at, pitch_size')
+      .gte('scheduled_at', in1Hour.toISOString())
+      .lte('scheduled_at', in3Hours.toISOString());
 
-    if (!games || games.length === 0) {
+    if (games2hError) {
+      console.error("Error fetching 2h games:", games2hError);
+    }
+
+    // Combine games with their window type
+    const gamesToProcess: Array<{ game: any; windowType: '24h' | '2h' }> = [];
+    
+    (games24h || []).forEach(game => {
+      gamesToProcess.push({ game, windowType: '24h' });
+    });
+    
+    (games2h || []).forEach(game => {
+      // Avoid duplicates if somehow in both windows
+      if (!gamesToProcess.some(g => g.game.id === game.id)) {
+        gamesToProcess.push({ game, windowType: '2h' });
+      }
+    });
+
+    console.log(`Found ${games24h?.length || 0} games in 24h window, ${games2h?.length || 0} games in 2h window`);
+
+    if (gamesToProcess.length === 0) {
       return new Response(
-        JSON.stringify({ message: "No games in 24-hour window" }),
+        JSON.stringify({ message: "No games in notification windows" }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const notifications: string[] = [];
 
-    for (const game of games) {
+    for (const { game, windowType } of gamesToProcess) {
       // Fetch signups with player/guest details (excluding dropouts)
       const { data: signups, error: signupsError } = await supabase
         .from('games_schedule_signups')
@@ -83,7 +114,7 @@ serve(async (req) => {
       const capacity = game.pitch_size === 'small' ? 12 : 14;
       const isUnderCapacity = signupCount < capacity;
 
-      console.log(`Game ${game.id}: ${signupCount}/${capacity} signups, under capacity: ${isUnderCapacity}`);
+      console.log(`Game ${game.id} (${windowType}): ${signupCount}/${capacity} signups, under capacity: ${isUnderCapacity}`);
 
       // Format game date
       const gameDate = new Date(game.scheduled_at);
@@ -116,21 +147,30 @@ serve(async (req) => {
         }
       });
 
-      // Build message
+      // Build message based on window type
       let message: string;
       const pitchInfo = game.pitch_size === 'small' ? 'Small pitch' : game.pitch_size === 'big' ? 'Big pitch' : 'Pitch TBD';
+      const timeLabel = windowType === '2h' ? "STARTING SOON" : "TOMORROW'S GAME";
       
       if (isUnderCapacity) {
         // Warning style - under capacity
         const spotsNeeded = capacity - signupCount;
-        message = `⚠️ *TOMORROW'S GAME NEEDS PLAYERS!*\n`;
+        if (windowType === '2h') {
+          message = `🚨 *GAME STARTING IN ~2 HOURS - NEEDS PLAYERS!*\n`;
+        } else {
+          message = `⚠️ *${timeLabel} NEEDS PLAYERS!*\n`;
+        }
         message += `🗓️ ${formattedDate}\n`;
         message += `⚽ ${pitchInfo}\n`;
         message += `📊 *${signupCount}/${capacity}* signed up\n`;
         message += `🔴 *${spotsNeeded} more needed!*\n\n`;
       } else {
         // Normal style - at or over capacity
-        message = `📋 *Tomorrow's Game Summary*\n`;
+        if (windowType === '2h') {
+          message = `⚽ *Game Starting in ~2 Hours!*\n`;
+        } else {
+          message = `📋 *Tomorrow's Game Summary*\n`;
+        }
         message += `🗓️ ${formattedDate}\n`;
         message += `⚽ ${pitchInfo}\n`;
         message += `✅ *${signupCount >= capacity ? 'Full' : signupCount + '/' + capacity}*\n\n`;
