@@ -28,26 +28,27 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Define time windows to check
+    // Define narrow time windows to prevent duplicate notifications from hourly cron
+    // Using 30-minute windows ensures each game is only caught once per notification type
     const now = new Date();
     
-    // 24-hour window (23-25 hours from now)
-    const in23Hours = new Date(now.getTime() + 23 * 60 * 60 * 1000);
-    const in25Hours = new Date(now.getTime() + 25 * 60 * 60 * 1000);
+    // 24-hour window: 23:45 to 24:15 hours from now (30 min window)
+    const in23h45m = new Date(now.getTime() + (23 * 60 + 45) * 60 * 1000);
+    const in24h15m = new Date(now.getTime() + (24 * 60 + 15) * 60 * 1000);
     
-    // 2-hour window (1-3 hours from now)
-    const in1Hour = new Date(now.getTime() + 1 * 60 * 60 * 1000);
-    const in3Hours = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+    // 2-hour window: 1:45 to 2:15 hours from now (30 min window)
+    const in1h45m = new Date(now.getTime() + (1 * 60 + 45) * 60 * 1000);
+    const in2h15m = new Date(now.getTime() + (2 * 60 + 15) * 60 * 1000);
 
-    console.log(`Checking for games in 24h window: ${in23Hours.toISOString()} to ${in25Hours.toISOString()}`);
-    console.log(`Checking for games in 2h window: ${in1Hour.toISOString()} to ${in3Hours.toISOString()}`);
+    console.log(`Checking for games in 24h window: ${in23h45m.toISOString()} to ${in24h15m.toISOString()}`);
+    console.log(`Checking for games in 2h window: ${in1h45m.toISOString()} to ${in2h15m.toISOString()}`);
 
     // Fetch games in the 24-hour window
     const { data: games24h, error: games24hError } = await supabase
       .from('games_schedule')
       .select('id, scheduled_at, pitch_size')
-      .gte('scheduled_at', in23Hours.toISOString())
-      .lte('scheduled_at', in25Hours.toISOString());
+      .gte('scheduled_at', in23h45m.toISOString())
+      .lte('scheduled_at', in24h15m.toISOString());
 
     if (games24hError) {
       console.error("Error fetching 24h games:", games24hError);
@@ -57,8 +58,8 @@ serve(async (req) => {
     const { data: games2h, error: games2hError } = await supabase
       .from('games_schedule')
       .select('id, scheduled_at, pitch_size')
-      .gte('scheduled_at', in1Hour.toISOString())
-      .lte('scheduled_at', in3Hours.toISOString());
+      .gte('scheduled_at', in1h45m.toISOString())
+      .lte('scheduled_at', in2h15m.toISOString());
 
     if (games2hError) {
       console.error("Error fetching 2h games:", games2hError);
@@ -212,7 +213,7 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ 
-        message: `Checked ${games.length} games, sent ${notifications.length} summaries`,
+        message: `Checked ${gamesToProcess.length} games, sent ${notifications.length} summaries`,
         notifications 
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
