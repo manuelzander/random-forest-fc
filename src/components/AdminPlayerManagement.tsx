@@ -1314,7 +1314,7 @@ const AdminPlayerManagement = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-2 mt-2 sm:mt-0">
+                    <div className="flex justify-center gap-1 sm:gap-2 flex-shrink-0">
                       <Button
                         size="sm"
                         variant="outline"
