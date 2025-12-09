@@ -51,10 +51,17 @@ interface Guest {
   debt: number;
 }
 
+interface OrphanedGuestSignup {
+  guest_name: string;
+  signupsCount: number;
+  gameScheduleIds: string[];
+}
+
 const AdminPlayerManagement = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
+  const [orphanedSignups, setOrphanedSignups] = useState<OrphanedGuestSignup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
@@ -266,6 +273,11 @@ const AdminPlayerManagement = () => {
         signed_up_at: s.signed_up_at
       }));
 
+      // Build a set of normalized guest names from the guests table
+      const guestNamesSet = new Set(
+        (guestsData || []).map(g => g.name.toLowerCase().replace(/[^a-z0-9]/g, ''))
+      );
+
       const formattedGuests = (guestsData || []).map(guest => {
         // Calculate debt using shared logic - pass guest name for fallback matching
         const debt = calculateGuestDebt(guest.id, gamesForDebt, signupsForDebt, guest.name);
@@ -285,7 +297,38 @@ const AdminPlayerManagement = () => {
         };
       });
 
+      // Find orphaned guest signups (is_guest=true, guest_id=null, guest_name not matching any guest)
+      const orphanedMap = new Map<string, { count: number; gameScheduleIds: string[]; originalName: string }>();
+      (signupsData || []).forEach((s: any) => {
+        if (s.is_guest && !s.guest_id && s.guest_name) {
+          const normalizedName = s.guest_name.toLowerCase().replace(/[^a-z0-9]/g, '');
+          // Check if this name matches any existing guest
+          if (!guestNamesSet.has(normalizedName)) {
+            const existing = orphanedMap.get(normalizedName);
+            if (existing) {
+              existing.count++;
+              if (!existing.gameScheduleIds.includes(s.game_schedule_id)) {
+                existing.gameScheduleIds.push(s.game_schedule_id);
+              }
+            } else {
+              orphanedMap.set(normalizedName, {
+                count: 1,
+                gameScheduleIds: [s.game_schedule_id],
+                originalName: s.guest_name
+              });
+            }
+          }
+        }
+      });
+
+      const orphanedList: OrphanedGuestSignup[] = Array.from(orphanedMap.entries()).map(([_, data]) => ({
+        guest_name: data.originalName,
+        signupsCount: data.count,
+        gameScheduleIds: data.gameScheduleIds
+      }));
+
       setGuests(formattedGuests);
+      setOrphanedSignups(orphanedList);
     } catch (error) {
       console.error('Error fetching guests:', error);
       toast({
@@ -905,7 +948,12 @@ const AdminPlayerManagement = () => {
         {/* Guest Management Section */}
         <div className="mt-8 pt-8 border-t">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-            <h3 className="text-base sm:text-lg font-semibold">Guests ({guests.length})</h3>
+            <h3 className="text-base sm:text-lg font-semibold">
+              Guests ({guests.length})
+              {orphanedSignups.length > 0 && (
+                <span className="text-orange-600 ml-2">+ {orphanedSignups.length} orphaned</span>
+              )}
+            </h3>
           </div>
 
           <div className="space-y-2">
@@ -981,7 +1029,7 @@ const AdminPlayerManagement = () => {
                 </div>
               </div>
             ))}
-            {guests.length === 0 && (
+            {guests.length === 0 && orphanedSignups.length === 0 && (
               <Alert>
                 <AlertDescription>
                   No guests found.
@@ -989,6 +1037,44 @@ const AdminPlayerManagement = () => {
               </Alert>
             )}
           </div>
+
+          {/* Orphaned Guest Signups */}
+          {orphanedSignups.length > 0 && (
+            <div className="mt-6">
+              <h4 className="text-sm font-semibold text-orange-600 mb-3 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" />
+                Orphaned Guest Signups ({orphanedSignups.length})
+              </h4>
+              <p className="text-xs text-muted-foreground mb-3">
+                These signups have no linked guest record. Create a guest or merge them with an existing player.
+              </p>
+              <div className="space-y-2">
+                {orphanedSignups.map((orphan) => (
+                  <div key={orphan.guest_name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-orange-200 bg-orange-50/50 rounded-lg">
+                    <div className="flex items-center gap-3 flex-1">
+                      <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 bg-orange-100">
+                        <AvatarFallback className="text-orange-700">
+                          {orphan.guest_name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-semibold text-sm sm:text-base truncate">{orphan.guest_name}</h4>
+                          <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            <span className="hidden sm:inline">Orphaned</span>
+                          </Badge>
+                        </div>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          {orphan.signupsCount} signup{orphan.signupsCount !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Guest Edit Dialog */}
