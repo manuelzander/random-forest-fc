@@ -215,6 +215,7 @@ const AdminGameManagement = () => {
               <GameInput 
                 players={players.map(p => ({ id: p.id, name: p.name, points: 0, games_played: 0, wins: 0, draws: 0, losses: 0, mvp_awards: 0, goal_difference: 0 }))}
                 onGameSubmit={handleGameSubmit}
+                onPlayersChange={fetchData}
                 initialData={editingGame ? {
                   team1Goals: editingGame.team1_goals,
                   team2Goals: editingGame.team2_goals,

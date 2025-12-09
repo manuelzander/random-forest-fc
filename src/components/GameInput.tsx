@@ -11,10 +11,13 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Plus, Trash2, Users, Target, Award, Video } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { isValidYouTubeUrl } from '@/utils/youtube';
+import { supabase } from '@/integrations/supabase/client';
+import PlayerNameAutocomplete from './PlayerNameAutocomplete';
 
 interface GameInputProps {
   players: Player[];
   onGameSubmit: (game: GameInputType) => void;
+  onPlayersChange?: () => void; // Callback to refresh players list after creating new player
   initialData?: {
     team1Goals: number;
     team2Goals: number;
@@ -29,7 +32,7 @@ interface GameInputProps {
   isSaving?: boolean;
 }
 
-const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialData, isEditing = false, isSaving = false }) => {
+const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersChange, initialData, isEditing = false, isSaving = false }) => {
   const { toast } = useToast();
   const [team1Players, setTeam1Players] = useState<string[]>(initialData?.team1Players || []);
   const [team2Players, setTeam2Players] = useState<string[]>(initialData?.team2Players || []);
@@ -41,11 +44,17 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl || '');
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [playerToRemove, setPlayerToRemove] = useState<{playerId: string, playerName: string, teamNumber: 1 | 2} | null>(null);
+  const [team1Input, setTeam1Input] = useState('');
+  const [team2Input, setTeam2Input] = useState('');
+  const [localPlayers, setLocalPlayers] = useState<Player[]>(players);
   
-  
+  // Update local players when props change
+  React.useEffect(() => {
+    setLocalPlayers(players);
+  }, [players]);
 
-  const availablePlayersForTeam1 = players.filter(p => !team2Players.includes(p.id) && !team1Players.includes(p.id));
-  const availablePlayersForTeam2 = players.filter(p => !team1Players.includes(p.id) && !team2Players.includes(p.id));
+  const availablePlayersForTeam1 = localPlayers.filter(p => !team2Players.includes(p.id) && !team1Players.includes(p.id));
+  const availablePlayersForTeam2 = localPlayers.filter(p => !team1Players.includes(p.id) && !team2Players.includes(p.id));
   const allGamePlayers = [...team1Players, ...team2Players];
 
   const addPlayerToTeam = (teamNumber: 1 | 2, playerId: string) => {
@@ -56,8 +65,59 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
     }
   };
 
+  const handlePlayerSelect = async (teamNumber: 1 | 2, suggestion: { id: string | null; name: string; type: string }) => {
+    let playerId = suggestion.id;
+    
+    // If it's a new player or guest/orphan, create a new player record
+    if (suggestion.type === 'new' || suggestion.type === 'guest' || suggestion.type === 'orphan') {
+      try {
+        const { data: newPlayer, error } = await supabase
+          .from('players')
+          .insert({ name: suggestion.name })
+          .select('id, name')
+          .single();
+        
+        if (error) throw error;
+        
+        playerId = newPlayer.id;
+        
+        // Add to local players list
+        setLocalPlayers(prev => [...prev, { 
+          ...newPlayer, 
+          points: 0, 
+          games_played: 0, 
+          wins: 0, 
+          draws: 0, 
+          losses: 0, 
+          mvp_awards: 0, 
+          goal_difference: 0 
+        }]);
+        
+        // Notify parent to refresh players
+        onPlayersChange?.();
+        
+        toast({
+          title: "Player Created",
+          description: `${suggestion.name} has been added as a new player`,
+        });
+      } catch (error) {
+        console.error('Error creating player:', error);
+        toast({
+          title: "Error",
+          description: "Failed to create new player",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
+    if (playerId) {
+      addPlayerToTeam(teamNumber, playerId);
+    }
+  };
+
   const openRemoveDialog = (teamNumber: 1 | 2, playerId: string) => {
-    const playerName = players.find(p => p.id === playerId)?.name || 'Unknown Player';
+    const playerName = localPlayers.find(p => p.id === playerId)?.name || 'Unknown Player';
     setPlayerToRemove({ playerId, playerName, teamNumber });
     setRemoveDialogOpen(true);
   };
@@ -174,7 +234,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
   };
 
   const getPlayerName = (playerId: string) => {
-    return players.find(p => p.id === playerId)?.name || '';
+    return localPlayers.find(p => p.id === playerId)?.name || '';
   };
 
   return (
@@ -190,18 +250,14 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
                 <Users className="h-5 w-5" />
                 Team 1 Players
               </Label>
-              <Select onValueChange={(value) => addPlayerToTeam(1, value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Add player to Team 1" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availablePlayersForTeam1.map((player) => (
-                    <SelectItem key={player.id} value={player.id}>
-                      {player.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <PlayerNameAutocomplete
+                value={team1Input}
+                onChange={setTeam1Input}
+                onSelect={(suggestion) => handlePlayerSelect(1, suggestion)}
+                existingPlayers={localPlayers.map(p => ({ id: p.id, name: p.name }))}
+                excludePlayerIds={[...team1Players, ...team2Players]}
+                placeholder="Type name or select player..."
+              />
               <div className="flex flex-wrap gap-2">
                 {team1Players.map((playerId) => (
                   <Badge key={playerId} variant="secondary" className="flex items-center gap-1">
@@ -226,18 +282,14 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, initialDat
                 <Users className="h-5 w-5" />
                 Team 2 Players
               </Label>
-              <Select onValueChange={(value) => addPlayerToTeam(2, value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Add player to Team 2" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availablePlayersForTeam2.map((player) => (
-                    <SelectItem key={player.id} value={player.id}>
-                      {player.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <PlayerNameAutocomplete
+                value={team2Input}
+                onChange={setTeam2Input}
+                onSelect={(suggestion) => handlePlayerSelect(2, suggestion)}
+                existingPlayers={localPlayers.map(p => ({ id: p.id, name: p.name }))}
+                excludePlayerIds={[...team1Players, ...team2Players]}
+                placeholder="Type name or select player..."
+              />
               <div className="flex flex-wrap gap-2">
                 {team2Players.map((playerId) => (
                   <Badge key={playerId} variant="secondary" className="flex items-center gap-1">
