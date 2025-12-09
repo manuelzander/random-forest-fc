@@ -147,10 +147,12 @@ const AdminScheduleManagement = () => {
 
       if (error) throw error;
 
-      // Send Telegram notification for new game
+      // Send Telegram notification for new game with signup URL
+      const signupUrl = `${window.location.origin}/game-signup`;
       sendNewGameNotification(
         scheduledAt,
-        newPitchSize === 'none' ? null : newPitchSize
+        newPitchSize === 'none' ? null : newPitchSize,
+        signupUrl
       );
 
       toast({
