@@ -250,13 +250,25 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                 <Users className="h-5 w-5" />
                 Team 1 Players
               </Label>
+              <Select onValueChange={(value) => addPlayerToTeam(1, value)} value="">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select existing player" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availablePlayersForTeam1.map((player) => (
+                    <SelectItem key={player.id} value={player.id}>
+                      {player.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <PlayerNameAutocomplete
                 value={team1Input}
                 onChange={setTeam1Input}
                 onSelect={(suggestion) => handlePlayerSelect(1, suggestion)}
                 existingPlayers={localPlayers.map(p => ({ id: p.id, name: p.name }))}
                 excludePlayerIds={[...team1Players, ...team2Players]}
-                placeholder="Type name or select player..."
+                placeholder="Or type to add new player..."
               />
               <div className="flex flex-wrap gap-2">
                 {team1Players.map((playerId) => (
@@ -282,13 +294,25 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                 <Users className="h-5 w-5" />
                 Team 2 Players
               </Label>
+              <Select onValueChange={(value) => addPlayerToTeam(2, value)} value="">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select existing player" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availablePlayersForTeam2.map((player) => (
+                    <SelectItem key={player.id} value={player.id}>
+                      {player.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <PlayerNameAutocomplete
                 value={team2Input}
                 onChange={setTeam2Input}
                 onSelect={(suggestion) => handlePlayerSelect(2, suggestion)}
                 existingPlayers={localPlayers.map(p => ({ id: p.id, name: p.name }))}
                 excludePlayerIds={[...team1Players, ...team2Players]}
-                placeholder="Type name or select player..."
+                placeholder="Or type to add new player..."
               />
               <div className="flex flex-wrap gap-2">
                 {team2Players.map((playerId) => (
