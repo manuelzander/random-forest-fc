@@ -137,6 +137,17 @@ const GuestNameAutocomplete = ({
     setShowSuggestions(false);
   };
 
+  const getIcon = (type: GuestSuggestion['type']) => {
+    return <User className={cn(
+      "h-3 w-3 shrink-0",
+      type === 'guest' ? "text-green-600" : "text-muted-foreground"
+    )} />;
+  };
+
+  const getLabel = (type: GuestSuggestion['type']) => {
+    return type === 'guest' ? 'Guest' : 'Previous signup';
+  };
+
   return (
     <div ref={wrapperRef} className="relative flex-1">
       <Input
@@ -152,10 +163,10 @@ const GuestNameAutocomplete = ({
       />
       
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-64 overflow-y-auto">
           {suggestions.map((suggestion, index) => (
             <button
-              key={`${suggestion.type}-${suggestion.id || index}`}
+              key={`${suggestion.type}-${suggestion.id || suggestion.name}-${index}`}
               type="button"
               className={cn(
                 "w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-accent transition-colors",
@@ -164,10 +175,14 @@ const GuestNameAutocomplete = ({
               )}
               onClick={() => handleSelect(suggestion)}
             >
-              <User className="h-3 w-3 text-muted-foreground shrink-0" />
-              <span className="truncate">{suggestion.name}</span>
-              <span className="text-xs text-muted-foreground ml-auto shrink-0">
-                {suggestion.type === 'guest' ? 'Guest' : 'Previous signup'}
+              {getIcon(suggestion.type)}
+              <span className="truncate flex-1">{suggestion.name}</span>
+              <span className={cn(
+                "text-xs ml-auto shrink-0 px-1.5 py-0.5 rounded",
+                suggestion.type === 'guest' && "bg-green-100 text-green-700",
+                suggestion.type === 'orphan' && "bg-muted text-muted-foreground"
+              )}>
+                {getLabel(suggestion.type)}
               </span>
             </button>
           ))}
