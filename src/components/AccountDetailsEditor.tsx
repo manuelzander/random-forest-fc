@@ -171,7 +171,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
             <div className="text-2xl font-bold text-red-600">
               £{debt.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
               Amount owed
             </p>
           </CardContent>
@@ -188,7 +188,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
             <div className="text-2xl font-bold text-green-600">
               £{credit.toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
               Available balance
             </p>
           </CardContent>
@@ -205,7 +205,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
             <div className={`text-2xl font-bold ${netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               £{Math.abs(netBalance).toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
               {netBalance >= 0 ? 'Surplus' : 'Outstanding'}
             </p>
           </CardContent>
