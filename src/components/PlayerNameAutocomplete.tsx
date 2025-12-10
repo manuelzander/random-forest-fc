@@ -223,7 +223,7 @@ const PlayerNameAutocomplete = ({
         </div>
       )}
       
-      {showSuggestions && loading && value.length >= 2 && (
+      {showSuggestions && loading && value.length >= 2 && suggestions.length === 0 && (
         <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg p-2 text-sm text-muted-foreground">
           Searching...
         </div>
