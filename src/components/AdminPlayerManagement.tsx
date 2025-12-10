@@ -1008,111 +1008,148 @@ const AdminPlayerManagement = () => {
       <CardContent>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
           <h3 className="text-base sm:text-lg font-semibold">Players ({players.length})</h3>
-          <div className="flex items-center gap-2">
-            <PlayerNameAutocomplete
-              value={newPlayerName}
-              onChange={setNewPlayerName}
-              onSelect={async (suggestion) => {
-                if (suggestion.type === 'new') {
-                  // Create new player
-                  try {
-                    setIsCreatingPlayer(true);
-                    const { data: newPlayer, error } = await supabase
-                      .from('players')
-                      .insert([{ name: suggestion.name }])
-                      .select()
-                      .single();
+          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) {
+              setEditingPlayer(null);
+              setNewPlayerName('');
+            }
+          }}>
+            <DialogTrigger asChild>
+              <Button size="sm" onClick={() => openDialog()}>
+                <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">Add Player</span>
+                <span className="sm:hidden">Add</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md mx-2 sm:mx-auto">
+              <DialogHeader>
+                <DialogTitle className="text-base sm:text-lg">
+                  {editingPlayer ? 'Edit Player' : 'Add New Player'}
+                </DialogTitle>
+              </DialogHeader>
+              {editingPlayer ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      defaultValue={editingPlayer?.name || ''}
+                      required
+                    />
+                  </div>
+                  <Alert className="mb-4">
+                    <AlertDescription>
+                      ℹ️ Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.
+                    </AlertDescription>
+                  </Alert>
+                  <div className="flex justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSavingPlayer}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={isSavingPlayer}>
+                      {isSavingPlayer ? 'Saving...' : 'Update Player'}
+                    </Button>
+                  </div>
+                </form>
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Player Name</Label>
+                    <PlayerNameAutocomplete
+                      value={newPlayerName}
+                      onChange={setNewPlayerName}
+                      onSelect={async (suggestion) => {
+                        if (suggestion.type === 'new') {
+                          // Create new player
+                          try {
+                            setIsCreatingPlayer(true);
+                            const { data: newPlayer, error } = await supabase
+                              .from('players')
+                              .insert([{ name: suggestion.name }])
+                              .select()
+                              .single();
 
-                    if (error) throw error;
+                            if (error) throw error;
 
-                    // Generate default avatar for new player
-                    try {
-                      await supabase.functions.invoke('generate-avatar', {
-                        body: { 
-                          playerName: suggestion.name,
-                          playerId: newPlayer.id 
+                            // Generate default avatar for new player
+                            try {
+                              await supabase.functions.invoke('generate-avatar', {
+                                body: { 
+                                  playerName: suggestion.name,
+                                  playerId: newPlayer.id 
+                                }
+                              });
+                            } catch (avatarError) {
+                              console.error('Failed to generate default avatar:', avatarError);
+                            }
+
+                            toast({
+                              title: "Success",
+                              description: `Player "${suggestion.name}" added successfully`,
+                            });
+                            setIsDialogOpen(false);
+                            setNewPlayerName('');
+                            fetchPlayers();
+                          } catch (error) {
+                            console.error('Error creating player:', error);
+                            toast({
+                              title: "Error",
+                              description: "Failed to create player",
+                              variant: "destructive",
+                            });
+                          } finally {
+                            setIsCreatingPlayer(false);
+                          }
+                        } else if (suggestion.type === 'guest') {
+                          // Create player from existing guest
+                          const guest = guests.find(g => g.id === suggestion.id);
+                          if (guest) {
+                            setIsDialogOpen(false);
+                            setNewPlayerName('');
+                            handleCreatePlayerFromGuest(guest);
+                          }
+                        } else if (suggestion.type === 'orphan') {
+                          // Create player from orphaned signup
+                          const orphan = orphanedSignups.find(o => o.guest_name === suggestion.name);
+                          if (orphan) {
+                            setIsDialogOpen(false);
+                            setNewPlayerName('');
+                            handleCreatePlayerFromOrphan(orphan);
+                          }
+                        } else if (suggestion.type === 'player') {
+                          toast({
+                            title: "Player exists",
+                            description: `"${suggestion.name}" is already a player`,
+                          });
                         }
-                      });
-                    } catch (avatarError) {
-                      console.error('Failed to generate default avatar:', avatarError);
-                    }
-
-                    toast({
-                      title: "Success",
-                      description: `Player "${suggestion.name}" added successfully`,
-                    });
-                    fetchPlayers();
-                  } catch (error) {
-                    console.error('Error creating player:', error);
-                    toast({
-                      title: "Error",
-                      description: "Failed to create player",
-                      variant: "destructive",
-                    });
-                  } finally {
-                    setIsCreatingPlayer(false);
-                  }
-                } else if (suggestion.type === 'guest') {
-                  // Create player from existing guest
-                  const guest = guests.find(g => g.id === suggestion.id);
-                  if (guest) {
-                    handleCreatePlayerFromGuest(guest);
-                  }
-                } else if (suggestion.type === 'orphan') {
-                  // Create player from orphaned signup
-                  const orphan = orphanedSignups.find(o => o.guest_name === suggestion.name);
-                  if (orphan) {
-                    handleCreatePlayerFromOrphan(orphan);
-                  }
-                } else if (suggestion.type === 'player') {
-                  toast({
-                    title: "Player exists",
-                    description: `"${suggestion.name}" is already a player`,
-                  });
-                }
-              }}
-              existingPlayers={players.map(p => ({ id: p.id, name: p.name }))}
-              placeholder="Type name to add player..."
-              className="w-full sm:w-64"
-            />
-            {isCreatingPlayer && <Loader2 className="h-4 w-4 animate-spin" />}
-          </div>
+                      }}
+                      existingPlayers={players.map(p => ({ id: p.id, name: p.name }))}
+                      placeholder="Type name to search or create..."
+                    />
+                  </div>
+                  <Alert>
+                    <AlertDescription>
+                      ℹ️ Type a name to search existing players, guests, or create a new player.
+                    </AlertDescription>
+                  </Alert>
+                  {isCreatingPlayer && (
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Creating player...
+                    </div>
+                  )}
+                  <div className="flex justify-end">
+                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
-
-        {/* Edit Player Dialog */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-md mx-2 sm:mx-auto">
-            <DialogHeader>
-              <DialogTitle className="text-base sm:text-lg">
-                Edit Player
-              </DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  defaultValue={editingPlayer?.name || ''}
-                  required
-                />
-              </div>
-              <Alert className="mb-4">
-                <AlertDescription>
-                  ℹ️ Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.
-                </AlertDescription>
-              </Alert>
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSavingPlayer}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isSavingPlayer}>
-                  {isSavingPlayer ? 'Saving...' : 'Update Player'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
 
         <div className="space-y-2">
           {players.map((player) => {
