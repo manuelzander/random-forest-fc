@@ -531,8 +531,8 @@ const AdminDebtManagement = () => {
       {/* Player Details Dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent className="max-w-3xl mx-2 sm:mx-auto max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center justify-between">
+          <DialogHeader className="pr-8">
+            <div className="flex items-center justify-between gap-4">
               <DialogTitle className="flex items-center gap-2">
                 <PoundSterling className="h-5 w-5" />
                 {selectedPlayer?.playerName} - Game Details
