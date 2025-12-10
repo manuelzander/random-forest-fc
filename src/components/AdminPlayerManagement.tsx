@@ -1278,7 +1278,7 @@ const AdminPlayerManagement = () => {
               <h3 className="text-base sm:text-lg font-semibold text-orange-600 mb-2">
                 Orphaned Guests ({orphanedSignups.length})
               </h3>
-              <p className="text-xs text-muted-foreground mb-3">
+              <p className="text-sm text-muted-foreground mb-3">
                 These signups have no linked guest record. Create a guest or merge them with an existing player.
               </p>
               <div className="space-y-2">
