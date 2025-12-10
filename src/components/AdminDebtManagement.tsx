@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { PoundSterling, AlertCircle, TrendingUp, TrendingDown, Calendar, Users, CheckCircle, User, AlertTriangle, Pencil } from 'lucide-react';
+import { PoundSterling, AlertCircle, TrendingUp, TrendingDown, Calendar, Users, CheckCircle, User, AlertTriangle, Pencil, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import type { ScheduledGame, GameScheduleSignup, Guest } from '@/types';
 
@@ -272,6 +272,37 @@ const AdminDebtManagement = () => {
     { debt: 0, credit: 0, netBalance: 0 }
   );
 
+  const exportToCSV = () => {
+    const headers = ['Player', 'Type', 'Games', 'Debt (£)', 'Credit (£)', 'Balance (£)'];
+    const rows = playerSummaries.map(summary => [
+      summary.playerName,
+      summary.isGuest ? 'Guest' : summary.isVerified ? 'Verified' : 'Unverified',
+      summary.gamesOwed.length,
+      summary.totalDebt.toFixed(2),
+      summary.credit.toFixed(2),
+      summary.netBalance.toFixed(2)
+    ]);
+    
+    // Add totals row
+    rows.push(['TOTAL', '', playerSummaries.length, totals.debt.toFixed(2), totals.credit.toFixed(2), totals.netBalance.toFixed(2)]);
+    
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `player-debt-credit-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    
+    toast({
+      title: "Exported",
+      description: "Player debt & credit data exported to CSV"
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -339,14 +370,22 @@ const AdminDebtManagement = () => {
       {/* Player Debt Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <PoundSterling className="h-5 w-5" />
-            Player Debt & Credit
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Debt calculated from scheduled games (£{TOTAL_GAME_COST} split among players). Only the top {' '}
-            12 (small pitch, £{(TOTAL_GAME_COST / 12).toFixed(2)} each) or 14 (big pitch, £{(TOTAL_GAME_COST / 14).toFixed(2)} each) players by signup position owe payment. Dropouts are marked but still pay for their spot.
-          </p>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <PoundSterling className="h-5 w-5" />
+                Player Debt & Credit
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Debt calculated from scheduled games (£{TOTAL_GAME_COST} split among players). Only the top {' '}
+                12 (small pitch, £{(TOTAL_GAME_COST / 12).toFixed(2)} each) or 14 (big pitch, £{(TOTAL_GAME_COST / 14).toFixed(2)} each) players by signup position owe payment.
+              </p>
+            </div>
+            <Button variant="outline" size="sm" onClick={exportToCSV} className="shrink-0">
+              <Download className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Export</span>
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {playerSummaries.length === 0 ? (
