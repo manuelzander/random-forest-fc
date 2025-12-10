@@ -303,6 +303,41 @@ const AdminDebtManagement = () => {
     });
   };
 
+  const exportPlayerDetails = (player: PlayerDebtSummary) => {
+    const headers = ['Date', 'Pitch', 'Cost (£)', 'Position', 'Status', 'Signup Time'];
+    const rows = player.gamesOwed.map(game => [
+      format(new Date(game.gameDate), 'MMM d, yyyy h:mm a'),
+      game.pitchSize,
+      game.costPerPlayer.toFixed(2),
+      game.position,
+      game.isDropout ? 'Dropout' : 'Played',
+      format(new Date(game.signupDate), 'MMM d, yyyy h:mm a')
+    ]);
+    
+    // Add summary rows
+    rows.push([]);
+    rows.push(['Total Games', '', player.gamesOwed.length, '', '', '']);
+    rows.push(['Total Debt', '', player.totalDebt.toFixed(2), '', '', '']);
+    rows.push(['Credit', '', player.credit.toFixed(2), '', '', '']);
+    rows.push(['Net Balance', '', player.netBalance.toFixed(2), '', '', '']);
+    
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${player.playerName.replace(/\s+/g, '-')}-debt-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    
+    toast({
+      title: "Exported",
+      description: `${player.playerName}'s game details exported to CSV`
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -497,10 +532,18 @@ const AdminDebtManagement = () => {
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent className="max-w-3xl mx-2 sm:mx-auto max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <PoundSterling className="h-5 w-5" />
-              {selectedPlayer?.playerName} - Game Details
-            </DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2">
+                <PoundSterling className="h-5 w-5" />
+                {selectedPlayer?.playerName} - Game Details
+              </DialogTitle>
+              {selectedPlayer && (
+                <Button size="sm" onClick={() => exportPlayerDetails(selectedPlayer)} className="bg-green-600 hover:bg-green-700">
+                  <Download className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Export</span>
+                </Button>
+              )}
+            </div>
           </DialogHeader>
           
           {selectedPlayer && (
