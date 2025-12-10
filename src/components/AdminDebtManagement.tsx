@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { PoundSterling, AlertCircle, TrendingUp, TrendingDown, Calendar, Users, CheckCircle, User, AlertTriangle } from 'lucide-react';
+import { PoundSterling, AlertCircle, TrendingUp, TrendingDown, Calendar, Users, CheckCircle, User, AlertTriangle, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 import type { ScheduledGame, GameScheduleSignup, Guest } from '@/types';
 
@@ -440,9 +440,10 @@ const AdminDebtManagement = () => {
                           ) : (
                             <button
                               onClick={() => setEditingCredit({ id: key, value: summary.credit.toString() })}
-                              className="font-medium text-green-600 hover:underline"
+                              className="inline-flex items-center gap-1.5 font-medium text-green-600 hover:bg-green-50 px-2 py-1 rounded transition-colors group"
                             >
                               £{summary.credit.toFixed(2)}
+                              <Pencil className="h-3 w-3 opacity-40 group-hover:opacity-100 transition-opacity" />
                             </button>
                           )}
                         </TableCell>
