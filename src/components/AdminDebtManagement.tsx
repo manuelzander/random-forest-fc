@@ -370,19 +370,13 @@ const AdminDebtManagement = () => {
       {/* Player Debt Table */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <PoundSterling className="h-5 w-5" />
-                Player Debt & Credit
-              </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                Debt calculated from scheduled games (£{TOTAL_GAME_COST} split among players). Only the top {' '}
-                12 (small pitch, £{(TOTAL_GAME_COST / 12).toFixed(2)} each) or 14 (big pitch, £{(TOTAL_GAME_COST / 14).toFixed(2)} each) players by signup position owe payment.
-              </p>
-            </div>
-            <Button size="sm" onClick={exportToCSV} className="shrink-0 bg-green-600 hover:bg-green-700">
-              <Download className="h-4 w-4 mr-2" />
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <PoundSterling className="h-5 w-5" />
+              Player Debt & Credit
+            </CardTitle>
+            <Button size="sm" onClick={exportToCSV} className="bg-green-600 hover:bg-green-700">
+              <Download className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Export</span>
             </Button>
           </div>
