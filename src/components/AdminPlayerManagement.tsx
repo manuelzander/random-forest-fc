@@ -1293,9 +1293,9 @@ const AdminPlayerManagement = () => {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <h4 className="font-semibold text-sm sm:text-base truncate">{orphan.guest_name}</h4>
-                          <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
-                            <AlertTriangle className="h-3 w-3 mr-1" />
-                            <span className="hidden sm:inline">Orphan</span>
+                          <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                            <Users className="h-3 w-3 mr-1" />
+                            <span className="hidden sm:inline">Guest</span>
                           </Badge>
                         </div>
                         <p className="text-xs sm:text-sm text-muted-foreground">
