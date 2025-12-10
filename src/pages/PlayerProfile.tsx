@@ -416,20 +416,58 @@ const PlayerProfile = () => {
               </CardTitle>
              </CardHeader>
               <CardContent className="space-y-6">
-                {/* Win/Draw/Loss at the top */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-3 bg-green-100 rounded-lg">
-                    <div className="text-xl font-bold text-green-700">{player.wins}</div>
-                    <div className="text-xs font-medium text-green-600">Wins</div>
-                  </div>
-                  <div className="text-center p-3 bg-yellow-100 rounded-lg">
-                    <div className="text-xl font-bold text-yellow-700">{player.draws}</div>
-                    <div className="text-xs font-medium text-yellow-600">Draws</div>
-                  </div>
-                  <div className="text-center p-3 bg-red-100 rounded-lg">
-                    <div className="text-xl font-bold text-red-700">{player.losses}</div>
-                    <div className="text-xs font-medium text-red-600">Losses</div>
-                  </div>
+                {/* Win/Draw/Loss Cards at the top */}
+                <div className="grid grid-cols-3 gap-3">
+                  <Card>
+                    <CardHeader className="pb-2 pt-3 px-3">
+                      <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                        <Trophy className="h-3.5 w-3.5 text-green-500" />
+                        Wins
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pb-3 px-3">
+                      <div className="text-2xl font-bold text-green-600">
+                        {player.wins}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Victories
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-2 pt-3 px-3">
+                      <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                        <Target className="h-3.5 w-3.5 text-yellow-500" />
+                        Draws
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pb-3 px-3">
+                      <div className="text-2xl font-bold text-yellow-600">
+                        {player.draws}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Tied games
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-2 pt-3 px-3">
+                      <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5 text-red-500" />
+                        Losses
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pb-3 px-3">
+                      <div className="text-2xl font-bold text-red-600">
+                        {player.losses}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Defeats
+                      </p>
+                    </CardContent>
+                  </Card>
                 </div>
 
                 {/* Form - Big box */}
