@@ -381,7 +381,7 @@ const AdminDebtManagement = () => {
                 12 (small pitch, £{(TOTAL_GAME_COST / 12).toFixed(2)} each) or 14 (big pitch, £{(TOTAL_GAME_COST / 14).toFixed(2)} each) players by signup position owe payment.
               </p>
             </div>
-            <Button variant="outline" size="sm" onClick={exportToCSV} className="shrink-0">
+            <Button size="sm" onClick={exportToCSV} className="shrink-0 bg-green-600 hover:bg-green-700">
               <Download className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Export</span>
             </Button>
