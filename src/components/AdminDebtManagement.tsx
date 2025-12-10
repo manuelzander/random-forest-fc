@@ -471,22 +471,58 @@ const AdminDebtManagement = () => {
           
           {selectedPlayer && (
             <div className="space-y-4">
-              {/* Summary */}
-              <div className="flex flex-wrap gap-4 p-4 bg-muted rounded-lg">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Debt</p>
-                  <p className="text-lg font-bold text-red-600">£{selectedPlayer.totalDebt.toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Credit</p>
-                  <p className="text-lg font-bold text-green-600">£{selectedPlayer.credit.toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Net Balance</p>
-                  <p className={`text-lg font-bold ${selectedPlayer.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    £{selectedPlayer.netBalance.toFixed(2)}
-                  </p>
-                </div>
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      <TrendingDown className="h-4 w-4 text-red-500" />
+                      Total Debt
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-red-600">
+                      £{selectedPlayer.totalDebt.toFixed(2)}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Amount owed
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-green-500" />
+                      Credit Balance
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-600">
+                      £{selectedPlayer.credit.toFixed(2)}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Available balance
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      <PoundSterling className="h-4 w-4" />
+                      Net Balance
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className={`text-2xl font-bold ${selectedPlayer.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      £{Math.abs(selectedPlayer.netBalance).toFixed(2)}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {selectedPlayer.netBalance >= 0 ? 'Surplus' : 'Outstanding'}
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Games Table */}
