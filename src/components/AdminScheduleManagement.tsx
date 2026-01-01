@@ -153,14 +153,16 @@ const AdminScheduleManagement = () => {
         gameData.pitch_size = newPitchSize;
       }
 
-      const { error } = await supabase
+      const { data: newGame, error } = await supabase
         .from('games_schedule')
-        .insert(gameData);
+        .insert(gameData)
+        .select('id')
+        .single();
 
       if (error) throw error;
 
       // Send Telegram notification for new game with signup URL
-      const signupUrl = `${window.location.origin}/game-signup`;
+      const signupUrl = `https://random-forest-fc.lovable.app/signup/${newGame.id}`;
       sendNewGameNotification(
         scheduledAt,
         newPitchSize === 'none' ? null : newPitchSize,
