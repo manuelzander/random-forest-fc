@@ -269,18 +269,18 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                             </Button>
                           </Link>
                             {(player as any).user_id ? (
-                               <Badge variant="secondary" className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
-                                 <CheckCircle className="h-3 w-3 sm:mr-1" />
+                               <Badge className="bg-green-100 text-green-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                                 <CheckCircle className="h-3 w-3" />
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              ) : (
-                               <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
-                                 <User className="h-3 w-3 sm:mr-1" />
+                               <Badge className="bg-orange-100 text-orange-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                                 <User className="h-3 w-3" />
                                  <span className="hidden sm:inline">Unverified</span>
                                </Badge>
                              )}
                             {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
-                              <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
+                              <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
                                 <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               </Badge>
                            ))}
