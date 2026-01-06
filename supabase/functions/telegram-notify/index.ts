@@ -17,7 +17,7 @@ interface NotificationPayload {
   addedBy?: string;
   removedBy?: string;
   // Notification types
-  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted' | 'game_result';
+  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted' | 'game_result' | 'game_cancelled';
   // For waitlist promotion
   promotedPlayerName?: string;
   droppedPlayerName?: string;
@@ -121,6 +121,9 @@ serve(async (req) => {
     } else if (type === 'game_full') {
       // Game reached capacity
       message = `🎉 *Game is now FULL!*\n🗓️ *${gameDate}*\n✅ ${capacity}/${capacity} players signed up\n\nAny new signups will be on the waitlist.`;
+    } else if (type === 'game_cancelled') {
+      // Game cancelled notification
+      message = `🚫 *Game cancelled!*\n🗓️ *${gameDate}*\n\nThe scheduled game has been removed.`;
     } else if (type === 'waitlist_promoted') {
       // Waitlist player promoted to main roster
       const { promotedPlayerName, droppedPlayerName } = payload;

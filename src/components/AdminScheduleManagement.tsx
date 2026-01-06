@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { sendTelegramNotification, sendNewGameNotification } from '@/utils/telegramNotify';
+import { sendTelegramNotification, sendNewGameNotification, sendGameCancelledNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 import GuestNameAutocomplete from './GuestNameAutocomplete';
 
@@ -238,12 +238,20 @@ const AdminScheduleManagement = () => {
 
   const deleteScheduledGame = async (gameId: string) => {
     try {
+      // Get game details before deleting for notification
+      const game = scheduledGames.find(g => g.id === gameId);
+      
       const { error } = await supabase
         .from('games_schedule')
         .delete()
         .eq('id', gameId);
 
       if (error) throw error;
+
+      // Send Telegram notification for cancelled game
+      if (game) {
+        sendGameCancelledNotification(game.scheduled_at, game.pitch_size);
+      }
 
       toast({
         title: "Success",
