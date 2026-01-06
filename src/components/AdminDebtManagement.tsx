@@ -488,7 +488,7 @@ const AdminDebtManagement = () => {
                                 step="0.01"
                                 value={editingCredit.value}
                                 onChange={(e) => setEditingCredit({ ...editingCredit, value: e.target.value })}
-                                className="w-24 h-8 text-right"
+                                className="w-24 h-8 text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 autoFocus
                               />
                               <Button
