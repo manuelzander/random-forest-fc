@@ -12,7 +12,7 @@ interface NotifyParams {
   isAdmin?: boolean;
   addedBy?: string;
   removedBy?: string;
-  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted' | 'game_result';
+  type?: 'signup' | 'new_game' | 'low_signup_warning' | 'game_full' | 'waitlist_promoted' | 'game_result' | 'game_cancelled';
   promotedPlayerName?: string;
   droppedPlayerName?: string;
   signupUrl?: string;
@@ -173,5 +173,18 @@ export const sendGameResultNotification = async (
     team1Captain: team1CaptainName,
     team2Captain: team2CaptainName,
     mvpPlayerName,
+  });
+};
+
+// Convenience function for game cancelled notification
+export const sendGameCancelledNotification = async (
+  gameDate: Date | string,
+  pitchSize: string | null
+): Promise<void> => {
+  return sendTelegramNotification({
+    gameDate,
+    signupCount: 0,
+    pitchSize,
+    type: 'game_cancelled',
   });
 };
