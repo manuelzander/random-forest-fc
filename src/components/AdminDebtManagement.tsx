@@ -561,9 +561,6 @@ const AdminDebtManagement = () => {
                     <div className="text-2xl font-bold text-red-600">
                       £{selectedPlayer.totalDebt.toFixed(2)}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
-                      Amount owed
-                    </p>
                   </CardContent>
                 </Card>
 
@@ -578,9 +575,6 @@ const AdminDebtManagement = () => {
                     <div className="text-2xl font-bold text-green-600">
                       £{selectedPlayer.credit.toFixed(2)}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
-                      Available balance
-                    </p>
                   </CardContent>
                 </Card>
 
@@ -595,9 +589,6 @@ const AdminDebtManagement = () => {
                     <div className={`text-2xl font-bold ${selectedPlayer.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       £{Math.abs(selectedPlayer.netBalance).toFixed(2)}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
-                      {selectedPlayer.netBalance >= 0 ? 'Surplus' : 'Outstanding'}
-                    </p>
                   </CardContent>
                 </Card>
               </div>
