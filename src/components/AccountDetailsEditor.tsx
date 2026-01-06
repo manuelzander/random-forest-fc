@@ -235,7 +235,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
               value={creditAmount}
               onChange={(e) => setCreditAmount(e.target.value)}
               placeholder="Enter amount (+ or -)"
-              className="flex-1"
+              className="flex-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             <Button
               onClick={handleAddCredit}
