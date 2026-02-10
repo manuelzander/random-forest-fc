@@ -41,7 +41,7 @@ const AdminScheduleManagement = () => {
   const [newGameDate, setNewGameDate] = useState<Date>(getNextTuesday());
   const [newGameTime, setNewGameTime] = useState('18:15');
   const [newPitchSize, setNewPitchSize] = useState<string>('small');
-  const [newTotalCost, setNewTotalCost] = useState<string>('93.6');
+  const [newTotalCost, setNewTotalCost] = useState<string>('98');
   const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
   
   // Edit game state
@@ -49,7 +49,7 @@ const AdminScheduleManagement = () => {
   const [editGameDate, setEditGameDate] = useState<Date>();
   const [editGameTime, setEditGameTime] = useState('');
   const [editPitchSize, setEditPitchSize] = useState<string>('');
-  const [editTotalCost, setEditTotalCost] = useState<string>('93.6');
+  const [editTotalCost, setEditTotalCost] = useState<string>('98');
   const [isUpdating, setIsUpdating] = useState(false);
   const [editDatePopoverOpen, setEditDatePopoverOpen] = useState(false);
 
