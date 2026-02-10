@@ -54,6 +54,7 @@ export interface ScheduledGame {
   created_at: string;
   updated_at: string;
   pitch_size?: string | null;
+  total_cost?: number | null;
 }
 
 export interface Guest {

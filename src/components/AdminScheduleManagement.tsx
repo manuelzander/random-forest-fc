@@ -41,6 +41,7 @@ const AdminScheduleManagement = () => {
   const [newGameDate, setNewGameDate] = useState<Date>(getNextTuesday());
   const [newGameTime, setNewGameTime] = useState('18:15');
   const [newPitchSize, setNewPitchSize] = useState<string>('small');
+  const [newTotalCost, setNewTotalCost] = useState<string>('93.6');
   const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
   
   // Edit game state
@@ -48,6 +49,7 @@ const AdminScheduleManagement = () => {
   const [editGameDate, setEditGameDate] = useState<Date>();
   const [editGameTime, setEditGameTime] = useState('');
   const [editPitchSize, setEditPitchSize] = useState<string>('');
+  const [editTotalCost, setEditTotalCost] = useState<string>('93.6');
   const [isUpdating, setIsUpdating] = useState(false);
   const [editDatePopoverOpen, setEditDatePopoverOpen] = useState(false);
 
@@ -153,6 +155,12 @@ const AdminScheduleManagement = () => {
         gameData.pitch_size = newPitchSize;
       }
 
+      // Add total cost
+      const costValue = parseFloat(newTotalCost);
+      if (!isNaN(costValue) && costValue >= 0) {
+        gameData.total_cost = costValue;
+      }
+
       const { data: newGame, error } = await supabase
         .from('games_schedule')
         .insert(gameData)
@@ -196,6 +204,7 @@ const AdminScheduleManagement = () => {
     setEditGameDate(gameDate);
     setEditGameTime(format(gameDate, 'HH:mm'));
     setEditPitchSize(game.pitch_size || 'none');
+    setEditTotalCost(String(game.total_cost ?? 93.6));
   };
 
   const updateScheduledGame = async () => {
@@ -211,7 +220,8 @@ const AdminScheduleManagement = () => {
         .from('games_schedule')
         .update({
           scheduled_at: scheduledAt.toISOString(),
-          pitch_size: editPitchSize === 'none' ? null : editPitchSize
+          pitch_size: editPitchSize === 'none' ? null : editPitchSize,
+          total_cost: parseFloat(editTotalCost) || 93.6
         })
         .eq('id', editingGame.id);
 
@@ -517,6 +527,18 @@ const AdminScheduleManagement = () => {
               </Select>
             </div>
 
+            <div className="space-y-2">
+              <Label>Total Cost (£)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={newTotalCost}
+                onChange={(e) => setNewTotalCost(e.target.value)}
+                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+            </div>
+
             <div className="flex items-end">
               <Button 
                 onClick={createScheduledGame}
@@ -811,6 +833,18 @@ const AdminScheduleManagement = () => {
                   <SelectItem value="big">Big pitch</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Total Cost (£)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={editTotalCost}
+                onChange={(e) => setEditTotalCost(e.target.value)}
+                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
             </div>
           </div>
           <DialogFooter>
