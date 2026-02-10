@@ -3,6 +3,7 @@ export const TOTAL_GAME_COST = 93.6;
 export interface GameScheduleForDebt {
   id: string;
   pitch_size: string | null;
+  total_cost: number | null;
 }
 
 export interface SignupForDebt {
@@ -27,7 +28,8 @@ export function calculatePlayerDebt(
 
   scheduledGames.forEach((game) => {
     const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
-    const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
+    const gameCost = game.total_cost ?? TOTAL_GAME_COST;
+    const costPerPlayer = gameCost / pitchCapacity;
 
     // Get all signups for this game, sorted by signup time
     const gameSignups = allSignups
@@ -72,7 +74,8 @@ export function calculateGuestDebt(
 
   scheduledGames.forEach((game) => {
     const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
-    const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
+    const gameCost = game.total_cost ?? TOTAL_GAME_COST;
+    const costPerPlayer = gameCost / pitchCapacity;
 
     // Get all signups for this game, sorted by signup time
     const gameSignups = allSignups

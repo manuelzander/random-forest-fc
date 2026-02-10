@@ -30,7 +30,7 @@ interface PlayerDebtSummary {
   }>;
 }
 
-const TOTAL_GAME_COST = 93.6; // Total cost per game to be split among players
+const DEFAULT_GAME_COST = 93.6; // Default total cost per game to be split among players
 
 const AdminDebtManagement = () => {
   const { toast } = useToast();
@@ -165,7 +165,8 @@ const AdminDebtManagement = () => {
             : `player-${playerId}`;
 
             // Calculate cost per player based on pitch capacity
-            const costPerPlayer = TOTAL_GAME_COST / pitchCapacity;
+            const gameCost = (game as any).total_cost ?? DEFAULT_GAME_COST;
+            const costPerPlayer = gameCost / pitchCapacity;
 
             if (!debtMap.has(key)) {
               debtMap.set(key, {

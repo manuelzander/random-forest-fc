@@ -182,7 +182,8 @@ const AdminPlayerManagement = () => {
       // Calculate debt using shared logic
       const gamesForDebt: GameScheduleForDebt[] = (scheduledGames || []).map(g => ({
         id: g.id,
-        pitch_size: g.pitch_size
+        pitch_size: g.pitch_size,
+        total_cost: g.total_cost ?? null
       }));
       const signupsForDebt: SignupForDebt[] = (signupsData || []).map((s: any) => ({
         id: s.id,
@@ -272,7 +273,8 @@ const AdminPlayerManagement = () => {
       // Prepare data for shared debt calculation
       const gamesForDebt: GameScheduleForDebt[] = (scheduledGames || []).map(g => ({
         id: g.id,
-        pitch_size: g.pitch_size
+        pitch_size: g.pitch_size,
+        total_cost: g.total_cost ?? null
       }));
       const signupsForDebt: SignupForDebt[] = (signupsData || []).map((s: any) => ({
         id: s.id,

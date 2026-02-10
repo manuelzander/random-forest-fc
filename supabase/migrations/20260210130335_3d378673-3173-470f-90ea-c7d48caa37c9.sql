@@ -1,0 +1,1 @@
+ALTER TABLE public.games_schedule ADD COLUMN total_cost numeric NOT NULL DEFAULT 93.6;

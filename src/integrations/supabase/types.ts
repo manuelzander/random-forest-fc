@@ -71,6 +71,7 @@ export type Database = {
           id: string
           pitch_size: string | null
           scheduled_at: string
+          total_cost: number
           updated_at: string
         }
         Insert: {
@@ -79,6 +80,7 @@ export type Database = {
           id?: string
           pitch_size?: string | null
           scheduled_at: string
+          total_cost?: number
           updated_at?: string
         }
         Update: {
@@ -87,6 +89,7 @@ export type Database = {
           id?: string
           pitch_size?: string | null
           scheduled_at?: string
+          total_cost?: number
           updated_at?: string
         }
         Relationships: []
