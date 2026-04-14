@@ -1,0 +1,1 @@
+UPDATE public.user_roles SET role = 'admin' WHERE user_id = 'e225ed81-8cc4-4390-8bae-70f845beed2d';
