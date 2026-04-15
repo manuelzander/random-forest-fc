@@ -114,6 +114,48 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
     }
   };
 
+  const handleNameUpdate = async () => {
+    const trimmed = displayName.trim();
+    if (!trimmed) {
+      toast({ title: "Error", description: "Display name cannot be empty", variant: "destructive" });
+      return;
+    }
+    if (trimmed.length > 50) {
+      toast({ title: "Error", description: "Display name must be 50 characters or less", variant: "destructive" });
+      return;
+    }
+    if (trimmed === playerName) {
+      toast({ title: "No changes", description: "Display name is the same as current" });
+      return;
+    }
+
+    setIsUpdatingName(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      const { error: playerError } = await supabase
+        .from('players')
+        .update({ name: trimmed })
+        .eq('user_id', user.id);
+      if (playerError) throw playerError;
+
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ display_name: trimmed })
+        .eq('user_id', user.id);
+      if (profileError) throw profileError;
+
+      toast({ title: "Name updated", description: `Your display name is now "${trimmed}"` });
+      onNameUpdate?.();
+    } catch (error: any) {
+      console.error('Error updating name:', error);
+      toast({ title: "Error", description: error.message || "Failed to update name", variant: "destructive" });
+    } finally {
+      setIsUpdatingName(false);
+    }
+  };
+
   const handleAddCredit = async () => {
     const amount = parseFloat(creditAmount);
     if (!amount || isNaN(amount)) {
