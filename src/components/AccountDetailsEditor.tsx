@@ -259,7 +259,37 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         </CardHeader>
         <CardContent className="space-y-6">
 
-        {/* Add Credit Section */}
+        {/* Display Name Section */}
+        {playerName !== undefined && (
+          <div className="space-y-3">
+            <Label className="text-sm font-medium flex items-center gap-2">
+              <UserPen className="h-4 w-4" />
+              Display Name
+            </Label>
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Enter your display name"
+                maxLength={50}
+                className="flex-1"
+              />
+              <Button
+                onClick={handleNameUpdate}
+                disabled={isUpdatingName || displayName.trim() === playerName}
+                variant="outline"
+              >
+                {isUpdatingName ? 'Updating...' : 'Update Name'}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              This name appears on leaderboards, game signups, and your profile
+            </p>
+          </div>
+        )}
+
+
         <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Banknote className="h-4 w-4" />
