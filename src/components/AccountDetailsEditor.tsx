@@ -334,9 +334,9 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             <Button
               onClick={handleEmailUpdate}
               disabled={isUpdating || email === userEmail}
-              variant="outline"
+              className="bg-green-600 hover:bg-green-700"
             >
-              Update Email
+              Update
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
