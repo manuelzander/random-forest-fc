@@ -492,21 +492,14 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
       )}
 
       {/* Account Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Account Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <AccountDetailsEditor 
-            userEmail={user.email || ''} 
-            debt={currentUserPlayer?.debt || 0}
-            credit={userCredit}
-            onCreditUpdate={fetchUserCredit}
-            playerName={currentUserPlayer?.name}
-            onNameUpdate={() => { fetchPlayers(); onDataRefresh(); }}
-          />
-        </CardContent>
-      </Card>
+      <AccountDetailsEditor 
+        userEmail={user.email || ''} 
+        debt={currentUserPlayer?.debt || 0}
+        credit={userCredit}
+        onCreditUpdate={fetchUserCredit}
+        playerName={currentUserPlayer?.name}
+        onNameUpdate={() => { fetchPlayers(); onDataRefresh(); }}
+      />
       {/* Create Player Dialog */}
       <Dialog open={createPlayerDialogOpen} onOpenChange={setCreatePlayerDialogOpen}>
         <DialogContent>
