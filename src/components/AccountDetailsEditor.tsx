@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Settings, Mail, Lock, Eye, EyeOff, Banknote, TrendingDown, TrendingUp, PoundSterling } from 'lucide-react';
+import { Settings, Mail, Lock, Eye, EyeOff, Banknote, TrendingDown, TrendingUp, PoundSterling, UserPen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -12,9 +12,11 @@ interface AccountDetailsEditorProps {
   debt?: number;
   credit?: number;
   onCreditUpdate?: () => void;
+  playerName?: string;
+  onNameUpdate?: () => void;
 }
 
-const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate }: AccountDetailsEditorProps) => {
+const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate, playerName, onNameUpdate }: AccountDetailsEditorProps) => {
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [email, setEmail] = useState(userEmail);
@@ -24,6 +26,8 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [creditAmount, setCreditAmount] = useState('');
   const [isAddingCredit, setIsAddingCredit] = useState(false);
+  const [displayName, setDisplayName] = useState(playerName || '');
+  const [isUpdatingName, setIsUpdatingName] = useState(false);
 
   const handleEmailUpdate = async () => {
     if (email === userEmail) {
@@ -107,6 +111,48 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
       });
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleNameUpdate = async () => {
+    const trimmed = displayName.trim();
+    if (!trimmed) {
+      toast({ title: "Error", description: "Display name cannot be empty", variant: "destructive" });
+      return;
+    }
+    if (trimmed.length > 50) {
+      toast({ title: "Error", description: "Display name must be 50 characters or less", variant: "destructive" });
+      return;
+    }
+    if (trimmed === playerName) {
+      toast({ title: "No changes", description: "Display name is the same as current" });
+      return;
+    }
+
+    setIsUpdatingName(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      const { error: playerError } = await supabase
+        .from('players')
+        .update({ name: trimmed })
+        .eq('user_id', user.id);
+      if (playerError) throw playerError;
+
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ display_name: trimmed })
+        .eq('user_id', user.id);
+      if (profileError) throw profileError;
+
+      toast({ title: "Name updated", description: `Your display name is now "${trimmed}"` });
+      onNameUpdate?.();
+    } catch (error: any) {
+      console.error('Error updating name:', error);
+      toast({ title: "Error", description: error.message || "Failed to update name", variant: "destructive" });
+    } finally {
+      setIsUpdatingName(false);
     }
   };
 
@@ -213,7 +259,37 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
         </CardHeader>
         <CardContent className="space-y-6">
 
-        {/* Add Credit Section */}
+        {/* Display Name Section */}
+        {playerName !== undefined && (
+          <div className="space-y-3">
+            <Label className="text-sm font-medium flex items-center gap-2">
+              <UserPen className="h-4 w-4" />
+              Display Name
+            </Label>
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Enter your display name"
+                maxLength={50}
+                className="flex-1"
+              />
+              <Button
+                onClick={handleNameUpdate}
+                disabled={isUpdatingName || displayName.trim() === playerName}
+                variant="outline"
+              >
+                {isUpdatingName ? 'Updating...' : 'Update Name'}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              This name appears on leaderboards, game signups, and your profile
+            </p>
+          </div>
+        )}
+
+
         <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Banknote className="h-4 w-4" />
