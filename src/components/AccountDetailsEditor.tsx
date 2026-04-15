@@ -278,9 +278,9 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
               <Button
                 onClick={handleNameUpdate}
                 disabled={isUpdatingName || displayName.trim() === playerName}
-                variant="outline"
+                className="bg-green-600 hover:bg-green-700"
               >
-                {isUpdatingName ? 'Updating...' : 'Update Name'}
+                {isUpdatingName ? 'Updating...' : 'Update'}
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
