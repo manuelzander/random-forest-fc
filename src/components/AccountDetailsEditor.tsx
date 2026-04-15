@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Settings, Mail, Lock, Eye, EyeOff, Banknote, TrendingDown, TrendingUp, PoundSterling, UserPen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -261,35 +262,38 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
 
         {/* Display Name Section */}
         {playerName !== undefined && (
-          <div className="space-y-3">
-            <Label className="text-sm font-medium flex items-center gap-2">
-              <UserPen className="h-4 w-4" />
-              Display Name
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Enter your display name"
-                maxLength={50}
-                className="flex-1"
-              />
-              <Button
-                onClick={handleNameUpdate}
-                disabled={isUpdatingName || displayName.trim() === playerName}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {isUpdatingName ? 'Updating...' : 'Update'}
-              </Button>
+          <>
+            <div className="space-y-3">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <UserPen className="h-4 w-4" />
+                Display Name
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Enter your display name"
+                  maxLength={50}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={handleNameUpdate}
+                  disabled={isUpdatingName || displayName.trim() === playerName}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {isUpdatingName ? 'Updating...' : 'Update'}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                This name appears on leaderboards, game signups, and your profile
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              This name appears on leaderboards, game signups, and your profile
-            </p>
-          </div>
+            <Separator />
+          </>
         )}
 
-
+        {/* Credit Section */}
         <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Banknote className="h-4 w-4" />
@@ -317,6 +321,8 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
           </p>
         </div>
 
+        <Separator />
+
         {/* Email Section */}
         <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
@@ -343,6 +349,8 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             Current email: {userEmail}
           </p>
         </div>
+
+        <Separator />
 
         {/* Password Section */}
         <div className="space-y-3">
@@ -388,7 +396,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             <Button
               onClick={handlePasswordUpdate}
               disabled={isUpdating || !newPassword || !confirmPassword}
-              className="w-full"
+              className="w-full bg-green-600 hover:bg-green-700"
             >
               Update Password
             </Button>
