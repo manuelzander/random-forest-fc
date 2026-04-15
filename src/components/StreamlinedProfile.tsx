@@ -502,6 +502,8 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
             debt={currentUserPlayer?.debt || 0}
             credit={userCredit}
             onCreditUpdate={fetchUserCredit}
+            playerName={currentUserPlayer?.name}
+            onNameUpdate={() => { fetchPlayers(); onDataRefresh(); }}
           />
         </CardContent>
       </Card>

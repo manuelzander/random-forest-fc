@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Settings, Mail, Lock, Eye, EyeOff, Banknote, TrendingDown, TrendingUp, PoundSterling } from 'lucide-react';
+import { Settings, Mail, Lock, Eye, EyeOff, Banknote, TrendingDown, TrendingUp, PoundSterling, UserPen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -12,9 +12,11 @@ interface AccountDetailsEditorProps {
   debt?: number;
   credit?: number;
   onCreditUpdate?: () => void;
+  playerName?: string;
+  onNameUpdate?: () => void;
 }
 
-const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate }: AccountDetailsEditorProps) => {
+const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate, playerName, onNameUpdate }: AccountDetailsEditorProps) => {
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [email, setEmail] = useState(userEmail);
@@ -24,6 +26,8 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [creditAmount, setCreditAmount] = useState('');
   const [isAddingCredit, setIsAddingCredit] = useState(false);
+  const [displayName, setDisplayName] = useState(playerName || '');
+  const [isUpdatingName, setIsUpdatingName] = useState(false);
 
   const handleEmailUpdate = async () => {
     if (email === userEmail) {
