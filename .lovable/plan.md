@@ -27,7 +27,20 @@ A slim banner sits directly above the "Total Players / Games Played" cards on th
   - The two stat cards show that season's player count and games played.
   - The banner shifts to a muted, historical treatment, the label reads e.g. "2025/26 · Archived", and a clear "Back to current season" action appears.
   - The News tab stays on current news (news isn't season-scoped).
-- No new route or page — it's homepage state, so returning to the current season is one click.
+- No new route or page — it's page state, so returning to the current season is one click.
+
+## The same banner on the Admin panel
+
+This architecture holds up, and reusing the banner in Admin is the cleaner design — one component, one hook, one source of truth for "which season am I looking at".
+
+The same banner sits above the Admin tab bar and drives which season the season-scoped tabs show:
+
+- **Games** — archived seasons show that season's results read-only (no edit, delete, or add).
+- **Schedule** — archived seasons show past fixtures and their signups read-only (no create, no signup changes, no delete).
+- **Debt** — archived seasons recalculate from that season's schedules and signups. Credit editing stays enabled, since credit is a single current balance rather than season data.
+- **Players** and **News** are not season-scoped, so they always show live data. When a past season is selected those two tabs stay exactly as they are today; the banner's archived styling makes it clear the season selector doesn't apply to them.
+
+Why read-only for archived data: archived rows are a historical record, and allowing edits there would let stats and debt for a closed season drift after the fact. Editing a past season stays a deliberate database operation rather than an everyday admin action.
 
 ## Debt time travel
 
@@ -65,5 +78,8 @@ Frontend:
 - Season selection state lives in `Index.tsx` and is passed down.
 - `src/hooks/useArchivedPlayerAchievements.tsx` — calls the new RPC when a past season is selected; `Index.tsx` feeds either live or archived players into `PlayerTable` and `AchievementsTable` unchanged.
 - `GamesList` and `ScheduleDisplay` gain an optional `seasonId` prop; when set they query the archived tables and render read-only (no signup or admin actions).
+- `AdminGameManagement` and `AdminScheduleManagement` gain the same optional `seasonId`; when a past season is active they render their tables with mutation controls hidden and read from the archive tables.
+- `Admin.tsx` renders `SeasonBanner` above its `TabsList` and passes the selected season into the Games, Schedule, and Debt tabs only.
+- The season selection hook is shared: `useSeasons` plus a small `SeasonProvider` so `Index.tsx` and `Admin.tsx` use the same logic without duplicating state handling.
 - Stat cards read counts from whichever season is active.
 - `AdminDebtManagement` gains a season `Select`. Its fetch reads `games_schedule` / `games_schedule_signups` for the current season and `archived_games_schedule` / `archived_games_schedule_signups` (filtered by `season_id`) for past ones. The aggregation currently inline in `fetchDebtData` is extracted into one shared helper so both paths use identical rules; `debtCalculation.ts` stays as-is.
