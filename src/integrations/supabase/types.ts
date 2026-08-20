@@ -14,6 +14,157 @@ export type Database = {
   }
   public: {
     Tables: {
+      archived_games: {
+        Row: {
+          created_at: string
+          id: string
+          mvp_player: string | null
+          season_id: string
+          team1_captain: string | null
+          team1_goals: number
+          team1_players: string[]
+          team2_captain: string | null
+          team2_goals: number
+          team2_players: string[]
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          created_at: string
+          id: string
+          mvp_player?: string | null
+          season_id: string
+          team1_captain?: string | null
+          team1_goals: number
+          team1_players: string[]
+          team2_captain?: string | null
+          team2_goals: number
+          team2_players: string[]
+          updated_at: string
+          youtube_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mvp_player?: string | null
+          season_id?: string
+          team1_captain?: string | null
+          team1_goals?: number
+          team1_players?: string[]
+          team2_captain?: string | null
+          team2_goals?: number
+          team2_players?: string[]
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "archived_games_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      archived_games_schedule: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          pitch_size: string | null
+          scheduled_at: string
+          season_id: string
+          total_cost: number
+          updated_at: string
+        }
+        Insert: {
+          created_at: string
+          created_by: string
+          id: string
+          pitch_size?: string | null
+          scheduled_at: string
+          season_id: string
+          total_cost?: number
+          updated_at: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          pitch_size?: string | null
+          scheduled_at?: string
+          season_id?: string
+          total_cost?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "archived_games_schedule_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      archived_games_schedule_signups: {
+        Row: {
+          created_at: string
+          created_by_user_id: string | null
+          game_schedule_id: string
+          guest_id: string | null
+          guest_name: string | null
+          id: string
+          is_guest: boolean | null
+          last_minute_dropout: boolean | null
+          player_id: string | null
+          season_id: string
+          signed_up_at: string
+        }
+        Insert: {
+          created_at: string
+          created_by_user_id?: string | null
+          game_schedule_id: string
+          guest_id?: string | null
+          guest_name?: string | null
+          id: string
+          is_guest?: boolean | null
+          last_minute_dropout?: boolean | null
+          player_id?: string | null
+          season_id: string
+          signed_up_at: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string | null
+          game_schedule_id?: string
+          guest_id?: string | null
+          guest_name?: string | null
+          id?: string
+          is_guest?: boolean | null
+          last_minute_dropout?: boolean | null
+          player_id?: string | null
+          season_id?: string
+          signed_up_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "archived_games_schedule_signups_game_schedule_id_fkey"
+            columns: ["game_schedule_id"]
+            isOneToOne: false
+            referencedRelation: "archived_games_schedule"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "archived_games_schedule_signups_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       games: {
         Row: {
           created_at: string
@@ -299,6 +450,36 @@ export type Database = {
         }
         Relationships: []
       }
+      seasons: {
+        Row: {
+          created_at: string
+          ended_on: string | null
+          id: string
+          is_current: boolean
+          name: string
+          started_on: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ended_on?: string | null
+          id?: string
+          is_current?: boolean
+          name: string
+          started_on?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ended_on?: string | null
+          id?: string
+          is_current?: boolean
+          name?: string
+          started_on?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -325,6 +506,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_archived_player_achievements: {
+        Args: { p_season_id: string }
+        Returns: {
+          avatar_url: string
+          draws: number
+          football_skills: Json
+          games_played: number
+          goal_difference: number
+          id: string
+          losses: number
+          mvp_awards: number
+          name: string
+          points: number
+          skill_ratings: Json
+          user_id: string
+          wins: number
+        }[]
+      }
       get_current_user_role: {
         Args: never
         Returns: Database["public"]["Enums"]["app_role"]
