@@ -10,6 +10,7 @@ import Admin from "./pages/Admin";
 import PlayerProfile from "./pages/PlayerProfile";
 import GameSignup from "./pages/GameSignup";
 import NotFound from "./pages/NotFound";
+import { SeasonProvider } from "@/hooks/useSeasons";
 
 const queryClient = new QueryClient();
 
