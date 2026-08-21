@@ -66,33 +66,53 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
 
       if (gamesError) throw gamesError;
 
-      // Fetch all signups with player and guest details
-      const signupSelect = `
-          *,
-          players:player_id (
-            id,
-            name,
-            user_id
-          ),
-          guests:guest_id (
-            id,
-            name,
-            credit
-          )
-        `;
+      // Fetch all signups with player and guest details.
+      // Archived signups have no FK relationships, so they're joined client-side.
+      let signupsData: any[] | null = null;
 
-      const { data: signupsData, error: signupsError } = archiveSeasonId
-        ? await supabase
+      if (archiveSeasonId) {
+        const [signupsRes, playersRes, guestsRes] = await Promise.all([
+          supabase
             .from('archived_games_schedule_signups')
-            .select(signupSelect)
+            .select('*')
             .eq('season_id', archiveSeasonId)
-            .order('signed_up_at', { ascending: true })
-        : await supabase
-            .from('games_schedule_signups')
-            .select(signupSelect)
-            .order('signed_up_at', { ascending: true });
+            .order('signed_up_at', { ascending: true }),
+          supabase.from('players').select('id, name, user_id'),
+          supabase.from('guests').select('id, name, credit'),
+        ]);
 
-      if (signupsError) throw signupsError;
+        if (signupsRes.error) throw signupsRes.error;
+        if (playersRes.error) throw playersRes.error;
+        if (guestsRes.error) throw guestsRes.error;
+
+        const playerMap = new Map((playersRes.data || []).map((p) => [p.id, p]));
+        const guestMap = new Map((guestsRes.data || []).map((g) => [g.id, g]));
+        signupsData = (signupsRes.data || []).map((s: any) => ({
+          ...s,
+          players: s.player_id ? playerMap.get(s.player_id) ?? null : null,
+          guests: s.guest_id ? guestMap.get(s.guest_id) ?? null : null,
+        }));
+      } else {
+        const { data, error: signupsError } = await supabase
+          .from('games_schedule_signups')
+          .select(`
+            *,
+            players:player_id (
+              id,
+              name,
+              user_id
+            ),
+            guests:guest_id (
+              id,
+              name,
+              credit
+            )
+          `)
+          .order('signed_up_at', { ascending: true });
+
+        if (signupsError) throw signupsError;
+        signupsData = data;
+      }
 
 
       // Fetch all verified player profiles for credit info
