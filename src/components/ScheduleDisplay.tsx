@@ -9,7 +9,12 @@ import { Calendar, User, CheckCircle, Users, ExternalLink, Clock, AlertTriangle 
 import { useAuth } from '@/hooks/useAuth';
 import type { ScheduledGame, GameScheduleSignup } from '@/types';
 
-const ScheduleDisplay = () => {
+interface ScheduleDisplayProps {
+  /** When set, show the archived schedule for this season (read-only) */
+  archiveSeasonId?: string | null;
+}
+
+const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [scheduledGames, setScheduledGames] = useState<ScheduledGame[]>([]);
@@ -18,41 +23,67 @@ const ScheduleDisplay = () => {
 
   useEffect(() => {
     fetchScheduledGames();
-  }, []);
+  }, [archiveSeasonId]);
 
   const fetchScheduledGames = async () => {
     setLoading(true);
     try {
-      // Fetch scheduled games that are in the future
-      const { data: games, error: gamesError } = await supabase
-        .from('games_schedule')
-        .select('*')
-        .gte('scheduled_at', new Date().toISOString())
-        .order('scheduled_at', { ascending: true });
+      // Live: upcoming games only. Archive: the full season schedule, newest first.
+      const { data: games, error: gamesError } = archiveSeasonId
+        ? await supabase
+            .from('archived_games_schedule')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('scheduled_at', { ascending: false })
+        : await supabase
+            .from('games_schedule')
+            .select('*')
+            .gte('scheduled_at', new Date().toISOString())
+            .order('scheduled_at', { ascending: true });
 
       if (gamesError) throw gamesError;
-      setScheduledGames(games || []);
+      setScheduledGames((games as ScheduledGame[]) || []);
 
       // Fetch signups for all games with player and guest details
-      const { data: signupsData, error: signupsError } = await supabase
-        .from('games_schedule_signups')
-        .select(`
-          *,
-          players:player_id (
-            id,
-            name,
-            avatar_url,
-            user_id
-          ),
-          guests:guest_id (
-            id,
-            name,
-            credit
-          )
-        `)
-        .order('signed_up_at', { ascending: true });
+      const { data: signupsData, error: signupsError } = archiveSeasonId
+        ? await supabase
+            .from('archived_games_schedule_signups')
+            .select(`
+              *,
+              players:player_id (
+                id,
+                name,
+                avatar_url,
+                user_id
+              ),
+              guests:guest_id (
+                id,
+                name,
+                credit
+              )
+            `)
+            .eq('season_id', archiveSeasonId)
+            .order('signed_up_at', { ascending: true })
+        : await supabase
+            .from('games_schedule_signups')
+            .select(`
+              *,
+              players:player_id (
+                id,
+                name,
+                avatar_url,
+                user_id
+              ),
+              guests:guest_id (
+                id,
+                name,
+                credit
+              )
+            `)
+            .order('signed_up_at', { ascending: true });
 
       if (signupsError) throw signupsError;
+
 
       // Group signups by game
       const groupedSignups: { [gameId: string]: GameScheduleSignup[] } = {};
