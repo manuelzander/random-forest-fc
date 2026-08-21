@@ -134,19 +134,23 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
     );
   }
 
+  const heading = archiveSeasonId ? 'Season Schedule' : 'Upcoming Games Schedule';
+
   if (scheduledGames.length === 0) {
     return (
       <Card>
         <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
             <Calendar className="h-6 w-6" />
-            Upcoming Games Schedule
+            {heading}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No upcoming games scheduled yet.</p>
+            <p className="text-muted-foreground">
+              {archiveSeasonId ? 'No games recorded for this season.' : 'No upcoming games scheduled yet.'}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -158,7 +162,10 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
       <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Calendar className="h-6 w-6" />
-          Upcoming Games Schedule
+          {heading}
+          {archiveSeasonId && (
+            <Badge className="border-0 bg-amber-200 text-xs text-amber-900">Archived</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
