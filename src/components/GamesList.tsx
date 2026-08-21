@@ -123,6 +123,9 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <History className="h-6 w-6" />
           Game History
+          {archiveSeasonId && (
+            <Badge className="border-0 bg-amber-200 text-xs text-amber-900">Archived</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
