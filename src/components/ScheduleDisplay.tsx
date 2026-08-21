@@ -196,15 +196,17 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                         </Badge>
                       )}
                     </div>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => navigateToSignup(game.id)}
-                      className="w-full sm:w-auto"
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Sign Up
-                    </Button>
+                    {!archiveSeasonId && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => navigateToSignup(game.id)}
+                        className="w-full sm:w-auto"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Sign Up
+                      </Button>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
