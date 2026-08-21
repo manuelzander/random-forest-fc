@@ -32,7 +32,12 @@ interface PlayerDebtSummary {
 
 const DEFAULT_GAME_COST = 93.6; // Default total cost per game to be split among players
 
-const AdminDebtManagement = () => {
+interface AdminDebtManagementProps {
+  /** When set, calculate debt from the archived signups of this season (read-only) */
+  archiveSeasonId?: string | null;
+}
+
+const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [playerSummaries, setPlayerSummaries] = useState<PlayerDebtSummary[]>([]);
@@ -42,24 +47,27 @@ const AdminDebtManagement = () => {
 
   useEffect(() => {
     fetchDebtData();
-  }, []);
+  }, [archiveSeasonId]);
 
   const fetchDebtData = async () => {
     setLoading(true);
     try {
-      console.log('Fetching debt data...');
-      // Fetch all scheduled games
-      const { data: games, error: gamesError } = await supabase
-        .from('games_schedule')
-        .select('*')
-        .order('scheduled_at', { ascending: false });
+      // Fetch all scheduled games (live or archived season)
+      const { data: games, error: gamesError } = archiveSeasonId
+        ? await supabase
+            .from('archived_games_schedule')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('scheduled_at', { ascending: false })
+        : await supabase
+            .from('games_schedule')
+            .select('*')
+            .order('scheduled_at', { ascending: false });
 
       if (gamesError) throw gamesError;
 
       // Fetch all signups with player and guest details
-      const { data: signupsData, error: signupsError } = await supabase
-        .from('games_schedule_signups')
-        .select(`
+      const signupSelect = `
           *,
           players:player_id (
             id,
@@ -71,10 +79,21 @@ const AdminDebtManagement = () => {
             name,
             credit
           )
-        `)
-        .order('signed_up_at', { ascending: true });
+        `;
+
+      const { data: signupsData, error: signupsError } = archiveSeasonId
+        ? await supabase
+            .from('archived_games_schedule_signups')
+            .select(signupSelect)
+            .eq('season_id', archiveSeasonId)
+            .order('signed_up_at', { ascending: true })
+        : await supabase
+            .from('games_schedule_signups')
+            .select(signupSelect)
+            .order('signed_up_at', { ascending: true });
 
       if (signupsError) throw signupsError;
+
 
       // Fetch all verified player profiles for credit info
       const { data: profiles, error: profilesError } = await supabase
