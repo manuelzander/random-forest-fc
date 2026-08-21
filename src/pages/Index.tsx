@@ -182,11 +182,14 @@ const Index = () => {
 
        {/* Main Content */}
         <div className="page-main-content space-y-6">
+          {/* Season Banner */}
+          <SeasonBanner />
+
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card>
               <CardContent className="px-4 py-2 text-center">
-                <div className="text-2xl font-bold text-primary">{players.length}</div>
+                <div className="text-2xl font-bold text-primary">{displayedPlayers.length}</div>
                 <div className="text-sm text-muted-foreground">Total Players</div>
               </CardContent>
             </Card>
@@ -210,16 +213,16 @@ const Index = () => {
               <TabsTrigger value="news" className="text-xs sm:text-sm">News</TabsTrigger>
             </TabsList>
             <TabsContent value="ranking">
-              <PlayerTable players={players} />
+              {archivedLoading ? <div className="p-8 text-center text-muted-foreground">Loading...</div> : <PlayerTable players={displayedPlayers} />}
             </TabsContent>
             <TabsContent value="achievements">
-              <AchievementsTable players={players} />
+              {archivedLoading ? <div className="p-8 text-center text-muted-foreground">Loading...</div> : <AchievementsTable players={displayedPlayers} />}
             </TabsContent>
             <TabsContent value="games">
-              <GamesList />
+              <GamesList archiveSeasonId={archiveSeasonId} />
             </TabsContent>
             <TabsContent value="schedule">
-              <ScheduleDisplay />
+              <ScheduleDisplay archiveSeasonId={archiveSeasonId} />
             </TabsContent>
             <TabsContent value="news">
               <Card>
