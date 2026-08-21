@@ -11,6 +11,9 @@ import GamesList from '@/components/GamesList';
 import AchievementsTable from '@/components/AchievementsTable';
 import ScheduleDisplay from '@/components/ScheduleDisplay';
 import { PlayerClaim } from '@/components/PlayerClaim';
+import SeasonBanner from '@/components/SeasonBanner';
+import { useSeasons } from '@/hooks/useSeasons';
+import { useArchivedAchievements } from '@/hooks/useArchivedAchievements';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -33,18 +36,18 @@ const Index = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsLoading, setNewsLoading] = useState(false);
   const [totalGames, setTotalGames] = useState(0);
+  const { archiveSeasonId } = useSeasons();
+  const { players: archivedPlayers, isLoading: archivedLoading } = useArchivedAchievements(archiveSeasonId);
+  const displayedPlayers = archiveSeasonId ? archivedPlayers : players;
   useEffect(() => {
     fetchGamesCount();
-  }, []);
+  }, [archiveSeasonId]);
   const fetchGamesCount = async () => {
     try {
-      const {
-        count,
-        error
-      } = await supabase.from('games').select('*', {
-        count: 'exact',
-        head: true
-      });
+      const query = archiveSeasonId
+        ? supabase.from('archived_games').select('*', { count: 'exact', head: true }).eq('season_id', archiveSeasonId)
+        : supabase.from('games').select('*', { count: 'exact', head: true });
+      const { count, error } = await query;
       if (error) throw error;
       setTotalGames(count || 0);
     } catch (error) {
@@ -179,11 +182,14 @@ const Index = () => {
 
        {/* Main Content */}
         <div className="page-main-content space-y-6">
+          {/* Season Banner */}
+          <SeasonBanner />
+
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card>
               <CardContent className="px-4 py-2 text-center">
-                <div className="text-2xl font-bold text-primary">{players.length}</div>
+                <div className="text-2xl font-bold text-primary">{displayedPlayers.length}</div>
                 <div className="text-sm text-muted-foreground">Total Players</div>
               </CardContent>
             </Card>
@@ -207,16 +213,16 @@ const Index = () => {
               <TabsTrigger value="news" className="text-xs sm:text-sm">News</TabsTrigger>
             </TabsList>
             <TabsContent value="ranking">
-              <PlayerTable players={players} />
+              {archivedLoading ? <div className="p-8 text-center text-muted-foreground">Loading...</div> : <PlayerTable players={displayedPlayers} />}
             </TabsContent>
             <TabsContent value="achievements">
-              <AchievementsTable players={players} />
+              {archivedLoading ? <div className="p-8 text-center text-muted-foreground">Loading...</div> : <AchievementsTable players={displayedPlayers} />}
             </TabsContent>
             <TabsContent value="games">
-              <GamesList />
+              <GamesList archiveSeasonId={archiveSeasonId} />
             </TabsContent>
             <TabsContent value="schedule">
-              <ScheduleDisplay />
+              <ScheduleDisplay archiveSeasonId={archiveSeasonId} />
             </TabsContent>
             <TabsContent value="news">
               <Card>

@@ -9,10 +9,15 @@ import AdminGameManagement from '@/components/AdminGameManagement';
 import AdminNewsManagement from '@/components/AdminNewsManagement';
 import AdminScheduleManagement from '@/components/AdminScheduleManagement';
 import AdminDebtManagement from '@/components/AdminDebtManagement';
+import GamesList from '@/components/GamesList';
+import ScheduleDisplay from '@/components/ScheduleDisplay';
+import SeasonBanner from '@/components/SeasonBanner';
+import { useSeasons } from '@/hooks/useSeasons';
 import { useToast } from '@/hooks/use-toast';
 
 const Admin = () => {
   const { user, userRole, isLoading, signOut } = useAuth();
+  const { archiveSeasonId } = useSeasons();
   const { toast } = useToast();
 
   const handleSignOut = async () => {
@@ -78,7 +83,9 @@ const Admin = () => {
       </div>
 
       {/* Main Content */}
-      <div className="page-main-content">
+      <div className="page-main-content space-y-6">
+        <SeasonBanner className="max-w-3xl mx-auto" />
+
         <Tabs defaultValue="players" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5 max-w-3xl mx-auto">
             <TabsTrigger value="players" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
@@ -108,15 +115,15 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="games">
-            <AdminGameManagement />
+            {archiveSeasonId ? <GamesList archiveSeasonId={archiveSeasonId} /> : <AdminGameManagement />}
           </TabsContent>
 
           <TabsContent value="schedule">
-            <AdminScheduleManagement />
+            {archiveSeasonId ? <ScheduleDisplay archiveSeasonId={archiveSeasonId} /> : <AdminScheduleManagement />}
           </TabsContent>
 
           <TabsContent value="debt">
-            <AdminDebtManagement />
+            <AdminDebtManagement archiveSeasonId={archiveSeasonId} />
           </TabsContent>
 
           <TabsContent value="news">

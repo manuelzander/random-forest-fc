@@ -47,7 +47,12 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
   );
 };
 
-const GamesList = () => {
+interface GamesListProps {
+  /** When set, show archived games for this season instead of the live season */
+  archiveSeasonId?: string | null;
+}
+
+const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
   const [games, setGames] = useState<Game[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,33 +60,34 @@ const GamesList = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [archiveSeasonId]);
 
   const fetchData = async () => {
     try {
-      console.log('GamesList: Starting fetch...');
+      setIsLoading(true);
+      const gamesQuery = archiveSeasonId
+        ? supabase
+            .from('archived_games')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('created_at', { ascending: false })
+        : supabase
+            .from('games')
+            .select('*')
+            .order('created_at', { ascending: false });
+
       const [gamesResponse, playersResponse] = await Promise.all([
-        supabase
-          .from('games')
-          .select('*')
-          .order('created_at', { ascending: false }),
+        gamesQuery,
         supabase
           .from('players')
           .select('id, name, avatar_url')
           .order('name')
       ]);
 
-      console.log('GamesList: Fetch results:', { 
-        gamesError: gamesResponse.error, 
-        playersError: playersResponse.error,
-        gamesCount: gamesResponse.data?.length,
-        playersCount: playersResponse.data?.length
-      });
-
       if (gamesResponse.error) throw gamesResponse.error;
       if (playersResponse.error) throw playersResponse.error;
 
-      setGames(gamesResponse.data || []);
+      setGames((gamesResponse.data as Game[]) || []);
       setPlayers(playersResponse.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -117,6 +123,9 @@ const GamesList = () => {
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <History className="h-6 w-6" />
           Game History
+          {archiveSeasonId && (
+            <Badge className="border-0 bg-amber-200 text-xs text-amber-900">Archived</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">

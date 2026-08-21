@@ -10,6 +10,7 @@ import Admin from "./pages/Admin";
 import PlayerProfile from "./pages/PlayerProfile";
 import GameSignup from "./pages/GameSignup";
 import NotFound from "./pages/NotFound";
+import { SeasonProvider } from "@/hooks/useSeasons";
 
 const queryClient = new QueryClient();
 
@@ -18,18 +19,20 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/player/:playerId" element={<PlayerProfile />} />
-          <Route path="/signup/:gameId" element={<GameSignup />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <SeasonProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/player/:playerId" element={<PlayerProfile />} />
+            <Route path="/signup/:gameId" element={<GameSignup />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </SeasonProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

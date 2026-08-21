@@ -9,7 +9,12 @@ import { Calendar, User, CheckCircle, Users, ExternalLink, Clock, AlertTriangle 
 import { useAuth } from '@/hooks/useAuth';
 import type { ScheduledGame, GameScheduleSignup } from '@/types';
 
-const ScheduleDisplay = () => {
+interface ScheduleDisplayProps {
+  /** When set, show the archived schedule for this season (read-only) */
+  archiveSeasonId?: string | null;
+}
+
+const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [scheduledGames, setScheduledGames] = useState<ScheduledGame[]>([]);
@@ -18,41 +23,72 @@ const ScheduleDisplay = () => {
 
   useEffect(() => {
     fetchScheduledGames();
-  }, []);
+  }, [archiveSeasonId]);
 
   const fetchScheduledGames = async () => {
     setLoading(true);
     try {
-      // Fetch scheduled games that are in the future
-      const { data: games, error: gamesError } = await supabase
-        .from('games_schedule')
-        .select('*')
-        .gte('scheduled_at', new Date().toISOString())
-        .order('scheduled_at', { ascending: true });
+      // Live: upcoming games only. Archive: the full season schedule, newest first.
+      const { data: games, error: gamesError } = archiveSeasonId
+        ? await supabase
+            .from('archived_games_schedule')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('scheduled_at', { ascending: false })
+        : await supabase
+            .from('games_schedule')
+            .select('*')
+            .gte('scheduled_at', new Date().toISOString())
+            .order('scheduled_at', { ascending: true });
 
       if (gamesError) throw gamesError;
-      setScheduledGames(games || []);
+      setScheduledGames((games as ScheduledGame[]) || []);
 
-      // Fetch signups for all games with player and guest details
-      const { data: signupsData, error: signupsError } = await supabase
-        .from('games_schedule_signups')
-        .select(`
-          *,
-          players:player_id (
-            id,
-            name,
-            avatar_url,
-            user_id
-          ),
-          guests:guest_id (
-            id,
-            name,
-            credit
-          )
-        `)
-        .order('signed_up_at', { ascending: true });
+      // Fetch signups for all games with player and guest details.
+      // Archived signups have no FK relationships, so they're joined client-side.
+      let signupsData: any[] | null = null;
 
-      if (signupsError) throw signupsError;
+      if (archiveSeasonId) {
+        const [signupsRes, playersRes] = await Promise.all([
+          supabase
+            .from('archived_games_schedule_signups')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('signed_up_at', { ascending: true }),
+          supabase.from('players').select('id, name, avatar_url, user_id'),
+        ]);
+
+        if (signupsRes.error) throw signupsRes.error;
+        if (playersRes.error) throw playersRes.error;
+
+        const playerMap = new Map((playersRes.data || []).map((p) => [p.id, p]));
+        signupsData = (signupsRes.data || []).map((s: any) => ({
+          ...s,
+          players: s.player_id ? playerMap.get(s.player_id) ?? null : null,
+          guests: null,
+        }));
+      } else {
+        const { data, error: signupsError } = await supabase
+          .from('games_schedule_signups')
+          .select(`
+            *,
+            players:player_id (
+              id,
+              name,
+              avatar_url,
+              user_id
+            ),
+            guests:guest_id (
+              id,
+              name,
+              credit
+            )
+          `)
+          .order('signed_up_at', { ascending: true });
+
+        if (signupsError) throw signupsError;
+        signupsData = data;
+      }
 
       // Group signups by game
       const groupedSignups: { [gameId: string]: GameScheduleSignup[] } = {};
@@ -103,19 +139,23 @@ const ScheduleDisplay = () => {
     );
   }
 
+  const heading = archiveSeasonId ? 'Season Schedule' : 'Upcoming Games Schedule';
+
   if (scheduledGames.length === 0) {
     return (
       <Card>
         <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
             <Calendar className="h-6 w-6" />
-            Upcoming Games Schedule
+            {heading}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No upcoming games scheduled yet.</p>
+            <p className="text-muted-foreground">
+              {archiveSeasonId ? 'No games recorded for this season.' : 'No upcoming games scheduled yet.'}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -127,7 +167,10 @@ const ScheduleDisplay = () => {
       <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Calendar className="h-6 w-6" />
-          Upcoming Games Schedule
+          {heading}
+          {archiveSeasonId && (
+            <Badge className="border-0 bg-amber-200 text-xs text-amber-900">Archived</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
@@ -158,15 +201,17 @@ const ScheduleDisplay = () => {
                         </Badge>
                       )}
                     </div>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => navigateToSignup(game.id)}
-                      className="w-full sm:w-auto"
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Sign Up
-                    </Button>
+                    {!archiveSeasonId && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => navigateToSignup(game.id)}
+                        className="w-full sm:w-auto"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Sign Up
+                      </Button>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
