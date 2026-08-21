@@ -525,6 +525,10 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                                 Cancel
                               </Button>
                             </div>
+                          ) : archiveSeasonId ? (
+                            <span className="font-medium text-green-600 px-2 py-1">
+                              £{summary.credit.toFixed(2)}
+                            </span>
                           ) : (
                             <button
                               onClick={() => setEditingCredit({ id: key, value: summary.credit.toString() })}
