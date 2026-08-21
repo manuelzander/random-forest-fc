@@ -33,18 +33,18 @@ const Index = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsLoading, setNewsLoading] = useState(false);
   const [totalGames, setTotalGames] = useState(0);
+  const { archiveSeasonId } = useSeasons();
+  const { players: archivedPlayers, isLoading: archivedLoading } = useArchivedAchievements(archiveSeasonId);
+  const displayedPlayers = archiveSeasonId ? archivedPlayers : players;
   useEffect(() => {
     fetchGamesCount();
-  }, []);
+  }, [archiveSeasonId]);
   const fetchGamesCount = async () => {
     try {
-      const {
-        count,
-        error
-      } = await supabase.from('games').select('*', {
-        count: 'exact',
-        head: true
-      });
+      const query = archiveSeasonId
+        ? supabase.from('archived_games').select('*', { count: 'exact', head: true }).eq('season_id', archiveSeasonId)
+        : supabase.from('games').select('*', { count: 'exact', head: true });
+      const { count, error } = await query;
       if (error) throw error;
       setTotalGames(count || 0);
     } catch (error) {
