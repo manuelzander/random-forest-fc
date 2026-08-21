@@ -9,10 +9,15 @@ import AdminGameManagement from '@/components/AdminGameManagement';
 import AdminNewsManagement from '@/components/AdminNewsManagement';
 import AdminScheduleManagement from '@/components/AdminScheduleManagement';
 import AdminDebtManagement from '@/components/AdminDebtManagement';
+import GamesList from '@/components/GamesList';
+import ScheduleDisplay from '@/components/ScheduleDisplay';
+import SeasonBanner from '@/components/SeasonBanner';
+import { useSeasons } from '@/hooks/useSeasons';
 import { useToast } from '@/hooks/use-toast';
 
 const Admin = () => {
   const { user, userRole, isLoading, signOut } = useAuth();
+  const { archiveSeasonId } = useSeasons();
   const { toast } = useToast();
 
   const handleSignOut = async () => {
