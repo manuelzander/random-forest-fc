@@ -11,10 +11,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { usePlayerAchievements } from '@/hooks/usePlayerAchievements';
 
-interface AchievementsTableProps {
-  players: Player[]; // This prop is now unused but kept for compatibility
-}
-
 interface PlayerWithProfile extends Player {
   profile?: {
     football_skills?: string[];
@@ -22,14 +18,22 @@ interface PlayerWithProfile extends Player {
   };
 }
 
-const AchievementsTable: React.FC<AchievementsTableProps> = () => {
+interface AchievementsTableProps {
+  /** Players with profiles to show — live standings or an archived season's. */
+  players?: PlayerWithProfile[];
+}
+
+const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: providedPlayers }) => {
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [sortField, setSortField] = useState<'badges' | 'name'>('badges');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  
-  // Use the optimized hook instead of manual fetching
-  const { players: playersWithProfiles, isLoading, error } = usePlayerAchievements();
-  
+
+  // Fall back to live standings only when no players are supplied
+  const live = usePlayerAchievements();
+  const playersWithProfiles = providedPlayers ?? live.players;
+  const isLoading = providedPlayers ? false : live.isLoading;
+  const error = providedPlayers ? null : live.error;
+
   // Sort players whenever sort options change
   const [sortedPlayers, setSortedPlayers] = useState<PlayerWithProfile[]>([]);
   
