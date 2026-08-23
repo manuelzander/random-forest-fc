@@ -8,6 +8,8 @@ import { format } from 'date-fns';
 import { Calendar, User, CheckCircle, Users, ExternalLink, Clock, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import type { ScheduledGame, GameScheduleSignup } from '@/types';
+import { fetchAllPages } from '@/lib/fetchAllPages';
+
 
 interface ScheduleDisplayProps {
   /** When set, show the archived schedule for this season (read-only) */
