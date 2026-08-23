@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllPages } from '@/lib/fetchAllPages';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -126,16 +128,18 @@ const AdminPlayerManagement = () => {
 
     if (scheduledError) throw scheduledError;
 
-    // Fetch all signups for debt calculation
-    const { data: signupsData, error: signupsError } = await supabase
-      .from('games_schedule_signups')
-      .select(`
-        *,
-        players:player_id (id, user_id)
-      `)
-      .order('signed_up_at', { ascending: true });
+    // Fetch all signups for debt calculation (paginated past the 1000-row cap)
+    const signupsData = await fetchAllPages((from, to) =>
+      supabase
+        .from('games_schedule_signups')
+        .select(`
+          *,
+          players:player_id (id, user_id)
+        `)
+        .order('signed_up_at', { ascending: true })
+        .range(from, to)
+    );
 
-    if (signupsError) throw signupsError;
     
     // Fetch all profiles to get credit info
     const { data: profilesData } = await supabase
@@ -262,13 +266,15 @@ const AdminPlayerManagement = () => {
 
       if (scheduledError) throw scheduledError;
 
-      // Fetch all signups for debt calculation
-      const { data: signupsData, error: signupsError } = await supabase
-        .from('games_schedule_signups')
-        .select('*')
-        .order('signed_up_at', { ascending: true });
+      // Fetch all signups for debt calculation (paginated past the 1000-row cap)
+      const signupsData = await fetchAllPages((from, to) =>
+        supabase
+          .from('games_schedule_signups')
+          .select('*')
+          .order('signed_up_at', { ascending: true })
+          .range(from, to)
+      );
 
-      if (signupsError) throw signupsError;
 
       // Prepare data for shared debt calculation
       const gamesForDebt: GameScheduleForDebt[] = (scheduledGames || []).map(g => ({
