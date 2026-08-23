@@ -126,16 +126,18 @@ const AdminPlayerManagement = () => {
 
     if (scheduledError) throw scheduledError;
 
-    // Fetch all signups for debt calculation
-    const { data: signupsData, error: signupsError } = await supabase
-      .from('games_schedule_signups')
-      .select(`
-        *,
-        players:player_id (id, user_id)
-      `)
-      .order('signed_up_at', { ascending: true });
+    // Fetch all signups for debt calculation (paginated past the 1000-row cap)
+    const signupsData = await fetchAllPages((from, to) =>
+      supabase
+        .from('games_schedule_signups')
+        .select(`
+          *,
+          players:player_id (id, user_id)
+        `)
+        .order('signed_up_at', { ascending: true })
+        .range(from, to)
+    );
 
-    if (signupsError) throw signupsError;
     
     // Fetch all profiles to get credit info
     const { data: profilesData } = await supabase
