@@ -44,50 +44,72 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
       if (gamesError) throw gamesError;
       setScheduledGames((games as ScheduledGame[]) || []);
 
-      // Fetch signups for all games with player and guest details.
-      // Archived signups have no FK relationships, so they're joined client-side.
-      let signupsData: any[] | null = null;
+      // Fetch signups for the fetched games only, paginated past Supabase's
+      // 1000-row default cap (an unscoped fetch silently dropped recent signups).
+      const gameIds = ((games as ScheduledGame[]) || []).map((g) => g.id);
+      let signupsData: any[] | null = [];
 
-      if (archiveSeasonId) {
-        const [signupsRes, playersRes] = await Promise.all([
-          supabase
-            .from('archived_games_schedule_signups')
-            .select('*')
-            .eq('season_id', archiveSeasonId)
-            .order('signed_up_at', { ascending: true }),
+      const PAGE = 1000;
+      const fetchAllSignups = async (
+        build: (from: number, to: number) => any,
+      ) => {
+        const all: any[] = [];
+        for (let from = 0; ; from += PAGE) {
+          const { data, error } = await build(from, from + PAGE - 1);
+          if (error) throw error;
+          all.push(...(data || []));
+          if (!data || data.length < PAGE) break;
+        }
+        return all;
+      };
+
+      if (gameIds.length === 0) {
+        signupsData = [];
+      } else if (archiveSeasonId) {
+        const [signupRows, playersRes] = await Promise.all([
+          fetchAllSignups((from, to) =>
+            supabase
+              .from('archived_games_schedule_signups')
+              .select('*')
+              .eq('season_id', archiveSeasonId)
+              .in('game_schedule_id', gameIds)
+              .order('signed_up_at', { ascending: true })
+              .range(from, to),
+          ),
           supabase.from('players').select('id, name, avatar_url, user_id'),
         ]);
 
-        if (signupsRes.error) throw signupsRes.error;
         if (playersRes.error) throw playersRes.error;
 
         const playerMap = new Map((playersRes.data || []).map((p) => [p.id, p]));
-        signupsData = (signupsRes.data || []).map((s: any) => ({
+        signupsData = signupRows.map((s: any) => ({
           ...s,
           players: s.player_id ? playerMap.get(s.player_id) ?? null : null,
           guests: null,
         }));
       } else {
-        const { data, error: signupsError } = await supabase
-          .from('games_schedule_signups')
-          .select(`
-            *,
-            players:player_id (
-              id,
-              name,
-              avatar_url,
-              user_id
-            ),
-            guests:guest_id (
-              id,
-              name,
-              credit
-            )
-          `)
-          .order('signed_up_at', { ascending: true });
+        signupsData = await fetchAllSignups((from, to) =>
+          supabase
+            .from('games_schedule_signups')
+            .select(`
+              *,
+              players:player_id (
+                id,
+                name,
+                avatar_url,
+                user_id
+              ),
+              guests:guest_id (
+                id,
+                name,
+                credit
+              )
+            `)
+            .in('game_schedule_id', gameIds)
+            .order('signed_up_at', { ascending: true })
+            .range(from, to),
+        );
 
-        if (signupsError) throw signupsError;
-        signupsData = data;
       }
 
       // Group signups by game
