@@ -49,19 +49,8 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
       const gameIds = ((games as ScheduledGame[]) || []).map((g) => g.id);
       let signupsData: any[] | null = [];
 
-      const PAGE = 1000;
-      const fetchAllSignups = async (
-        build: (from: number, to: number) => any,
-      ) => {
-        const all: any[] = [];
-        for (let from = 0; ; from += PAGE) {
-          const { data, error } = await build(from, from + PAGE - 1);
-          if (error) throw error;
-          all.push(...(data || []));
-          if (!data || data.length < PAGE) break;
-        }
-        return all;
-      };
+      const fetchAllSignups = fetchAllPages;
+
 
       if (gameIds.length === 0) {
         signupsData = [];
