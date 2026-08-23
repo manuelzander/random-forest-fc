@@ -72,25 +72,28 @@ const AdminScheduleManagement = () => {
       setScheduledGames(games || []);
 
       // Fetch signups for all games with player and guest details
-      const { data: signupsData, error: signupsError } = await supabase
-        .from('games_schedule_signups')
-        .select(`
-          *,
-          players:player_id (
-            id,
-            name,
-            avatar_url,
-            user_id
-          ),
-          guests:guest_id (
-            id,
-            name,
-            credit
-          )
-        `)
-        .order('signed_up_at', { ascending: true });
+      // (paginated: an unpaged fetch stops at Supabase's 1000-row default cap)
+      const signupsData = await fetchAllPages((from, to) =>
+        supabase
+          .from('games_schedule_signups')
+          .select(`
+            *,
+            players:player_id (
+              id,
+              name,
+              avatar_url,
+              user_id
+            ),
+            guests:guest_id (
+              id,
+              name,
+              credit
+            )
+          `)
+          .order('signed_up_at', { ascending: true })
+          .range(from, to)
+      );
 
-      if (signupsError) throw signupsError;
 
       // Group signups by game
       const groupedSignups: { [gameId: string]: GameScheduleSignup[] } = {};
