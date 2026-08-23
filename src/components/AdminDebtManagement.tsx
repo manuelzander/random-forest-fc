@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { PoundSterling, AlertCircle, TrendingUp, TrendingDown, Calendar, Users, CheckCircle, User, AlertTriangle, Pencil, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import type { ScheduledGame, GameScheduleSignup, Guest } from '@/types';
+import { fetchAllPages } from '@/lib/fetchAllPages';
+
 
 interface PlayerDebtSummary {
   playerId?: string;
