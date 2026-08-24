@@ -178,7 +178,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   if (isLoading) {
     return (
       <Card className="glass-card border-0">
-        <CardHeader className="card-header-gradient-primary py-4">
+        <CardHeader className="card-header-glass py-4">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl font-display tracking-wide">
             <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
             Player Ranking
@@ -193,7 +193,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
 
   return (
     <Card className="glass-card border-0">
-      <CardHeader className="card-header-gradient-primary py-4">
+      <CardHeader className="card-header-glass py-4">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl font-display tracking-wide">
           <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
           Player Ranking

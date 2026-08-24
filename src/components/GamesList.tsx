@@ -119,7 +119,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
 
   return (
     <Card>
-      <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
+      <CardHeader className="card-header-glass py-4">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <History className="h-6 w-6" />
           Game History
