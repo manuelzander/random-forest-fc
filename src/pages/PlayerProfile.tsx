@@ -565,11 +565,12 @@ const PlayerProfile = () => {
 
                   </div>
                 ) : (
-                  <div className="text-center py-2">
-                    <Zap className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground text-sm">No signature moves listed yet</p>
+                  <div className="empty-tile !py-6">
+                    <Zap className="h-7 w-7 text-muted-foreground/60" />
+                    <p>No signature moves listed yet</p>
                   </div>
                 )}
+
               </CardContent>
             </Card>
           </div>
