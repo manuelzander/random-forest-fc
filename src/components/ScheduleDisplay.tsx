@@ -280,6 +280,12 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                                       <span className="hidden sm:inline">Guest</span>
                                     </Badge>
                                   )}
+                                  {!signup.is_guest && !signup.player?.user_id && !isLastMinuteDropout && (
+                                    <Badge className="status-badge status-badge-unverified">
+                                      <User className="h-3 w-3 mr-1" />
+                                      <span className="hidden sm:inline">Unverified</span>
+                                    </Badge>
+                                  )}
                                 </div>
                               </div>
                               <span className="text-xs text-muted-foreground shrink-0 ml-2">
