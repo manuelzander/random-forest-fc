@@ -139,7 +139,7 @@
   }
   
   .page-header {
-    @apply sticky top-0 z-40 border-b border-white/10 bg-background/60 backdrop-blur-2xl;
+    @apply sticky top-0 z-40 relative border-b border-white/10 bg-background/60 backdrop-blur-2xl;
   }
 
   /* Hairline accent glow under the header */
