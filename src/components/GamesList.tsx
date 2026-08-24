@@ -117,6 +117,68 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
     );
   }
 
+  const renderTeam = (game: Game, team: 1 | 2) => {
+    const playerIds = team === 1 ? game.team1_players : game.team2_players;
+    const captain = team === 1 ? game.team1_captain : game.team2_captain;
+    const goals = team === 1 ? game.team1_goals : game.team2_goals;
+    const otherGoals = team === 1 ? game.team2_goals : game.team1_goals;
+    const isWinner = goals > otherGoals;
+
+    return (
+      <div className="min-w-0">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="font-display text-base sm:text-lg text-foreground tracking-wide uppercase">
+            Team {team}
+          </h4>
+          <span
+            className={`text-[10px] px-2 py-1 rounded border font-bold ${
+              isWinner
+                ? 'bg-primary/10 text-primary border-primary/20'
+                : 'bg-white/[0.04] text-muted-foreground border-white/10'
+            }`}
+          >
+            {isWinner ? 'WINNER' : `${playerIds.length} PLAYERS`}
+          </span>
+        </div>
+        <div className="space-y-2">
+          {playerIds.map((playerId, index) => (
+            <div
+              key={playerId}
+              className="group/row flex items-center justify-between p-2 -mx-2 rounded-xl transition-all duration-300 hover:bg-white/5"
+            >
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <Badge variant="outline" className="slot-number">
+                  #{index + 1}
+                </Badge>
+                <PlayerAvatarWithDefault player={getPlayer(playerId)} />
+                <Link
+                  to={`/player/${playerId}`}
+                  className="font-medium truncate text-sm sm:text-base text-foreground hover:text-primary transition-colors"
+                >
+                  {getPlayerName(playerId)}
+                </Link>
+                <div className="flex gap-1 shrink-0">
+                  {captain === playerId && (
+                    <Badge className="status-badge status-badge-unverified !text-foreground/85">
+                      <Crown className="h-3 w-3 mr-1" />
+                      <span className="hidden sm:inline">Captain</span>
+                    </Badge>
+                  )}
+                  {game.mvp_player === playerId && (
+                    <Badge className="badge-trophy h-auto w-fit">
+                      <span>👑</span>
+                      MVP
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Card>
       <CardHeader className="card-header-glass py-4">
@@ -125,134 +187,81 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
           Game History
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="pt-6">
         {games.length === 0 ? (
-          <Alert>
-            <AlertDescription>
-              No games have been played yet.
-            </AlertDescription>
-          </Alert>
+          <div className="empty-tile">
+            <History className="h-6 w-6 text-muted-foreground" />
+            <p>No games have been played yet.</p>
+          </div>
         ) : (
           <div className="space-y-4">
             {games.map((game) => (
-              <div key={game.id} className="p-4 rounded-xl border border-white/10 bg-white/5">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-4">
-                    <div className="text-center">
-                      <div className="text-sm font-medium text-muted-foreground">Team 1</div>
-                      <div className="text-2xl font-bold text-primary">{game.team1_goals}</div>
+              <div key={game.id} className="glass-panel overflow-hidden">
+                <div className="p-5 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="font-display text-2xl sm:text-3xl text-foreground tracking-tight leading-none mb-2 uppercase">
+                        {format(new Date(game.created_at), 'EEEE, MMM d')}
+                      </h3>
+                      <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+                        <span>{format(new Date(game.created_at), 'yyyy')}</span>
+                        <span className="text-muted-foreground/40">•</span>
+                        <span>{game.team1_players.length + game.team2_players.length} players</span>
+                      </p>
                     </div>
-                    <div className="text-lg font-medium text-muted-foreground">vs</div>
-                    <div className="text-center">
-                      <div className="text-sm font-medium text-muted-foreground">Team 2</div>
-                      <div className="text-2xl font-bold text-primary">{game.team2_goals}</div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className={`font-display text-3xl sm:text-4xl leading-none ${game.team1_goals >= game.team2_goals ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {game.team1_goals}
+                      </span>
+                      <span className="text-muted-foreground/50 text-sm">vs</span>
+                      <span className={`font-display text-3xl sm:text-4xl leading-none ${game.team2_goals >= game.team1_goals ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {game.team2_goals}
+                      </span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    {format(new Date(game.created_at), 'MMM d, yyyy')}
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <div className="font-medium text-muted-foreground mb-2">Team 1 Players:</div>
-                      <div className="space-y-1">
-                         {game.team1_players.map(playerId => (
-                           <div key={playerId} className="flex items-center justify-between">
-                             <div className="flex items-center gap-2">
-                               <PlayerAvatarWithDefault player={getPlayer(playerId)} />
-                                <Link 
-                                  to={`/player/${playerId}`} 
-                                  className="hover:text-primary transition-colors"
-                                >
-                                  {getPlayerName(playerId)}
-                                </Link>
-                                {game.team1_captain === playerId && (
-                                  <Badge className="status-badge status-badge-unverified gap-1 !text-foreground/85">
-                                    <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                                    <span className="hidden sm:inline">Captain</span>
-                                    <span className="sm:hidden">C</span>
-                                  </Badge>
-                                )}
-                             </div>
-                              {game.mvp_player === playerId && (
-                                <Badge className="badge-trophy h-auto w-fit">
-                                  <span>👑</span>
-                                  MVP
-                                </Badge>
-                              )}
-                          </div>
-                        ))}
+
+                <div className="bg-white/[0.02] border-t border-white/10 p-5 sm:p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    {renderTeam(game, 1)}
+                    {renderTeam(game, 2)}
+                  </div>
+
+                  {game.youtube_url && (
+                    <div className="mt-6 pt-5 border-t border-white/10">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Video className="h-4 w-4 text-primary" />
+                        <span className="font-display text-base text-foreground tracking-wide uppercase">Game Recording</span>
+                        <a
+                          href={game.youtube_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-auto text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          Watch on YouTube
+                        </a>
                       </div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-muted-foreground mb-2">Team 2 Players:</div>
-                      <div className="space-y-1">
-                         {game.team2_players.map(playerId => (
-                           <div key={playerId} className="flex items-center justify-between">
-                             <div className="flex items-center gap-2">
-                               <PlayerAvatarWithDefault player={getPlayer(playerId)} />
-                                <Link 
-                                  to={`/player/${playerId}`} 
-                                  className="hover:text-primary transition-colors"
-                                >
-                                  {getPlayerName(playerId)}
-                                </Link>
-                                {game.team2_captain === playerId && (
-                                  <Badge className="status-badge status-badge-unverified gap-1 !text-foreground/85">
-                                    <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                                    <span className="hidden sm:inline">Captain</span>
-                                    <span className="sm:hidden">C</span>
-                                  </Badge>
-                                )}
-                             </div>
-                              {game.mvp_player === playerId && (
-                                <Badge className="badge-trophy h-auto w-fit">
-                                  <span>👑</span>
-                                  MVP
-                                </Badge>
-                              )}
+                      <div className="relative w-full aspect-video bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden">
+                        {getYouTubeEmbedUrl(game.youtube_url) ? (
+                          <iframe
+                            src={getYouTubeEmbedUrl(game.youtube_url)!}
+                            title={`Game highlights from ${format(new Date(game.created_at), 'MMM d, yyyy')}`}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-muted-foreground">Unable to load video</span>
                           </div>
-                        ))}
+                        )}
                       </div>
-                  </div>
-                 </div>
-                
-                {/* YouTube Video Section */}
-                {game.youtube_url && (
-                  <div className="mt-4 border-t pt-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Video className="h-4 w-4 text-primary" />
-                      <span className="font-medium text-sm">Game Recording</span>
-                      <a 
-                        href={game.youtube_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="ml-auto text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                        Watch on YouTube
-                      </a>
                     </div>
-                    <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
-                      {getYouTubeEmbedUrl(game.youtube_url) ? (
-                        <iframe
-                          src={getYouTubeEmbedUrl(game.youtube_url)!}
-                          title={`Game highlights from ${format(new Date(game.created_at), 'MMM d, yyyy')}`}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="w-full h-full"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-muted-foreground">Unable to load video</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -260,6 +269,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
       </CardContent>
     </Card>
   );
+
 };
 
 export default GamesList;
