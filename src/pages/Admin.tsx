@@ -57,22 +57,25 @@ const Admin = () => {
           <div className="page-header-inner">
             <div className="flex items-center gap-3">
               <div className="header-brand-admin">
-                <Shield className="h-6 w-6" />
+                <Shield className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Admin Panel</h1>
+              <div className="flex flex-col gap-0.5">
+                <span className="header-kicker">Random Forest FC</span>
+                <h1 className="header-wordmark">Admin Panel</h1>
+              </div>
             </div>
              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-                <div className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
-                  Welcome, {user?.email}
+                <div className="text-xs sm:text-sm text-muted-foreground hidden lg:block">
+                  {user?.email}
                 </div>
                <div className="flex items-center gap-1 sm:gap-2">
                  <Link to="/">
-                   <Button variant="outline" size="sm">
+                   <Button variant="outline" size="sm" className="header-nav-button">
                      <Home className="h-4 w-4 sm:mr-2" />
                      <span className="hidden sm:inline">Home</span>
                    </Button>
                  </Link>
-                 <Button variant="outline" size="sm" onClick={handleSignOut}>
+                 <Button variant="outline" size="sm" onClick={handleSignOut} className="header-nav-button">
                    <LogOut className="h-4 w-4 sm:mr-2" />
                    <span className="hidden sm:inline">Sign Out</span>
                  </Button>

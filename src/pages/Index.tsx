@@ -156,32 +156,35 @@ const Index = () => {
           <div className="page-header-inner">
             <div className="flex items-center gap-3">
               <div className="header-brand-primary">
-                <Trophy className="h-6 w-6" />
+                <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <h1 className="font-display text-xl sm:text-3xl text-foreground tracking-wide">
-                {isMobile ? 'RFFC' : 'Random Forest FC'}
-              </h1>
+              <div className="flex flex-col gap-0.5">
+                <span className="header-kicker">Est. Nottingham</span>
+                <h1 className="header-wordmark">
+                  {isMobile ? 'RFFC' : 'Random Forest FC'}
+                </h1>
+              </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               {user ? <div className="flex items-center gap-1 sm:gap-2">
                   <Link to="/profile">
-                    <Button variant="outline" size="sm" className="border-white/10 bg-white/5 hover:bg-white/10 hover:text-foreground">
+                    <Button variant="outline" size="sm" className="header-nav-button">
                       <User className="h-4 w-4 sm:mr-2" />
                       <span className="hidden sm:inline">Profile</span>
                     </Button>
                   </Link>
                   {userRole === 'admin' && <Link to="/admin">
-                      <Button variant="outline" size="sm" className="border-white/10 bg-white/5 hover:bg-white/10 hover:text-foreground">
+                      <Button variant="outline" size="sm" className="header-nav-button">
                         <Shield className="h-4 w-4 sm:mr-2" />
                         <span className="hidden sm:inline">Admin</span>
                       </Button>
                     </Link>}
-                  <Button variant="outline" size="sm" onClick={handleSignOut} className="border-white/10 bg-white/5 hover:bg-white/10 hover:text-foreground">
+                  <Button variant="outline" size="sm" onClick={handleSignOut} className="header-nav-button">
                     <LogOut className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Sign Out</span>
                   </Button>
                 </div> : <Link to="/auth">
-                  <Button variant="outline" size="sm" className="border-white/10 bg-white/5 hover:bg-white/10 hover:text-foreground">
+                  <Button variant="outline" size="sm" className="header-nav-button">
                     <LogIn className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Sign In</span>
                   </Button>
