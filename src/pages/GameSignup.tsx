@@ -650,33 +650,6 @@ const GameSignup = () => {
   const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
 
   return <div className="page-container">
-      <div className="page-header">
-        <div className="page-header-content">
-          <div className="page-header-inner">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <Link to="/">
-                <Button variant="outline" size="sm" className="header-nav-button">
-                  <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Back</span>
-                </Button>
-              </Link>
-              <div className="min-w-0 flex-1">
-                <h1 className="header-wordmark truncate">Game Signup</h1>
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <p className="text-sm sm:text-base text-muted-foreground truncate">
-                    <span className="sm:hidden">{format(gameDate, "MMM d, h:mm a")}</span>
-                    <span className="hidden sm:inline">{format(gameDate, "MMM d, yyyy 'at' h:mm a")}</span>
-                  </p>
-                  {game.pitch_size && <Badge variant="outline" className="text-xs">
-                      {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
-                    </Badge>}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="page-main-content relative overflow-hidden">
         {/* Animated Aurora background glows */}
         <div className="aurora-blob aurora-blob-purple w-96 h-96 -top-24 -left-24 animate-aurora" />
