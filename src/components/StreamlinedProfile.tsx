@@ -477,16 +477,16 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
             {availablePlayers.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <div className="h-px bg-border flex-1" />
-                  <span className="text-sm text-muted-foreground px-2">or claim existing</span>
-                  <div className="h-px bg-border flex-1" />
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-white/15" />
+                  <span className="font-display text-[10px] uppercase tracking-[0.24em] text-muted-foreground px-2">or claim existing</span>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/15 to-white/15" />
                 </div>
                 <div className="grid gap-3">
                   {availablePlayers.map((player) => (
-                    <div key={player.id} className="flex items-center justify-between p-3 rounded-xl border border-white/10 bg-white/[0.03]">
+                    <div key={player.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] p-3 transition-all duration-300 hover:border-primary/25 hover:bg-white/[0.07]">
                       <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback>
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback className="font-display">
                             {player.name.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
@@ -498,13 +498,14 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                         size="sm"
                         variant="outline"
                         onClick={() => handleClaimPlayer(player.id)}
-                        className="border-primary text-primary hover:bg-primary/10"
+                        className="rounded-full border-primary/40 text-primary hover:bg-primary/10 hover:text-primary"
                       >
                         Claim
                       </Button>
                     </div>
                   ))}
                 </div>
+
               </div>
             )}
           </CardContent>
