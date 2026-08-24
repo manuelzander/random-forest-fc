@@ -83,7 +83,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
       variant="ghost"
       size="sm"
       onClick={() => handleSort(field)}
-      className="h-auto p-2 font-semibold"
+      className="table-sort-button"
     >
       {children}
       {sortField === field && (
@@ -176,9 +176,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
         {/* Players Table */}
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-card/5 border-b">
+            <thead className="table-head-glass">
               <tr>
-                <th className="px-3 py-3 text-left text-sm font-medium text-foreground w-12">Rank</th>
+                <th className="table-head-cell w-12">Rank</th>
                 <th className="px-3 py-3 text-left">
                   <SortButton field="name">Player</SortButton>
                 </th>
@@ -188,7 +188,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                     Count
                   </SortButton>
                 </th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-foreground min-w-[300px]">
+                <th className="table-head-cell !text-center min-w-[300px]">
                   Achievements
                 </th>
               </tr>
