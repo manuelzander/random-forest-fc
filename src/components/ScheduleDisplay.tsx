@@ -159,7 +159,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
       <Card>
         <CardHeader className="card-header-glass py-4">
           <CardTitle className="card-header-glass-title">
-            <Calendar className="h-6 w-6" />
+            <Calendar className="card-header-glass-icon h-6 w-6" />
             {heading}
           </CardTitle>
         </CardHeader>
@@ -179,7 +179,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
     <Card>
       <CardHeader className="card-header-glass py-4">
         <CardTitle className="card-header-glass-title">
-          <Calendar className="h-6 w-6" />
+          <Calendar className="card-header-glass-icon h-6 w-6" />
           {heading}
         </CardTitle>
       </CardHeader>

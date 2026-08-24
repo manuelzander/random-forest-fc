@@ -239,7 +239,7 @@ const Index = () => {
             <Card className="glass-card border-0">
               <CardHeader className="card-header-glass py-4">
                 <CardTitle className="card-header-glass-title">
-                  <Newspaper className="h-6 w-6" />
+                  <Newspaper className="card-header-glass-icon h-6 w-6" />
                   Latest News
                 </CardTitle>
               </CardHeader>

@@ -82,7 +82,7 @@ const News = () => {
         <Card className="w-full">
           <CardHeader className="card-header-glass py-4">
             <CardTitle className="card-header-glass-title">
-              <Newspaper className="h-5 w-5 sm:h-6 sm:w-6" />
+              <Newspaper className="card-header-glass-icon h-5 w-5 sm:h-6 sm:w-6" />
               Latest News
             </CardTitle>
           </CardHeader>

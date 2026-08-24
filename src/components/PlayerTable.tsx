@@ -180,7 +180,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       <Card className="glass-card border-0">
         <CardHeader className="card-header-glass py-4">
           <CardTitle className="card-header-glass-title">
-            <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
+            <Trophy className="card-header-glass-icon h-5 w-5 sm:h-6 sm:w-6" />
             Player Ranking
           </CardTitle>
         </CardHeader>
@@ -195,7 +195,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     <Card className="glass-card border-0">
       <CardHeader className="card-header-glass py-4">
         <CardTitle className="card-header-glass-title">
-          <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
+          <Trophy className="card-header-glass-icon h-5 w-5 sm:h-6 sm:w-6" />
           Player Ranking
         </CardTitle>
       </CardHeader>

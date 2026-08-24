@@ -121,7 +121,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
     <Card>
       <CardHeader className="card-header-glass py-4">
         <CardTitle className="card-header-glass-title">
-          <History className="h-6 w-6" />
+          <History className="card-header-glass-icon h-6 w-6" />
           Game History
         </CardTitle>
       </CardHeader>
