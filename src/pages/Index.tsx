@@ -200,14 +200,14 @@ const Index = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="glass-card p-6 flex flex-col">
             <span className="text-muted-foreground text-xs uppercase tracking-widest">Total Players</span>
-            <span className="font-display text-4xl text-white mt-1">{displayedPlayers.length}</span>
+            <span className="font-display text-4xl text-foreground mt-1">{displayedPlayers.length}</span>
             <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
               <div className="h-full bg-primary" style={{ width: '75%' }} />
             </div>
           </div>
           <div className="glass-card p-6 flex flex-col">
             <span className="text-muted-foreground text-xs uppercase tracking-widest">Games Played</span>
-            <span className="font-display text-4xl text-white mt-1">{totalGames}</span>
+            <span className="font-display text-4xl text-foreground mt-1">{totalGames}</span>
             <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
               <div className="h-full bg-[hsl(var(--aurora-blue))]" style={{ width: '60%' }} />
             </div>
