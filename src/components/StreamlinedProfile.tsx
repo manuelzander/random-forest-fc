@@ -377,41 +377,61 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
             {/* Player Overview */}
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold">{currentUserPlayer.name}</h3>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleSaveProfile}
-                  disabled={isSaving}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  size="sm"
-                >
-                  {isSaving ? 'Saving...' : <><span className="hidden sm:inline">Save Profile</span><span className="sm:hidden">Save</span></>}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={openUnclaimDialog}
-                  className="border-primary text-primary hover:bg-primary/10 hover:text-primary"
-                >
-                  <span className="hidden sm:inline">Unclaim Player</span>
-                  <span className="sm:hidden">Unclaim</span>
-                </Button>
-                {currentUserPlayer.created_by === user?.id && (
+            <div className="hero-panel -mx-6 -mt-6 mb-2 px-6 py-6">
+              <div className="hero-glow" />
+              <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0">
+                  <Avatar className="avatar-glow h-16 w-16 flex-shrink-0">
+                    <AvatarImage src={avatarUrl || undefined} />
+                    <AvatarFallback className="font-display">
+                      {currentUserPlayer.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <h3 className="hero-name !text-2xl sm:!text-3xl truncate">{currentUserPlayer.name}</h3>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <span className="status-badge status-badge-verified gap-1">
+                        <UserCheck className="h-3 w-3" />
+                        Verified
+                      </span>
+                      <span className="meta-pill">{currentUserPlayer.points} Points</span>
+                      <span className="meta-pill">{currentUserPlayer.games_played} Games</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <Button
+                    onClick={handleSaveProfile}
+                    disabled={isSaving}
+                    className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    size="sm"
+                  >
+                    {isSaving ? 'Saving...' : <><span className="hidden sm:inline">Save Profile</span><span className="sm:hidden">Save</span></>}
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setDeletePlayerDialogOpen(true)}
-                    className="border-destructive/30 text-destructive hover:bg-destructive/10"
+                    onClick={openUnclaimDialog}
+                    className="header-nav-button"
                   >
-                    <Trash2 className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Delete Player</span>
+                    <span className="hidden sm:inline">Unclaim Player</span>
+                    <span className="sm:hidden">Unclaim</span>
                   </Button>
-                )}
+                  {currentUserPlayer.created_by === user?.id && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDeletePlayerDialogOpen(true)}
+                      className="rounded-full border border-white/10 bg-white/5 text-muted-foreground backdrop-blur-xl transition-all duration-300 hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Delete Player</span>
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
+
 
             {/* Profile Skills Editor - includes avatar upload */}
             <ProfileSkillsEditor 
