@@ -227,7 +227,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                     </td>
                     <td className="px-3 py-4">
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="bg-yellow-500/15 text-yellow-400 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
+                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="badge-gold flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                               <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               <span className="hidden sm:inline">{badge.name}</span>
                             </Badge>) : <span className="text-xs text-muted-foreground italic">No badges earned yet</span>}

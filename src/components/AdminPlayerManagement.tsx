@@ -1738,7 +1738,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-orange-600 hover:bg-orange-700">
+              <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                 Disconnect Player
               </AlertDialogAction>
             </AlertDialogFooter>

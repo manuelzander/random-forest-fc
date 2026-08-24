@@ -835,7 +835,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={removeSkill} className="bg-orange-600 hover:bg-orange-700">
+            <AlertDialogAction onClick={removeSkill} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Remove Skill
             </AlertDialogAction>
           </AlertDialogFooter>

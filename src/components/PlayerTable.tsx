@@ -246,7 +246,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                   >
                     <td className="px-3 py-4">
                        <Badge 
-                         className={`${getRankBadgeColor(rank)} font-bold !border-0 border-transparent font-display text-sm`}
+                         className={`${getRankBadgeColor(rank)} font-bold font-display text-sm`}
                        >
                          {rank}
                        </Badge>
@@ -272,7 +272,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                </Badge>
                              )}
                             {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
-                              <Badge key={badgeIndex} className="bg-yellow-500/15 text-yellow-400 border-yellow-500/30 border flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                              <Badge key={badgeIndex} className="badge-gold flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
                                 <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               </Badge>
                              ))}
@@ -296,7 +296,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                        </Badge>
                      </td>
                     <td className="px-3 py-4 text-center">
-                      <Badge className="font-semibold bg-yellow-500/15 text-yellow-400 border-yellow-500/30">
+                      <Badge className="font-semibold badge-gold">
                         {player.mvp_awards}
                       </Badge>
                     </td>
@@ -313,7 +313,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                         <div className="flex gap-1 justify-center">
                           <span className="text-primary font-medium">{player.wins}W</span>
                           <span className="text-muted-foreground">/</span>
-                          <span className="text-yellow-400 font-medium">{player.draws}D</span>
+                          <span className="text-amber-300 font-medium">{player.draws}D</span>
                           <span className="text-muted-foreground">/</span>
                           <span className="text-destructive font-medium">{player.losses}L</span>
                         </div>
@@ -324,7 +324,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                 key={index}
                                 className={`w-3 h-3 rounded ${
                                   result === 'win' ? 'bg-primary' :
-                                  result === 'draw' ? 'bg-yellow-400' :
+                                  result === 'draw' ? 'bg-amber-300' :
                                   'bg-destructive'
                                 }`}
                                 title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
