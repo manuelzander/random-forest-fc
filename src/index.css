@@ -280,8 +280,8 @@
   /* Roster slot number */
   .slot-number {
     @apply inline-flex items-center justify-center shrink-0 h-5 min-w-[1.75rem] px-1
-           text-[11px] font-display rounded-md border border-white/10 bg-transparent
-           text-muted-foreground;
+           text-[11px] font-display rounded-md !border !border-white/10 !bg-transparent
+           !text-muted-foreground hover:!bg-transparent;
   }
 
   /* Shared table header — one style across all data tables */
