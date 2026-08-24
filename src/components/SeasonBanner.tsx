@@ -50,19 +50,19 @@ const SeasonBanner = ({ className }: { className?: string }) => {
                 {selectedSeason.name}
               </h2>
               {isArchive ? (
-                <div className="flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5">
-                  <History className="h-3 w-3 text-amber-600" />
-                  <span className="text-[10px] font-bold uppercase tracking-tighter text-amber-700">
+                <div className="flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5">
+                  <History className="h-3 w-3 text-primary" />
+                  <span className="text-[10px] font-bold uppercase tracking-tighter text-primary">
                     Archive
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 px-2 py-0.5">
+                <div className="flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5">
                   <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
                   </span>
-                  <span className="text-[10px] font-bold uppercase tracking-tighter text-destructive">
+                  <span className="text-[10px] font-bold uppercase tracking-tighter text-primary">
                     Live
                   </span>
                 </div>
