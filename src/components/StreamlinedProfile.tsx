@@ -394,8 +394,12 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                         <UserCheck className="h-3 w-3" />
                         Verified
                       </span>
-                      <span className="meta-pill">{currentUserPlayer.points} Points</span>
-                      <span className="meta-pill">{currentUserPlayer.games_played} Games</span>
+                      {(currentUserPlayer.points ?? 0) > 0 && (
+                        <span className="meta-pill">{currentUserPlayer.points} Points</span>
+                      )}
+                      {(currentUserPlayer.games_played ?? 0) > 0 && (
+                        <span className="meta-pill">{currentUserPlayer.games_played} Games</span>
+                      )}
                     </div>
                   </div>
                 </div>
