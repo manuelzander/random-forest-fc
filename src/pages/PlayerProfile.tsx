@@ -422,9 +422,9 @@ const PlayerProfile = () => {
                     <div className="text-xl font-bold text-primary">{player.wins}</div>
                     <div className="text-xs font-medium text-primary">Wins</div>
                   </div>
-                  <div className="text-center p-3 bg-yellow-500/15 rounded-lg">
+                  <div className="text-center p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
                     <div className="text-xl font-bold text-yellow-400">{player.draws}</div>
-                    <div className="text-xs font-medium text-yellow-400">Draws</div>
+                    <div className="text-xs font-medium text-yellow-400/80">Draws</div>
                   </div>
                   <div className="text-center p-3 bg-destructive/15 rounded-lg">
                     <div className="text-xl font-bold text-destructive">{player.losses}</div>
@@ -441,7 +441,7 @@ const PlayerProfile = () => {
                           key={index}
                           className={`w-8 h-8 rounded ${
                             result === 'win' ? 'bg-primary/100' :
-                            result === 'draw' ? 'bg-yellow-500' :
+                            result === 'draw' ? 'bg-yellow-400' :
                             'bg-destructive/100'
                           }`}
                           title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
@@ -465,7 +465,7 @@ const PlayerProfile = () => {
                     <div className="text-sm font-medium text-muted-foreground">Games</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-purple-400">
                       {player.games_played > 0 ? (Number(player.points) / player.games_played).toFixed(1) : '0.0'}
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">PPG</div>
@@ -490,17 +490,17 @@ const PlayerProfile = () => {
                     <div className="text-sm font-medium text-muted-foreground">Goal Diff</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-violet-600">
+                    <div className="text-2xl font-bold text-violet-400">
                       {player.longest_unbeaten_streak || 0}
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">Unbeaten Streak</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-emerald-600">{player.clean_sheets || 0}</div>
+                    <div className="text-2xl font-bold text-emerald-400">{player.clean_sheets || 0}</div>
                     <div className="text-sm font-medium text-muted-foreground">Clean Sheets</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-indigo-600">{player.captain_count || 0}</div>
+                    <div className="text-2xl font-bold text-indigo-400">{player.captain_count || 0}</div>
                     <div className="text-sm font-medium text-muted-foreground">Captain</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
