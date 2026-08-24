@@ -139,7 +139,20 @@
   }
   
   .page-header {
-    @apply border-b border-white/10 bg-black/20 backdrop-blur-xl;
+    @apply sticky top-0 z-40 border-b border-white/10 bg-background/60 backdrop-blur-2xl;
+  }
+
+  /* Hairline accent glow under the header */
+  .page-header::after {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 -bottom-px h-px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--primary) / 0.5),
+      hsl(var(--aurora-blue) / 0.35),
+      transparent
+    );
   }
   
   .page-header-content {
@@ -147,37 +160,56 @@
   }
   
   .page-header-inner {
-    @apply flex items-center justify-between h-16;
+    @apply flex items-center justify-between h-16 sm:h-20;
   }
   
   .page-main-content {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
   }
 
-  /* Header brand variants */
+  /* Header brand tiles — glass chips with an ambient accent glow */
+  .header-brand {
+    @apply relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl
+           border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300;
+  }
+
   .header-brand-primary {
-    @apply p-2 rounded-lg;
-    background: hsl(var(--header-primary));
-    color: hsl(var(--primary-foreground));
+    @apply header-brand text-primary;
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.2), 0 8px 30px -8px hsl(var(--primary) / 0.5);
   }
-  
+
   .header-brand-admin {
-    @apply p-2 rounded-lg;
-    background: hsl(var(--header-admin));
-    color: hsl(var(--primary-foreground));
+    @apply header-brand text-[hsl(var(--aurora-purple))];
+    box-shadow: 0 0 0 1px hsl(var(--aurora-purple) / 0.2),
+      0 8px 30px -8px hsl(var(--aurora-purple) / 0.5);
   }
-  
+
   .header-brand-profile {
-    @apply p-2 rounded-lg;
-    background: hsl(var(--header-profile));
-    color: hsl(var(--primary-foreground));
+    @apply header-brand text-[hsl(var(--aurora-blue))];
+    box-shadow: 0 0 0 1px hsl(var(--aurora-blue) / 0.2),
+      0 8px 30px -8px hsl(var(--aurora-blue) / 0.5);
   }
-  
+
   .header-brand-news {
-    @apply p-2 rounded-lg;
-    background: hsl(var(--header-news));
-    color: hsl(var(--primary-foreground));
+    @apply header-brand text-primary;
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.2), 0 8px 30px -8px hsl(var(--primary) / 0.5);
   }
+
+  /* Wordmark */
+  .header-wordmark {
+    @apply font-display text-2xl sm:text-3xl leading-none uppercase text-foreground tracking-[0.06em];
+  }
+
+  .header-kicker {
+    @apply hidden sm:block font-display text-[10px] uppercase tracking-[0.32em] text-primary/80;
+  }
+
+  /* Header nav pills */
+  .header-nav-button {
+    @apply rounded-full border border-white/10 bg-white/5 text-muted-foreground backdrop-blur-xl
+           transition-all duration-300 hover:border-primary/30 hover:bg-primary/10 hover:text-foreground;
+  }
+
 
   /* Loading states */
   .loading-container {
