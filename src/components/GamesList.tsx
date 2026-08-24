@@ -124,7 +124,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
           <History className="h-6 w-6" />
           Game History
           {archiveSeasonId && (
-            <Badge className="border-0 bg-amber-200 text-xs text-amber-900">Archived</Badge>
+            <Badge className="border-0 bg-amber-500/15 text-xs text-amber-400">Archived</Badge>
           )}
         </CardTitle>
       </CardHeader>
