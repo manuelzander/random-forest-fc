@@ -169,7 +169,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                                   {getPlayerName(playerId)}
                                 </Link>
                                 {game.team1_captain === playerId && (
-                                  <Badge className="inline-flex items-center gap-1 h-5 px-1.5 text-xs font-medium rounded-md !border-0 !bg-white/[0.08] !text-foreground/85">
+                                  <Badge className="status-badge status-badge-unverified gap-1 !text-foreground/85">
                                     <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
                                     <span className="hidden sm:inline">Captain</span>
                                     <span className="sm:hidden">C</span>
@@ -200,7 +200,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                                   {getPlayerName(playerId)}
                                 </Link>
                                 {game.team2_captain === playerId && (
-                                  <Badge className="inline-flex items-center gap-1 h-5 px-1.5 text-xs font-medium rounded-md !border-0 !bg-white/[0.08] !text-foreground/85">
+                                  <Badge className="status-badge status-badge-unverified gap-1 !text-foreground/85">
                                     <Crown className="h-2 w-2 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
                                     <span className="hidden sm:inline">Captain</span>
                                     <span className="sm:hidden">C</span>

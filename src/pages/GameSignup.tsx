@@ -665,9 +665,9 @@ const GameSignup = () => {
               <p className="text-muted-foreground text-sm mb-6 sm:mb-8 flex items-center gap-2">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 <span className="capitalize">{format(gameDate, "EEEE, MMM d")}</span>
-                <span className="text-white/20">•</span>
+                <span className="text-muted-foreground/40">•</span>
                 <span>{format(gameDate, "h:mm a")}</span>
-                <span className="text-white/20">•</span>
+                <span className="text-muted-foreground/40">•</span>
                 <span>{game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}</span>
               </p>
 

@@ -169,7 +169,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
 
   const getRankBadgeColor = (rank: number) => {
     if (rank === 1) return 'bg-amber-400/20 text-amber-300 border border-amber-400/40';
-    if (rank === 2) return 'bg-slate-300/20 text-slate-200 border border-slate-300/40';
+    if (rank === 2) return 'bg-white/15 text-foreground border border-white/20';
     if (rank === 3) return 'bg-orange-400/20 text-orange-300 border border-orange-400/40';
     if (rank <= 5) return 'bg-primary/20 text-primary border border-primary/40';
     return 'bg-white/10 text-muted-foreground border border-white/15';
@@ -177,7 +177,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
 
   if (isLoading) {
     return (
-      <Card className="glass-card border-0">
+      <Card>
         <CardHeader className="card-header-glass py-4">
           <CardTitle className="card-header-glass-title">
             <Trophy className="card-header-glass-icon h-5 w-5 sm:h-6 sm:w-6" />
@@ -192,7 +192,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   }
 
   return (
-    <Card className="glass-card border-0">
+    <Card>
       <CardHeader className="card-header-glass py-4">
         <CardTitle className="card-header-glass-title">
           <Trophy className="card-header-glass-icon h-5 w-5 sm:h-6 sm:w-6" />
