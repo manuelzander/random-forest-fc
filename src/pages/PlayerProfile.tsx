@@ -424,7 +424,7 @@ const PlayerProfile = () => {
                   </div>
                   <div className="text-center p-3 bg-yellow-500/15 rounded-lg">
                     <div className="text-xl font-bold text-yellow-400">{player.draws}</div>
-                    <div className="text-xs font-medium text-yellow-600">Draws</div>
+                    <div className="text-xs font-medium text-yellow-400">Draws</div>
                   </div>
                   <div className="text-center p-3 bg-destructive/15 rounded-lg">
                     <div className="text-xl font-bold text-destructive">{player.losses}</div>
@@ -504,7 +504,7 @@ const PlayerProfile = () => {
                     <div className="text-sm font-medium text-muted-foreground">Captain</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">{player.longest_win_streak || 0}</div>
+                    <div className="text-2xl font-bold text-[hsl(var(--aurora-blue))]">{player.longest_win_streak || 0}</div>
                     <div className="text-sm font-medium text-muted-foreground">Win Streak</div>
                   </div>
                 </div>

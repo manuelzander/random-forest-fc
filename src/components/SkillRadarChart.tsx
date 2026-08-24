@@ -154,9 +154,9 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
     'bg-pink-50 dark:bg-pink-950/30'
   ];
   const skillTextClasses = [
-    'text-destructive dark:text-red-400',
+    'text-destructive dark:text-destructive',
     'text-primary dark:text-green-400', 
-    'text-[hsl(var(--aurora-blue))] dark:text-blue-400',
+    'text-[hsl(var(--aurora-blue))] dark:text-[hsl(var(--aurora-blue))]',
     'text-purple-600 dark:text-purple-400',
     'text-amber-600 dark:text-amber-400',
     'text-pink-600 dark:text-pink-400'

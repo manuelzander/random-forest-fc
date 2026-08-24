@@ -1387,7 +1387,7 @@ const AdminPlayerManagement = () => {
           {/* Orphaned Guest Signups */}
           {orphanedSignups.length > 0 && (
             <div className="mt-6">
-              <h3 className="text-base sm:text-lg font-semibold text-orange-600 mb-2">
+              <h3 className="text-base sm:text-lg font-semibold text-[hsl(var(--aurora-blue))] mb-2">
                 Orphaned Guests ({orphanedSignups.length})
               </h3>
               <p className="text-sm text-muted-foreground mb-3">
@@ -1544,7 +1544,7 @@ const AdminPlayerManagement = () => {
               <AlertDialogDescription className="space-y-2">
                 <span className="block">Are you sure you want to delete "{guestToDelete?.name}"?</span>
                 {(guestToDelete?.signupsCount || 0) > 0 && (
-                  <span className="block text-orange-600 font-medium">
+                  <span className="block text-[hsl(var(--aurora-blue))] font-medium">
                     ⚠️ This guest has {guestToDelete?.signupsCount} signup(s) which will become orphaned.
                   </span>
                 )}

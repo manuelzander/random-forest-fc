@@ -199,7 +199,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
               const rank = index + 1;
               const getRankBadgeColor = (rank: number) => {
                 if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-600';
-                if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500 border-gray-500';
+                if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500 border-white/15';
                 if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800 border-amber-800';
                 if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600 border-green-600';
                 return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';

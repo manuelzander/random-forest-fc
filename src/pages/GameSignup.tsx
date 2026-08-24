@@ -726,7 +726,7 @@ const GameSignup = () => {
                             </Alert>}
                           
                           {isWithin24Hours && isUserWaitlisted && <Alert className="border-primary/30 bg-primary/10">
-                              <AlertDescription className="text-green-800">
+                              <AlertDescription className="text-primary">
                                 You're on the waitlist. You can cancel anytime without penalty.
                               </AlertDescription>
                             </Alert>}
@@ -734,7 +734,7 @@ const GameSignup = () => {
                           <div className="flex flex-col gap-3 p-4 bg-primary/10 border border-primary/30 rounded-lg">
                             <div className="flex items-center gap-2">
                               <CheckCircle className="h-5 w-5 text-primary" />
-                              <span className="text-green-800 font-medium text-sm sm:text-base">
+                              <span className="text-primary font-medium text-sm sm:text-base">
                                 You're signed up for this game!
                                 {isUserWaitlisted && <Badge variant="outline" className="ml-2 text-xs">
                                     Waitlist Position {userPosition - pitchCapacity}
