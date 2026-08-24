@@ -108,14 +108,14 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   if (error) {
     return (
       <Card>
-        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
+        <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
             <Trophy className="h-6 w-6" />
             Player Achievements
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center p-8">
-          <div className="text-red-600">{error}</div>
+          <div className="text-destructive">{error}</div>
         </CardContent>
       </Card>
     );
@@ -124,7 +124,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   if (isLoading) {
     return (
       <Card>
-        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
+        <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
             <Trophy className="h-6 w-6" />
             Player Achievements
@@ -138,7 +138,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   }
 
   return <Card>
-      <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
+      <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Trophy className="h-6 w-6" />
           Player Achievements
@@ -146,10 +146,10 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
       </CardHeader>
       <CardContent className="p-0">
         {/* Badge Legend */}
-        <div className="p-4 border-b bg-gray-50">
+        <div className="p-4 border-b bg-card/5">
           <Collapsible open={isLegendOpen} onOpenChange={setIsLegendOpen}>
-            <CollapsibleTrigger className="flex items-center gap-2 w-full hover:text-blue-600 transition-colors font-medium text-gray-900">
-              <Info className="h-4 w-4 text-blue-600" />
+            <CollapsibleTrigger className="flex items-center gap-2 w-full hover:text-[hsl(var(--aurora-blue))] transition-colors font-medium text-foreground">
+              <Info className="h-4 w-4 text-[hsl(var(--aurora-blue))]" />
               <span className="font-semibold">Badge Guide</span>
               {isLegendOpen ? <ChevronUp className="h-4 w-4 ml-auto" /> : <ChevronDown className="h-4 w-4 ml-auto" />}
             </CollapsibleTrigger>
@@ -157,13 +157,13 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
               {Object.entries(badgeCategories).map(([category, badges]) => {
               if (badges.length === 0) return null;
               return <div key={category}>
-                    <h4 className="font-semibold text-sm text-gray-700 mb-3 uppercase tracking-wide">{category}</h4>
+                    <h4 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wide">{category}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-                      {badges.map(badge => <div key={badge.name} className="flex items-start gap-3 p-3 rounded-lg bg-white border shadow-sm hover:shadow-md transition-shadow">
+                      {badges.map(badge => <div key={badge.name} className="flex items-start gap-3 p-3 rounded-lg bg-card border shadow-sm hover:shadow-md transition-shadow">
                           <span className="text-xl flex-shrink-0 mt-0.5">{badge.icon}</span>
                           <div className="min-w-0 flex-1">
-                            <div className="font-semibold text-gray-900">{badge.name}</div>
-                            <div className="text-xs text-gray-600 mt-1 leading-relaxed">{badge.description}</div>
+                            <div className="font-semibold text-foreground">{badge.name}</div>
+                            <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{badge.description}</div>
                           </div>
                         </div>)}
                     </div>
@@ -176,9 +176,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
         {/* Players Table */}
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-card/5 border-b">
               <tr>
-                <th className="px-3 py-3 text-left text-sm font-medium text-gray-900 w-12">Rank</th>
+                <th className="px-3 py-3 text-left text-sm font-medium text-foreground w-12">Rank</th>
                 <th className="px-3 py-3 text-left">
                   <SortButton field="name">Player</SortButton>
                 </th>
@@ -188,12 +188,12 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                     Count
                   </SortButton>
                 </th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900 min-w-[300px]">
+                <th className="px-3 py-3 text-center text-sm font-medium text-foreground min-w-[300px]">
                   Achievements
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/5">
               {sortedPlayers.map((player, index) => {
               const playerBadges = getCachedBadges(player, player.profile);
               const rank = index + 1;
@@ -204,7 +204,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                 if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600 border-green-600';
                 return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
               };
-              return <tr key={player.id} className="hover:bg-gray-50 transition-colors">
+              return <tr key={player.id} className="hover:bg-card/5 transition-colors">
                     <td className="px-3 py-4">
                       <Badge className={`${getRankBadgeColor(rank)} text-white font-bold !border-0 border-transparent`}>
                         {rank}
@@ -214,7 +214,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                       <div className="flex items-center gap-3">
                         <PlayerAvatarWithDefault player={player} />
                         <Link to={`/player/${player.id}`}>
-                          <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-blue-600">
+                          <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-[hsl(var(--aurora-blue))]">
                             {player.name}
                           </Button>
                         </Link>
@@ -227,11 +227,11 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                     </td>
                     <td className="px-3 py-4">
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
+                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="bg-yellow-500/15 text-yellow-400 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                               <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               <span className="hidden sm:inline">{badge.name}</span>
-                            </Badge>) : <span className="text-xs text-gray-400 italic">No badges earned yet</span>}
-                        {playerBadges.length > 8 && <span className="text-xs text-gray-500 font-medium">
+                            </Badge>) : <span className="text-xs text-muted-foreground italic">No badges earned yet</span>}
+                        {playerBadges.length > 8 && <span className="text-xs text-muted-foreground font-medium">
                             +{playerBadges.length - 8} more
                           </span>}
                       </div>

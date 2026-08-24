@@ -394,7 +394,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                   variant="outline"
                   size="sm"
                   onClick={openUnclaimDialog}
-                  className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
+                  className="border-green-500 text-primary hover:bg-green-50 hover:text-primary"
                 >
                   <span className="hidden sm:inline">Unclaim Player</span>
                   <span className="sm:hidden">Unclaim</span>
@@ -404,7 +404,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                     variant="outline"
                     size="sm"
                     onClick={() => setDeletePlayerDialogOpen(true)}
-                    className="border-red-200 text-red-600 hover:bg-red-50"
+                    className="border-red-200 text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Delete Player</span>
@@ -478,7 +478,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                         size="sm"
                         variant="outline"
                         onClick={() => handleClaimPlayer(player.id)}
-                        className="border-green-500 text-green-600 hover:bg-green-50"
+                        className="border-green-500 text-primary hover:bg-green-50"
                       >
                         Claim
                       </Button>

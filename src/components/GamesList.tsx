@@ -119,7 +119,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
 
   return (
     <Card>
-      <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
+      <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <History className="h-6 w-6" />
           Game History
@@ -180,7 +180,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                                 )}
                              </div>
                               {game.mvp_player === playerId && (
-                                <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                <Badge className="bg-yellow-500/15 text-yellow-400 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                   <span>👑</span>
                                   MVP
                                 </Badge>
@@ -211,7 +211,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                                 )}
                              </div>
                               {game.mvp_player === playerId && (
-                                <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                <Badge className="bg-yellow-500/15 text-yellow-400 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                   <span>👑</span>
                                   MVP
                                 </Badge>

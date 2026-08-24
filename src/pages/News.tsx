@@ -80,7 +80,7 @@ const News = () => {
     <div className="page-container">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <Card className="w-full">
-          <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
+          <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
             <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
               <Newspaper className="h-5 w-5 sm:h-6 sm:w-6" />
               Latest News
@@ -95,7 +95,7 @@ const News = () => {
           ) : (
             <div className="space-y-6">
               {news.map((article) => (
-                <article key={article.id} className="border-b border-gray-200 pb-6 last:border-b-0">
+                <article key={article.id} className="border-b border-white/10 pb-6 last:border-b-0">
                   <div className="flex items-start gap-4">
                     <div className="flex-1">
                        <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">

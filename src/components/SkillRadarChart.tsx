@@ -146,7 +146,7 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
   // Show individual skill values below the chart
   const skillLabels = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'];
   const skillBgClasses = [
-    'bg-red-50 dark:bg-red-950/30',
+    'bg-destructive/10 dark:bg-red-950/30',
     'bg-green-50 dark:bg-green-950/30', 
     'bg-blue-50 dark:bg-blue-950/30',
     'bg-purple-50 dark:bg-purple-950/30',
@@ -154,9 +154,9 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
     'bg-pink-50 dark:bg-pink-950/30'
   ];
   const skillTextClasses = [
-    'text-red-600 dark:text-red-400',
-    'text-green-600 dark:text-green-400', 
-    'text-blue-600 dark:text-blue-400',
+    'text-destructive dark:text-red-400',
+    'text-primary dark:text-green-400', 
+    'text-[hsl(var(--aurora-blue))] dark:text-blue-400',
     'text-purple-600 dark:text-purple-400',
     'text-amber-600 dark:text-amber-400',
     'text-pink-600 dark:text-pink-400'
@@ -192,7 +192,7 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
               </div>
             </div>
             {/* Progress bar */}
-            <div className="w-full bg-white/50 dark:bg-black/20 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-card/50 dark:bg-black/20 rounded-full h-2 overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all duration-1000 ease-out ${skillProgressClasses[index]}`}
                 style={{ width: `${skillData[index]}%` }}

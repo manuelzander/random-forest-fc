@@ -733,7 +733,7 @@ const GameSignup = () => {
                           
                           <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
                             <div className="flex items-center gap-2">
-                              <CheckCircle className="h-5 w-5 text-green-600" />
+                              <CheckCircle className="h-5 w-5 text-primary" />
                               <span className="text-green-800 font-medium text-sm sm:text-base">
                                 You're signed up for this game!
                                 {isUserWaitlisted && <Badge variant="outline" className="ml-2 text-xs">
@@ -827,7 +827,7 @@ const GameSignup = () => {
                 const isWaitlisted = index >= pitchCapacity;
                 const isLastMinuteDropout = signup.last_minute_dropout === true;
                 return <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
-                  isLastMinuteDropout ? 'bg-red-50 border border-red-300' :
+                  isLastMinuteDropout ? 'bg-destructive/10 border border-red-300' :
                   isWaitlisted ? 'bg-orange-50 border border-orange-200' : 
                   'bg-muted/50'
                 }`}>
@@ -835,27 +835,27 @@ const GameSignup = () => {
                           <Badge variant="outline" className="shrink-0 text-xs">
                             {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
                           </Badge>
-                          <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-red-600' : ''}`}>
+                          <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-destructive' : ''}`}>
                             {signup.is_guest ? signup.guest_name : signup.player?.name || 'Unknown'}
                           </span>
                           <div className="flex gap-1 shrink-0">
-                             {isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-red-100 text-red-700 border-0">
+                             {isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-destructive/15 text-destructive border-0">
                                  <AlertTriangle className="h-3 w-3 mr-1" />
                                  <span className="hidden sm:inline">Dropout</span>
                                </Badge>}
-                             {isWaitlisted && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                             {isWaitlisted && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
                                  <Clock className="h-3 w-3 mr-1" />
                                  <span className="hidden sm:inline">Waitlist</span>
                                </Badge>}
-                            {signup.player?.user_id && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0 hover:bg-green-200">
+                            {signup.player?.user_id && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0 hover:bg-green-200">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Verified</span>
                               </Badge>}
-                            {signup.is_guest && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0 hover:bg-blue-200">
+                            {signup.is_guest && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 hover:bg-blue-200">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Guest</span>
                               </Badge>}
-                            {!signup.is_guest && !signup.player?.user_id && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                            {!signup.is_guest && !signup.player?.user_id && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Unverified</span>
                               </Badge>}

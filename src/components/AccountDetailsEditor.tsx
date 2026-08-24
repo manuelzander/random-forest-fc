@@ -215,7 +215,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-destructive">
               £{debt.toFixed(2)}
             </div>
           </CardContent>
@@ -229,7 +229,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-primary">
               £{credit.toFixed(2)}
             </div>
           </CardContent>
@@ -243,7 +243,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-2xl font-bold ${netBalance >= 0 ? 'text-primary' : 'text-destructive'}`}>
               £{Math.abs(netBalance).toFixed(2)}
             </div>
           </CardContent>

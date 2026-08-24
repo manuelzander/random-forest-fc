@@ -140,7 +140,7 @@ const GuestNameAutocomplete = ({
   const getIcon = (type: GuestSuggestion['type']) => {
     return <User className={cn(
       "h-3 w-3 shrink-0",
-      type === 'guest' ? "text-green-600" : "text-muted-foreground"
+      type === 'guest' ? "text-primary" : "text-muted-foreground"
     )} />;
   };
 
@@ -179,7 +179,7 @@ const GuestNameAutocomplete = ({
               <span className="truncate flex-1">{suggestion.name}</span>
               <span className={cn(
                 "text-xs ml-auto shrink-0 px-1.5 py-0.5 rounded",
-                suggestion.type === 'guest' && "bg-green-100 text-green-700",
+                suggestion.type === 'guest' && "bg-primary/15 text-primary",
                 suggestion.type === 'orphan' && "bg-muted text-muted-foreground"
               )}>
                 {getLabel(suggestion.type)}
