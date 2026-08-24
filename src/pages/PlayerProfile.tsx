@@ -330,31 +330,31 @@ const PlayerProfile = () => {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Player Header */}
-        <Card>
-          <CardContent className="p-6">
+        <Card className="hero-panel">
+          <div className="hero-glow" />
+          <CardContent className="relative p-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <Avatar className="h-28 w-28 sm:h-32 sm:w-32 flex-shrink-0">
+              <Avatar className="avatar-glow h-28 w-28 sm:h-32 sm:w-32 flex-shrink-0">
                 <AvatarImage src={player.avatar_url} />
-                <AvatarFallback className="text-lg sm:text-2xl">
+                <AvatarFallback className="text-lg sm:text-2xl font-display">
                   {player.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
                <div className="flex-1 w-full">
-                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{player.name}</h1>
-                 
-                 {/* Basic stats row - always visible */}
-                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
-                  <div className="flex items-center gap-1">
-                    <Trophy className="h-4 w-4" />
-                    <span>{player.points} Points</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Target className="h-4 w-4" />
-                    <span>{getWinRate()}% Win Rate</span>
-                  </div>
-                   
+                 <h1 className="hero-name mb-3">{player.name}</h1>
+
+                 {/* Key stats */}
+                 <div className="flex flex-wrap items-center gap-2 mb-3">
+                   <span className="meta-pill">
+                     <Trophy className="h-3.5 w-3.5 text-primary" />
+                     {player.points} Points
+                   </span>
+                   <span className="meta-pill">
+                     <Target className="h-3.5 w-3.5 text-[hsl(var(--aurora-blue))]" />
+                     {getWinRate()}% Win Rate
+                   </span>
                  </div>
-                 
+
                  {/* Profile details - responsive layout */}
                  {(profile?.favorite_position || profile?.favorite_club || profile?.years_playing) && (
                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
@@ -410,6 +410,7 @@ const PlayerProfile = () => {
           </CardContent>
         </Card>
 
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Stats */}
           <Card>
@@ -422,32 +423,32 @@ const PlayerProfile = () => {
               <CardContent className="space-y-6 pt-6">
                 {/* Win/Draw/Loss at the top */}
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-3 bg-primary/15 rounded-lg">
-                    <div className="text-xl font-bold text-primary">{player.wins}</div>
-                    <div className="text-xs font-medium text-primary">Wins</div>
+                  <div className="stat-tile !bg-primary/10 !border-primary/20 p-3">
+                    <div className="stat-tile-value text-primary">{player.wins}</div>
+                    <div className="stat-tile-label !text-primary/80">Wins</div>
                   </div>
-                  <div className="text-center p-3 bg-amber-300/15 rounded-lg">
-                    <div className="text-xl font-bold text-amber-200">{player.draws}</div>
-                    <div className="text-xs font-medium text-amber-200">Draws</div>
+                  <div className="stat-tile !bg-amber-300/10 !border-amber-300/20 p-3">
+                    <div className="stat-tile-value text-amber-200">{player.draws}</div>
+                    <div className="stat-tile-label !text-amber-200/80">Draws</div>
                   </div>
-                  <div className="text-center p-3 bg-destructive/15 rounded-lg">
-                    <div className="text-xl font-bold text-destructive">{player.losses}</div>
-                    <div className="text-xs font-medium text-destructive">Losses</div>
+                  <div className="stat-tile !bg-destructive/10 !border-destructive/20 p-3">
+                    <div className="stat-tile-value text-destructive">{player.losses}</div>
+                    <div className="stat-tile-label !text-destructive/80">Losses</div>
                   </div>
                 </div>
 
-
-                {/* Form - Big box */}
-                <div className="text-center p-6 bg-muted/50 rounded-lg">
-                  <div className="flex gap-2 justify-center mb-3">
+                {/* Form */}
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] p-5 text-center">
+                  <div className="stat-tile-label mb-3 !mt-0">Form (Last 6)</div>
+                  <div className="flex gap-2 justify-center">
                     {player.recentResults && player.recentResults.length > 0 ? (
                       player.recentResults.slice(0, 6).reverse().map((result, index) => (
                         <div 
                           key={index}
-                          className={`w-8 h-8 rounded ${
-                            result === 'win' ? 'bg-primary/100' :
-                            result === 'draw' ? 'bg-amber-300' :
-                            'bg-destructive/100'
+                          className={`h-8 w-8 rounded-lg border ${
+                            result === 'win' ? 'bg-primary/80 border-primary/40 shadow-[0_0_14px_-4px_hsl(var(--primary)/0.8)]' :
+                            result === 'draw' ? 'bg-amber-300/70 border-amber-300/40' :
+                            'bg-destructive/70 border-destructive/40'
                           }`}
                           title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
                         />
@@ -456,63 +457,63 @@ const PlayerProfile = () => {
                       <span className="text-sm text-muted-foreground">No recent games</span>
                     )}
                   </div>
-                  <div className="text-lg font-bold text-muted-foreground">Form (Last 6)</div>
                 </div>
 
-                {/* Stats grid - 8 smaller boxes */}
+                {/* Stats grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-primary">{player.points}</div>
-                    <div className="text-sm font-medium text-muted-foreground">Points</div>
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-primary">{player.points}</div>
+                    <div className="stat-tile-label">Points</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-primary">{player.games_played}</div>
-                    <div className="text-sm font-medium text-muted-foreground">Games</div>
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-primary">{player.games_played}</div>
+                    <div className="stat-tile-label">Games</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-400">
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-[hsl(var(--aurora-purple))]">
                       {player.games_played > 0 ? (Number(player.points) / player.games_played).toFixed(1) : '0.0'}
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">PPG</div>
+                    <div className="stat-tile-label">PPG</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-[hsl(var(--aurora-blue))]">
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-[hsl(var(--aurora-blue))]">
                       {player.games_played > 0 ? ((player.wins / player.games_played) * 100).toFixed(1) : '0.0'}%
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Win %</div>
+                    <div className="stat-tile-label">Win %</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-amber-300">{player.mvp_awards}</div>
-                    <div className="text-sm font-medium text-muted-foreground">MVP</div>
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-amber-200">{player.mvp_awards}</div>
+                    <div className="stat-tile-label">MVP</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className={`text-2xl font-bold ${
+                  <div className="stat-tile">
+                    <div className={`stat-tile-value ${
                       player.goal_difference > 0 ? 'text-primary' : 
                       player.goal_difference < 0 ? 'text-destructive' : 'text-muted-foreground'
                     }`}>
                       {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Goal Diff</div>
+                    <div className="stat-tile-label">Goal Diff</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-violet-400">
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-[hsl(var(--aurora-purple))]">
                       {player.longest_unbeaten_streak || 0}
                     </div>
-                    <div className="text-sm font-medium text-muted-foreground">Unbeaten Streak</div>
+                    <div className="stat-tile-label">Unbeaten Streak</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-emerald-400">{player.clean_sheets || 0}</div>
-                    <div className="text-sm font-medium text-muted-foreground">Clean Sheets</div>
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-primary">{player.clean_sheets || 0}</div>
+                    <div className="stat-tile-label">Clean Sheets</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-indigo-400">{player.captain_count || 0}</div>
-                    <div className="text-sm font-medium text-muted-foreground">Captain</div>
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-amber-200">{player.captain_count || 0}</div>
+                    <div className="stat-tile-label">Captain</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-[hsl(var(--aurora-blue))]">{player.longest_win_streak || 0}</div>
-                    <div className="text-sm font-medium text-muted-foreground">Win Streak</div>
+                  <div className="stat-tile">
+                    <div className="stat-tile-value text-[hsl(var(--aurora-blue))]">{player.longest_win_streak || 0}</div>
+                    <div className="stat-tile-label">Win Streak</div>
                   </div>
                 </div>
+
              </CardContent>
           </Card>
 
@@ -536,11 +537,12 @@ const PlayerProfile = () => {
                     />
                   </div>
                 ) : (
-                  <div className="text-center py-8">
-                    <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground text-sm">No skill ratings available</p>
+                  <div className="empty-tile">
+                    <Target className="h-8 w-8 text-muted-foreground/60" />
+                    <p>No skill ratings available</p>
                   </div>
                 )}
+
               </CardContent>
             </Card>
 
@@ -563,11 +565,12 @@ const PlayerProfile = () => {
 
                   </div>
                 ) : (
-                  <div className="text-center py-2">
-                    <Zap className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground text-sm">No signature moves listed yet</p>
+                  <div className="empty-tile !py-6">
+                    <Zap className="h-7 w-7 text-muted-foreground/60" />
+                    <p>No signature moves listed yet</p>
                   </div>
                 )}
+
               </CardContent>
             </Card>
           </div>
