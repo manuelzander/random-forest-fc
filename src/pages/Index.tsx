@@ -159,7 +159,7 @@ const Index = () => {
                 <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="header-kicker">Est. Nottingham</span>
+                <span className="header-kicker">Est. 2019</span>
                 <h1 className="header-wordmark">
                   {isMobile ? 'RFFC' : 'Random Forest FC'}
                 </h1>
