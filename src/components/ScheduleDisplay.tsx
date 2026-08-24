@@ -187,72 +187,73 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
         <div className="space-y-4">
           {scheduledGames.map((game) => {
             const gameSignups = signups[game.id] || [];
-            
+            const gameDate = new Date(game.scheduled_at);
+            const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+
             return (
-              <Card key={game.id}>
-                <CardHeader className="pb-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                          <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
-                          <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM d, h:mm a")}</span>
-                          <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "MMM d, yyyy 'at' h:mm a")}</span>
-                        </CardTitle>
+              <div key={game.id} className="glass-panel overflow-hidden">
+                <div className="p-5 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="font-display text-2xl sm:text-3xl text-foreground tracking-tight leading-none mb-2 uppercase">
+                        {format(gameDate, "EEEE, MMM d")}
+                      </h3>
+                      <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span>{format(gameDate, "h:mm a")}</span>
                         {game.pitch_size && (
-                          <Badge variant="outline" className="text-xs sm:hidden">
-                            {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
-                          </Badge>
+                          <>
+                            <span className="text-muted-foreground/40">•</span>
+                            <span>{game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}</span>
+                          </>
                         )}
-                      </div>
-                      {game.pitch_size && (
-                        <Badge variant="outline" className="text-xs w-fit hidden sm:inline-flex">
-                          {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
-                        </Badge>
-                      )}
+                      </p>
                     </div>
                     {!archiveSeasonId && (
                       <Button
-                        variant="default"
                         size="sm"
                         onClick={() => navigateToSignup(game.id)}
-                        className="w-full sm:w-auto"
+                        className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.35)]"
                       >
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Sign Up
                       </Button>
                     )}
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm sm:text-base text-muted-foreground">
-                        <Users className="h-4 w-4 inline mr-1" />
-                        Players ({gameSignups.length})
-                      </h4>
+                </div>
+
+                <div className="bg-white/[0.02] border-t border-white/10 p-5 sm:p-6">
+                  <div className="flex justify-between items-center mb-5">
+                    <h4 className="font-display text-lg sm:text-xl text-foreground tracking-wide">
+                      PLAYERS SIGNED UP
+                    </h4>
+                    <span className="relative flex items-center justify-center">
+                      <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold">
+                        {gameSignups.length} / {pitchCapacity}
+                      </span>
+                    </span>
+                  </div>
+
+                  {gameSignups.length === 0 ? (
+                    <div className="empty-tile">
+                      <Users className="h-6 w-6 text-muted-foreground" />
+                      <p>No players yet. Be the first!</p>
                     </div>
-                    {gameSignups.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-6 text-sm">
-                        No players yet. Be the first!
-                      </p>
-                    ) : (
+                  ) : (
                       <div className="space-y-2">
                         {gameSignups.map((signup, index) => {
-                          const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
                           const isWaitlisted = index >= pitchCapacity;
                           const isLastMinuteDropout = signup.last_minute_dropout === true;
-                          
+
                           return (
-                            <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
-                              isLastMinuteDropout ? 'bg-destructive/10 border border-destructive/30' :
-                              isWaitlisted ? 'bg-[hsl(var(--aurora-blue))]/10 border border-[hsl(var(--aurora-blue))]/30' : 'bg-muted/50'
+                            <div key={signup.id} className={`group/row flex items-center justify-between p-2 -mx-2 rounded-xl transition-all duration-300 hover:bg-white/5 ${
+                              isLastMinuteDropout ? 'bg-destructive/5 border border-destructive/20' : ''
                             }`}>
                               <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                                <Badge variant="outline" className="shrink-0 text-xs">
+                                <Badge variant="outline" className="shrink-0 text-xs font-display">
                                   {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
                                 </Badge>
-                                <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-destructive' : ''}`}>
+                                <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-destructive' : 'text-foreground'}`}>
                                   {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown')}
                                 </span>
                                 <div className="flex gap-1 shrink-0">
@@ -288,19 +289,19 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                                   )}
                                 </div>
                               </div>
-                              <span className="text-xs text-muted-foreground shrink-0 ml-2">
+                              <span className="text-xs text-muted-foreground shrink-0 ml-2 hidden sm:inline">
                                 {format(new Date(signup.signed_up_at), "MMM d")}
                               </span>
                             </div>
                           );
                         })}
                       </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                  )}
+                </div>
+              </div>
             );
           })}
+
         </div>
       </CardContent>
     </Card>
