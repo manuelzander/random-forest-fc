@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { History, Calendar, Crown, Video, ExternalLink } from 'lucide-react';
+import { History, Crown, Video, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { getYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '@/utils/youtube';
+import { getYouTubeEmbedUrl } from '@/utils/youtube';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 
 interface Game {
