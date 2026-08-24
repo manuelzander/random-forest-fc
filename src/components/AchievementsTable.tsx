@@ -61,9 +61,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
       playerName: player.name,
       currentAvatarUrl: player.avatar_url
     });
-    return <Avatar className="h-10 w-10">
+    return <Avatar className="h-10 w-10 border border-white/10">
       <AvatarImage src={avatarUrl || undefined} />
-      <AvatarFallback>
+      <AvatarFallback className="bg-white/10 text-foreground text-xs">
         {player.name.substring(0, 2).toUpperCase()}
       </AvatarFallback>
     </Avatar>;
@@ -214,7 +214,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                       <div className="flex items-center gap-3">
                         <PlayerAvatarWithDefault player={player} />
                         <Link to={`/player/${player.id}`}>
-                          <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-primary">
+                          <Button variant="link" className="p-0 h-auto font-semibold text-left text-foreground hover:text-primary">
                             {player.name}
                           </Button>
                         </Link>
