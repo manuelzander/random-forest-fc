@@ -108,7 +108,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   if (error) {
     return (
       <Card>
-        <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
+        <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
             <Trophy className="h-6 w-6" />
             Player Achievements
@@ -124,7 +124,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   if (isLoading) {
     return (
       <Card>
-        <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
+        <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
             <Trophy className="h-6 w-6" />
             Player Achievements
@@ -138,7 +138,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   }
 
   return <Card>
-      <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
+      <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Trophy className="h-6 w-6" />
           Player Achievements

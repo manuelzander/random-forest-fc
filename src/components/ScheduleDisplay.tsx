@@ -157,7 +157,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
   if (scheduledGames.length === 0) {
     return (
       <Card>
-        <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
+        <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
           <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
             <Calendar className="h-6 w-6" />
             {heading}
@@ -177,7 +177,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
 
   return (
     <Card>
-      <CardHeader className="card-header-gradient-primary text-white rounded-t-lg py-3">
+      <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Calendar className="h-6 w-6" />
           {heading}
