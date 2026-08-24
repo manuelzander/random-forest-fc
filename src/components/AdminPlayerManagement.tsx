@@ -13,7 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { calculatePlayerDebt, calculateGuestDebt, type GameScheduleForDebt, type SignupForDebt } from '@/utils/debtCalculation';
 import PlayerNameAutocomplete from './PlayerNameAutocomplete';
@@ -1048,6 +1048,7 @@ const AdminPlayerManagement = () => {
                     />
                   </div>
                   <Alert className="info-note mb-4">
+                    <Info className="info-note-icon" />
                     <AlertDescription>
                       Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.
                     </AlertDescription>
@@ -1138,6 +1139,7 @@ const AdminPlayerManagement = () => {
                     />
                   </div>
                   <Alert className="info-note">
+                    <Info className="info-note-icon" />
                     <AlertDescription>
                       Type a name to search existing players, guests, or create a new player.
                     </AlertDescription>
