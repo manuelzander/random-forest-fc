@@ -595,28 +595,39 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
       {/* Basic Info */}
       <Card>
         <CardHeader className="card-header-glass py-4">
-          <CardTitle className="card-header-glass-title">Basic Information</CardTitle>
+          <CardTitle className="card-header-glass-title">
+            <User className="card-header-glass-icon h-5 w-5" />
+            Basic Information
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div>
-            <Label htmlFor="bio">Bio</Label>
+        <CardContent className="space-y-5 pt-6">
+          {/* Bio */}
+          <div className="form-field-glass">
+            <Label htmlFor="bio" className="form-field-label">
+              <User className="form-field-label-icon" />
+              Bio
+            </Label>
             <Textarea
               id="bio"
               placeholder="Tell us about yourself and your football journey..."
               value={profile.bio || ''}
               onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
               rows={3}
+              className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0 resize-none"
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="position">Favorite Position</Label>
+            <div className="form-field-glass">
+              <Label htmlFor="position" className="form-field-label">
+                <MapPin className="form-field-label-icon" />
+                Favorite Position
+              </Label>
               <Select
                 value={profile.favorite_position || ''}
                 onValueChange={(value) => setProfile(prev => ({ ...prev, favorite_position: value }))}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-0 bg-transparent px-1 focus:ring-1 focus:ring-primary/50 focus:ring-offset-0">
                   <SelectValue placeholder="Select a position" />
                 </SelectTrigger>
                 <SelectContent>
@@ -629,8 +640,11 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
               </Select>
             </div>
             
-            <div>
-              <Label htmlFor="years">Years Playing</Label>
+            <div className="form-field-glass">
+              <Label htmlFor="years" className="form-field-label">
+                <Clock className="form-field-label-icon" />
+                Years Playing
+              </Label>
               <Input
                 id="years"
                 type="number"
@@ -640,21 +654,27 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                   ...prev, 
                   years_playing: e.target.value ? parseInt(e.target.value) : undefined 
                 }))}
+                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
             </div>
 
-            <div>
-              <Label htmlFor="club">Favorite Club</Label>
+            <div className="form-field-glass">
+              <Label htmlFor="club" className="form-field-label">
+                <Heart className="form-field-label-icon" />
+                Favorite Club
+              </Label>
               <Input
                 id="club"
-                placeholder="e.g. Real Madrid, Barcelona, Man United"
+                placeholder="e.g. Real Madrid, Barcelona"
                 value={profile.favorite_club || ''}
                 onChange={(e) => setProfile(prev => ({ ...prev, favorite_club: e.target.value }))}
+                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
             </div>
           </div>
         </CardContent>
       </Card>
+
 
       {/* Player Skills */}
       <Card>
