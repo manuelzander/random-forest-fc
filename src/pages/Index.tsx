@@ -240,7 +240,7 @@ const Index = () => {
             <ScheduleDisplay archiveSeasonId={archiveSeasonId} />
           </TabsContent>
           <TabsContent value="news">
-            <Card className="glass-card border-0">
+            <Card>
               <CardHeader className="card-header-glass py-4">
                 <CardTitle className="card-header-glass-title">
                   <Newspaper className="card-header-glass-icon h-6 w-6" />

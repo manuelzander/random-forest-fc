@@ -686,7 +686,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                           </TableCell>
                           <TableCell>
                             {game.isDropout ? (
-                              <Badge className="text-xs h-5 px-1.5 bg-destructive/15 text-destructive border-0">
+                              <Badge className="status-badge status-badge-dropout">
                                 <AlertTriangle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Dropout</span>
                               </Badge>
