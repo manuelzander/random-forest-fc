@@ -521,13 +521,13 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
       {/* Avatar Upload */}
       {playerData && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
+          <CardHeader className="card-header-glass py-4">
+            <CardTitle className="card-header-glass-title">
+              <User className="card-header-glass-icon h-5 w-5" />
               Avatar
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 pt-6">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex justify-center sm:justify-start">
                 <Avatar className="h-24 w-24 sm:h-28 sm:w-28">
@@ -594,10 +594,10 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
 
       {/* Basic Info */}
       <Card>
-        <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">Basic Information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div>
             <Label htmlFor="bio">Bio</Label>
             <Textarea
@@ -658,10 +658,10 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
 
       {/* Player Skills */}
       <Card>
-        <CardHeader>
-          <CardTitle>Player Skills</CardTitle>
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">Player Skills</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label>PAC - Pace</Label>

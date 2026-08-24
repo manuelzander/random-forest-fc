@@ -369,13 +369,13 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
       {/* Player Section - Claim or Manage */}
       {currentUserPlayer ? (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserCheck className="h-5 w-5" />
+          <CardHeader className="card-header-glass py-4">
+            <CardTitle className="card-header-glass-title">
+              <UserCheck className="card-header-glass-icon h-5 w-5" />
               Your Player Profile
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 pt-6">
             {/* Player Overview */}
             <div className="flex items-center justify-between gap-4">
               <div className="flex-1">
@@ -425,13 +425,13 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
         </Card>
       ) : (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
+          <CardHeader className="card-header-glass py-4">
+            <CardTitle className="card-header-glass-title">
+              <User className="card-header-glass-icon h-5 w-5" />
               Get Your Player
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 pt-6">
             <p className="text-muted-foreground">
               Create a new player or connect to an existing one to manage your profile and avatar.
             </p>
@@ -463,7 +463,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                 </div>
                 <div className="grid gap-3">
                   {availablePlayers.map((player) => (
-                    <div key={player.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={player.id} className="flex items-center justify-between p-3 rounded-xl border border-white/10 bg-white/[0.03]">
                       <div className="flex items-center gap-3">
                         <Avatar>
                           <AvatarFallback>
