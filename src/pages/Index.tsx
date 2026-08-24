@@ -238,7 +238,7 @@ const Index = () => {
           <TabsContent value="news">
             <Card className="glass-card border-0">
               <CardHeader className="card-header-glass py-4">
-                <CardTitle className="flex items-center gap-2 text-base sm:text-xl font-display tracking-wide">
+                <CardTitle className="card-header-glass-title">
                   <Newspaper className="h-6 w-6" />
                   Latest News
                 </CardTitle>

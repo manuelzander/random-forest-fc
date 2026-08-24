@@ -456,7 +456,6 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
               <PoundSterling className="h-5 w-5" />
               Player Debt & Credit
               {archiveSeasonId && (
-                <Badge className="border-0 bg-amber-500/15 text-xs text-amber-400">Archived</Badge>
               )}
             </CardTitle>
             <Button size="sm" onClick={exportToCSV} className="bg-primary hover:bg-primary/90">

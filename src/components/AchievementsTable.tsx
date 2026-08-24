@@ -109,7 +109,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
     return (
       <Card>
         <CardHeader className="card-header-glass py-4">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+          <CardTitle className="card-header-glass-title">
             <Trophy className="h-6 w-6" />
             Player Achievements
           </CardTitle>
@@ -125,7 +125,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
     return (
       <Card>
         <CardHeader className="card-header-glass py-4">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+          <CardTitle className="card-header-glass-title">
             <Trophy className="h-6 w-6" />
             Player Achievements
           </CardTitle>
@@ -139,7 +139,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
 
   return <Card>
       <CardHeader className="card-header-glass py-4">
-        <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+        <CardTitle className="card-header-glass-title">
           <Trophy className="h-6 w-6" />
           Player Achievements
         </CardTitle>
