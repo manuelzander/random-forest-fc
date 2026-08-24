@@ -537,11 +537,12 @@ const PlayerProfile = () => {
                     />
                   </div>
                 ) : (
-                  <div className="text-center py-8">
-                    <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground text-sm">No skill ratings available</p>
+                  <div className="empty-tile">
+                    <Target className="h-8 w-8 text-muted-foreground/60" />
+                    <p>No skill ratings available</p>
                   </div>
                 )}
+
               </CardContent>
             </Card>
 
