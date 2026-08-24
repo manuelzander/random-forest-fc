@@ -1,93 +1,145 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSeasons } from '@/hooks/useSeasons';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ChevronDown, History, Sparkles } from 'lucide-react';
+import { ChevronDown, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
- * Slim season banner. Clicking the season name reveals a subtle inline
- * picker that lets you "time travel" into an archived season.
+ * Premium season banner with a glass "time-travel" switcher.
+ * Clicking the season name expands a satisfying drawer of season chips.
  */
 const SeasonBanner = ({ className }: { className?: string }) => {
   const { seasons, selectedSeason, selectedSeasonId, setSelectedSeasonId, isArchive, isLoading } =
     useSeasons();
   const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open]);
 
   if (isLoading || !selectedSeason || seasons.length === 0) return null;
 
   return (
-    <div
-      className={cn(
-        'rounded-lg border transition-colors',
-        isArchive
-          ? 'border-amber-300 bg-amber-50/80'
-          : 'border-border bg-gradient-to-r from-green-600/10 to-green-700/5',
-        className
-      )}
-    >
-      <div className="flex items-center justify-between gap-2 px-3 py-2">
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="group flex items-center gap-2 text-left"
-          aria-expanded={open}
-        >
-          <span
-            className={cn(
-              'text-xs font-medium uppercase tracking-wide',
-              isArchive ? 'text-amber-700' : 'text-muted-foreground'
-            )}
-          >
-            Season
-          </span>
-          <span
-            className={cn(
-              'text-base font-bold sm:text-lg',
-              isArchive ? 'text-amber-800' : 'text-foreground'
-            )}
-          >
-            {selectedSeason.name}
-          </span>
-          <ChevronDown
-            className={cn(
-              'h-3.5 w-3.5 opacity-40 transition-all group-hover:opacity-100',
-              open && 'rotate-180'
-            )}
-          />
-        </button>
-
-        {isArchive ? (
-          <Badge className="border-0 bg-amber-200 text-xs text-amber-900">
-            <History className="mr-1 h-3 w-3" />
-            Archive
-          </Badge>
-        ) : (
-          <Badge className="border-0 bg-green-100 text-xs text-green-700">
-            <Sparkles className="mr-1 h-3 w-3" />
-            Live
-          </Badge>
+    <div ref={wrapperRef} className={cn('relative', className)}>
+      {/* Main Banner Control */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className={cn(
+          'relative z-10 flex w-full items-center justify-between',
+          'rounded-2xl border border-primary/20 bg-card/80 p-4 shadow-lg backdrop-blur-xl',
+          'cursor-pointer transition-all duration-300',
+          open && 'rounded-b-none border-b-transparent'
         )}
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col text-left">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              Season
+            </span>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-extrabold tracking-tight text-foreground italic uppercase">
+                {selectedSeason.name}
+              </h2>
+              {isArchive ? (
+                <div className="flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5">
+                  <History className="h-3 w-3 text-amber-600" />
+                  <span className="text-[10px] font-bold uppercase tracking-tighter text-amber-700">
+                    Archive
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 px-2 py-0.5">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-tighter text-destructive">
+                    Live
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={cn(
+            'flex h-8 w-8 items-center justify-center rounded-full',
+            'bg-primary/10 text-primary',
+            'transition-transform duration-500',
+            open && 'rotate-180'
+          )}
+        >
+          <ChevronDown className="h-5 w-5" />
+        </div>
+      </button>
+
+      {/* Time-Travel Switcher Drawer */}
+      <div
+        className={cn(
+          'absolute top-full left-0 z-20 w-full overflow-hidden',
+          'transition-all duration-300 ease-out',
+          open
+            ? 'max-h-96 translate-y-0 opacity-100 pointer-events-auto'
+            : 'max-h-0 translate-y-[-10px] opacity-0 pointer-events-none'
+        )}
+      >
+        <div className="rounded-b-2xl border-x border-b border-primary/20 bg-card/80 p-2 shadow-lg backdrop-blur-xl">
+          <div className="grid grid-cols-1 gap-1">
+            {seasons.map((season) => {
+              const isSelected = season.id === selectedSeasonId;
+              return (
+                <button
+                  key={season.id}
+                  onClick={() => {
+                    setSelectedSeasonId(season.id);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    'group/item flex w-full items-center justify-between rounded-xl px-4 py-3 transition-all',
+                    isSelected
+                      ? 'border border-primary/30 bg-primary/10 text-foreground'
+                      : 'text-muted-foreground hover:bg-primary/5 hover:text-foreground'
+                  )}
+                >
+                  <span className="text-sm font-medium">{season.name}</span>
+                  {isSelected ? (
+                    <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.6)]" />
+                  ) : (
+                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-0 transition-opacity group-hover/item:opacity-100">
+                      {season.is_current ? 'Current' : 'Archive'}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tactical Detail Footer */}
+          <div className="mt-2 flex justify-between border-t border-primary/10 px-2 pt-2 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+            <span>Time Travel</span>
+            <span>{seasons.length} seasons</span>
+          </div>
+        </div>
       </div>
 
-      {open && (
-        <div className="flex flex-wrap items-center gap-2 border-t px-3 py-2">
-          {seasons.map((season) => (
-            <Button
-              key={season.id}
-              size="sm"
-              variant={season.id === selectedSeasonId ? 'default' : 'outline'}
-              className={cn(
-                'h-7 text-xs',
-                season.id === selectedSeasonId && 'bg-green-600 hover:bg-green-700'
-              )}
-              onClick={() => setSelectedSeasonId(season.id)}
-            >
-              {season.name}
-              {season.is_current && <span className="ml-1 opacity-70">(current)</span>}
-            </Button>
-          ))}
-        </div>
-      )}
+      {/* Ambient glow behind the banner when open */}
+      <div
+        className={cn(
+          'absolute -inset-4 -z-10 rounded-full bg-primary/5 blur-3xl',
+          'transition-opacity duration-700',
+          open ? 'opacity-100' : 'opacity-0'
+        )}
+      />
     </div>
   );
 };
