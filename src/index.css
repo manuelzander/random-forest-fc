@@ -237,6 +237,15 @@
     @apply !bg-[hsl(var(--aurora-purple))]/20 !text-[hsl(var(--aurora-purple))];
   }
 
+  .status-badge-waitlist {
+    @apply !bg-[hsl(var(--aurora-blue))]/15 !text-[hsl(var(--aurora-blue))];
+  }
+
+  .status-badge-dropout {
+    @apply !bg-destructive/15 !text-destructive;
+  }
+
+
   /* Trophies / achievements — one shared gold token */
   .badge-trophy {
     @apply inline-flex items-center gap-1 h-5 px-1.5 text-xs font-medium rounded-md !border-0 !bg-amber-300/15 !text-amber-200;

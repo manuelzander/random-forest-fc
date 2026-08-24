@@ -261,12 +261,12 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                             </Button>
                           </Link>
                             {(player as any).user_id ? (
-                               <Badge className="bg-primary/15 text-primary border-primary/30 border flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                               <Badge className="status-badge status-badge-verified gap-1">
                                  <CheckCircle className="h-3 w-3" />
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              ) : (
-                               <Badge className="bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-[hsl(var(--aurora-blue))]/30 border flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                               <Badge className="status-badge status-badge-unverified gap-1">
                                  <User className="h-3 w-3" />
                                  <span className="hidden sm:inline">Unverified</span>
                                </Badge>

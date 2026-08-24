@@ -257,13 +257,13 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                                 </span>
                                 <div className="flex gap-1 shrink-0">
                                    {isLastMinuteDropout && (
-                                     <Badge className="text-xs h-5 px-1.5 bg-destructive/15 text-destructive border-0">
+                                     <Badge className="status-badge status-badge-dropout">
                                        <AlertTriangle className="h-3 w-3 mr-1" />
                                        <span className="hidden sm:inline">Dropout</span>
                                      </Badge>
                                    )}
                                    {isWaitlisted && !isLastMinuteDropout && (
-                                     <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
+                                     <Badge className="status-badge status-badge-waitlist">
                                        <Clock className="h-3 w-3 mr-1" />
                                        <span className="hidden sm:inline">Waitlist</span>
                                      </Badge>
@@ -278,6 +278,12 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                                     <Badge className="status-badge status-badge-guest">
                                       <User className="h-3 w-3 mr-1" />
                                       <span className="hidden sm:inline">Guest</span>
+                                    </Badge>
+                                  )}
+                                  {!signup.is_guest && !signup.player?.user_id && !isLastMinuteDropout && (
+                                    <Badge className="status-badge status-badge-unverified">
+                                      <User className="h-3 w-3 mr-1" />
+                                      <span className="hidden sm:inline">Unverified</span>
                                     </Badge>
                                   )}
                                 </div>
