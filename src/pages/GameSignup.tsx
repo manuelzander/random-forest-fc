@@ -657,13 +657,13 @@ const GameSignup = () => {
           <div className="page-header-inner">
             <div className="flex items-center gap-2 sm:gap-3">
               <Link to="/">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="header-nav-button">
                   <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
                   <span className="hidden sm:inline">Back</span>
                 </Button>
               </Link>
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">Game Signup</h1>
+                <h1 className="header-wordmark truncate">Game Signup</h1>
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <p className="text-sm sm:text-base text-muted-foreground truncate">
                     <span className="sm:hidden">{format(gameDate, "MMM d, h:mm a")}</span>
