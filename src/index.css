@@ -194,6 +194,19 @@
     @apply rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden;
   }
 
+  /* Glass status surfaces */
+  .glass-info {
+    @apply rounded-xl border bg-[hsl(var(--aurora-blue))]/10 border-[hsl(var(--aurora-blue))]/30;
+  }
+
+  .glass-warning {
+    @apply rounded-xl border bg-amber-500/10 border-amber-500/30;
+  }
+
+  .glass-danger {
+    @apply rounded-xl border bg-destructive/10 border-destructive/30;
+  }
+
   /* Card headers with gradients */
   .card-header-gradient-primary {
     @apply text-primary-foreground rounded-t-lg;
