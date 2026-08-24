@@ -220,6 +220,35 @@
     @apply text-primary;
   }
 
+  /* Shared status / achievement badge tokens */
+  .status-badge {
+    @apply inline-flex items-center h-5 px-1.5 text-xs font-medium rounded-md !border-0;
+  }
+
+  .status-badge-verified {
+    @apply !bg-primary/15 !text-primary;
+  }
+
+  .status-badge-unverified {
+    @apply !bg-white/[0.08] !text-muted-foreground;
+  }
+
+  .status-badge-guest {
+    @apply !bg-[hsl(var(--aurora-purple))]/20 !text-[hsl(var(--aurora-purple))];
+  }
+
+  /* Trophies / achievements — one shared gold token */
+  .badge-trophy {
+    @apply inline-flex items-center gap-1 h-5 px-1.5 text-xs font-medium rounded-md !border-0 !bg-amber-300/15 !text-amber-200;
+  }
+
+  /* Signature moves / skill chips */
+  .badge-skill {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-md !border !border-white/10 !bg-white/[0.06] !text-foreground/85;
+  }
+
+
+
 
   /* Aurora background blobs */
   .aurora-blob {

@@ -252,13 +252,13 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
 
       {/* Account Settings Card */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">
+            <Settings className="card-header-glass-icon h-5 w-5" />
             Account Settings
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 pt-6">
 
         {/* Display Name Section */}
         {playerName !== undefined && (

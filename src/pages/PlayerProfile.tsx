@@ -382,24 +382,25 @@ const PlayerProfile = () => {
                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {/* Verified badge for claimed players */}
                     {player.user_id && (
-                      <Badge className="bg-primary/15 text-primary border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge className="status-badge status-badge-verified gap-1">
                         <CheckCircle className="h-3 w-3" />
                         <span className="hidden sm:inline">Verified</span>
                       </Badge>
                     )}
                     {/* Unverified badge for unclaimed players */}
                     {!player.user_id && (
-                      <Badge className="bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge className="status-badge status-badge-unverified gap-1">
                         <User className="h-3 w-3" />
                         <span className="hidden sm:inline">Unverified</span>
                       </Badge>
                     )}
                     {badges.filter(b => b.name !== 'Verified Player').map((badge, index) => (
-                      <Badge key={index} className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge key={index} className="badge-trophy whitespace-nowrap">
                         {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
                         <span className="hidden sm:inline">{badge.name}</span>
                       </Badge>
                     ))}
+
                  </div>
               </div>
             </div>
@@ -409,28 +410,29 @@ const PlayerProfile = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Stats */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5" />
+            <CardHeader className="card-header-glass py-4">
+              <CardTitle className="card-header-glass-title">
+                <Trophy className="card-header-glass-icon h-5 w-5" />
                 Statistics
               </CardTitle>
              </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 pt-6">
                 {/* Win/Draw/Loss at the top */}
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center p-3 bg-primary/15 rounded-lg">
                     <div className="text-xl font-bold text-primary">{player.wins}</div>
                     <div className="text-xs font-medium text-primary">Wins</div>
                   </div>
-                  <div className="text-center p-3 bg-amber-400/10 rounded-lg border border-amber-400/20">
-                    <div className="text-xl font-bold text-amber-300">{player.draws}</div>
-                    <div className="text-xs font-medium text-amber-300/80">Draws</div>
+                  <div className="text-center p-3 bg-amber-300/15 rounded-lg">
+                    <div className="text-xl font-bold text-amber-200">{player.draws}</div>
+                    <div className="text-xs font-medium text-amber-200">Draws</div>
                   </div>
                   <div className="text-center p-3 bg-destructive/15 rounded-lg">
                     <div className="text-xl font-bold text-destructive">{player.losses}</div>
                     <div className="text-xs font-medium text-destructive">Losses</div>
                   </div>
                 </div>
+
 
                 {/* Form - Big box */}
                 <div className="text-center p-6 bg-muted/50 rounded-lg">
@@ -515,13 +517,14 @@ const PlayerProfile = () => {
           <div className="space-y-4">
             {/* Player Skills Radar Chart */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
+              <CardHeader className="card-header-glass py-4">
+                <CardTitle className="card-header-glass-title">
+                  <Target className="card-header-glass-icon h-5 w-5" />
                   Player Skills
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
+
                 {profile?.skill_ratings && Object.keys(profile.skill_ratings).length > 0 ? (
                   <div className="flex justify-center">
                     <SkillRadarChart 
@@ -540,20 +543,21 @@ const PlayerProfile = () => {
 
             {/* Signature Moves */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5" />
+              <CardHeader className="card-header-glass py-4">
+                <CardTitle className="card-header-glass-title">
+                  <Zap className="card-header-glass-icon h-5 w-5" />
                   Signature Moves
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {profile?.football_skills && profile.football_skills.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {profile.football_skills.map((skill, index) => (
-                      <Badge key={index} variant="secondary" className="text-sm">
+                      <Badge key={index} className="badge-skill">
                         {skill}
                       </Badge>
                     ))}
+
                   </div>
                 ) : (
                   <div className="text-center py-2">

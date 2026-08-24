@@ -501,19 +501,19 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                         <TableCell>
                           <div className="flex gap-1">
                             {summary.isVerified && (
-                              <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0">
+                              <Badge className="status-badge status-badge-verified">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Verified</span>
                               </Badge>
                             )}
                             {summary.isGuest && (
-                              <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
+                              <Badge className="status-badge status-badge-guest">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Guest</span>
                               </Badge>
                             )}
                             {!summary.isGuest && !summary.isVerified && (
-                              <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
+                              <Badge className="status-badge status-badge-unverified">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Unverified</span>
                               </Badge>
@@ -691,7 +691,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                                 <span className="hidden sm:inline">Dropout</span>
                               </Badge>
                             ) : (
-                              <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0">
+                              <Badge className="status-badge status-badge-verified">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Played</span>
                               </Badge>
