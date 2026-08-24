@@ -796,10 +796,13 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
 
       {/* Signature Moves */}
       <Card>
-        <CardHeader>
-          <CardTitle>Signature Moves</CardTitle>
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">
+            <Zap className="card-header-glass-icon h-5 w-5" />
+            Signature Moves
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div className="flex flex-wrap gap-2">
             {profile.football_skills?.map((skill, index) => (
               <Badge key={index} className="badge-skill">
