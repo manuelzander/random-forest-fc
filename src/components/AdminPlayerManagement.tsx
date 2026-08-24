@@ -1047,12 +1047,10 @@ const AdminPlayerManagement = () => {
                       required
                     />
                   </div>
-                  <Alert className="info-note mb-4">
+                  <div className="info-note mb-4">
                     <Info className="info-note-icon" />
-                    <AlertDescription>
-                      Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.
-                    </AlertDescription>
-                  </Alert>
+                    <span>Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.</span>
+                  </div>
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSavingPlayer}>
                       Cancel
@@ -1138,12 +1136,10 @@ const AdminPlayerManagement = () => {
                       placeholder="Type name to search or create..."
                     />
                   </div>
-                  <Alert className="info-note">
+                  <div className="info-note">
                     <Info className="info-note-icon" />
-                    <AlertDescription>
-                      Type a name to search existing players, guests, or create a new player.
-                    </AlertDescription>
-                  </Alert>
+                    <span>Type a name to search existing players, guests, or create a new player.</span>
+                  </div>
                   {isCreatingPlayer && (
                     <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                       <Loader2 className="h-4 w-4 animate-spin" />
