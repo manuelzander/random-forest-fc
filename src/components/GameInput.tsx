@@ -432,7 +432,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             />
           </div>
 
-          <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-lg py-3" disabled={isSaving}>
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-lg py-3" disabled={isSaving}>
             {isSaving ? 'Saving...' : isEditing ? 'Update Match Result' : 'Record Match Result'}
           </Button>
         </form>

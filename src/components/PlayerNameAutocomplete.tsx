@@ -155,9 +155,9 @@ const PlayerNameAutocomplete = ({
   const getIcon = (type: PlayerSuggestion['type']) => {
     switch (type) {
       case 'player':
-        return <Users className="h-3 w-3 text-green-600 shrink-0" />;
+        return <Users className="h-3 w-3 text-primary shrink-0" />;
       case 'guest':
-        return <User className="h-3 w-3 text-blue-600 shrink-0" />;
+        return <User className="h-3 w-3 text-[hsl(var(--aurora-blue))] shrink-0" />;
       case 'orphan':
         return <User className="h-3 w-3 text-muted-foreground shrink-0" />;
       case 'new':
@@ -211,8 +211,8 @@ const PlayerNameAutocomplete = ({
               </span>
               <span className={cn(
                 "text-xs ml-auto shrink-0 px-1.5 py-0.5 rounded",
-                suggestion.type === 'player' && "bg-green-100 text-green-700",
-                suggestion.type === 'guest' && "bg-blue-100 text-blue-700",
+                suggestion.type === 'player' && "bg-primary/15 text-primary",
+                suggestion.type === 'guest' && "bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))]",
                 suggestion.type === 'orphan' && "bg-muted text-muted-foreground",
                 suggestion.type === 'new' && "bg-primary/10 text-primary"
               )}>

@@ -286,7 +286,7 @@ const AdminGameManagement = () => {
                               )}
                             </div>
                             {game.mvp_player === playerId && (
-                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                              <Badge className="bg-yellow-500/15 text-yellow-400 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                 <span>👑</span>
                                 MVP
                               </Badge>
@@ -311,7 +311,7 @@ const AdminGameManagement = () => {
                               )}
                             </div>
                             {game.mvp_player === playerId && (
-                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                              <Badge className="bg-yellow-500/15 text-yellow-400 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                 <span>👑</span>
                                 MVP
                               </Badge>
@@ -358,7 +358,7 @@ const AdminGameManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
                 Delete Game
               </AlertDialogAction>
             </AlertDialogFooter>

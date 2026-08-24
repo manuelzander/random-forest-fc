@@ -399,12 +399,12 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-red-500" />
+              <TrendingDown className="h-4 w-4 text-destructive" />
               Total Debt
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-destructive">
               £{totals.debt.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
@@ -416,12 +416,12 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-green-500" />
+              <TrendingUp className="h-4 w-4 text-primary" />
               Total Credit
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-primary">
               £{totals.credit.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
@@ -438,7 +438,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${totals.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-2xl font-bold ${totals.netBalance >= 0 ? 'text-primary' : 'text-destructive'}`}>
               £{totals.netBalance.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
@@ -456,10 +456,10 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
               <PoundSterling className="h-5 w-5" />
               Player Debt & Credit
               {archiveSeasonId && (
-                <Badge className="border-0 bg-amber-200 text-xs text-amber-900">Archived</Badge>
+                <Badge className="border-0 bg-amber-500/15 text-xs text-amber-400">Archived</Badge>
               )}
             </CardTitle>
-            <Button size="sm" onClick={exportToCSV} className="bg-green-600 hover:bg-green-700">
+            <Button size="sm" onClick={exportToCSV} className="bg-primary hover:bg-primary/90">
               <Download className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Export</span>
             </Button>
@@ -504,19 +504,19 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                         <TableCell>
                           <div className="flex gap-1">
                             {summary.isVerified && (
-                              <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                              <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Verified</span>
                               </Badge>
                             )}
                             {summary.isGuest && (
-                              <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                              <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Guest</span>
                               </Badge>
                             )}
                             {!summary.isGuest && !summary.isVerified && (
-                              <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                              <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Unverified</span>
                               </Badge>
@@ -526,7 +526,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                         <TableCell className="text-right">
                           {summary.gamesOwed.length}
                         </TableCell>
-                        <TableCell className="text-right font-medium text-red-600">
+                        <TableCell className="text-right font-medium text-destructive">
                           £{summary.totalDebt.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right">
@@ -555,20 +555,20 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                               </Button>
                             </div>
                           ) : archiveSeasonId ? (
-                            <span className="font-medium text-green-600 px-2 py-1">
+                            <span className="font-medium text-primary px-2 py-1">
                               £{summary.credit.toFixed(2)}
                             </span>
                           ) : (
                             <button
                               onClick={() => setEditingCredit({ id: key, value: summary.credit.toString() })}
-                              className="inline-flex items-center gap-1.5 font-medium text-green-600 hover:bg-green-50 px-2 py-1 rounded transition-colors group"
+                              className="inline-flex items-center gap-1.5 font-medium text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors group"
                             >
                               £{summary.credit.toFixed(2)}
                               <Pencil className="h-3 w-3 opacity-40 group-hover:opacity-100 transition-opacity" />
                             </button>
                           )}
                         </TableCell>
-                        <TableCell className={`text-right font-bold ${summary.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <TableCell className={`text-right font-bold ${summary.netBalance >= 0 ? 'text-primary' : 'text-destructive'}`}>
                           £{summary.netBalance.toFixed(2)}
                         </TableCell>
                       </TableRow>
@@ -591,7 +591,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                 {selectedPlayer?.playerName} - Game Details
               </DialogTitle>
               {selectedPlayer && (
-                <Button size="sm" onClick={() => exportPlayerDetails(selectedPlayer)} className="bg-green-600 hover:bg-green-700">
+                <Button size="sm" onClick={() => exportPlayerDetails(selectedPlayer)} className="bg-primary hover:bg-primary/90">
                   <Download className="h-4 w-4 sm:mr-2" />
                   <span className="hidden sm:inline">Export</span>
                 </Button>
@@ -606,12 +606,12 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <TrendingDown className="h-4 w-4 text-red-500" />
+                      <TrendingDown className="h-4 w-4 text-destructive" />
                       Total Debt
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-red-600">
+                    <div className="text-2xl font-bold text-destructive">
                       £{selectedPlayer.totalDebt.toFixed(2)}
                     </div>
                   </CardContent>
@@ -620,12 +620,12 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
+                      <TrendingUp className="h-4 w-4 text-primary" />
                       Credit Balance
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="text-2xl font-bold text-primary">
                       £{selectedPlayer.credit.toFixed(2)}
                     </div>
                   </CardContent>
@@ -639,7 +639,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className={`text-2xl font-bold ${selectedPlayer.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <div className={`text-2xl font-bold ${selectedPlayer.netBalance >= 0 ? 'text-primary' : 'text-destructive'}`}>
                       £{Math.abs(selectedPlayer.netBalance).toFixed(2)}
                     </div>
                   </CardContent>
@@ -666,8 +666,8 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                     </TableHeader>
                     <TableBody>
                       {selectedPlayer.gamesOwed.map((game, index) => (
-                        <TableRow key={index} className={game.isDropout ? 'bg-red-50 border-red-200' : ''}>
-                          <TableCell className={`font-medium text-xs ${game.isDropout ? 'text-red-600' : 'text-muted-foreground'}`}>
+                        <TableRow key={index} className={game.isDropout ? 'bg-destructive/10 border-destructive/30' : ''}>
+                          <TableCell className={`font-medium text-xs ${game.isDropout ? 'text-destructive' : 'text-muted-foreground'}`}>
                             <span className={game.isDropout ? 'line-through' : ''}>
                               <span className="sm:hidden">{format(new Date(game.gameDate), 'M/d h:mm a')}</span>
                               <span className="hidden sm:inline">{format(new Date(game.gameDate), 'MMM d, h:mm a')}</span>
@@ -689,12 +689,12 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                           </TableCell>
                           <TableCell>
                             {game.isDropout ? (
-                              <Badge className="text-xs h-5 px-1.5 bg-red-100 text-red-700 border-0">
+                              <Badge className="text-xs h-5 px-1.5 bg-destructive/15 text-destructive border-0">
                                 <AlertTriangle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Dropout</span>
                               </Badge>
                             ) : (
-                              <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                              <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Played</span>
                               </Badge>

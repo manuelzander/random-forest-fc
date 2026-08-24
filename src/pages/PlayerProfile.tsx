@@ -382,20 +382,20 @@ const PlayerProfile = () => {
                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {/* Verified badge for claimed players */}
                     {player.user_id && (
-                      <Badge className="bg-green-100 text-green-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge className="bg-primary/15 text-primary border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
                         <CheckCircle className="h-3 w-3" />
                         <span className="hidden sm:inline">Verified</span>
                       </Badge>
                     )}
                     {/* Unverified badge for unclaimed players */}
                     {!player.user_id && (
-                      <Badge className="bg-orange-100 text-orange-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge className="bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
                         <User className="h-3 w-3" />
                         <span className="hidden sm:inline">Unverified</span>
                       </Badge>
                     )}
                     {badges.filter(b => b.name !== 'Verified Player').map((badge, index) => (
-                      <Badge key={index} className="bg-yellow-100 text-yellow-800 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge key={index} className="bg-yellow-500/15 text-yellow-400 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
                         {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
                         <span className="hidden sm:inline">{badge.name}</span>
                       </Badge>
@@ -418,17 +418,17 @@ const PlayerProfile = () => {
               <CardContent className="space-y-6">
                 {/* Win/Draw/Loss at the top */}
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-3 bg-green-100 rounded-lg">
-                    <div className="text-xl font-bold text-green-700">{player.wins}</div>
-                    <div className="text-xs font-medium text-green-600">Wins</div>
+                  <div className="text-center p-3 bg-primary/15 rounded-lg">
+                    <div className="text-xl font-bold text-primary">{player.wins}</div>
+                    <div className="text-xs font-medium text-primary">Wins</div>
                   </div>
-                  <div className="text-center p-3 bg-yellow-100 rounded-lg">
-                    <div className="text-xl font-bold text-yellow-700">{player.draws}</div>
-                    <div className="text-xs font-medium text-yellow-600">Draws</div>
+                  <div className="text-center p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                    <div className="text-xl font-bold text-yellow-400">{player.draws}</div>
+                    <div className="text-xs font-medium text-yellow-400/80">Draws</div>
                   </div>
-                  <div className="text-center p-3 bg-red-100 rounded-lg">
-                    <div className="text-xl font-bold text-red-700">{player.losses}</div>
-                    <div className="text-xs font-medium text-red-600">Losses</div>
+                  <div className="text-center p-3 bg-destructive/15 rounded-lg">
+                    <div className="text-xl font-bold text-destructive">{player.losses}</div>
+                    <div className="text-xs font-medium text-destructive">Losses</div>
                   </div>
                 </div>
 
@@ -440,9 +440,9 @@ const PlayerProfile = () => {
                         <div 
                           key={index}
                           className={`w-8 h-8 rounded ${
-                            result === 'win' ? 'bg-green-500' :
-                            result === 'draw' ? 'bg-yellow-500' :
-                            'bg-red-500'
+                            result === 'win' ? 'bg-primary/100' :
+                            result === 'draw' ? 'bg-yellow-400' :
+                            'bg-destructive/100'
                           }`}
                           title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
                         />
@@ -465,46 +465,46 @@ const PlayerProfile = () => {
                     <div className="text-sm font-medium text-muted-foreground">Games</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-purple-400">
                       {player.games_played > 0 ? (Number(player.points) / player.games_played).toFixed(1) : '0.0'}
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">PPG</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-2xl font-bold text-[hsl(var(--aurora-blue))]">
                       {player.games_played > 0 ? ((player.wins / player.games_played) * 100).toFixed(1) : '0.0'}%
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">Win %</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-yellow-700">{player.mvp_awards}</div>
+                    <div className="text-2xl font-bold text-yellow-400">{player.mvp_awards}</div>
                     <div className="text-sm font-medium text-muted-foreground">MVP</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className={`text-2xl font-bold ${
-                      player.goal_difference > 0 ? 'text-green-600' : 
-                      player.goal_difference < 0 ? 'text-red-600' : 'text-muted-foreground'
+                      player.goal_difference > 0 ? 'text-primary' : 
+                      player.goal_difference < 0 ? 'text-destructive' : 'text-muted-foreground'
                     }`}>
                       {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">Goal Diff</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-violet-600">
+                    <div className="text-2xl font-bold text-violet-400">
                       {player.longest_unbeaten_streak || 0}
                     </div>
                     <div className="text-sm font-medium text-muted-foreground">Unbeaten Streak</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-emerald-600">{player.clean_sheets || 0}</div>
+                    <div className="text-2xl font-bold text-emerald-400">{player.clean_sheets || 0}</div>
                     <div className="text-sm font-medium text-muted-foreground">Clean Sheets</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-indigo-600">{player.captain_count || 0}</div>
+                    <div className="text-2xl font-bold text-indigo-400">{player.captain_count || 0}</div>
                     <div className="text-sm font-medium text-muted-foreground">Captain</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">{player.longest_win_streak || 0}</div>
+                    <div className="text-2xl font-bold text-[hsl(var(--aurora-blue))]">{player.longest_win_streak || 0}</div>
                     <div className="text-sm font-medium text-muted-foreground">Win Streak</div>
                   </div>
                 </div>

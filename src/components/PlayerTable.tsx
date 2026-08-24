@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Player } from '@/types';
@@ -34,9 +33,9 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
   });
 
   return (
-    <Avatar className="h-10 w-10">
+    <Avatar className="h-10 w-10 border border-white/10">
       <AvatarImage src={avatarUrl || undefined} />
-      <AvatarFallback>
+      <AvatarFallback className="bg-white/10 text-foreground text-xs">
         {player.name.substring(0, 2).toUpperCase()}
       </AvatarFallback>
     </Avatar>
@@ -60,7 +59,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     setIsLoading(true);
     const fetchFormData = async () => {
       try {
-        // Batch fetch all recent games data in a single query
         const playerIds = players.map(p => p.id);
         const { data: allGamesData, error: gamesError } = await supabase
           .from('games')
@@ -69,7 +67,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
           .order('created_at', { ascending: false })
           .limit(6 * playerIds.length);
 
-        // Process data for each player (profile data already comes from parent)
         const playersWithRecentResults: PlayerWithForm[] = players.map(player => {
           const playerGames = (allGamesData || [])
             .filter(game => 
@@ -113,25 +110,20 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   }, [players]);
 
   const sortedPlayers = [...playersWithForm].sort((a, b) => {
-    // Default sorting: Points -> PPG -> Goal Diff
     if (sortField === 'points' && sortDirection === 'desc') {
-      // First sort by points (descending)
       if (b.points !== a.points) {
         return b.points - a.points;
       }
       
-      // If points are equal, sort by points per game (descending)
       const aPPG = a.games_played > 0 ? a.points / a.games_played : 0;
       const bPPG = b.games_played > 0 ? b.points / b.games_played : 0;
       if (bPPG !== aPPG) {
         return bPPG - aPPG;
       }
       
-      // If PPG is equal, sort by goal difference (descending)
       return b.goal_difference - a.goal_difference;
     }
     
-    // For other sort fields, use standard sorting
     let aValue: number;
     let bValue: number;
     
@@ -166,7 +158,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       variant="ghost"
       size="sm"
       onClick={() => handleSort(field)}
-      className="h-auto p-2 font-semibold"
+      className="h-auto p-2 font-semibold text-muted-foreground hover:text-foreground hover:bg-white/5"
     >
       {children}
       {sortField === field && (
@@ -176,18 +168,18 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   );
 
   const getRankBadgeColor = (rank: number) => {
-    if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-600';
-    if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500 border-gray-500';
-    if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800 border-amber-800';
-    if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600 border-green-600';
-    return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
+    if (rank === 1) return 'bg-gradient-to-r from-yellow-300 to-yellow-500 text-black';
+    if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-400 text-black';
+    if (rank === 3) return 'bg-gradient-to-r from-amber-500 to-amber-700 text-white';
+    if (rank <= 5) return 'bg-gradient-to-r from-primary to-emerald-400 text-primary-foreground';
+    return 'bg-gradient-to-r from-[hsl(var(--aurora-blue))] to-blue-400 text-white';
   };
 
   if (isLoading) {
     return (
-      <Card className="w-full">
-        <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+      <Card className="glass-card border-0">
+        <CardHeader className="card-header-gradient-primary py-4">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-xl font-display tracking-wide">
             <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
             Player Ranking
           </CardTitle>
@@ -200,9 +192,9 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-3">
-        <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+    <Card className="glass-card border-0">
+      <CardHeader className="card-header-gradient-primary py-4">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-xl font-display tracking-wide">
           <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
           Player Ranking
         </CardTitle>
@@ -210,10 +202,10 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b">
+            <thead className="border-b border-white/10">
               <tr>
-                <th className="px-3 py-3 text-left text-sm font-medium text-gray-900">Rank</th>
-                <th className="px-3 py-3 text-left text-sm font-medium text-gray-900">Player</th>
+                <th className="px-3 py-3 text-left text-sm font-medium text-muted-foreground">Rank</th>
+                <th className="px-3 py-3 text-left text-sm font-medium text-muted-foreground">Player</th>
                 <th className="px-3 py-3 text-center">
                   <SortButton field="points">
                     <Award className="h-4 w-4 mr-1" />
@@ -241,20 +233,20 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                 <th className="px-3 py-3 text-center">
                   <SortButton field="goal_difference">Goal Diff</SortButton>
                 </th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-gray-900">Record & Form</th>
+                <th className="px-3 py-3 text-center text-sm font-medium text-muted-foreground">Record & Form</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/5">
               {sortedPlayers.map((player, index) => {
                 const rank = index + 1;
                 return (
                   <tr 
                     key={player.id} 
-                    className="hover:bg-gray-50 transition-colors"
+                    className="hover:bg-white/5 transition-colors"
                   >
                     <td className="px-3 py-4">
                        <Badge 
-                         className={`${getRankBadgeColor(rank)} text-white font-bold !border-0 border-transparent`}
+                         className={`${getRankBadgeColor(rank)} font-bold !border-0 border-transparent font-display text-sm`}
                        >
                          {rank}
                        </Badge>
@@ -262,56 +254,56 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                      <td className="px-3 py-4">
                        <div className="flex items-center gap-3">
                          <PlayerAvatarWithDefault player={player} />
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <Link to={`/player/${player.id}`}>
-                            <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-blue-600">
+                            <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-primary text-foreground">
                               {player.name}
                             </Button>
                           </Link>
                             {(player as any).user_id ? (
-                               <Badge className="bg-green-100 text-green-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                               <Badge className="bg-primary/15 text-primary border-primary/30 border flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
                                  <CheckCircle className="h-3 w-3" />
                                  <span className="hidden sm:inline">Verified</span>
                                </Badge>
                              ) : (
-                               <Badge className="bg-orange-100 text-orange-700 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                               <Badge className="bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-[hsl(var(--aurora-blue))]/30 border flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
                                  <User className="h-3 w-3" />
                                  <span className="hidden sm:inline">Unverified</span>
                                </Badge>
                              )}
                             {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
-                              <Badge key={badgeIndex} className="bg-yellow-100 text-yellow-800 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                              <Badge key={badgeIndex} className="bg-yellow-500/15 text-yellow-400 border-yellow-500/30 border flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
                                 <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               </Badge>
-                           ))}
+                             ))}
                         </div>
                       </div>
                     </td>
                     <td className="px-3 py-4 text-center">
-                      <Badge variant="secondary" className="font-bold text-lg">
+                      <Badge className="font-bold text-lg bg-white/10 text-foreground border-white/10">
                         {player.points}
                       </Badge>
                     </td>
-                    <td className="px-3 py-4 text-center font-medium">{player.games_played}</td>
+                    <td className="px-3 py-4 text-center font-medium text-foreground">{player.games_played}</td>
                      <td className="px-3 py-4 text-center">
-                       <Badge variant="outline" className="font-semibold text-purple-700">
+                       <Badge className="font-semibold bg-[hsl(var(--aurora-purple))]/15 text-[hsl(var(--aurora-purple))] border-[hsl(var(--aurora-purple))]/30">
                          {player.games_played > 0 ? (player.points / player.games_played).toFixed(1) : '0.0'}
                        </Badge>
                      </td>
                      <td className="px-3 py-4 text-center">
-                       <Badge variant="outline" className="font-semibold text-blue-700">
+                       <Badge className="font-semibold bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-[hsl(var(--aurora-blue))]/30">
                          {player.games_played > 0 ? Math.round((player.wins / player.games_played) * 100) : 0}%
                        </Badge>
                      </td>
                     <td className="px-3 py-4 text-center">
-                      <Badge variant="outline" className="font-semibold text-yellow-700">
+                      <Badge className="font-semibold bg-yellow-500/15 text-yellow-400 border-yellow-500/30">
                         {player.mvp_awards}
                       </Badge>
                     </td>
                     <td className="px-3 py-4 text-center">
                       <span className={`font-medium ${
-                        player.goal_difference > 0 ? 'text-green-600' : 
-                        player.goal_difference < 0 ? 'text-red-600' : 'text-gray-600'
+                        player.goal_difference > 0 ? 'text-primary' : 
+                        player.goal_difference < 0 ? 'text-destructive' : 'text-muted-foreground'
                       }`}>
                         {player.goal_difference > 0 ? '+' : ''}{player.goal_difference}
                       </span>
@@ -319,11 +311,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                     <td className="px-3 py-4 text-center text-sm">
                       <div className="space-y-1">
                         <div className="flex gap-1 justify-center">
-                          <span className="text-green-600 font-medium">{player.wins}W</span>
-                          <span className="text-gray-500">/</span>
-                          <span className="text-yellow-600 font-medium">{player.draws}D</span>
-                          <span className="text-gray-500">/</span>
-                          <span className="text-red-600 font-medium">{player.losses}L</span>
+                          <span className="text-primary font-medium">{player.wins}W</span>
+                          <span className="text-muted-foreground">/</span>
+                          <span className="text-yellow-400 font-medium">{player.draws}D</span>
+                          <span className="text-muted-foreground">/</span>
+                          <span className="text-destructive font-medium">{player.losses}L</span>
                         </div>
                         <div className="flex gap-0.5 justify-center">
                           {player.recentResults && player.recentResults.length > 0 ? (
@@ -331,15 +323,15 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                               <div 
                                 key={index}
                                 className={`w-3 h-3 rounded ${
-                                  result === 'win' ? 'bg-green-500' :
-                                  result === 'draw' ? 'bg-yellow-500' :
-                                  'bg-red-500'
+                                  result === 'win' ? 'bg-primary' :
+                                  result === 'draw' ? 'bg-yellow-400' :
+                                  'bg-destructive'
                                 }`}
                                 title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
                               />
                             ))
                           ) : (
-                            <span className="text-gray-400 text-xs">No games</span>
+                            <span className="text-muted-foreground text-xs">No games</span>
                           )}
                         </div>
                       </div>

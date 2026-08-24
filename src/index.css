@@ -6,116 +6,124 @@
 
 @layer base {
   :root {
-    /* Base colors */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Dark Glass Aurora theme — default for the whole app */
+    --background: 220 25% 3%;
+    --foreground: 210 20% 92%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 20% 6%;
+    --card-foreground: 210 20% 92%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 20% 6%;
+    --popover-foreground: 210 20% 92%;
 
-    /* Primary branding - Forest Green for football theme */
-    --primary: 142 76% 36%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary branding — Aurora emerald green */
+    --primary: 150 80% 55%;
+    --primary-foreground: 220 25% 3%;
 
     /* Secondary colors */
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 15% 12%;
+    --secondary-foreground: 210 20% 92%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 15% 14%;
+    --muted-foreground: 215 15% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 220 15% 16%;
+    --accent-foreground: 210 20% 92%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 142 76% 36%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 150 80% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     /* Custom page backgrounds */
-    --page-gradient: linear-gradient(135deg, hsl(142 20% 96%) 0%, hsl(200 20% 96%) 100%);
+    --page-gradient: linear-gradient(135deg, hsl(220 25% 3%) 0%, hsl(220 25% 5%) 100%);
     
     /* Header variants */
-    --header-primary: 142 76% 36%;
-    --header-admin: 0 84% 60%;
-    --header-profile: 217 91% 60%;
-    --header-news: 142 76% 36%;
+    --header-primary: 150 80% 55%;
+    --header-admin: 260 70% 65%;
+    --header-profile: 210 80% 60%;
+    --header-news: 150 80% 55%;
 
-    --sidebar-background: 0 0% 98%;
+    /* Glass surface tokens */
+    --glass-bg: 0 0% 100% / 0.05;
+    --glass-border: 0 0% 100% / 0.1;
+    --glass-blur: 16px;
+    --aurora-emerald: 150 80% 55%;
+    --aurora-blue: 220 80% 55%;
+    --aurora-purple: 260 70% 65%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 220 15% 8%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 150 80% 55%;
+    --sidebar-primary-foreground: 220 25% 3%;
+    --sidebar-accent: 220 15% 14%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 150 80% 55%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 25% 3%;
+    --foreground: 210 20% 92%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 20% 6%;
+    --card-foreground: 210 20% 92%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 20% 6%;
+    --popover-foreground: 210 20% 92%;
 
-    --primary: 142 76% 46%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 150 80% 55%;
+    --primary-foreground: 220 25% 3%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 15% 12%;
+    --secondary-foreground: 210 20% 92%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 15% 14%;
+    --muted-foreground: 215 15% 55%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 220 15% 16%;
+    --accent-foreground: 210 20% 92%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 70% 55%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 142 76% 46%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 150 80% 55%;
 
-    /* Custom page backgrounds for dark mode */
-    --page-gradient: linear-gradient(135deg, hsl(222 84% 6%) 0%, hsl(217 32% 18%) 100%);
+    --page-gradient: linear-gradient(135deg, hsl(220 25% 3%) 0%, hsl(220 25% 5%) 100%);
     
-    /* Header variants for dark mode */
-    --header-primary: 142 76% 46%;
-    --header-admin: 0 84% 60%;
-    --header-profile: 217 91% 60%;
-    --header-news: 142 76% 46%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --header-primary: 150 80% 55%;
+    --header-admin: 260 70% 65%;
+    --header-profile: 210 80% 60%;
+    --header-news: 150 80% 55%;
+    --sidebar-background: 220 15% 8%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 150 80% 55%;
+    --sidebar-primary-foreground: 220 25% 3%;
+    --sidebar-accent: 220 15% 14%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 150 80% 55%;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  html {
+    font-family: 'Barlow', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.02em;
   }
 
   body {
@@ -126,12 +134,12 @@
 @layer components {
   /* Page layout components */
   .page-container {
-    @apply min-h-screen;
+    @apply min-h-screen relative;
     background: var(--page-gradient);
   }
   
   .page-header {
-    @apply bg-card shadow-sm border-b;
+    @apply border-b border-white/10 bg-black/20 backdrop-blur-xl;
   }
   
   .page-header-content {
@@ -148,23 +156,27 @@
 
   /* Header brand variants */
   .header-brand-primary {
-    @apply p-2 rounded-lg text-white;
-    background-color: hsl(var(--header-primary));
+    @apply p-2 rounded-lg;
+    background: hsl(var(--header-primary));
+    color: hsl(var(--primary-foreground));
   }
   
   .header-brand-admin {
-    @apply p-2 rounded-lg text-white;
-    background-color: hsl(var(--header-admin));
+    @apply p-2 rounded-lg;
+    background: hsl(var(--header-admin));
+    color: hsl(var(--primary-foreground));
   }
   
   .header-brand-profile {
-    @apply p-2 rounded-lg text-white;
-    background-color: hsl(var(--header-profile));
+    @apply p-2 rounded-lg;
+    background: hsl(var(--header-profile));
+    color: hsl(var(--primary-foreground));
   }
   
   .header-brand-news {
-    @apply p-2 rounded-lg text-white;
-    background-color: hsl(var(--header-news));
+    @apply p-2 rounded-lg;
+    background: hsl(var(--header-news));
+    color: hsl(var(--primary-foreground));
   }
 
   /* Loading states */
@@ -173,14 +185,53 @@
     background: var(--page-gradient);
   }
 
+  /* Glass card surfaces */
+  .glass-card {
+    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-xl;
+  }
+
+  .glass-panel {
+    @apply rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden;
+  }
+
+  /* Glass status surfaces */
+  .glass-info {
+    @apply rounded-xl border bg-[hsl(var(--aurora-blue))]/10 border-[hsl(var(--aurora-blue))]/30;
+  }
+
+  .glass-warning {
+    @apply rounded-xl border bg-amber-500/10 border-amber-500/30;
+  }
+
+  .glass-danger {
+    @apply rounded-xl border bg-destructive/10 border-destructive/30;
+  }
+
   /* Card headers with gradients */
   .card-header-gradient-primary {
-    @apply text-white rounded-t-lg;
-    background: linear-gradient(135deg, hsl(var(--header-primary)), hsl(var(--header-primary) / 0.8));
+    @apply text-primary-foreground rounded-t-lg;
+    background: linear-gradient(135deg, hsl(var(--header-primary) / 0.9), hsl(var(--header-primary) / 0.6));
   }
   
   .card-header-gradient-news {
-    @apply text-white rounded-t-lg;
-    background: linear-gradient(135deg, hsl(var(--header-news)), hsl(var(--header-news) / 0.8));
+    @apply text-primary-foreground rounded-t-lg;
+    background: linear-gradient(135deg, hsl(var(--header-news) / 0.9), hsl(var(--header-news) / 0.6));
+  }
+
+  /* Aurora background blobs */
+  .aurora-blob {
+    @apply absolute rounded-full blur-[120px] pointer-events-none;
+  }
+
+  .aurora-blob-emerald {
+    background: hsl(var(--aurora-emerald) / 0.2);
+  }
+
+  .aurora-blob-blue {
+    background: hsl(var(--aurora-blue) / 0.15);
+  }
+
+  .aurora-blob-purple {
+    background: hsl(var(--aurora-purple) / 0.15);
   }
 }

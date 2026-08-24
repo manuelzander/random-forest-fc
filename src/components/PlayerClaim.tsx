@@ -345,7 +345,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
                 <Button
                   variant="outline"
                   onClick={() => setDeletePlayerDialogOpen(true)}
-                  className="border-red-200 text-red-600 hover:bg-red-50"
+                  className="border-destructive/30 text-destructive hover:bg-destructive/10"
                 >
                   <Trash2 className="h-4 w-4 sm:mr-2" />
                   <span className="hidden sm:inline">Delete Player</span>
@@ -502,7 +502,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-destructive hover:bg-destructive/90">
               Unclaim Player
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -522,7 +522,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeletePlayer} 
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive hover:bg-destructive/90"
               disabled={isDeleting}
             >
               {isDeleting ? 'Deleting...' : 'Delete Player'}

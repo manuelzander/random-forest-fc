@@ -1180,12 +1180,12 @@ const AdminPlayerManagement = () => {
                         <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
                       </Link>
                       {player.user_id ? (
-                        <Badge className="text-xs h-5 px-1.5 bg-green-100 text-green-700 border-0">
+                        <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0">
                           <UserCheck className="h-3 w-3 mr-1" />
                           <span className="hidden sm:inline">Verified</span>
                         </Badge>
                       ) : (
-                        <Badge className="text-xs h-5 px-1.5 bg-orange-100 text-orange-700 border-0">
+                        <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
                           <AlertTriangle className="h-3 w-3 mr-1" />
                           <span className="hidden sm:inline">Unverified</span>
                         </Badge>
@@ -1205,13 +1205,13 @@ const AdminPlayerManagement = () => {
                         Debt: <span className="font-medium text-destructive">£{player.debt.toFixed(2)}</span>
                       </p>
                       <p>
-                        Credit: <span className="font-medium text-green-600">£{player.credit.toFixed(2)}</span>
+                        Credit: <span className="font-medium text-primary">£{player.credit.toFixed(2)}</span>
                       </p>
                       <p>
                         Net: <span className={`font-bold ${
                           (player.credit - player.debt) >= 0 
-                            ? 'text-green-600' 
-                            : 'text-red-600'
+                            ? 'text-primary' 
+                            : 'text-destructive'
                         }`}>
                           £{Math.abs(player.credit - player.debt).toFixed(2)}
                         </span>
@@ -1254,7 +1254,7 @@ const AdminPlayerManagement = () => {
                       size="sm" 
                       variant="outline" 
                       onClick={() => openDisconnectDialog(player)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-destructive hover:text-destructive"
                     >
                       <UserX className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
@@ -1299,7 +1299,7 @@ const AdminPlayerManagement = () => {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <h4 className="font-semibold text-sm sm:text-base truncate">{guest.name}</h4>
-                      <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                      <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
                         <Users className="h-3 w-3 mr-1" />
                         <span className="hidden sm:inline">Guest</span>
                       </Badge>
@@ -1317,13 +1317,13 @@ const AdminPlayerManagement = () => {
                         Debt: <span className="font-medium text-destructive">£{guest.debt.toFixed(2)}</span>
                       </p>
                       <p>
-                        Credit: <span className="font-medium text-green-600">£{guest.credit.toFixed(2)}</span>
+                        Credit: <span className="font-medium text-primary">£{guest.credit.toFixed(2)}</span>
                       </p>
                       <p>
                         Net: <span className={`font-bold ${
                           (guest.credit - guest.debt) >= 0 
-                            ? 'text-green-600' 
-                            : 'text-red-600'
+                            ? 'text-primary' 
+                            : 'text-destructive'
                         }`}>
                           £{Math.abs(guest.credit - guest.debt).toFixed(2)}
                         </span>
@@ -1387,7 +1387,7 @@ const AdminPlayerManagement = () => {
           {/* Orphaned Guest Signups */}
           {orphanedSignups.length > 0 && (
             <div className="mt-6">
-              <h3 className="text-base sm:text-lg font-semibold text-orange-600 mb-2">
+              <h3 className="text-base sm:text-lg font-semibold text-[hsl(var(--aurora-blue))] mb-2">
                 Orphaned Guests ({orphanedSignups.length})
               </h3>
               <p className="text-sm text-muted-foreground mb-3">
@@ -1395,17 +1395,17 @@ const AdminPlayerManagement = () => {
               </p>
               <div className="space-y-2">
                 {orphanedSignups.map((orphan) => (
-                  <div key={orphan.guest_name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-orange-200 bg-orange-50/50 rounded-lg">
+                  <div key={orphan.guest_name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-[hsl(var(--aurora-blue))]/30 bg-[hsl(var(--aurora-blue))]/10 rounded-lg">
                     <div className="flex items-center gap-3 flex-1">
-                      <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 bg-orange-100">
-                        <AvatarFallback className="text-orange-700 text-lg">
+                      <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 bg-[hsl(var(--aurora-blue))]/15">
+                        <AvatarFallback className="text-[hsl(var(--aurora-blue))] text-lg">
                           {orphan.guest_name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <h4 className="font-semibold text-sm sm:text-base truncate">{orphan.guest_name}</h4>
-                          <Badge className="text-xs h-5 px-1.5 bg-blue-100 text-blue-700 border-0">
+                          <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0">
                             <Users className="h-3 w-3 mr-1" />
                             <span className="hidden sm:inline">Guest</span>
                           </Badge>
@@ -1418,10 +1418,10 @@ const AdminPlayerManagement = () => {
                             Debt: <span className="font-medium text-destructive">£{orphan.debt.toFixed(2)}</span>
                           </p>
                           <p>
-                            Credit: <span className="font-medium text-green-600">£0.00</span>
+                            Credit: <span className="font-medium text-primary">£0.00</span>
                           </p>
                           <p>
-                            Net: <span className="font-bold text-red-600">£{orphan.debt.toFixed(2)}</span>
+                            Net: <span className="font-bold text-destructive">£{orphan.debt.toFixed(2)}</span>
                           </p>
                         </div>
                       </div>
@@ -1544,7 +1544,7 @@ const AdminPlayerManagement = () => {
               <AlertDialogDescription className="space-y-2">
                 <span className="block">Are you sure you want to delete "{guestToDelete?.name}"?</span>
                 {(guestToDelete?.signupsCount || 0) > 0 && (
-                  <span className="block text-orange-600 font-medium">
+                  <span className="block text-[hsl(var(--aurora-blue))] font-medium">
                     ⚠️ This guest has {guestToDelete?.signupsCount} signup(s) which will become orphaned.
                   </span>
                 )}
@@ -1553,7 +1553,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteGuest} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDeleteGuest} className="bg-destructive hover:bg-destructive/90">
                 Delete Guest
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -1622,18 +1622,18 @@ const AdminPlayerManagement = () => {
                       
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Debt transfer:</span>
-                        <span className="font-medium text-red-600">+£{guestToMerge.debt.toFixed(2)}</span>
+                        <span className="font-medium text-destructive">+£{guestToMerge.debt.toFixed(2)}</span>
                       </div>
                       
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Credit transfer:</span>
-                        <span className="font-medium text-green-600">+£{guestToMerge.credit.toFixed(2)}</span>
+                        <span className="font-medium text-primary">+£{guestToMerge.credit.toFixed(2)}</span>
                       </div>
                       
                       <div className="pt-2 border-t">
                         <div className="flex justify-between font-semibold">
                           <span>Player's new balance:</span>
-                          <span className={newNetBalance >= 0 ? 'text-green-600' : 'text-red-600'}>
+                          <span className={newNetBalance >= 0 ? 'text-primary' : 'text-destructive'}>
                             £{Math.abs(newNetBalance).toFixed(2)} {newNetBalance >= 0 ? 'credit' : 'owed'}
                           </span>
                         </div>
@@ -1720,7 +1720,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
                 Delete Player
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -1756,7 +1756,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={removeAvatar} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={removeAvatar} className="bg-destructive hover:bg-destructive/90">
                 Remove Avatar
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -1774,7 +1774,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteOrphanSignups} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDeleteOrphanSignups} className="bg-destructive hover:bg-destructive/90">
                 Delete Signups
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -1840,13 +1840,13 @@ const AdminPlayerManagement = () => {
                       
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Debt transfer:</span>
-                        <span className="font-medium text-red-600">+£{orphanToMerge.debt.toFixed(2)}</span>
+                        <span className="font-medium text-destructive">+£{orphanToMerge.debt.toFixed(2)}</span>
                       </div>
                       
                       <div className="pt-2 border-t">
                         <div className="flex justify-between font-semibold">
                           <span>Player's new balance:</span>
-                          <span className={newNetBalance >= 0 ? 'text-green-600' : 'text-red-600'}>
+                          <span className={newNetBalance >= 0 ? 'text-primary' : 'text-destructive'}>
                             £{Math.abs(newNetBalance).toFixed(2)} {newNetBalance >= 0 ? 'credit' : 'owed'}
                           </span>
                         </div>
