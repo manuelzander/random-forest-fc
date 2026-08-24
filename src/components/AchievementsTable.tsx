@@ -148,8 +148,8 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
         {/* Badge Legend */}
         <div className="p-4 border-b bg-card/5">
           <Collapsible open={isLegendOpen} onOpenChange={setIsLegendOpen}>
-            <CollapsibleTrigger className="flex items-center gap-2 w-full hover:text-[hsl(var(--aurora-blue))] transition-colors font-medium text-foreground">
-              <Info className="h-4 w-4 text-[hsl(var(--aurora-blue))]" />
+            <CollapsibleTrigger className="info-note w-full items-center hover:bg-white/[0.07] transition-colors text-foreground">
+              <Info className="info-note-icon mt-0" />
               <span className="font-semibold">Badge Guide</span>
               {isLegendOpen ? <ChevronUp className="h-4 w-4 ml-auto" /> : <ChevronDown className="h-4 w-4 ml-auto" />}
             </CollapsibleTrigger>
@@ -159,7 +159,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
               return <div key={category}>
                     <h4 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wide">{category}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-                      {badges.map(badge => <div key={badge.name} className="flex items-start gap-3 p-3 rounded-lg bg-card border shadow-sm hover:shadow-md transition-shadow">
+                      {badges.map(badge => <div key={badge.name} className="flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.08] transition-colors">
                           <span className="text-xl flex-shrink-0 mt-0.5">{badge.icon}</span>
                           <div className="min-w-0 flex-1">
                             <div className="font-semibold text-foreground">{badge.name}</div>

@@ -38,7 +38,7 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
   });
 
   return (
-    <Avatar className="h-6 w-6">
+    <Avatar className="h-8 w-8 border border-white/10">
       <AvatarImage src={avatarUrl || undefined} />
       <AvatarFallback className="text-xs">
         {player.name.substring(0, 2).toUpperCase()}
@@ -135,7 +135,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
         ) : (
           <div className="space-y-4">
             {games.map((game) => (
-              <div key={game.id} className="p-4 border rounded-lg bg-card">
+              <div key={game.id} className="p-4 rounded-xl border border-white/10 bg-white/5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-4">
                     <div className="text-center">

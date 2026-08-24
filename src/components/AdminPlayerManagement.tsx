@@ -13,7 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { calculatePlayerDebt, calculateGuestDebt, type GameScheduleForDebt, type SignupForDebt } from '@/utils/debtCalculation';
 import PlayerNameAutocomplete from './PlayerNameAutocomplete';
@@ -1047,11 +1047,10 @@ const AdminPlayerManagement = () => {
                       required
                     />
                   </div>
-                  <Alert className="mb-4">
-                    <AlertDescription>
-                      ℹ️ Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.
-                    </AlertDescription>
-                  </Alert>
+                  <div className="info-note mb-4">
+                    <Info className="info-note-icon" />
+                    <span>Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.</span>
+                  </div>
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSavingPlayer}>
                       Cancel
@@ -1137,11 +1136,10 @@ const AdminPlayerManagement = () => {
                       placeholder="Type name to search or create..."
                     />
                   </div>
-                  <Alert>
-                    <AlertDescription>
-                      ℹ️ Type a name to search existing players, guests, or create a new player.
-                    </AlertDescription>
-                  </Alert>
+                  <div className="info-note">
+                    <Info className="info-note-icon" />
+                    <span>Type a name to search existing players, guests, or create a new player.</span>
+                  </div>
                   {isCreatingPlayer && (
                     <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                       <Loader2 className="h-4 w-4 animate-spin" />
