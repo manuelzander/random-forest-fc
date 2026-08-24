@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Slider } from '@/components/ui/slider';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { User, Upload, X, Plus, Shuffle, Wand2, Download } from 'lucide-react';
+import { User, Upload, X, Plus, Shuffle, Wand2, Download, MapPin, Clock, Heart, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProfileData {
@@ -595,28 +595,39 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
       {/* Basic Info */}
       <Card>
         <CardHeader className="card-header-glass py-4">
-          <CardTitle className="card-header-glass-title">Basic Information</CardTitle>
+          <CardTitle className="card-header-glass-title">
+            <User className="card-header-glass-icon h-5 w-5" />
+            Basic Information
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div>
-            <Label htmlFor="bio">Bio</Label>
+        <CardContent className="space-y-5 pt-6">
+          {/* Bio */}
+          <div className="form-field-glass">
+            <Label htmlFor="bio" className="form-field-label">
+              <User className="form-field-label-icon" />
+              Bio
+            </Label>
             <Textarea
               id="bio"
               placeholder="Tell us about yourself and your football journey..."
               value={profile.bio || ''}
               onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
               rows={3}
+              className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0 resize-none"
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="position">Favorite Position</Label>
+            <div className="form-field-glass">
+              <Label htmlFor="position" className="form-field-label">
+                <MapPin className="form-field-label-icon" />
+                Favorite Position
+              </Label>
               <Select
                 value={profile.favorite_position || ''}
                 onValueChange={(value) => setProfile(prev => ({ ...prev, favorite_position: value }))}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-0 bg-transparent px-1 focus:ring-1 focus:ring-primary/50 focus:ring-offset-0">
                   <SelectValue placeholder="Select a position" />
                 </SelectTrigger>
                 <SelectContent>
@@ -629,8 +640,11 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
               </Select>
             </div>
             
-            <div>
-              <Label htmlFor="years">Years Playing</Label>
+            <div className="form-field-glass">
+              <Label htmlFor="years" className="form-field-label">
+                <Clock className="form-field-label-icon" />
+                Years Playing
+              </Label>
               <Input
                 id="years"
                 type="number"
@@ -640,21 +654,27 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
                   ...prev, 
                   years_playing: e.target.value ? parseInt(e.target.value) : undefined 
                 }))}
+                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
             </div>
 
-            <div>
-              <Label htmlFor="club">Favorite Club</Label>
+            <div className="form-field-glass">
+              <Label htmlFor="club" className="form-field-label">
+                <Heart className="form-field-label-icon" />
+                Favorite Club
+              </Label>
               <Input
                 id="club"
-                placeholder="e.g. Real Madrid, Barcelona, Man United"
+                placeholder="e.g. Real Madrid, Barcelona"
                 value={profile.favorite_club || ''}
                 onChange={(e) => setProfile(prev => ({ ...prev, favorite_club: e.target.value }))}
+                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
             </div>
           </div>
         </CardContent>
       </Card>
+
 
       {/* Player Skills */}
       <Card>
@@ -776,10 +796,13 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
 
       {/* Signature Moves */}
       <Card>
-        <CardHeader>
-          <CardTitle>Signature Moves</CardTitle>
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">
+            <Zap className="card-header-glass-icon h-5 w-5" />
+            Signature Moves
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div className="flex flex-wrap gap-2">
             {profile.football_skills?.map((skill, index) => (
               <Badge key={index} className="badge-skill">
@@ -794,32 +817,42 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
             ))}
           </div>
           
-          <div className="space-y-2">
-            <Label>Add Signature Moves</Label>
+          <div className="form-field-glass">
+            <Label htmlFor="new-skill" className="form-field-label">
+              <Plus className="form-field-label-icon" />
+              Add Signature Moves
+            </Label>
             <div className="flex gap-2">
               <Input
+                id="new-skill"
                 placeholder="Custom signature move..."
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addSkill(newSkill)}
+                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
-              <Button onClick={() => addSkill(newSkill)} disabled={!newSkill}>
+              <Button 
+                onClick={() => addSkill(newSkill)} 
+                disabled={!newSkill}
+                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-3"
+              >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {FUNNY_SKILLS.map(skill => (
-                <Button
-                  key={skill}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addSkill(skill)}
-                  disabled={profile.football_skills?.includes(skill)}
-                >
-                  {skill}
-                </Button>
-              ))}
-            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {FUNNY_SKILLS.map(skill => (
+              <Button
+                key={skill}
+                variant="outline"
+                size="sm"
+                onClick={() => addSkill(skill)}
+                disabled={profile.football_skills?.includes(skill)}
+                className="rounded-full border-white/10 bg-white/[0.04] text-xs hover:bg-white/[0.08] hover:border-primary/30 disabled:opacity-40"
+              >
+                {skill}
+              </Button>
+            ))}
           </div>
         </CardContent>
       </Card>

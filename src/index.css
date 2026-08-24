@@ -292,10 +292,25 @@
     @apply h-4 w-4 shrink-0 mt-0.5 text-primary;
   }
 
+  /* Glass form field tiles */
+  .form-field-glass {
+    @apply rounded-2xl border border-white/10 bg-white/[0.04] p-3.5 sm:p-4 transition-all duration-300
+           focus-within:border-primary/30 focus-within:bg-white/[0.06];
+  }
+
+  .form-field-label {
+    @apply flex items-center gap-2 mb-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground;
+  }
+
+  .form-field-label-icon {
+    @apply h-4 w-4 text-primary/80;
+  }
+
   /* Signature moves / skill chips */
   .badge-skill {
     @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-md !border !border-white/10 !bg-white/[0.06] !text-foreground/85;
   }
+
 
   /* Profile hero panel */
   .hero-panel {
