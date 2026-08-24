@@ -168,11 +168,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   );
 
   const getRankBadgeColor = (rank: number) => {
-    if (rank === 1) return 'bg-gradient-to-r from-yellow-300 to-yellow-500 text-black';
-    if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-400 text-black';
-    if (rank === 3) return 'bg-gradient-to-r from-amber-500 to-amber-700 text-white';
-    if (rank <= 5) return 'bg-gradient-to-r from-primary to-emerald-400 text-primary-foreground';
-    return 'bg-gradient-to-r from-[hsl(var(--aurora-blue))] to-blue-400 text-white';
+    if (rank === 1) return 'rank-pill rank-pill-gold';
+    if (rank === 2) return 'rank-pill rank-pill-silver';
+    if (rank === 3) return 'rank-pill rank-pill-bronze';
+    if (rank <= 5) return 'rank-pill bg-primary/15 text-primary border-primary/30';
+    return 'rank-pill rank-pill-default';
   };
 
   if (isLoading) {

@@ -198,15 +198,15 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
               const playerBadges = getCachedBadges(player, player.profile);
               const rank = index + 1;
               const getRankBadgeColor = (rank: number) => {
-                if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-600';
-                if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500 border-white/15';
-                if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800 border-amber-800';
-                if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600 border-green-600';
-                return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
+                if (rank === 1) return 'rank-pill rank-pill-gold';
+                if (rank === 2) return 'rank-pill rank-pill-silver';
+                if (rank === 3) return 'rank-pill rank-pill-bronze';
+                if (rank <= 5) return 'rank-pill bg-primary/15 text-primary border-primary/30';
+                return 'rank-pill rank-pill-default';
               };
               return <tr key={player.id} className="hover:bg-card/5 transition-colors">
                     <td className="px-3 py-4">
-                      <Badge className={`${getRankBadgeColor(rank)} text-white font-bold !border-0 border-transparent`}>
+                      <Badge className={`${getRankBadgeColor(rank)} font-bold`}>
                         {rank}
                       </Badge>
                     </td>
