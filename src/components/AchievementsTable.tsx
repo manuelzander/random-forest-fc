@@ -214,7 +214,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                       <div className="flex items-center gap-3">
                         <PlayerAvatarWithDefault player={player} />
                         <Link to={`/player/${player.id}`}>
-                          <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-[hsl(var(--aurora-blue))]">
+                          <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-primary">
                             {player.name}
                           </Button>
                         </Link>
