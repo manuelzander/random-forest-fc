@@ -84,10 +84,10 @@ const Admin = () => {
 
       {/* Main Content */}
       <div className="page-main-content space-y-6">
-        <SeasonBanner className="max-w-3xl mx-auto" />
+        <SeasonBanner />
 
         <Tabs defaultValue="players" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 max-w-3xl mx-auto">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="players" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Players</span>
