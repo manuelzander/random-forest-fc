@@ -622,23 +622,21 @@ const GameSignup = () => {
   if (!game) {
     return <div className="page-container">
         <div className="page-main-content">
-          <Card className="max-w-md mx-auto">
-            <CardContent className="pt-6">
-              <div className="text-center space-y-4">
-                <Calendar className="h-12 w-12 mx-auto text-muted-foreground" />
-                <h2 className="text-xl font-semibold">Game Not Found</h2>
-                <p className="text-muted-foreground">
-                  The scheduled game you're looking for doesn't exist or has been removed.
-                </p>
-                <Link to="/">
-                  <Button variant="outline">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Go Home
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="glass-panel max-w-md mx-auto p-8">
+            <div className="text-center space-y-4">
+              <Calendar className="h-12 w-12 mx-auto text-muted-foreground" />
+              <h2 className="font-display text-2xl text-foreground">Game Not Found</h2>
+              <p className="text-muted-foreground">
+                The scheduled game you're looking for doesn't exist or has been removed.
+              </p>
+              <Link to="/">
+                <Button variant="outline" className="header-nav-button">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Go Home
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>;
   }
