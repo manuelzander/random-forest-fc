@@ -297,7 +297,59 @@
     @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-md !border !border-white/10 !bg-white/[0.06] !text-foreground/85;
   }
 
+  /* Profile hero panel */
+  .hero-panel {
+    @apply relative overflow-hidden;
+  }
 
+  .hero-panel::after {
+    content: '';
+    @apply absolute inset-x-0 bottom-0 h-px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--primary) / 0.5),
+      hsl(var(--aurora-blue) / 0.35),
+      transparent
+    );
+  }
+
+  .hero-glow {
+    @apply pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full blur-[90px];
+    background: hsl(var(--aurora-emerald) / 0.22);
+  }
+
+  .avatar-glow {
+    @apply ring-2 ring-primary/30 shadow-[0_0_35px_-10px_hsl(var(--primary)/0.6)];
+  }
+
+  .hero-name {
+    @apply font-display uppercase tracking-[0.06em] leading-none text-3xl sm:text-4xl text-foreground;
+  }
+
+  .meta-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06]
+           px-3 py-1 text-xs font-medium text-foreground/85 backdrop-blur-xl;
+  }
+
+  /* Shared stat tiles */
+  .stat-tile {
+    @apply text-center rounded-xl border border-white/10 bg-white/[0.04] p-4
+           transition-all duration-300 hover:border-primary/25 hover:bg-white/[0.07];
+  }
+
+  .stat-tile-value {
+    @apply text-2xl font-display leading-none tracking-wide;
+  }
+
+  .stat-tile-label {
+    @apply mt-1.5 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground;
+  }
+
+  .empty-tile {
+    @apply flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/10
+           bg-white/[0.02] py-8 text-sm text-muted-foreground;
+  }
 
 
   /* Aurora background blobs */
