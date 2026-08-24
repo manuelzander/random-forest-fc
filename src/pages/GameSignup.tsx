@@ -814,10 +814,11 @@ const GameSignup = () => {
                     return <div key={signup.id} className={`group/row flex items-center justify-between p-2 -mx-2 rounded-xl transition-all duration-300 hover:bg-white/5 ${
                       isLastMinuteDropout ? 'bg-destructive/5 border border-destructive/20' : ''
                     }`}>
-                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                          <Badge variant="outline" className="shrink-0 text-xs font-display">
-                            {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
-                          </Badge>
+                          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                            <Badge className="slot-number">
+                              {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
+                            </Badge>
+
                           <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-destructive' : 'text-foreground'}`}>
                             {signup.is_guest ? signup.guest_name : signup.player?.name || 'Unknown'}
                           </span>
