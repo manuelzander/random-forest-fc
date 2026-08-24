@@ -269,13 +269,13 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                                      </Badge>
                                    )}
                                   {signup.player?.user_id && !isLastMinuteDropout && (
-                                    <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0 hover:bg-primary/25">
+                                    <Badge className="status-badge status-badge-verified">
                                       <CheckCircle className="h-3 w-3 mr-1" />
                                       <span className="hidden sm:inline">Verified</span>
                                     </Badge>
                                   )}
                                   {signup.is_guest && !isLastMinuteDropout && (
-                                    <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 hover:bg-[hsl(var(--aurora-blue))]/25">
+                                    <Badge className="status-badge status-badge-guest">
                                       <User className="h-3 w-3 mr-1" />
                                       <span className="hidden sm:inline">Guest</span>
                                     </Badge>

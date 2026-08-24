@@ -242,6 +242,15 @@
     @apply inline-flex items-center gap-1 h-5 px-1.5 text-xs font-medium rounded-md !border-0 !bg-amber-300/15 !text-amber-200;
   }
 
+  /* Info notes — one shared subtle glass style */
+  .info-note {
+    @apply flex items-start gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-muted-foreground;
+  }
+
+  .info-note-icon {
+    @apply h-4 w-4 shrink-0 mt-0.5 text-primary;
+  }
+
   /* Signature moves / skill chips */
   .badge-skill {
     @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-md !border !border-white/10 !bg-white/[0.06] !text-foreground/85;

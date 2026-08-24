@@ -1047,9 +1047,9 @@ const AdminPlayerManagement = () => {
                       required
                     />
                   </div>
-                  <Alert className="mb-4">
+                  <Alert className="info-note mb-4">
                     <AlertDescription>
-                      ℹ️ Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.
+                      Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.
                     </AlertDescription>
                   </Alert>
                   <div className="flex justify-end gap-2">
@@ -1137,9 +1137,9 @@ const AdminPlayerManagement = () => {
                       placeholder="Type name to search or create..."
                     />
                   </div>
-                  <Alert>
+                  <Alert className="info-note">
                     <AlertDescription>
-                      ℹ️ Type a name to search existing players, guests, or create a new player.
+                      Type a name to search existing players, guests, or create a new player.
                     </AlertDescription>
                   </Alert>
                   {isCreatingPlayer && (
