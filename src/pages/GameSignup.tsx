@@ -815,7 +815,7 @@ const GameSignup = () => {
                       isLastMinuteDropout ? 'bg-destructive/5 border border-destructive/20' : ''
                     }`}>
                           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                            <Badge className="slot-number">
+                            <Badge variant="outline" className="slot-number">
                               {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
                             </Badge>
 
