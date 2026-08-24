@@ -382,24 +382,25 @@ const PlayerProfile = () => {
                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {/* Verified badge for claimed players */}
                     {player.user_id && (
-                      <Badge className="bg-primary/15 text-primary border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge className="status-badge status-badge-verified gap-1">
                         <CheckCircle className="h-3 w-3" />
                         <span className="hidden sm:inline">Verified</span>
                       </Badge>
                     )}
                     {/* Unverified badge for unclaimed players */}
                     {!player.user_id && (
-                      <Badge className="bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge className="status-badge status-badge-unverified gap-1">
                         <User className="h-3 w-3" />
                         <span className="hidden sm:inline">Unverified</span>
                       </Badge>
                     )}
                     {badges.filter(b => b.name !== 'Verified Player').map((badge, index) => (
-                      <Badge key={index} className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge key={index} className="badge-trophy whitespace-nowrap">
                         {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
                         <span className="hidden sm:inline">{badge.name}</span>
                       </Badge>
                     ))}
+
                  </div>
               </div>
             </div>
