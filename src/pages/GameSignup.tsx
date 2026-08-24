@@ -702,14 +702,14 @@ const GameSignup = () => {
                     return <div className="space-y-3">
                       {isDropout ? (
                         // Dropout state - show rejoin option
-                        <div className="flex flex-col gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                        <div className="flex flex-col gap-3 p-4 glass-warning rounded-lg">
                           <div className="flex items-center gap-2">
-                            <AlertTriangle className="h-5 w-5 text-amber-600" />
-                            <span className="text-amber-800 font-medium text-sm sm:text-base">
+                            <AlertTriangle className="h-5 w-5 text-amber-500" />
+                            <span className="text-amber-400 font-medium text-sm sm:text-base">
                               You dropped out of this game
                             </span>
                           </div>
-                          <p className="text-sm text-amber-700">
+                          <p className="text-sm text-amber-300/80">
                             You still owe payment for the spot. Click rejoin to reclaim your original position.
                           </p>
                           <Button onClick={rejoinAfterDropout} disabled={isSigningUp} className="w-full">
