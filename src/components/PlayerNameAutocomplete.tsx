@@ -212,7 +212,7 @@ const PlayerNameAutocomplete = ({
               <span className={cn(
                 "text-xs ml-auto shrink-0 px-1.5 py-0.5 rounded",
                 suggestion.type === 'player' && "bg-primary/15 text-primary",
-                suggestion.type === 'guest' && "bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))]",
+                suggestion.type === 'guest' && "bg-[hsl(var(--aurora-purple))]/20 text-[hsl(var(--aurora-purple))]",
                 suggestion.type === 'orphan' && "bg-muted text-muted-foreground",
                 suggestion.type === 'new' && "bg-primary/10 text-primary"
               )}>
