@@ -817,32 +817,42 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
             ))}
           </div>
           
-          <div className="space-y-2">
-            <Label>Add Signature Moves</Label>
+          <div className="form-field-glass">
+            <Label htmlFor="new-skill" className="form-field-label">
+              <Plus className="form-field-label-icon" />
+              Add Signature Moves
+            </Label>
             <div className="flex gap-2">
               <Input
+                id="new-skill"
                 placeholder="Custom signature move..."
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addSkill(newSkill)}
+                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
-              <Button onClick={() => addSkill(newSkill)} disabled={!newSkill}>
+              <Button 
+                onClick={() => addSkill(newSkill)} 
+                disabled={!newSkill}
+                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-3"
+              >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {FUNNY_SKILLS.map(skill => (
-                <Button
-                  key={skill}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addSkill(skill)}
-                  disabled={profile.football_skills?.includes(skill)}
-                >
-                  {skill}
-                </Button>
-              ))}
-            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {FUNNY_SKILLS.map(skill => (
+              <Button
+                key={skill}
+                variant="outline"
+                size="sm"
+                onClick={() => addSkill(skill)}
+                disabled={profile.football_skills?.includes(skill)}
+                className="rounded-full border-white/10 bg-white/[0.04] text-xs hover:bg-white/[0.08] hover:border-primary/30 disabled:opacity-40"
+              >
+                {skill}
+              </Button>
+            ))}
           </div>
         </CardContent>
       </Card>
