@@ -207,15 +207,43 @@
     @apply rounded-xl border bg-destructive/10 border-destructive/30;
   }
 
-  /* Card headers with gradients */
-  .card-header-gradient-primary {
-    @apply text-primary-foreground rounded-t-lg;
-    background: linear-gradient(135deg, hsl(var(--header-primary) / 0.9), hsl(var(--header-primary) / 0.6));
+  /* Lean glass card header — single style across the app */
+  .card-header-glass {
+    @apply border-b border-white/10 bg-white/[0.02] rounded-t-2xl;
   }
-  
-  .card-header-gradient-news {
-    @apply text-primary-foreground rounded-t-lg;
-    background: linear-gradient(135deg, hsl(var(--header-news) / 0.9), hsl(var(--header-news) / 0.6));
+
+  .card-header-glass-title {
+    @apply flex items-center gap-2 font-display tracking-wide text-base sm:text-xl text-foreground;
+  }
+
+  .card-header-glass-icon {
+    @apply text-primary;
+  }
+
+  /* Rank pills — muted glass tints for gold/silver/bronze */
+  .rank-pill {
+    @apply font-semibold border;
+  }
+
+  .rank-pill-gold {
+    @apply bg-amber-400/15 text-amber-300 border-amber-400/30;
+  }
+
+  .rank-pill-silver {
+    @apply bg-slate-300/15 text-slate-200 border-slate-300/30;
+  }
+
+  .rank-pill-bronze {
+    @apply bg-orange-400/15 text-orange-300 border-orange-400/30;
+  }
+
+  .rank-pill-default {
+    @apply bg-white/5 text-muted-foreground border-white/10;
+  }
+
+  /* Shared trophy / MVP gold badge */
+  .badge-gold {
+    @apply bg-amber-400/15 text-amber-300 border border-amber-400/25;
   }
 
   /* Aurora background blobs */
