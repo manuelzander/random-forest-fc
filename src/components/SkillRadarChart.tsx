@@ -147,7 +147,7 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
   const skillLabels = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'];
   const skillBgClasses = [
     'bg-destructive/10 dark:bg-red-950/30',
-    'bg-green-50 dark:bg-green-950/30', 
+    'bg-primary/10 dark:bg-green-950/30', 
     'bg-blue-50 dark:bg-blue-950/30',
     'bg-purple-50 dark:bg-purple-950/30',
     'bg-amber-50 dark:bg-amber-950/30',

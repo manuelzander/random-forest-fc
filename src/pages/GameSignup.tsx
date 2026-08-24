@@ -725,13 +725,13 @@ const GameSignup = () => {
                               </AlertDescription>
                             </Alert>}
                           
-                          {isWithin24Hours && isUserWaitlisted && <Alert className="border-green-200 bg-green-50">
+                          {isWithin24Hours && isUserWaitlisted && <Alert className="border-primary/30 bg-primary/10">
                               <AlertDescription className="text-green-800">
                                 You're on the waitlist. You can cancel anytime without penalty.
                               </AlertDescription>
                             </Alert>}
                           
-                          <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex flex-col gap-3 p-4 bg-primary/10 border border-primary/30 rounded-lg">
                             <div className="flex items-center gap-2">
                               <CheckCircle className="h-5 w-5 text-primary" />
                               <span className="text-green-800 font-medium text-sm sm:text-base">
@@ -827,8 +827,8 @@ const GameSignup = () => {
                 const isWaitlisted = index >= pitchCapacity;
                 const isLastMinuteDropout = signup.last_minute_dropout === true;
                 return <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
-                  isLastMinuteDropout ? 'bg-destructive/10 border border-red-300' :
-                  isWaitlisted ? 'bg-orange-50 border border-orange-200' : 
+                  isLastMinuteDropout ? 'bg-destructive/10 border border-destructive/30' :
+                  isWaitlisted ? 'bg-orange-50 border border-[hsl(var(--aurora-blue))]/30' : 
                   'bg-muted/50'
                 }`}>
                         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">

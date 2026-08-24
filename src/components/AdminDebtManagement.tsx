@@ -399,7 +399,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-red-500" />
+              <TrendingDown className="h-4 w-4 text-destructive" />
               Total Debt
             </CardTitle>
           </CardHeader>
@@ -416,7 +416,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-green-500" />
+              <TrendingUp className="h-4 w-4 text-primary" />
               Total Credit
             </CardTitle>
           </CardHeader>
@@ -459,7 +459,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                 <Badge className="border-0 bg-amber-200 text-xs text-amber-900">Archived</Badge>
               )}
             </CardTitle>
-            <Button size="sm" onClick={exportToCSV} className="bg-green-600 hover:bg-green-700">
+            <Button size="sm" onClick={exportToCSV} className="bg-primary hover:bg-primary/90">
               <Download className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Export</span>
             </Button>
@@ -561,7 +561,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                           ) : (
                             <button
                               onClick={() => setEditingCredit({ id: key, value: summary.credit.toString() })}
-                              className="inline-flex items-center gap-1.5 font-medium text-primary hover:bg-green-50 px-2 py-1 rounded transition-colors group"
+                              className="inline-flex items-center gap-1.5 font-medium text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors group"
                             >
                               £{summary.credit.toFixed(2)}
                               <Pencil className="h-3 w-3 opacity-40 group-hover:opacity-100 transition-opacity" />
@@ -591,7 +591,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                 {selectedPlayer?.playerName} - Game Details
               </DialogTitle>
               {selectedPlayer && (
-                <Button size="sm" onClick={() => exportPlayerDetails(selectedPlayer)} className="bg-green-600 hover:bg-green-700">
+                <Button size="sm" onClick={() => exportPlayerDetails(selectedPlayer)} className="bg-primary hover:bg-primary/90">
                   <Download className="h-4 w-4 sm:mr-2" />
                   <span className="hidden sm:inline">Export</span>
                 </Button>
@@ -606,7 +606,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <TrendingDown className="h-4 w-4 text-red-500" />
+                      <TrendingDown className="h-4 w-4 text-destructive" />
                       Total Debt
                     </CardTitle>
                   </CardHeader>
@@ -620,7 +620,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
+                      <TrendingUp className="h-4 w-4 text-primary" />
                       Credit Balance
                     </CardTitle>
                   </CardHeader>
@@ -666,7 +666,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                     </TableHeader>
                     <TableBody>
                       {selectedPlayer.gamesOwed.map((game, index) => (
-                        <TableRow key={index} className={game.isDropout ? 'bg-destructive/10 border-red-200' : ''}>
+                        <TableRow key={index} className={game.isDropout ? 'bg-destructive/10 border-destructive/30' : ''}>
                           <TableCell className={`font-medium text-xs ${game.isDropout ? 'text-destructive' : 'text-muted-foreground'}`}>
                             <span className={game.isDropout ? 'line-through' : ''}>
                               <span className="sm:hidden">{format(new Date(game.gameDate), 'M/d h:mm a')}</span>

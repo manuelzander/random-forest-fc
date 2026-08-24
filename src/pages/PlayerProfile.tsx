@@ -440,7 +440,7 @@ const PlayerProfile = () => {
                         <div 
                           key={index}
                           className={`w-8 h-8 rounded ${
-                            result === 'win' ? 'bg-green-500' :
+                            result === 'win' ? 'bg-primary/100' :
                             result === 'draw' ? 'bg-yellow-500' :
                             'bg-destructive/100'
                           }`}

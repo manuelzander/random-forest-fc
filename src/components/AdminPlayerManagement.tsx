@@ -1395,7 +1395,7 @@ const AdminPlayerManagement = () => {
               </p>
               <div className="space-y-2">
                 {orphanedSignups.map((orphan) => (
-                  <div key={orphan.guest_name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-orange-200 bg-orange-50/50 rounded-lg">
+                  <div key={orphan.guest_name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-[hsl(var(--aurora-blue))]/30 bg-orange-50/50 rounded-lg">
                     <div className="flex items-center gap-3 flex-1">
                       <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 bg-[hsl(var(--aurora-blue))]/15">
                         <AvatarFallback className="text-[hsl(var(--aurora-blue))] text-lg">
@@ -1553,7 +1553,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteGuest} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDeleteGuest} className="bg-destructive hover:bg-destructive/90">
                 Delete Guest
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -1720,7 +1720,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
                 Delete Player
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -1756,7 +1756,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={removeAvatar} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={removeAvatar} className="bg-destructive hover:bg-destructive/90">
                 Remove Avatar
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -1774,7 +1774,7 @@ const AdminPlayerManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteOrphanSignups} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDeleteOrphanSignups} className="bg-destructive hover:bg-destructive/90">
                 Delete Signups
               </AlertDialogAction>
             </AlertDialogFooter>

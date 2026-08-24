@@ -210,7 +210,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-red-500" />
+              <TrendingDown className="h-4 w-4 text-destructive" />
               Total Debt
             </CardTitle>
           </CardHeader>
@@ -224,7 +224,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-green-500" />
+              <TrendingUp className="h-4 w-4 text-primary" />
               Credit Balance
             </CardTitle>
           </CardHeader>
@@ -280,7 +280,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
                 <Button
                   onClick={handleNameUpdate}
                   disabled={isUpdatingName || displayName.trim() === playerName}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-primary hover:bg-primary/90"
                 >
                   {isUpdatingName ? 'Updating...' : 'Update'}
                 </Button>
@@ -311,7 +311,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             <Button
               onClick={handleAddCredit}
               disabled={isAddingCredit || !creditAmount}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-primary hover:bg-primary/90"
             >
               Update
             </Button>
@@ -340,7 +340,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             <Button
               onClick={handleEmailUpdate}
               disabled={isUpdating || email === userEmail}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-primary hover:bg-primary/90"
             >
               Update
             </Button>
@@ -396,7 +396,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
             <Button
               onClick={handlePasswordUpdate}
               disabled={isUpdating || !newPassword || !confirmPassword}
-              className="w-full bg-green-600 hover:bg-green-700"
+              className="w-full bg-primary hover:bg-primary/90"
             >
               Update Password
             </Button>

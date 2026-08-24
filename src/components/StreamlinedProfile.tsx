@@ -385,7 +385,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                 <Button
                   onClick={handleSaveProfile}
                   disabled={isSaving}
-                  className="bg-green-600 text-white hover:bg-green-700"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
                   size="sm"
                 >
                   {isSaving ? 'Saving...' : <><span className="hidden sm:inline">Save Profile</span><span className="sm:hidden">Save</span></>}
@@ -394,7 +394,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                   variant="outline"
                   size="sm"
                   onClick={openUnclaimDialog}
-                  className="border-green-500 text-primary hover:bg-green-50 hover:text-primary"
+                  className="border-primary text-primary hover:bg-primary/10 hover:text-primary"
                 >
                   <span className="hidden sm:inline">Unclaim Player</span>
                   <span className="sm:hidden">Unclaim</span>
@@ -404,7 +404,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                     variant="outline"
                     size="sm"
                     onClick={() => setDeletePlayerDialogOpen(true)}
-                    className="border-red-200 text-destructive hover:bg-destructive/10"
+                    className="border-destructive/30 text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="h-4 w-4 sm:mr-2" />
                     <span className="hidden sm:inline">Delete Player</span>
@@ -445,7 +445,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                       setNewPlayerName(user?.user_metadata?.display_name || user?.email?.split('@')[0] || '');
                       setCreatePlayerDialogOpen(true);
                     }}
-                    className="bg-green-600 text-white hover:bg-green-700"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
                     Create New Player
@@ -478,7 +478,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                         size="sm"
                         variant="outline"
                         onClick={() => handleClaimPlayer(player.id)}
-                        className="border-green-500 text-primary hover:bg-green-50"
+                        className="border-primary text-primary hover:bg-primary/10"
                       >
                         Claim
                       </Button>
@@ -532,7 +532,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
             <Button
               onClick={handleCreatePlayer}
               disabled={!newPlayerName.trim() || isCreating}
-              className="bg-green-600 text-white hover:bg-green-700"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {isCreating ? 'Creating...' : 'Create Player'}
             </Button>
@@ -551,7 +551,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleUnclaimPlayer} className="bg-destructive hover:bg-destructive/90">
               Unclaim Player
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -571,7 +571,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeletePlayer} 
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive hover:bg-destructive/90"
               disabled={isDeleting}
             >
               {isDeleting ? 'Deleting...' : 'Delete Player'}

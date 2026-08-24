@@ -248,8 +248,8 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                           
                           return (
                             <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
-                              isLastMinuteDropout ? 'bg-destructive/10 border border-red-300' :
-                              isWaitlisted ? 'bg-orange-50 border border-orange-200' : 'bg-muted/50'
+                              isLastMinuteDropout ? 'bg-destructive/10 border border-destructive/30' :
+                              isWaitlisted ? 'bg-orange-50 border border-[hsl(var(--aurora-blue))]/30' : 'bg-muted/50'
                             }`}>
                               <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                                 <Badge variant="outline" className="shrink-0 text-xs">
