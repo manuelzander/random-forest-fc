@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Slider } from '@/components/ui/slider';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { User, Upload, X, Plus, Shuffle, Wand2, Download } from 'lucide-react';
+import { User, Upload, X, Plus, Shuffle, Wand2, Download, MapPin, Clock, Heart, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProfileData {
