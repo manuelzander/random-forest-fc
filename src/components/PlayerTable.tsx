@@ -233,7 +233,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                 <th className="px-3 py-3 text-center">
                   <SortButton field="goal_difference">Goal Diff</SortButton>
                 </th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-muted-foreground">Record & Form</th>
+                <th className="table-head-cell !text-center">Record &amp; Form</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
