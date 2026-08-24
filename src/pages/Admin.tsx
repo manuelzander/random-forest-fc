@@ -61,7 +61,7 @@ const Admin = () => {
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="header-kicker">Random Forest FC</span>
-                <h1 className="header-wordmark">Admin Panel</h1>
+                <h1 className="header-wordmark">Admin</h1>
               </div>
             </div>
              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
