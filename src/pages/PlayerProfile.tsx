@@ -330,31 +330,31 @@ const PlayerProfile = () => {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Player Header */}
-        <Card>
-          <CardContent className="p-6">
+        <Card className="hero-panel">
+          <div className="hero-glow" />
+          <CardContent className="relative p-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <Avatar className="h-28 w-28 sm:h-32 sm:w-32 flex-shrink-0">
+              <Avatar className="avatar-glow h-28 w-28 sm:h-32 sm:w-32 flex-shrink-0">
                 <AvatarImage src={player.avatar_url} />
-                <AvatarFallback className="text-lg sm:text-2xl">
+                <AvatarFallback className="text-lg sm:text-2xl font-display">
                   {player.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
                <div className="flex-1 w-full">
-                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{player.name}</h1>
-                 
-                 {/* Basic stats row - always visible */}
-                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
-                  <div className="flex items-center gap-1">
-                    <Trophy className="h-4 w-4" />
-                    <span>{player.points} Points</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Target className="h-4 w-4" />
-                    <span>{getWinRate()}% Win Rate</span>
-                  </div>
-                   
+                 <h1 className="hero-name mb-3">{player.name}</h1>
+
+                 {/* Key stats */}
+                 <div className="flex flex-wrap items-center gap-2 mb-3">
+                   <span className="meta-pill">
+                     <Trophy className="h-3.5 w-3.5 text-primary" />
+                     {player.points} Points
+                   </span>
+                   <span className="meta-pill">
+                     <Target className="h-3.5 w-3.5 text-[hsl(var(--aurora-blue))]" />
+                     {getWinRate()}% Win Rate
+                   </span>
                  </div>
-                 
+
                  {/* Profile details - responsive layout */}
                  {(profile?.favorite_position || profile?.favorite_club || profile?.years_playing) && (
                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
@@ -409,6 +409,7 @@ const PlayerProfile = () => {
             </div>
           </CardContent>
         </Card>
+
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Stats */}
