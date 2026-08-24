@@ -502,7 +502,7 @@ const AdminScheduleManagement = () => {
                       tuesday: (date) => date.getDay() === 2,
                     }}
                     modifiersClassNames={{
-                      tuesday: "bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] hover:bg-orange-200 hover:text-orange-800",
+                      tuesday: "bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] hover:bg-[hsl(var(--aurora-blue))]/25 hover:text-[hsl(var(--aurora-blue))]",
                     }}
                   />
                 </PopoverContent>
@@ -705,7 +705,7 @@ const AdminScheduleManagement = () => {
                             return (
                               <TableRow key={signup.id} className={
                                 isLastMinuteDropout ? 'bg-destructive/10' :
-                                isWaitlisted ? 'bg-orange-50' : ''
+                                isWaitlisted ? 'bg-[hsl(var(--aurora-blue))]/10' : ''
                               }>
                                 <TableCell className="font-medium">
                                   <div className="flex items-center gap-2">
@@ -735,7 +735,7 @@ const AdminScheduleManagement = () => {
                                          </Badge>
                                        )}
                                        {signup.is_guest && (
-                                         <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 hover:bg-blue-200">
+                                         <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 hover:bg-[hsl(var(--aurora-blue))]/25">
                                            <User className="h-3 w-3 mr-1" />
                                            <span className="hidden sm:inline">Guest</span>
                                          </Badge>

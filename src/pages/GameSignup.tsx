@@ -828,7 +828,7 @@ const GameSignup = () => {
                 const isLastMinuteDropout = signup.last_minute_dropout === true;
                 return <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
                   isLastMinuteDropout ? 'bg-destructive/10 border border-destructive/30' :
-                  isWaitlisted ? 'bg-orange-50 border border-[hsl(var(--aurora-blue))]/30' : 
+                  isWaitlisted ? 'bg-[hsl(var(--aurora-blue))]/10 border border-[hsl(var(--aurora-blue))]/30' : 
                   'bg-muted/50'
                 }`}>
                         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
@@ -847,11 +847,11 @@ const GameSignup = () => {
                                  <Clock className="h-3 w-3 mr-1" />
                                  <span className="hidden sm:inline">Waitlist</span>
                                </Badge>}
-                            {signup.player?.user_id && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0 hover:bg-green-200">
+                            {signup.player?.user_id && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-primary/15 text-primary border-0 hover:bg-primary/25">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Verified</span>
                               </Badge>}
-                            {signup.is_guest && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 hover:bg-blue-200">
+                            {signup.is_guest && !isLastMinuteDropout && <Badge className="text-xs h-5 px-1.5 bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] border-0 hover:bg-[hsl(var(--aurora-blue))]/25">
                                 <User className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Guest</span>
                               </Badge>}

@@ -1395,7 +1395,7 @@ const AdminPlayerManagement = () => {
               </p>
               <div className="space-y-2">
                 {orphanedSignups.map((orphan) => (
-                  <div key={orphan.guest_name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-[hsl(var(--aurora-blue))]/30 bg-orange-50/50 rounded-lg">
+                  <div key={orphan.guest_name} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-[hsl(var(--aurora-blue))]/30 bg-[hsl(var(--aurora-blue))]/10 rounded-lg">
                     <div className="flex items-center gap-3 flex-1">
                       <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 bg-[hsl(var(--aurora-blue))]/15">
                         <AvatarFallback className="text-[hsl(var(--aurora-blue))] text-lg">
