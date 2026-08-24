@@ -272,7 +272,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                </Badge>
                              )}
                             {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
-                              <Badge key={badgeIndex} className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                              <Badge key={badgeIndex} className="badge-trophy h-auto">
                                 <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               </Badge>
                              ))}
@@ -296,7 +296,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                        </Badge>
                      </td>
                     <td className="px-3 py-4 text-center">
-                      <Badge className="font-semibold bg-amber-400/15 text-amber-300 border border-amber-400/25">
+                      <Badge className="badge-trophy font-semibold">
                         {player.mvp_awards}
                       </Badge>
                     </td>

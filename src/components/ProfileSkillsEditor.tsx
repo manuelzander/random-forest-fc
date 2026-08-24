@@ -782,7 +782,7 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
             {profile.football_skills?.map((skill, index) => (
-              <Badge key={index} variant="secondary" className="flex items-center gap-1">
+              <Badge key={index} className="badge-skill">
                 {skill}
                 <button
                   onClick={() => openRemoveSkillDialog(skill)}
