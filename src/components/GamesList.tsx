@@ -177,7 +177,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                                 )}
                              </div>
                               {game.mvp_player === playerId && (
-                                <Badge className="badge-gold flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                <Badge className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                   <span>👑</span>
                                   MVP
                                 </Badge>
@@ -208,7 +208,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                                 )}
                              </div>
                               {game.mvp_player === playerId && (
-                                <Badge className="badge-gold flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                <Badge className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                   <span>👑</span>
                                   MVP
                                 </Badge>

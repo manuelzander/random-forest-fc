@@ -220,31 +220,6 @@
     @apply text-primary;
   }
 
-  /* Rank pills — muted glass tints for gold/silver/bronze */
-  .rank-pill {
-    @apply font-semibold border;
-  }
-
-  .rank-pill-gold {
-    @apply bg-amber-400/15 text-amber-300 border-amber-400/30;
-  }
-
-  .rank-pill-silver {
-    @apply bg-slate-300/15 text-slate-200 border-slate-300/30;
-  }
-
-  .rank-pill-bronze {
-    @apply bg-orange-400/15 text-orange-300 border-orange-400/30;
-  }
-
-  .rank-pill-default {
-    @apply bg-white/5 text-muted-foreground border-white/10;
-  }
-
-  /* Shared trophy / MVP gold badge */
-  .badge-gold {
-    @apply bg-amber-400/15 text-amber-300 border border-amber-400/25;
-  }
 
   /* Aurora background blobs */
   .aurora-blob {

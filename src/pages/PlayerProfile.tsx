@@ -395,7 +395,7 @@ const PlayerProfile = () => {
                       </Badge>
                     )}
                     {badges.filter(b => b.name !== 'Verified Player').map((badge, index) => (
-                      <Badge key={index} className="badge-gold flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge key={index} className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
                         {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
                         <span className="hidden sm:inline">{badge.name}</span>
                       </Badge>

@@ -198,11 +198,11 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
               const playerBadges = getCachedBadges(player, player.profile);
               const rank = index + 1;
               const getRankBadgeColor = (rank: number) => {
-                if (rank === 1) return 'rank-pill rank-pill-gold';
-                if (rank === 2) return 'rank-pill rank-pill-silver';
-                if (rank === 3) return 'rank-pill rank-pill-bronze';
-                if (rank <= 5) return 'rank-pill bg-primary/15 text-primary border-primary/30';
-                return 'rank-pill rank-pill-default';
+                if (rank === 1) return 'bg-amber-400/20 text-amber-300 border border-amber-400/40';
+                if (rank === 2) return 'bg-slate-300/20 text-slate-200 border border-slate-300/40';
+                if (rank === 3) return 'bg-orange-400/20 text-orange-300 border border-orange-400/40';
+                if (rank <= 5) return 'bg-primary/20 text-primary border border-primary/40';
+                return 'bg-white/10 text-muted-foreground border border-white/15';
               };
               return <tr key={player.id} className="hover:bg-card/5 transition-colors">
                     <td className="px-3 py-4">
@@ -227,7 +227,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                     </td>
                     <td className="px-3 py-4">
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="badge-gold flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
+                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                               <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               <span className="hidden sm:inline">{badge.name}</span>
                             </Badge>) : <span className="text-xs text-muted-foreground italic">No badges earned yet</span>}
