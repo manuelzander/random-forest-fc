@@ -45,7 +45,7 @@ const SeasonBanner = ({ className }: { className?: string }) => {
             {isArchive ? 'Archived Campaign' : 'Current Campaign'}
           </span>
           <div className="flex items-center gap-3">
-            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl leading-none text-white uppercase">
+            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl leading-none text-foreground uppercase">
               {selectedSeason.name}
             </h2>
             {isArchive ? (
