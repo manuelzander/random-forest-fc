@@ -207,16 +207,19 @@
     @apply rounded-xl border bg-destructive/10 border-destructive/30;
   }
 
-  /* Card headers with gradients */
-  .card-header-gradient-primary {
-    @apply text-primary-foreground rounded-t-lg;
-    background: linear-gradient(135deg, hsl(var(--header-primary) / 0.9), hsl(var(--header-primary) / 0.6));
+  /* Lean glass card header — single style across the app */
+  .card-header-glass {
+    @apply border-b border-white/10 bg-white/[0.02] rounded-t-2xl;
   }
-  
-  .card-header-gradient-news {
-    @apply text-primary-foreground rounded-t-lg;
-    background: linear-gradient(135deg, hsl(var(--header-news) / 0.9), hsl(var(--header-news) / 0.6));
+
+  .card-header-glass-title {
+    @apply flex items-center gap-2 font-display tracking-wide text-base sm:text-xl text-foreground;
   }
+
+  .card-header-glass-icon {
+    @apply text-primary;
+  }
+
 
   /* Aurora background blobs */
   .aurora-blob {

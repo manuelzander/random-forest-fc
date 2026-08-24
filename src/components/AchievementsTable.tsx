@@ -108,9 +108,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   if (error) {
     return (
       <Card>
-        <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-            <Trophy className="h-6 w-6" />
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">
+            <Trophy className="card-header-glass-icon h-6 w-6" />
             Player Achievements
           </CardTitle>
         </CardHeader>
@@ -124,9 +124,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   if (isLoading) {
     return (
       <Card>
-        <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-            <Trophy className="h-6 w-6" />
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">
+            <Trophy className="card-header-glass-icon h-6 w-6" />
             Player Achievements
           </CardTitle>
         </CardHeader>
@@ -138,9 +138,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
   }
 
   return <Card>
-      <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
-        <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-          <Trophy className="h-6 w-6" />
+      <CardHeader className="card-header-glass py-4">
+        <CardTitle className="card-header-glass-title">
+          <Trophy className="card-header-glass-icon h-6 w-6" />
           Player Achievements
         </CardTitle>
       </CardHeader>
@@ -198,15 +198,15 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
               const playerBadges = getCachedBadges(player, player.profile);
               const rank = index + 1;
               const getRankBadgeColor = (rank: number) => {
-                if (rank === 1) return 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-600';
-                if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-500 border-white/15';
-                if (rank === 3) return 'bg-gradient-to-r from-amber-600 to-amber-800 border-amber-800';
-                if (rank <= 5) return 'bg-gradient-to-r from-green-500 to-green-600 border-green-600';
-                return 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600';
+                if (rank === 1) return 'bg-amber-400/20 text-amber-300 border border-amber-400/40';
+                if (rank === 2) return 'bg-slate-300/20 text-slate-200 border border-slate-300/40';
+                if (rank === 3) return 'bg-orange-400/20 text-orange-300 border border-orange-400/40';
+                if (rank <= 5) return 'bg-primary/20 text-primary border border-primary/40';
+                return 'bg-white/10 text-muted-foreground border border-white/15';
               };
               return <tr key={player.id} className="hover:bg-card/5 transition-colors">
                     <td className="px-3 py-4">
-                      <Badge className={`${getRankBadgeColor(rank)} text-white font-bold !border-0 border-transparent`}>
+                      <Badge className={`${getRankBadgeColor(rank)} font-bold`}>
                         {rank}
                       </Badge>
                     </td>
@@ -227,7 +227,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                     </td>
                     <td className="px-3 py-4">
                       <div className="flex flex-wrap gap-2 justify-center">
-                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="bg-yellow-500/15 text-yellow-400 border-0 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
+                        {playerBadges.length > 0 ? playerBadges.slice(0, 8).map((badge, badgeIndex) => <Badge key={badgeIndex} className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1.5 py-0.5 text-xs h-5">
                               <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               <span className="hidden sm:inline">{badge.name}</span>
                             </Badge>) : <span className="text-xs text-muted-foreground italic">No badges earned yet</span>}

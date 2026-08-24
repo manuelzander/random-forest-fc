@@ -119,13 +119,10 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
 
   return (
     <Card>
-      <CardHeader className="card-header-gradient-primary rounded-t-lg py-3">
-        <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-          <History className="h-6 w-6" />
+      <CardHeader className="card-header-glass py-4">
+        <CardTitle className="card-header-glass-title">
+          <History className="card-header-glass-icon h-6 w-6" />
           Game History
-          {archiveSeasonId && (
-            <Badge className="border-0 bg-amber-500/15 text-xs text-amber-400">Archived</Badge>
-          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
@@ -180,7 +177,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                                 )}
                              </div>
                               {game.mvp_player === playerId && (
-                                <Badge className="bg-yellow-500/15 text-yellow-400 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                <Badge className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                   <span>👑</span>
                                   MVP
                                 </Badge>
@@ -211,7 +208,7 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                                 )}
                              </div>
                               {game.mvp_player === playerId && (
-                                <Badge className="bg-yellow-500/15 text-yellow-400 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
+                                <Badge className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1 py-0.5 text-xs h-auto border-0 w-fit">
                                   <span>👑</span>
                                   MVP
                                 </Badge>

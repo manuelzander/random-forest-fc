@@ -146,28 +146,28 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
   // Show individual skill values below the chart
   const skillLabels = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'];
   const skillBgClasses = [
-    'bg-destructive/10 dark:bg-red-950/30',
-    'bg-primary/10 dark:bg-green-950/30', 
-    'bg-blue-50 dark:bg-blue-950/30',
-    'bg-purple-50 dark:bg-purple-950/30',
-    'bg-amber-50 dark:bg-amber-950/30',
-    'bg-pink-50 dark:bg-pink-950/30'
+    'bg-destructive/10',
+    'bg-primary/10', 
+    'bg-blue-400/10',
+    'bg-purple-400/10',
+    'bg-amber-400/10',
+    'bg-pink-400/10'
   ];
   const skillTextClasses = [
-    'text-destructive dark:text-destructive',
-    'text-primary dark:text-green-400', 
-    'text-[hsl(var(--aurora-blue))] dark:text-[hsl(var(--aurora-blue))]',
-    'text-purple-600 dark:text-purple-400',
-    'text-amber-600 dark:text-amber-400',
-    'text-pink-600 dark:text-pink-400'
+    'text-destructive',
+    'text-primary', 
+    'text-[hsl(var(--aurora-blue))]',
+    'text-purple-400',
+    'text-amber-300',
+    'text-pink-400'
   ];
   const skillProgressClasses = [
-    'bg-red-600 dark:bg-red-400',
-    'bg-green-600 dark:bg-green-400', 
-    'bg-blue-600 dark:bg-blue-400',
-    'bg-purple-600 dark:bg-purple-400',
-    'bg-amber-600 dark:bg-amber-400',
-    'bg-pink-600 dark:bg-pink-400'
+    'bg-destructive',
+    'bg-primary', 
+    'bg-blue-400',
+    'bg-purple-400',
+    'bg-amber-400',
+    'bg-pink-400'
   ];
 
   return (
@@ -192,7 +192,7 @@ export const SkillRadarChart = ({ skillRatings, className = "" }: SkillRadarChar
               </div>
             </div>
             {/* Progress bar */}
-            <div className="w-full bg-card/50 dark:bg-black/20 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all duration-1000 ease-out ${skillProgressClasses[index]}`}
                 style={{ width: `${skillData[index]}%` }}

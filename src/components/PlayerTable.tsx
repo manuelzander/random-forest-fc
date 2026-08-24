@@ -168,19 +168,19 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   );
 
   const getRankBadgeColor = (rank: number) => {
-    if (rank === 1) return 'bg-gradient-to-r from-yellow-300 to-yellow-500 text-black';
-    if (rank === 2) return 'bg-gradient-to-r from-gray-300 to-gray-400 text-black';
-    if (rank === 3) return 'bg-gradient-to-r from-amber-500 to-amber-700 text-white';
-    if (rank <= 5) return 'bg-gradient-to-r from-primary to-emerald-400 text-primary-foreground';
-    return 'bg-gradient-to-r from-[hsl(var(--aurora-blue))] to-blue-400 text-white';
+    if (rank === 1) return 'bg-amber-400/20 text-amber-300 border border-amber-400/40';
+    if (rank === 2) return 'bg-slate-300/20 text-slate-200 border border-slate-300/40';
+    if (rank === 3) return 'bg-orange-400/20 text-orange-300 border border-orange-400/40';
+    if (rank <= 5) return 'bg-primary/20 text-primary border border-primary/40';
+    return 'bg-white/10 text-muted-foreground border border-white/15';
   };
 
   if (isLoading) {
     return (
       <Card className="glass-card border-0">
-        <CardHeader className="card-header-gradient-primary py-4">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-xl font-display tracking-wide">
-            <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">
+            <Trophy className="card-header-glass-icon h-5 w-5 sm:h-6 sm:w-6" />
             Player Ranking
           </CardTitle>
         </CardHeader>
@@ -193,9 +193,9 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
 
   return (
     <Card className="glass-card border-0">
-      <CardHeader className="card-header-gradient-primary py-4">
-        <CardTitle className="flex items-center gap-2 text-base sm:text-xl font-display tracking-wide">
-          <Trophy className="h-5 w-5 sm:h-6 sm:w-6" />
+      <CardHeader className="card-header-glass py-4">
+        <CardTitle className="card-header-glass-title">
+          <Trophy className="card-header-glass-icon h-5 w-5 sm:h-6 sm:w-6" />
           Player Ranking
         </CardTitle>
       </CardHeader>
@@ -246,7 +246,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                   >
                     <td className="px-3 py-4">
                        <Badge 
-                         className={`${getRankBadgeColor(rank)} font-bold !border-0 border-transparent font-display text-sm`}
+                         className={`${getRankBadgeColor(rank)} font-bold font-display text-sm`}
                        >
                          {rank}
                        </Badge>
@@ -272,7 +272,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                </Badge>
                              )}
                             {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
-                              <Badge key={badgeIndex} className="bg-yellow-500/15 text-yellow-400 border-yellow-500/30 border flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
+                              <Badge key={badgeIndex} className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1.5 py-0.5 text-xs h-auto">
                                 <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                               </Badge>
                              ))}
@@ -296,7 +296,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                        </Badge>
                      </td>
                     <td className="px-3 py-4 text-center">
-                      <Badge className="font-semibold bg-yellow-500/15 text-yellow-400 border-yellow-500/30">
+                      <Badge className="font-semibold bg-amber-400/15 text-amber-300 border border-amber-400/25">
                         {player.mvp_awards}
                       </Badge>
                     </td>
@@ -313,7 +313,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                         <div className="flex gap-1 justify-center">
                           <span className="text-primary font-medium">{player.wins}W</span>
                           <span className="text-muted-foreground">/</span>
-                          <span className="text-yellow-400 font-medium">{player.draws}D</span>
+                          <span className="text-amber-300 font-medium">{player.draws}D</span>
                           <span className="text-muted-foreground">/</span>
                           <span className="text-destructive font-medium">{player.losses}L</span>
                         </div>
@@ -324,7 +324,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                                 key={index}
                                 className={`w-3 h-3 rounded ${
                                   result === 'win' ? 'bg-primary' :
-                                  result === 'draw' ? 'bg-yellow-400' :
+                                  result === 'draw' ? 'bg-amber-300' :
                                   'bg-destructive'
                                 }`}
                                 title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}

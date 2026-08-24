@@ -395,7 +395,7 @@ const PlayerProfile = () => {
                       </Badge>
                     )}
                     {badges.filter(b => b.name !== 'Verified Player').map((badge, index) => (
-                      <Badge key={index} className="bg-yellow-500/15 text-yellow-400 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
+                      <Badge key={index} className="bg-amber-400/15 text-amber-300 border border-amber-400/25 flex items-center gap-1 px-1.5 py-0.5 text-xs whitespace-nowrap">
                         {typeof badge.icon === 'string' ? <span>{badge.icon}</span> : badge.icon}
                         <span className="hidden sm:inline">{badge.name}</span>
                       </Badge>
@@ -422,9 +422,9 @@ const PlayerProfile = () => {
                     <div className="text-xl font-bold text-primary">{player.wins}</div>
                     <div className="text-xs font-medium text-primary">Wins</div>
                   </div>
-                  <div className="text-center p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-                    <div className="text-xl font-bold text-yellow-400">{player.draws}</div>
-                    <div className="text-xs font-medium text-yellow-400/80">Draws</div>
+                  <div className="text-center p-3 bg-amber-400/10 rounded-lg border border-amber-400/20">
+                    <div className="text-xl font-bold text-amber-300">{player.draws}</div>
+                    <div className="text-xs font-medium text-amber-300/80">Draws</div>
                   </div>
                   <div className="text-center p-3 bg-destructive/15 rounded-lg">
                     <div className="text-xl font-bold text-destructive">{player.losses}</div>
@@ -441,7 +441,7 @@ const PlayerProfile = () => {
                           key={index}
                           className={`w-8 h-8 rounded ${
                             result === 'win' ? 'bg-primary/100' :
-                            result === 'draw' ? 'bg-yellow-400' :
+                            result === 'draw' ? 'bg-amber-300' :
                             'bg-destructive/100'
                           }`}
                           title={result === 'win' ? 'Win' : result === 'draw' ? 'Draw' : 'Loss'}
@@ -477,7 +477,7 @@ const PlayerProfile = () => {
                     <div className="text-sm font-medium text-muted-foreground">Win %</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-yellow-400">{player.mvp_awards}</div>
+                    <div className="text-2xl font-bold text-amber-300">{player.mvp_awards}</div>
                     <div className="text-sm font-medium text-muted-foreground">MVP</div>
                   </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">

@@ -450,7 +450,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={removePlayerFromTeam} className="bg-orange-600 hover:bg-orange-700">
+          <AlertDialogAction onClick={removePlayerFromTeam} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
             Remove Player
           </AlertDialogAction>
         </AlertDialogFooter>
