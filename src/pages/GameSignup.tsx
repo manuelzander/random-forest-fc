@@ -3,14 +3,12 @@ import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { Calendar, Users, UserPlus, ArrowLeft, Clock, CheckCircle, User, UserMinus, AlertTriangle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Calendar, Users, ArrowLeft, Clock, CheckCircle, User, UserMinus, AlertTriangle } from 'lucide-react';
 import { sendTelegramNotification, sendGameFullNotification, sendWaitlistPromotedNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 import GuestNameAutocomplete from '@/components/GuestNameAutocomplete';
@@ -624,23 +622,21 @@ const GameSignup = () => {
   if (!game) {
     return <div className="page-container">
         <div className="page-main-content">
-          <Card className="max-w-md mx-auto">
-            <CardContent className="pt-6">
-              <div className="text-center space-y-4">
-                <Calendar className="h-12 w-12 mx-auto text-muted-foreground" />
-                <h2 className="text-xl font-semibold">Game Not Found</h2>
-                <p className="text-muted-foreground">
-                  The scheduled game you're looking for doesn't exist or has been removed.
-                </p>
-                <Link to="/">
-                  <Button variant="outline">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Go Home
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="glass-panel max-w-md mx-auto p-8">
+            <div className="text-center space-y-4">
+              <Calendar className="h-12 w-12 mx-auto text-muted-foreground" />
+              <h2 className="font-display text-2xl text-foreground">Game Not Found</h2>
+              <p className="text-muted-foreground">
+                The scheduled game you're looking for doesn't exist or has been removed.
+              </p>
+              <Link to="/">
+                <Button variant="outline" className="header-nav-button">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Go Home
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>;
   }
@@ -651,6 +647,8 @@ const GameSignup = () => {
   const timeUntilGame = gameDate.getTime() - new Date().getTime();
   const hoursUntilGame = timeUntilGame / (1000 * 60 * 60);
   const isWithin24Hours = hoursUntilGame <= 24 && hoursUntilGame > 0;
+  const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
+
   return <div className="page-container">
       <div className="page-header">
         <div className="page-header-content">
@@ -679,174 +677,186 @@ const GameSignup = () => {
         </div>
       </div>
 
-      <div className="page-main-content">
-        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 px-4">
+      <div className="page-main-content relative overflow-hidden">
+        {/* Animated Aurora background glows */}
+        <div className="aurora-blob aurora-blob-purple w-96 h-96 -top-24 -left-24 animate-aurora" />
+        <div className="aurora-blob aurora-blob-emerald w-96 h-96 -bottom-24 -right-24 animate-aurora" style={{ animationDelay: '-5s' }} />
+        <div className="aurora-blob aurora-blob-blue w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-aurora" style={{ animationDelay: '-10s' }} />
 
-          {/* Main Signup Section */}
-          {!isPastGame && <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                  <UserPlus className="h-4 w-4 sm:h-5 sm:w-5" />
-                  Join This Game
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {user ? (() => {
-                    // Calculate user's position
-                    const userSignup = signups.find(signup => signup.player?.user_id === user.id);
-                    const userPosition = userSignup ? signups.findIndex(s => s.id === userSignup.id) + 1 : 0;
-                    const pitchCapacity = game?.pitch_size === 'small' ? 12 : 14;
-                    const isUserInTopPositions = userPosition > 0 && userPosition <= pitchCapacity;
-                    const isUserWaitlisted = userPosition > pitchCapacity;
+        <div className="relative z-10 max-w-md mx-auto">
+          <div className="glass-panel shadow-2xl overflow-hidden">
+            <div className="p-6 sm:p-8">
+              <h1 className="font-display text-4xl sm:text-5xl text-foreground tracking-tight leading-none mb-2">
+                JOIN THIS GAME
+              </h1>
+              <p className="text-muted-foreground text-sm mb-6 sm:mb-8 flex items-center gap-2">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="capitalize">{format(gameDate, "EEEE, MMM d")}</span>
+                <span className="text-white/20">•</span>
+                <span>{format(gameDate, "h:mm a")}</span>
+                <span className="text-white/20">•</span>
+                <span>{game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}</span>
+              </p>
 
-                    return <div className="space-y-3">
-                      {isDropout ? (
-                        // Dropout state - show rejoin option
-                        <div className="flex flex-col gap-3 p-4 glass-warning rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <AlertTriangle className="h-5 w-5 text-amber-500" />
-                            <span className="text-amber-400 font-medium text-sm sm:text-base">
-                              You dropped out of this game
-                            </span>
-                          </div>
-                          <p className="text-sm text-amber-300/80">
-                            You still owe payment for the spot. Click rejoin to reclaim your original position.
-                          </p>
-                          <Button onClick={rejoinAfterDropout} disabled={isSigningUp} className="w-full">
-                            {isSigningUp ? "Rejoining..." : "Rejoin Game"}
-                          </Button>
-                        </div>
-                      ) : isSignedUp ? <div className="space-y-3">
-                          {/* Alert based on position */}
-                          {isWithin24Hours && isUserInTopPositions && <Alert>
-                              <AlertTriangle className="h-4 w-4" />
-                              <AlertDescription>
-                                You're in the playing lineup. If you cancel within 24 hours, you'll be marked as a dropout and still owe payment.
-                              </AlertDescription>
-                            </Alert>}
-                          
-                          {isWithin24Hours && isUserWaitlisted && <Alert className="border-primary/30 bg-primary/10">
-                              <AlertDescription className="text-primary">
-                                You're on the waitlist. You can cancel anytime without penalty.
-                              </AlertDescription>
-                            </Alert>}
-                          
-                          <div className="flex flex-col gap-3 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+              {/* Main Action Area */}
+              {!isPastGame && <div className="space-y-6">
+                  {user ? (() => {
+                      const userSignup = signups.find(signup => signup.player?.user_id === user.id);
+                      const userPosition = userSignup ? signups.findIndex(s => s.id === userSignup.id) + 1 : 0;
+                      const isUserInTopPositions = userPosition > 0 && userPosition <= pitchCapacity;
+                      const isUserWaitlisted = userPosition > pitchCapacity;
+
+                      return <div className="space-y-3">
+                        {isDropout ? (
+                          // Dropout state - show rejoin option
+                          <div className="flex flex-col gap-3 p-4 glass-warning rounded-xl">
                             <div className="flex items-center gap-2">
-                              <CheckCircle className="h-5 w-5 text-primary" />
-                              <span className="text-primary font-medium text-sm sm:text-base">
-                                You're signed up for this game!
-                                {isUserWaitlisted && <Badge variant="outline" className="ml-2 text-xs">
-                                    Waitlist Position {userPosition - pitchCapacity}
-                                  </Badge>}
+                              <AlertTriangle className="h-5 w-5 text-amber-500" />
+                              <span className="text-amber-400 font-medium text-sm sm:text-base">
+                                You dropped out of this game
                               </span>
                             </div>
-                            
-                            {/* Confirmation checkbox only for top positions within 24h */}
-                            {isWithin24Hours && isUserInTopPositions && <div className="flex items-start gap-2 pt-2">
-                                <Checkbox id="confirm-replacement" checked={confirmReplacement} onCheckedChange={checked => setConfirmReplacement(checked as boolean)} />
-                                <label htmlFor="confirm-replacement" className="text-sm text-muted-foreground cursor-pointer leading-tight">
-                                  I confirm I will ask the group for a replacement player
-                                </label>
-                              </div>}
-                            
-                            <Button variant="outline" size="sm" onClick={removeSignup} disabled={isWithin24Hours && isUserInTopPositions && !confirmReplacement}>
-                              {isWithin24Hours && isUserInTopPositions ? "Cancel (Will Mark as Dropout)" : isUserWaitlisted ? "Remove from Waitlist" : "Cancel Signup"}
+                            <p className="text-sm text-amber-300/80">
+                              You still owe payment for the spot. Click rejoin to reclaim your original position.
+                            </p>
+                            <Button onClick={rejoinAfterDropout} disabled={isSigningUp} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                              {isSigningUp ? "Rejoining..." : "Rejoin Game"}
                             </Button>
                           </div>
-                        </div> : <div className="text-center space-y-3">
+                        ) : isSignedUp ? <div className="space-y-3">
+                            {/* Alerts based on position */}
+                            {isWithin24Hours && isUserInTopPositions && <div className="info-note">
+                                <AlertTriangle className="info-note-icon" />
+                                <span>You're in the playing lineup. If you cancel within 24 hours, you'll be marked as a dropout and still owe payment.</span>
+                              </div>}
+                            
+                            {isWithin24Hours && isUserWaitlisted && <div className="info-note">
+                                <Clock className="info-note-icon" />
+                                <span>You're on the waitlist. You can cancel anytime without penalty.</span>
+                              </div>}
+                            
+                            <div className="flex flex-col gap-3 p-4 rounded-xl border border-primary/30 bg-primary/10">
+                              <div className="flex items-center gap-2">
+                                <CheckCircle className="h-5 w-5 text-primary" />
+                                <span className="text-primary font-medium text-sm sm:text-base">
+                                  You're signed up for this game!
+                                  {isUserWaitlisted && <Badge variant="outline" className="ml-2 text-xs">
+                                      Waitlist Position {userPosition - pitchCapacity}
+                                    </Badge>}
+                                </span>
+                              </div>
+                              
+                              {/* Confirmation checkbox only for top positions within 24h */}
+                              {isWithin24Hours && isUserInTopPositions && <div className="flex items-start gap-2 pt-2">
+                                  <Checkbox id="confirm-replacement" checked={confirmReplacement} onCheckedChange={checked => setConfirmReplacement(checked as boolean)} />
+                                  <label htmlFor="confirm-replacement" className="text-sm text-muted-foreground cursor-pointer leading-tight">
+                                    I confirm I will ask the group for a replacement player
+                                  </label>
+                                </div>}
+                              
+                              <Button variant="outline" size="sm" onClick={removeSignup} disabled={isWithin24Hours && isUserInTopPositions && !confirmReplacement} className="header-nav-button">
+                                {isWithin24Hours && isUserInTopPositions ? "Cancel (Will Mark as Dropout)" : isUserWaitlisted ? "Remove from Waitlist" : "Cancel Signup"}
+                              </Button>
+                            </div>
+                          </div> : <div className="text-center space-y-3">
+                          <p className="text-muted-foreground text-sm">
+                            Ready to play? Sign up now!
+                          </p>
+                          <Button onClick={signUpAsUser} disabled={isSigningUp} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_25px_rgba(16,185,129,0.2)] hover:shadow-[0_0_35px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all" size="lg">
+                            {isSigningUp ? "Signing up..." : "Sign Me Up"}
+                          </Button>
+                        </div>}
+                      </div>;
+                    })() : <div className="space-y-4">
+                      <div className="space-y-2">
+                        <h3 className="font-display text-lg tracking-wide text-foreground">Have an account?</h3>
                         <p className="text-muted-foreground text-sm">
-                          Ready to play? Sign up now!
+                          Sign in to join the game and track your stats
                         </p>
-                        <Button onClick={signUpAsUser} disabled={isSigningUp} className="w-full" size="lg">
-                          {isSigningUp ? "Signing up..." : "Sign Me Up"}
-                        </Button>
-                      </div>}
-                  </div>;
-                })() : <div className="text-center space-y-4 p-6 bg-muted/30 rounded-lg">
-                    <div className="space-y-2">
-                      <h3 className="font-semibold text-lg">Have an account?</h3>
-                      <p className="text-muted-foreground text-sm">
-                        Sign in to join the game and track your stats
-                      </p>
-                    </div>
-                    <div className="flex gap-2 justify-center">
-                      <Link to="/auth">
-                        <Button size="lg">Sign In</Button>
-                      </Link>
-                      <Link to="/auth">
-                        <Button variant="outline" size="lg">Create Account</Button>
-                      </Link>
-                    </div>
-                  </div>}
-
-                {/* Guest Signup Section */}
-                <div className="border-t pt-6">
-                  <div className="space-y-4">
-                    <div className="text-center space-y-2">
-                      <h4 className="font-medium text-base text-muted-foreground">Don't have an account?</h4>
-                      <p className="text-sm text-muted-foreground">
-                        You can still join as a guest
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Label htmlFor="guestName" className="sr-only">Guest Name</Label>
-                        <GuestNameAutocomplete
-                          value={playerName}
-                          onChange={setPlayerName}
-                          onKeyPress={e => e.key === 'Enter' && signUpAsGuest()}
-                          placeholder="Enter your name"
-                          className="text-sm"
-                          gameId={gameId}
-                        />
                       </div>
-                      <Button onClick={signUpAsGuest} disabled={!playerName.trim() || isSigningUp} size="sm" variant="outline">
-                        Join as Guest
-                      </Button>
+                      <div className="flex gap-4">
+                        <Link to="/auth" className="flex-1">
+                          <Button variant="outline" className="w-full header-nav-button">
+                            Sign In
+                          </Button>
+                        </Link>
+                        <Link to="/auth" className="flex-1">
+                          <Button variant="outline" className="w-full header-nav-button">
+                            Create Account
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>}
+
+                  {/* Guest Signup Section */}
+                  <div className="border-t border-white/10 pt-6 space-y-4">
+                    <div className="space-y-1">
+                      <Label htmlFor="guestName" className="text-[10px] uppercase tracking-widest text-primary font-bold ml-1">
+                        Guest Registration
+                      </Label>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <GuestNameAutocomplete
+                            value={playerName}
+                            onChange={setPlayerName}
+                            onKeyPress={e => e.key === 'Enter' && signUpAsGuest()}
+                            placeholder="Enter your full name"
+                            className="rounded-xl bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/30 focus-visible:border-primary/50"
+                            gameId={gameId}
+                          />
+                        </div>
+                        <Button onClick={signUpAsGuest} disabled={!playerName.trim() || isSigningUp} size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.35)]">
+                          Join as Guest
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>}
+                </div>}
 
-          {/* Players List */}
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                Players ({signups.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {signups.length === 0 ? <p className="text-center text-muted-foreground py-6 text-sm">
-                  No players yet. Be the first!
-                </p> : <div className="space-y-2">
+              {isPastGame && <div className="info-note">
+                  <Clock className="info-note-icon" />
+                  <span>This game has already taken place. The roster below is shown for reference.</span>
+                </div>}
+            </div>
+
+            {/* Player List Section */}
+            <div className="bg-white/[0.02] border-t border-white/10 p-6 sm:p-8">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-display text-2xl text-foreground tracking-wide">PLAYERS SIGNED UP</h3>
+                <span className="relative flex items-center justify-center">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+                  <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold">
+                    {signups.length} / {pitchCapacity}
+                  </span>
+                </span>
+              </div>
+
+              {signups.length === 0 ? <div className="empty-tile">
+                  <Users className="h-6 w-6 text-muted-foreground" />
+                  <p>No players yet. Be the first!</p>
+                </div> : <div className="space-y-2">
                   {signups.map((signup, index) => {
-                const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
-                const isWaitlisted = index >= pitchCapacity;
-                const isLastMinuteDropout = signup.last_minute_dropout === true;
-                return <div key={signup.id} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg ${
-                  isLastMinuteDropout ? 'bg-destructive/10 border border-destructive/30' :
-                  isWaitlisted ? 'bg-[hsl(var(--aurora-blue))]/10 border border-[hsl(var(--aurora-blue))]/30' : 
-                  'bg-muted/50'
-                }`}>
+                    const isWaitlisted = index >= pitchCapacity;
+                    const isLastMinuteDropout = signup.last_minute_dropout === true;
+                    return <div key={signup.id} className={`group/row flex items-center justify-between p-2 -mx-2 rounded-xl transition-all duration-300 hover:bg-white/5 ${
+                      isLastMinuteDropout ? 'bg-destructive/5 border border-destructive/20' : ''
+                    }`}>
                         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                          <Badge variant="outline" className="shrink-0 text-xs">
+                          <Badge variant="outline" className="shrink-0 text-xs font-display">
                             {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
                           </Badge>
-                          <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-destructive' : ''}`}>
+                          <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-destructive' : 'text-foreground'}`}>
                             {signup.is_guest ? signup.guest_name : signup.player?.name || 'Unknown'}
                           </span>
                           <div className="flex gap-1 shrink-0">
-                             {isLastMinuteDropout && <Badge className="status-badge status-badge-dropout">
-                                 <AlertTriangle className="h-3 w-3 mr-1" />
-                                 <span className="hidden sm:inline">Dropout</span>
-                               </Badge>}
-                             {isWaitlisted && !isLastMinuteDropout && <Badge className="status-badge status-badge-waitlist">
-                                 <Clock className="h-3 w-3 mr-1" />
-                                 <span className="hidden sm:inline">Waitlist</span>
-                               </Badge>}
+                            {isLastMinuteDropout && <Badge className="status-badge status-badge-dropout">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Dropout</span>
+                              </Badge>}
+                            {isWaitlisted && !isLastMinuteDropout && <Badge className="status-badge status-badge-waitlist">
+                                <Clock className="h-3 w-3 mr-1" />
+                                <span className="hidden sm:inline">Waitlist</span>
+                              </Badge>}
                             {signup.player?.user_id && !isLastMinuteDropout && <Badge className="status-badge status-badge-verified">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 <span className="hidden sm:inline">Verified</span>
@@ -860,29 +870,29 @@ const GameSignup = () => {
                                 <span className="hidden sm:inline">Unverified</span>
                               </Badge>}
                           </div>
-                         </div>
-                         <div className="flex items-center gap-2 shrink-0">
-                           <span className="text-xs text-muted-foreground hidden sm:inline">
-                             {format(new Date(signup.signed_up_at), "MMM d")}
-                           </span>
-                           {/* Show remove button for guest signups created by current user */}
-                           {user && !isLastMinuteDropout && signup.is_guest && signup.created_by_user_id === user.id && (
-                             <Button 
-                               variant="outline" 
-                               size="sm" 
-                               onClick={() => removeGuestSignup(signup.id)} 
-                               className="h-7 px-2 text-xs text-destructive border-destructive/50 hover:bg-destructive hover:text-destructive-foreground"
-                             >
-                               <UserMinus className="h-3 w-3 mr-1" />
-                               Remove
-                             </Button>
-                           )}
-                         </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-muted-foreground hidden sm:inline">
+                            {format(new Date(signup.signed_up_at), "MMM d")}
+                          </span>
+                          {/* Show remove button for guest signups created by current user */}
+                          {user && !isLastMinuteDropout && signup.is_guest && signup.created_by_user_id === user.id && (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => removeGuestSignup(signup.id)} 
+                              className="h-7 px-2 text-xs text-destructive border-destructive/50 hover:bg-destructive hover:text-destructive-foreground rounded-full"
+                            >
+                              <UserMinus className="h-3 w-3 mr-1" />
+                              <span className="hidden sm:inline">Remove</span>
+                            </Button>
+                          )}
+                        </div>
                       </div>;
-              })}
+                  })}
                 </div>}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>;
