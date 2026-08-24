@@ -61,9 +61,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
       playerName: player.name,
       currentAvatarUrl: player.avatar_url
     });
-    return <Avatar className="h-10 w-10">
+    return <Avatar className="h-10 w-10 border border-white/10">
       <AvatarImage src={avatarUrl || undefined} />
-      <AvatarFallback>
+      <AvatarFallback className="bg-white/10 text-foreground text-xs">
         {player.name.substring(0, 2).toUpperCase()}
       </AvatarFallback>
     </Avatar>;
@@ -83,7 +83,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
       variant="ghost"
       size="sm"
       onClick={() => handleSort(field)}
-      className="h-auto p-2 font-semibold"
+      className="table-sort-button"
     >
       {children}
       {sortField === field && (
@@ -176,9 +176,9 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
         {/* Players Table */}
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-card/5 border-b">
+            <thead className="table-head-glass">
               <tr>
-                <th className="px-3 py-3 text-left text-sm font-medium text-foreground w-12">Rank</th>
+                <th className="table-head-cell w-12">Rank</th>
                 <th className="px-3 py-3 text-left">
                   <SortButton field="name">Player</SortButton>
                 </th>
@@ -188,7 +188,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                     Count
                   </SortButton>
                 </th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-foreground min-w-[300px]">
+                <th className="table-head-cell !text-center min-w-[300px]">
                   Achievements
                 </th>
               </tr>
@@ -214,7 +214,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                       <div className="flex items-center gap-3">
                         <PlayerAvatarWithDefault player={player} />
                         <Link to={`/player/${player.id}`}>
-                          <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-primary">
+                          <Button variant="link" className="p-0 h-auto font-semibold text-left text-foreground hover:text-primary">
                             {player.name}
                           </Button>
                         </Link>

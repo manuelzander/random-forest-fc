@@ -158,7 +158,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       variant="ghost"
       size="sm"
       onClick={() => handleSort(field)}
-      className="h-auto p-2 font-semibold text-muted-foreground hover:text-foreground hover:bg-white/5"
+      className="table-sort-button"
     >
       {children}
       {sortField === field && (
@@ -202,10 +202,10 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="border-b border-white/10">
+            <thead className="table-head-glass">
               <tr>
-                <th className="px-3 py-3 text-left text-sm font-medium text-muted-foreground">Rank</th>
-                <th className="px-3 py-3 text-left text-sm font-medium text-muted-foreground">Player</th>
+                <th className="table-head-cell">Rank</th>
+                <th className="table-head-cell">Player</th>
                 <th className="px-3 py-3 text-center">
                   <SortButton field="points">
                     <Award className="h-4 w-4 mr-1" />
@@ -233,7 +233,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                 <th className="px-3 py-3 text-center">
                   <SortButton field="goal_difference">Goal Diff</SortButton>
                 </th>
-                <th className="px-3 py-3 text-center text-sm font-medium text-muted-foreground">Record & Form</th>
+                <th className="table-head-cell !text-center">Record &amp; Form</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
