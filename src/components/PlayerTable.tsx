@@ -277,14 +277,12 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                             </Button>
                           </Link>
                              {(player as any).user_id ? (
-                                <Badge className="status-badge-compact status-badge-verified gap-1">
+                                <Badge className="status-badge-compact status-badge-verified" title="Verified">
                                   <CheckCircle className="h-3 w-3" />
-                                  <span className="hidden sm:inline">Verified</span>
                                 </Badge>
                               ) : (
-                                <Badge className="status-badge-compact status-badge-unverified gap-1">
+                                <Badge className="status-badge-compact status-badge-unverified" title="Unverified">
                                   <User className="h-3 w-3" />
-                                  <span className="hidden sm:inline">Unverified</span>
                                 </Badge>
                               )}
                             {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
