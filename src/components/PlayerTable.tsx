@@ -272,10 +272,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                         <PlayerAvatarWithDefault player={player} />
                         <div className="flex flex-col gap-1.5 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <Link to={`/player/${player.id}`}>
-                              <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-primary text-foreground whitespace-nowrap">
-                                {player.name}
-                              </Button>
+                            <Link
+                              to={`/player/${player.id}`}
+                              className="text-base font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background whitespace-nowrap"
+                            >
+                              {player.name}
                             </Link>
                             {(player as any).user_id ? (
                               <Badge className="status-badge-compact status-badge-verified" title="Verified">
@@ -289,7 +290,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                           </div>
                           {getCachedBadges(player, player.profile).length > 0 && (
                             <div className="flex items-center gap-1 flex-wrap">
-                              {getCachedBadges(player, player.profile).slice(0, 4).map((badge, badgeIndex) => (
+                              {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
                                 <Badge key={badgeIndex} className="badge-trophy h-auto">
                                   <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
                                 </Badge>

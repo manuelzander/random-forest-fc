@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp, Trophy, Info, Award, ArrowUp, ArrowDown } from 'lucide-react';
+import { ChevronDown, ChevronUp, Trophy, Info, Award, ArrowUp, ArrowDown, CheckCircle, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { usePlayerAchievements } from '@/hooks/usePlayerAchievements';
@@ -61,7 +61,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
       playerName: player.name,
       currentAvatarUrl: player.avatar_url
     });
-    return <Avatar className="h-10 w-10 border border-white/10">
+    return <Avatar className="h-11 w-11 border border-white/10">
       <AvatarImage src={avatarUrl || undefined} />
       <AvatarFallback className="bg-white/10 text-foreground text-xs">
         {player.name.substring(0, 2).toUpperCase()}
@@ -213,15 +213,27 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                     <td className="px-3 py-4">
                       <div className="flex items-center gap-3">
                         <PlayerAvatarWithDefault player={player} />
-                        <Link to={`/player/${player.id}`}>
-                          <Button variant="link" className="p-0 h-auto font-semibold text-left text-foreground hover:text-primary">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <Link
+                            to={`/player/${player.id}`}
+                            className="truncate text-base font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                          >
                             {player.name}
-                          </Button>
-                        </Link>
+                          </Link>
+                          {player.user_id ? (
+                            <Badge className="status-badge-compact status-badge-verified shrink-0" title="Verified">
+                              <CheckCircle className="h-3 w-3" />
+                            </Badge>
+                          ) : (
+                            <Badge className="status-badge-compact status-badge-unverified shrink-0" title="Unverified">
+                              <User className="h-3 w-3" />
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="px-3 py-4 text-center">
-                      <Badge variant="secondary" className="font-bold text-lg">
+                      <Badge className="font-bold text-lg bg-white/10 text-foreground border-white/10">
                         {playerBadges.length}
                       </Badge>
                     </td>
