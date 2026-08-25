@@ -114,11 +114,11 @@ const HomepageStatsCards = ({
   const pitchCapacity = nextGame ? getPitchCapacity(nextGame.pitch_size) : 14;
   const signupProgress = Math.min(100, Math.round((nextGameSignupCount / pitchCapacity) * 100));
   const nextGameDate = nextGame ? new Date(nextGame.scheduled_at) : null;
-  const nextGameLabel = archiveSeasonId ? 'Season fixture' : 'Next game';
+  const nextGameLabel = archiveSeasonId ? 'Season opener' : 'Next game';
 
   return (
-    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5" aria-label="Homepage summary">
-      <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 xl:col-span-2">
+    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5" aria-label="Homepage summary">
+      <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
         <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex min-h-[13rem] flex-col justify-between gap-6">
           <div className="flex items-start justify-between gap-4">
