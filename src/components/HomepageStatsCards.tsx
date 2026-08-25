@@ -204,7 +204,7 @@ const HomepageStatsCards = ({
         </div>
         <div>
           <span className="font-display text-5xl leading-none text-foreground">{totalGames}</span>
-          <p className="mt-2 text-sm text-muted-foreground">Recorded match results</p>
+          <p className="mt-2 text-sm text-muted-foreground">Recorded results</p>
         </div>
       </div>
 
