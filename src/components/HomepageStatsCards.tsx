@@ -174,7 +174,7 @@ const HomepageStatsCards = ({
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                {archiveSeasonId ? 'No archived schedule is available for this season.' : 'No upcoming game is scheduled yet.'}
+                {archiveSeasonId ? 'No archived schedule is available for this season.' : 'No upcoming game is scheduled yet'}
               </p>
               {onOpenSchedule && (
                 <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenSchedule}>
@@ -193,7 +193,7 @@ const HomepageStatsCards = ({
         </div>
         <div>
           <span className="font-display text-5xl leading-none text-foreground">{isSeasonDataLoading ? '—' : totalPlayers}</span>
-          <p className="mt-2 text-sm text-muted-foreground">Registered in this view</p>
+          <p className="mt-2 text-sm text-muted-foreground">Registered players</p>
         </div>
       </div>
 
@@ -204,7 +204,7 @@ const HomepageStatsCards = ({
         </div>
         <div>
           <span className="font-display text-5xl leading-none text-foreground">{totalGames}</span>
-          <p className="mt-2 text-sm text-muted-foreground">Recorded match results</p>
+          <p className="mt-2 text-sm text-muted-foreground">Recorded results</p>
         </div>
       </div>
 
@@ -218,7 +218,7 @@ const HomepageStatsCards = ({
             {isSeasonDataLoading ? '—' : mvpLeader?.name || 'No MVP yet'}
           </span>
           <p className="mt-2 text-sm text-muted-foreground">
-            {mvpLeader ? `${mvpLeader.mvp_awards} award${mvpLeader.mvp_awards === 1 ? '' : 's'}` : 'Awaiting the first award'}
+            {mvpLeader ? `${mvpLeader.mvp_awards} award${mvpLeader.mvp_awards === 1 ? '' : 's'}` : 'Awaiting first award'}
           </p>
         </div>
       </div>
