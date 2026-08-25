@@ -475,8 +475,8 @@ const AdminScheduleManagement = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="form-field-glass space-y-2">
-              <Label>Date</Label>
+            <div className="space-y-2">
+              <Label className="sr-only">Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -509,20 +509,21 @@ const AdminScheduleManagement = () => {
               </Popover>
             </div>
 
-            <div className="form-field-glass space-y-2">
-              <Label>Time</Label>
+            <div className="space-y-2">
+              <Label htmlFor="new-game-time" className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Kick-off time</Label>
               <Input
+                id="new-game-time"
                 type="time"
                 value={newGameTime}
                 onChange={(e) => setNewGameTime(e.target.value)}
               />
             </div>
 
-            <div className="form-field-glass space-y-2">
-              <Label>Pitch Size (Optional)</Label>
+            <div className="space-y-2">
+              <Label className="sr-only">Pitch Size (Optional)</Label>
               <Select value={newPitchSize} onValueChange={setNewPitchSize}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select pitch size" />
+                  <SelectValue placeholder="Pitch size (optional)" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border shadow-lg z-50">
                   <SelectItem value="none">No preference</SelectItem>
@@ -532,9 +533,10 @@ const AdminScheduleManagement = () => {
               </Select>
             </div>
 
-            <div className="form-field-glass space-y-2">
-              <Label>Total Cost (£)</Label>
+            <div className="space-y-2">
+              <Label htmlFor="new-total-cost" className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Total cost (£)</Label>
               <Input
+                id="new-total-cost"
                 type="number"
                 step="0.01"
                 min="0"
