@@ -179,7 +179,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
             <thead className="table-head-glass">
               <tr>
                 <th className="table-head-cell w-12">Rank</th>
-                <th className="table-head-cell min-w-[160px]">
+                <th className="table-head-cell">
                   <SortButton field="name">Player</SortButton>
                 </th>
                 <th className="table-head-cell !text-center">
@@ -210,22 +210,22 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
                         {rank}
                       </Badge>
                     </td>
-                    <td className="px-3 py-4 min-w-[160px]">
-                      <div className="flex items-start gap-3">
+                    <td className="px-3 py-4">
+                      <div className="flex items-center gap-3">
                         <PlayerAvatarWithDefault player={player} />
-                        <div className="flex flex-col gap-1 min-w-0">
+                        <div className="flex min-w-0 items-center gap-2">
                           <Link
                             to={`/player/${player.id}`}
-                            className="text-base font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background break-words"
+                            className="truncate text-base font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                           >
                             {player.name}
                           </Link>
                           {player.user_id ? (
-                            <Badge className="status-badge-compact status-badge-verified w-fit" title="Verified">
+                            <Badge className="status-badge-compact status-badge-verified shrink-0" title="Verified">
                               <CheckCircle className="h-3 w-3" />
                             </Badge>
                           ) : (
-                            <Badge className="status-badge-compact status-badge-unverified w-fit" title="Unverified">
+                            <Badge className="status-badge-compact status-badge-unverified shrink-0" title="Unverified">
                               <User className="h-3 w-3" />
                             </Badge>
                           )}
