@@ -804,19 +804,15 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
             ))}
           </div>
           
-          <div className="form-field-glass">
-            <Label htmlFor="new-skill" className="form-field-label">
-              <Plus className="form-field-label-icon" />
-              Add Signature Moves
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="new-skill" className="sr-only">Add Signature Moves</Label>
             <div className="flex gap-2">
               <Input
                 id="new-skill"
-                placeholder="Custom signature move..."
+                placeholder="Add a custom signature move..."
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addSkill(newSkill)}
-                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
               <Button 
                 onClick={() => addSkill(newSkill)} 
