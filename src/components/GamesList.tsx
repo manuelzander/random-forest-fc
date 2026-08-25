@@ -130,15 +130,11 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
           <h4 className="font-display text-base sm:text-lg text-foreground tracking-wide uppercase">
             Team {team}
           </h4>
-          <span
-            className={`text-[10px] px-2 py-1 rounded border font-bold ${
-              isWinner
-                ? 'bg-primary/10 text-primary border-primary/20'
-                : 'bg-white/[0.04] text-muted-foreground border-white/10'
-            }`}
-          >
-            {isWinner ? 'WINNER' : `${playerIds.length} PLAYERS`}
-          </span>
+          {isWinner && (
+            <span className="text-[10px] px-2 py-1 rounded border font-bold bg-primary/10 text-primary border-primary/20">
+              WINNER
+            </span>
+          )}
         </div>
         <div className="space-y-2">
           {playerIds.map((playerId, index) => (
