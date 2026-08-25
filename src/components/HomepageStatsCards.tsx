@@ -117,10 +117,10 @@ const HomepageStatsCards = ({
   const nextGameLabel = archiveSeasonId ? 'Season opener' : 'Next game';
 
   return (
-    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5" aria-label="Homepage summary">
-      <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
+    <section className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5" aria-label="Homepage summary">
+      <div className="glass-panel relative overflow-hidden p-4 sm:p-5 md:col-span-2 lg:col-span-2">
         <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative flex min-h-[13rem] flex-col justify-between gap-6">
+        <div className="relative flex min-h-[10rem] flex-col justify-between gap-4">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="section-kicker">{nextGameLabel}</span>
@@ -147,7 +147,7 @@ const HomepageStatsCards = ({
               <div className="h-2 w-full animate-pulse rounded-full bg-white/10" />
             </div>
           ) : nextGameDate ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                 <span>{format(nextGameDate, 'h:mm a')}</span>
@@ -172,7 +172,7 @@ const HomepageStatsCards = ({
               )}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
                 {archiveSeasonId ? 'No archived schedule is available for this season.' : 'No upcoming game is scheduled yet.'}
               </p>
@@ -186,41 +186,30 @@ const HomepageStatsCards = ({
         </div>
       </div>
 
-      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
+      <div className="stat-tile flex min-h-[8rem] flex-col items-start justify-between p-4 text-left sm:p-5">
         <div className="flex w-full items-start justify-between gap-3">
           <span className="section-kicker">Total Players</span>
           <Users className="h-5 w-5 text-primary" />
         </div>
-        <div>
-          <span className="font-display text-5xl leading-none text-foreground">{isSeasonDataLoading ? '—' : totalPlayers}</span>
-          <p className="mt-2 text-sm text-muted-foreground">Registered in this view</p>
-        </div>
+        <span className="font-display text-5xl leading-none text-foreground">{isSeasonDataLoading ? '—' : totalPlayers}</span>
       </div>
 
-      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
+      <div className="stat-tile flex min-h-[8rem] flex-col items-start justify-between p-4 text-left sm:p-5">
         <div className="flex w-full items-start justify-between gap-3">
           <span className="section-kicker">Games Played</span>
           <Trophy className="h-5 w-5 text-primary" />
         </div>
-        <div>
-          <span className="font-display text-5xl leading-none text-foreground">{totalGames}</span>
-          <p className="mt-2 text-sm text-muted-foreground">Recorded match results</p>
-        </div>
+        <span className="font-display text-5xl leading-none text-foreground">{totalGames}</span>
       </div>
 
-      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
+      <div className="stat-tile flex min-h-[8rem] flex-col items-start justify-between p-4 text-left sm:p-5">
         <div className="flex w-full items-start justify-between gap-3">
           <span className="section-kicker">MVP Race</span>
           <Crown className="h-5 w-5 text-primary" />
         </div>
-        <div className="min-w-0">
-          <span className="block truncate font-display text-3xl leading-none text-foreground">
-            {isSeasonDataLoading ? '—' : mvpLeader?.name || 'No MVP yet'}
-          </span>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {mvpLeader ? `${mvpLeader.mvp_awards} award${mvpLeader.mvp_awards === 1 ? '' : 's'}` : 'Awaiting the first award'}
-          </p>
-        </div>
+        <span className="block truncate font-display text-3xl leading-none text-foreground">
+          {isSeasonDataLoading ? '—' : mvpLeader?.name || 'No MVP yet'}
+        </span>
       </div>
     </section>
   );
