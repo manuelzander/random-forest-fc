@@ -221,7 +221,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
             <thead className="table-head-glass">
               <tr>
                 <th className="table-head-cell">Rank</th>
-                <th className="table-head-cell">Player</th>
+                <th className="table-head-cell min-w-[160px]">Player</th>
                 <th className="table-head-cell !text-center">
                   <SortButton field="points">
                     <Award className="h-4 w-4 mr-1" />

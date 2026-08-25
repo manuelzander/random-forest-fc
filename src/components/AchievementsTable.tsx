@@ -179,7 +179,7 @@ const AchievementsTable: React.FC<AchievementsTableProps> = ({ players: provided
             <thead className="table-head-glass">
               <tr>
                 <th className="table-head-cell w-12">Rank</th>
-                <th className="table-head-cell">
+                <th className="table-head-cell min-w-[160px]">
                   <SortButton field="name">Player</SortButton>
                 </th>
                 <th className="table-head-cell !text-center">
