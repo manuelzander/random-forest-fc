@@ -218,7 +218,7 @@ const HomepageStatsCards = ({
             {isSeasonDataLoading ? '—' : mvpLeader?.name || 'No MVP yet'}
           </span>
           <p className="mt-2 text-sm text-muted-foreground">
-            {mvpLeader ? `${mvpLeader.mvp_awards} award${mvpLeader.mvp_awards === 1 ? '' : 's'}` : 'Awaiting the first award'}
+            {mvpLeader ? `${mvpLeader.mvp_awards} award${mvpLeader.mvp_awards === 1 ? '' : 's'}` : 'Awaiting first award'}
           </p>
         </div>
       </div>
