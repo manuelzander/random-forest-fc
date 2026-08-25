@@ -102,7 +102,7 @@ const Auth = () => {
               <CardTitle className="header-wordmark">Random Forest FC</CardTitle>
             </div>
           </div>
-          <p className="relative text-muted-foreground text-sm sm:text-base">Sign in to manage your league</p>
+          <p className="relative text-muted-foreground text-sm sm:text-base">Sign in to access your league</p>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
