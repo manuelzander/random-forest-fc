@@ -193,7 +193,7 @@ const HomepageStatsCards = ({
         </div>
         <div>
           <span className="font-display text-5xl leading-none text-foreground">{isSeasonDataLoading ? '—' : totalPlayers}</span>
-          <p className="mt-2 text-sm text-muted-foreground">Registered in this view</p>
+          <p className="mt-2 text-sm text-muted-foreground">Registered players</p>
         </div>
       </div>
 
