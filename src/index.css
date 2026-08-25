@@ -257,6 +257,10 @@
     @apply inline-flex items-center h-5 px-1.5 text-xs font-medium rounded-md !border-0;
   }
 
+  .status-badge-compact {
+    @apply inline-flex items-center h-4 px-1 text-[10px] font-medium rounded-md !border-0;
+  }
+
   .status-badge-verified {
     @apply !bg-primary/15 !text-primary;
   }
