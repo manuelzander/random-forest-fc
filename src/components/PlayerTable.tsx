@@ -123,7 +123,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     };
 
     fetchFormData();
-  }, [players]);
+  }, [players, isArchive, archiveSeasonId]);
 
   const sortedPlayers = [...playersWithForm].sort((a, b) => {
     if (sortField === 'points' && sortDirection === 'desc') {
