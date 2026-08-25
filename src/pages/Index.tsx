@@ -8,6 +8,7 @@ import { Player, GameInput as GameInputType, NewsItem } from '@/types';
 import PlayerTable from '@/components/PlayerTable';
 import GameInput from '@/components/GameInput';
 import GamesList from '@/components/GamesList';
+import HomepageStatsCards from '@/components/HomepageStatsCards';
 import AchievementsTable from '@/components/AchievementsTable';
 import ScheduleDisplay from '@/components/ScheduleDisplay';
 import { PlayerClaim } from '@/components/PlayerClaim';
@@ -17,8 +18,7 @@ import { useArchivedAchievements } from '@/hooks/useArchivedAchievements';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Trophy, Plus, BarChart, Shield, LogIn, LogOut, Settings, User, Calendar, Newspaper, Award, Users } from 'lucide-react';
+import { Trophy, Shield, LogIn, LogOut, User, Calendar, Newspaper } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
@@ -200,22 +200,14 @@ const Index = () => {
         <SeasonBanner />
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="stat-tile flex flex-col items-stretch p-6 text-left">
-            <span className="text-muted-foreground text-xs uppercase tracking-widest">Total Players</span>
-            <span className="font-display text-4xl text-foreground mt-1">{displayedPlayers.length}</span>
-            <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-primary" style={{ width: '75%' }} />
-            </div>
-          </div>
-          <div className="stat-tile flex flex-col items-stretch p-6 text-left">
-            <span className="text-muted-foreground text-xs uppercase tracking-widest">Games Played</span>
-            <span className="font-display text-4xl text-foreground mt-1">{totalGames}</span>
-            <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-[hsl(var(--aurora-blue))]" style={{ width: '60%' }} />
-            </div>
-          </div>
-        </div>
+        <HomepageStatsCards
+          archiveSeasonId={archiveSeasonId}
+          totalPlayers={displayedPlayers.length}
+          totalGames={totalGames}
+          players={displayedPlayers}
+          isSeasonDataLoading={archivedLoading}
+          onOpenSchedule={() => setActiveTab('schedule')}
+        />
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
