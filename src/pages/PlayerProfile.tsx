@@ -423,15 +423,15 @@ const PlayerProfile = () => {
               <CardContent className="space-y-6 pt-6">
                 {/* Win/Draw/Loss at the top */}
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="stat-tile !bg-primary/10 !border-primary/20 p-3">
+                  <div className="stat-tile stat-tile-primary p-3">
                     <div className="stat-tile-value text-primary">{player.wins}</div>
                     <div className="stat-tile-label !text-primary/80">Wins</div>
                   </div>
-                  <div className="stat-tile !bg-amber-300/10 !border-amber-300/20 p-3">
+                  <div className="stat-tile stat-tile-draw p-3">
                     <div className="stat-tile-value text-amber-200">{player.draws}</div>
                     <div className="stat-tile-label !text-amber-200/80">Draws</div>
                   </div>
-                  <div className="stat-tile !bg-destructive/10 !border-destructive/20 p-3">
+                  <div className="stat-tile stat-tile-destructive p-3">
                     <div className="stat-tile-value text-destructive">{player.losses}</div>
                     <div className="stat-tile-label !text-destructive/80">Losses</div>
                   </div>

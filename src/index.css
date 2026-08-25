@@ -392,6 +392,18 @@
     @apply mt-1.5 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground;
   }
 
+  .stat-tile-primary {
+    @apply border-primary/20 bg-primary/10;
+  }
+
+  .stat-tile-draw {
+    @apply border-amber-300/20 bg-amber-300/10;
+  }
+
+  .stat-tile-destructive {
+    @apply border-destructive/20 bg-destructive/10;
+  }
+
   .empty-tile {
     @apply flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/10
            bg-white/[0.02] py-8 text-sm text-muted-foreground;

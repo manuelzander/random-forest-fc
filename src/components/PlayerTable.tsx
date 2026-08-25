@@ -222,31 +222,31 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
               <tr>
                 <th className="table-head-cell">Rank</th>
                 <th className="table-head-cell">Player</th>
-                <th className="px-3 py-3 text-center">
+                <th className="table-head-cell !text-center">
                   <SortButton field="points">
                     <Award className="h-4 w-4 mr-1" />
                     Points
                   </SortButton>
                 </th>
-                <th className="px-3 py-3 text-center">
+                <th className="table-head-cell !text-center">
                   <SortButton field="games_played">
                     <Users className="h-4 w-4 mr-1" />
                     Games
                   </SortButton>
                 </th>
-                <th className="px-3 py-3 text-center">
+                <th className="table-head-cell !text-center">
                   <SortButton field="pointsPerGame">
                     <Target className="h-4 w-4 mr-1" />
                     PPG
                   </SortButton>
                 </th>
-                <th className="px-3 py-3 text-center">
+                <th className="table-head-cell !text-center">
                   <SortButton field="winPercentage">Win %</SortButton>
                 </th>
-                <th className="px-3 py-3 text-center">
+                <th className="table-head-cell !text-center">
                   <SortButton field="mvp_awards">MVP</SortButton>
                 </th>
-                <th className="px-3 py-3 text-center">
+                <th className="table-head-cell !text-center">
                   <SortButton field="goal_difference">Goal Diff</SortButton>
                 </th>
                 <th className="table-head-cell !text-center">Record &amp; Form</th>
