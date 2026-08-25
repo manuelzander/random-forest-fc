@@ -261,6 +261,10 @@
     @apply inline-flex items-center !h-4 !px-1 !py-0 !text-[10px] !leading-none font-medium rounded-md !border-0;
   }
 
+  .status-badge-compact svg {
+    @apply h-2.5 w-2.5;
+  }
+
   .status-badge-verified {
     @apply !bg-primary/15 !text-primary;
   }
