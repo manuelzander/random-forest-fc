@@ -239,13 +239,13 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
 
   return (
     <>
-      <Card className="w-full max-w-4xl mx-auto">
-      <CardContent className="p-6">
+      <Card className="w-full max-w-4xl mx-auto border-0 bg-transparent shadow-none backdrop-blur-none">
+      <CardContent className="p-0">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Teams Section */}
           <div className="grid md:grid-cols-2 gap-6">
             {/* Team 1 */}
-            <div className="space-y-3">
+            <div className="glass-form-section space-y-3">
               <Label className="text-lg font-semibold flex items-center gap-2">
                 <Users className="h-5 w-5" />
                 Team 1 Players
@@ -289,7 +289,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             </div>
 
             {/* Team 2 */}
-            <div className="space-y-3">
+            <div className="glass-form-section space-y-3">
               <Label className="text-lg font-semibold flex items-center gap-2">
                 <Users className="h-5 w-5" />
                 Team 2 Players
@@ -336,7 +336,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           {/* Captains Section */}
           <div className="grid md:grid-cols-2 gap-6">
             {/* Team 1 Captain */}
-            <div className="space-y-2">
+            <div className="glass-form-section space-y-2">
               <Label className="text-lg font-semibold">Team 1 Captain</Label>
               <Select value={team1Captain} onValueChange={setTeam1Captain}>
                 <SelectTrigger>
@@ -353,7 +353,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             </div>
 
             {/* Team 2 Captain */}
-            <div className="space-y-2">
+            <div className="glass-form-section space-y-2">
               <Label className="text-lg font-semibold">Team 2 Captain</Label>
               <Select value={team2Captain} onValueChange={setTeam2Captain}>
                 <SelectTrigger>
@@ -372,7 +372,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
 
           {/* Score Section */}
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
+            <div className="glass-form-section space-y-2">
               <Label htmlFor="team1Goals">Team 1 Goals</Label>
               <Input
                 id="team1Goals"
@@ -383,7 +383,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                 className="text-center text-xl font-bold"
               />
             </div>
-            <div className="space-y-2">
+            <div className="glass-form-section space-y-2">
               <Label htmlFor="team2Goals">Team 2 Goals</Label>
               <Input
                 id="team2Goals"
@@ -397,7 +397,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           </div>
 
           {/* MVP Section */}
-          <div className="space-y-2">
+          <div className="glass-form-section space-y-2">
             <Label className="text-lg font-semibold flex items-center gap-2">
               <Award className="h-5 w-5" />
               MVP Player (Optional)
@@ -418,7 +418,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           </div>
 
           {/* YouTube Video Section */}
-          <div className="space-y-2">
+          <div className="glass-form-section space-y-2">
             <Label htmlFor="youtubeUrl" className="text-lg font-semibold flex items-center gap-2">
               <Video className="h-5 w-5" />
               YouTube Video (Optional)

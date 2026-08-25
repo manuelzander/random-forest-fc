@@ -1005,17 +1005,17 @@ const AdminPlayerManagement = () => {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-          <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+    <Card className="w-full overflow-hidden">
+      <CardHeader className="card-header-glass py-4">
+        <CardTitle className="card-header-glass-title">
+          <Users className="card-header-glass-icon h-4 w-4 sm:h-5 sm:w-5" />
           <span className="hidden sm:inline">Player Management</span>
           <span className="sm:hidden">Players</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-          <h3 className="text-base sm:text-lg font-semibold">Players ({players.length})</h3>
+      <CardContent className="p-0">
+        <div className="management-toolbar">
+          <h3 className="management-count">Players ({players.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
             if (!open) {
@@ -1157,11 +1157,11 @@ const AdminPlayerManagement = () => {
           </Dialog>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 p-4 sm:p-6">
           {players.map((player) => {
             const profile = getProfileByUserId(player.user_id);
             return (
-              <div key={player.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
+              <div key={player.id} className="glass-row flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex items-center gap-3 flex-1">
                   <Avatar key={`${player.id}-${player.avatar_url}`} className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0">
                     <AvatarImage src={player.avatar_url || undefined} />
@@ -1278,16 +1278,16 @@ const AdminPlayerManagement = () => {
         </div>
 
         {/* Guest Management Section */}
-        <div className="mt-8 pt-8 border-t">
+        <div className="border-t border-white/10 px-4 pb-4 pt-6 sm:px-6 sm:pb-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-            <h3 className="text-base sm:text-lg font-semibold">
+            <h3 className="management-count">
               Guests ({guests.length})
             </h3>
           </div>
 
           <div className="space-y-2">
             {guests.map((guest) => (
-              <div key={guest.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
+              <div key={guest.id} className="glass-row flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex items-center gap-3 flex-1">
                   <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 bg-muted">
                     <AvatarFallback>

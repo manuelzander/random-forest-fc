@@ -206,17 +206,17 @@ const AdminGameManagement = () => {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-          <History className="h-4 w-4 sm:h-5 sm:w-5" />
+    <Card className="w-full overflow-hidden">
+      <CardHeader className="card-header-glass py-4">
+        <CardTitle className="card-header-glass-title">
+          <History className="card-header-glass-icon h-4 w-4 sm:h-5 sm:w-5" />
           <span className="hidden sm:inline">Game Management</span>
           <span className="sm:hidden">Games</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-          <h3 className="text-base sm:text-lg font-semibold">Games ({games.length})</h3>
+      <CardContent className="p-0">
+        <div className="management-toolbar">
+          <h3 className="management-count">Games ({games.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" onClick={() => openDialog()}>
@@ -252,9 +252,9 @@ const AdminGameManagement = () => {
           </Dialog>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3 p-4 sm:p-6">
           {games.map((game) => (
-            <div key={game.id} className="p-3 sm:p-4 border rounded-lg">
+            <div key={game.id} className="glass-row">
               <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                 <div className="flex-1">
                   <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-4 mb-3">
@@ -328,10 +328,10 @@ const AdminGameManagement = () => {
                 </div>
                 
                 <div className="flex gap-2 flex-shrink-0 justify-center sm:ml-4">
-                  <Button size="sm" variant="outline" onClick={() => openDialog(game)}>
+                  <Button size="sm" variant="outline" className="icon-action" onClick={() => openDialog(game)} title="Edit game">
                     <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => openDeleteDialog(game)}>
+                  <Button size="sm" variant="outline" className="icon-action hover:!border-destructive/30 hover:!bg-destructive/10 hover:!text-destructive" onClick={() => openDeleteDialog(game)} title="Delete game">
                     <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
