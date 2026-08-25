@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle, User } from 'lucide-react';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
+import { useSeasons } from '@/hooks/useSeasons';
+
 
 interface PlayerWithProfile extends Player {
   profile?: {
@@ -50,6 +52,8 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
   const [playersWithForm, setPlayersWithForm] = useState<PlayerWithForm[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const { isArchive, archiveSeasonId } = useSeasons();
+
   useEffect(() => {
     if (players.length === 0) {
       setIsLoading(false);
@@ -60,12 +64,24 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     const fetchFormData = async () => {
       try {
         const playerIds = players.map(p => p.id);
-        const { data: allGamesData, error: gamesError } = await supabase
-          .from('games')
-          .select('team1_players, team2_players, team1_goals, team2_goals, created_at')
-          .or(playerIds.map(id => `team1_players.cs.{${id}},team2_players.cs.{${id}}`).join(','))
+        const orFilter = playerIds.map(id => `team1_players.cs.{${id}},team2_players.cs.{${id}}`).join(',');
+
+        let query = isArchive && archiveSeasonId
+          ? supabase
+              .from('archived_games')
+              .select('team1_players, team2_players, team1_goals, team2_goals, created_at')
+              .eq('season_id', archiveSeasonId)
+          : supabase
+              .from('games')
+              .select('team1_players, team2_players, team1_goals, team2_goals, created_at');
+
+        const { data: allGamesData, error: gamesError } = await query
+          .or(orFilter)
           .order('created_at', { ascending: false })
           .limit(6 * playerIds.length);
+
+        if (gamesError) throw gamesError;
+
 
         const playersWithRecentResults: PlayerWithForm[] = players.map(player => {
           const playerGames = (allGamesData || [])
@@ -107,7 +123,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
     };
 
     fetchFormData();
-  }, [players]);
+  }, [players, isArchive, archiveSeasonId]);
 
   const sortedPlayers = [...playersWithForm].sort((a, b) => {
     if (sortField === 'points' && sortDirection === 'desc') {
