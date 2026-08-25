@@ -263,7 +263,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         {/* Display Name Section */}
         {playerName !== undefined && (
           <>
-            <div className="form-field-glass space-y-3">
+            <div className="space-y-3">
               <Label className="text-sm font-medium flex items-center gap-2">
                 <UserPen className="h-4 w-4" />
                 Display Name
@@ -294,7 +294,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         )}
 
         {/* Credit Section */}
-        <div className="form-field-glass space-y-3">
+        <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Banknote className="h-4 w-4" />
             Update Credit
@@ -324,7 +324,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         <Separator />
 
         {/* Email Section */}
-        <div className="form-field-glass space-y-3">
+        <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Mail className="h-4 w-4" />
             Email Address
@@ -353,7 +353,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         <Separator />
 
         {/* Password Section */}
-        <div className="form-field-glass space-y-3">
+        <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Lock className="h-4 w-4" />
             Change Password
