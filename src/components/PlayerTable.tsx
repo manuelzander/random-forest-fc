@@ -35,7 +35,7 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
   });
 
   return (
-    <Avatar className="h-10 w-10 border border-white/10">
+    <Avatar className="h-11 w-11 border border-white/10">
       <AvatarImage src={avatarUrl || undefined} />
       <AvatarFallback className="bg-white/10 text-foreground text-xs">
         {player.name.substring(0, 2).toUpperCase()}
@@ -267,29 +267,35 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                          {rank}
                        </Badge>
                     </td>
-                     <td className="px-3 py-4">
-                       <div className="flex items-center gap-3">
-                         <PlayerAvatarWithDefault player={player} />
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <Link to={`/player/${player.id}`}>
-                            <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-primary text-foreground">
-                              {player.name}
-                            </Button>
-                          </Link>
-                             {(player as any).user_id ? (
-                                <Badge className="status-badge-compact status-badge-verified" title="Verified">
-                                  <CheckCircle className="h-3 w-3" />
-                                </Badge>
-                              ) : (
-                                <Badge className="status-badge-compact status-badge-unverified" title="Unverified">
-                                  <User className="h-3 w-3" />
-                                </Badge>
-                              )}
-                            {getCachedBadges(player, player.profile).slice(0, 3).map((badge, badgeIndex) => (
-                              <Badge key={badgeIndex} className="badge-trophy h-auto">
-                                <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
+                    <td className="px-3 py-3">
+                      <div className="flex items-start gap-3">
+                        <PlayerAvatarWithDefault player={player} />
+                        <div className="flex flex-col gap-1.5 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Link to={`/player/${player.id}`}>
+                              <Button variant="link" className="p-0 h-auto font-semibold text-left hover:text-primary text-foreground whitespace-nowrap">
+                                {player.name}
+                              </Button>
+                            </Link>
+                            {(player as any).user_id ? (
+                              <Badge className="status-badge-compact status-badge-verified" title="Verified">
+                                <CheckCircle className="h-3 w-3" />
                               </Badge>
-                             ))}
+                            ) : (
+                              <Badge className="status-badge-compact status-badge-unverified" title="Unverified">
+                                <User className="h-3 w-3" />
+                              </Badge>
+                            )}
+                          </div>
+                          {getCachedBadges(player, player.profile).length > 0 && (
+                            <div className="flex items-center gap-1 flex-wrap">
+                              {getCachedBadges(player, player.profile).slice(0, 4).map((badge, badgeIndex) => (
+                                <Badge key={badgeIndex} className="badge-trophy h-auto">
+                                  <span>{typeof badge.icon === 'string' ? badge.icon : '✅'}</span>
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>
