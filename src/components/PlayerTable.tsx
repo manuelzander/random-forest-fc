@@ -35,7 +35,7 @@ const PlayerAvatarWithDefault = ({ player }: { player: Player }) => {
   });
 
   return (
-    <Avatar className="h-10 w-10 border border-white/10">
+    <Avatar className="h-11 w-11 border border-white/10">
       <AvatarImage src={avatarUrl || undefined} />
       <AvatarFallback className="bg-white/10 text-foreground text-xs">
         {player.name.substring(0, 2).toUpperCase()}
