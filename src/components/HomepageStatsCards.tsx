@@ -174,7 +174,7 @@ const HomepageStatsCards = ({
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                {archiveSeasonId ? 'No archived schedule is available for this season.' : 'No upcoming game is scheduled yet.'}
+                {archiveSeasonId ? 'No archived schedule is available for this season.' : 'No upcoming game is scheduled yet'}
               </p>
               {onOpenSchedule && (
                 <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenSchedule}>
