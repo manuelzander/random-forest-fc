@@ -48,14 +48,7 @@ const SeasonBanner = ({ className }: { className?: string }) => {
             <h2 className="font-display text-4xl sm:text-5xl md:text-6xl leading-none text-foreground uppercase">
               {selectedSeason.name}
             </h2>
-            {isArchive ? (
-              <div className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1">
-                <History className="h-3 w-3 text-primary" />
-                <span className="text-[10px] font-bold uppercase tracking-tighter text-primary">
-                  Archive
-                </span>
-              </div>
-            ) : (
+            {!isArchive && (
               <div className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
