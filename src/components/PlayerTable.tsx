@@ -267,23 +267,23 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                          {rank}
                        </Badge>
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-3 min-w-[160px]">
                       <div className="flex items-start gap-3">
                         <PlayerAvatarWithDefault player={player} />
                         <div className="flex flex-col gap-1.5 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-start gap-2 flex-wrap">
                             <Link
                               to={`/player/${player.id}`}
-                              className="text-base font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background whitespace-nowrap"
+                              className="text-base font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background break-words"
                             >
                               {player.name}
                             </Link>
                             {(player as any).user_id ? (
-                              <Badge className="status-badge-compact status-badge-verified" title="Verified">
+                              <Badge className="status-badge-compact status-badge-verified shrink-0" title="Verified">
                                 <CheckCircle className="h-3 w-3" />
                               </Badge>
                             ) : (
-                              <Badge className="status-badge-compact status-badge-unverified" title="Unverified">
+                              <Badge className="status-badge-compact status-badge-unverified shrink-0" title="Unverified">
                                 <User className="h-3 w-3" />
                               </Badge>
                             )}
