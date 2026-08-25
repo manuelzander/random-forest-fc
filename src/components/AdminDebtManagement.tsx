@@ -396,7 +396,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="stat-tile text-left">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <TrendingDown className="h-4 w-4 text-destructive" />
@@ -413,7 +413,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stat-tile text-left">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
@@ -430,7 +430,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stat-tile text-left">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <PoundSterling className="h-4 w-4" />
@@ -449,11 +449,11 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
       </div>
 
       {/* Player Debt Table */}
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="card-header-glass py-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <PoundSterling className="h-5 w-5" />
+            <CardTitle className="card-header-glass-title">
+              <PoundSterling className="card-header-glass-icon h-5 w-5" />
               Player Debt & Credit
             </CardTitle>
             <Button size="sm" onClick={exportToCSV} className="bg-primary hover:bg-primary/90">
@@ -464,9 +464,11 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
         </CardHeader>
         <CardContent>
           {playerSummaries.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">
+            <div className="empty-tile">
+            <p className="text-center text-muted-foreground">
               No debt entries found.
             </p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
@@ -493,7 +495,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
                               setSelectedPlayer(summary);
                               setIsDetailsOpen(true);
                             }}
-                            className="text-primary hover:underline cursor-pointer"
+                            className="cursor-pointer font-medium text-foreground transition-colors hover:text-primary"
                           >
                             {summary.playerName}
                           </button>
@@ -646,7 +648,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
               {/* Games Table */}
               <div>
                 <h3 className="font-semibold mb-2">Game Breakdown</h3>
-                <div className="border rounded-lg overflow-hidden">
+                 <div className="glass-row-static overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -709,7 +711,7 @@ const AdminDebtManagement = ({ archiveSeasonId = null }: AdminDebtManagementProp
               </div>
 
               {/* Total */}
-              <div className="flex justify-between items-center p-4 bg-muted rounded-lg font-semibold">
+              <div className="glass-row-static flex items-center justify-between p-4 font-semibold">
                 <span>Total Games:</span>
                 <span>{selectedPlayer.gamesOwed.length}</span>
               </div>

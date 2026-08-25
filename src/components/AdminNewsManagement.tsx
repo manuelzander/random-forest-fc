@@ -212,17 +212,17 @@ const AdminNewsManagement = () => {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-          <Newspaper className="h-4 w-4 sm:h-5 sm:w-5" />
+    <Card className="w-full overflow-hidden">
+      <CardHeader className="card-header-glass py-4">
+        <CardTitle className="card-header-glass-title">
+          <Newspaper className="card-header-glass-icon h-4 w-4 sm:h-5 sm:w-5" />
           <span className="hidden sm:inline">News Management</span>
           <span className="sm:hidden">News</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-          <h3 className="text-base sm:text-lg font-semibold">News Articles ({news.length})</h3>
+      <CardContent className="p-0">
+        <div className="management-toolbar">
+          <h3 className="management-count">News Articles ({news.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button
@@ -296,14 +296,14 @@ const AdminNewsManagement = () => {
             </AlertDescription>
           </Alert>
         ) : (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 p-4 sm:space-y-4 sm:p-6">
             {news.map((item) => (
-              <div key={item.id} className="border rounded-lg p-3 sm:p-4 space-y-3">
+              <div key={item.id} className="glass-row space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                   <div className="flex-1">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                      <h3 className="text-base sm:text-lg font-semibold">{item.title}</h3>
-                      <Badge variant={item.published ? "default" : "secondary"} className="w-fit">
+                      <h3 className="font-display text-lg uppercase tracking-wide sm:text-xl">{item.title}</h3>
+                      <Badge className={`status-badge w-fit ${item.published ? 'status-badge-verified' : 'status-badge-unverified'}`}>
                         {item.published ? 'Published' : 'Draft'}
                       </Badge>
                     </div>
@@ -325,6 +325,7 @@ const AdminNewsManagement = () => {
                   <div className="flex gap-2 flex-shrink-0 justify-center sm:ml-4">
                     <Button
                       variant="outline"
+                      className="icon-action"
                       size="sm"
                       onClick={() => togglePublished(item)}
                     >
@@ -332,6 +333,7 @@ const AdminNewsManagement = () => {
                     </Button>
                     <Button
                       variant="outline"
+                      className="icon-action"
                       size="sm"
                       onClick={() => handleEdit(item)}
                     >
@@ -339,6 +341,7 @@ const AdminNewsManagement = () => {
                     </Button>
                     <Button
                       variant="outline"
+                      className="icon-action hover:!border-destructive/30 hover:!bg-destructive/10 hover:!text-destructive"
                       size="sm"
                       onClick={() => openDeleteDialog(item)}
                     >
@@ -362,7 +365,7 @@ const AdminNewsManagement = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                 Delete Article
               </AlertDialogAction>
             </AlertDialogFooter>

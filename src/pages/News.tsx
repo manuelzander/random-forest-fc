@@ -79,7 +79,7 @@ const News = () => {
   return (
     <div className="page-container">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <Card className="w-full">
+        <Card className="w-full overflow-hidden">
           <CardHeader className="card-header-glass py-4">
             <CardTitle className="card-header-glass-title">
               <Newspaper className="card-header-glass-icon h-5 w-5 sm:h-6 sm:w-6" />
@@ -89,16 +89,18 @@ const News = () => {
         <CardContent className="pt-4">
           {news.length === 0 ? (
             <div className="text-center py-8">
-              <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <div className="empty-tile">
+              <Newspaper className="h-10 w-10 text-primary/60" />
               <p className="text-muted-foreground">No news articles available at this time.</p>
+              </div>
             </div>
           ) : (
             <div className="space-y-6">
               {news.map((article) => (
-                <article key={article.id} className="border-b border-white/10 pb-6 last:border-b-0">
+                <article key={article.id} className="glass-row group">
                   <div className="flex items-start gap-4">
                     <div className="flex-1">
-                       <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
+                       <h3 className="font-display text-xl uppercase tracking-wide text-foreground transition-colors group-hover:text-primary sm:text-2xl">
                          {article.title}
                        </h3>
                        {article.content && (
@@ -106,7 +108,7 @@ const News = () => {
                            {article.content}
                          </p>
                        )}
-                       <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <div className="mt-3 flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                         <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                         <time dateTime={article.created_at}>
                           {format(new Date(article.created_at), 'PPP')}

@@ -392,9 +392,64 @@
     @apply mt-1.5 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground;
   }
 
+  .stat-tile-primary {
+    @apply border-primary/20 bg-primary/10;
+  }
+
+  .stat-tile-draw {
+    @apply border-amber-300/20 bg-amber-300/10;
+  }
+
+  .stat-tile-destructive {
+    @apply border-destructive/20 bg-destructive/10;
+  }
+
   .empty-tile {
     @apply flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/10
            bg-white/[0.02] py-8 text-sm text-muted-foreground;
+  }
+
+  /* Management and utility surfaces */
+  .management-toolbar {
+    @apply flex flex-col gap-3 border-b border-white/10 bg-white/[0.025] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6;
+  }
+
+  .management-count {
+    @apply font-display text-lg uppercase tracking-[0.06em] text-foreground sm:text-xl;
+  }
+
+  .glass-row {
+    @apply rounded-xl border border-white/10 bg-white/[0.025] p-3 transition-all duration-300
+           hover:border-primary/20 hover:bg-white/[0.05] sm:p-4;
+  }
+
+  .glass-row-static {
+    @apply rounded-xl border border-white/10 bg-white/[0.025];
+  }
+
+  .glass-form-section {
+    @apply rounded-xl border border-white/10 bg-white/[0.025] p-4 sm:p-5;
+  }
+
+  .glass-form-title {
+    @apply flex items-center gap-2 font-display text-lg uppercase tracking-[0.06em] text-foreground;
+  }
+
+  .icon-action {
+    @apply h-9 w-9 rounded-lg border-white/10 bg-white/[0.04] p-0 text-muted-foreground
+           hover:border-primary/30 hover:bg-primary/10 hover:text-primary;
+  }
+
+  .auth-shell {
+    @apply relative overflow-hidden;
+  }
+
+  .auth-panel {
+    @apply relative z-10 w-full max-w-md overflow-hidden border-white/10 bg-white/[0.055] shadow-2xl backdrop-blur-2xl;
+  }
+
+  .section-kicker {
+    @apply text-[10px] font-semibold uppercase tracking-[0.2em] text-primary/80;
   }
 
 
@@ -426,5 +481,11 @@
 
   .animate-aurora {
     animation: aurora-float 20s ease-in-out infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-aurora {
+      animation: none;
+    }
   }
 }

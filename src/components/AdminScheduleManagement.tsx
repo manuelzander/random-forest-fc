@@ -466,16 +466,16 @@ const AdminScheduleManagement = () => {
   return (
     <div className="space-y-6">
       {/* Create New Scheduled Game */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <Plus className="h-5 w-5" />
+      <Card className="overflow-hidden">
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">
+            <Plus className="card-header-glass-icon h-5 w-5" />
             Schedule New Game
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="space-y-2">
+            <div className="form-field-glass space-y-2">
               <Label>Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -509,7 +509,7 @@ const AdminScheduleManagement = () => {
               </Popover>
             </div>
 
-            <div className="space-y-2">
+            <div className="form-field-glass space-y-2">
               <Label>Time</Label>
               <Input
                 type="time"
@@ -518,7 +518,7 @@ const AdminScheduleManagement = () => {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="form-field-glass space-y-2">
               <Label>Pitch Size (Optional)</Label>
               <Select value={newPitchSize} onValueChange={setNewPitchSize}>
                 <SelectTrigger>
@@ -532,7 +532,7 @@ const AdminScheduleManagement = () => {
               </Select>
             </div>
 
-            <div className="space-y-2">
+            <div className="form-field-glass space-y-2">
               <Label>Total Cost (£)</Label>
               <Input
                 type="number"
@@ -558,16 +558,16 @@ const AdminScheduleManagement = () => {
       </Card>
 
       {/* Scheduled Games List */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-            <CalendarIcon className="h-5 w-5" />
+      <Card className="overflow-hidden">
+        <CardHeader className="card-header-glass py-4">
+          <CardTitle className="card-header-glass-title">
+            <CalendarIcon className="card-header-glass-icon h-5 w-5" />
             Schedule Management
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-            <h3 className="text-base sm:text-lg font-semibold">Scheduled Games ({scheduledGames.length})</h3>
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="management-count">Scheduled Games ({scheduledGames.length})</h3>
           </div>
           {scheduledGames.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
@@ -576,7 +576,7 @@ const AdminScheduleManagement = () => {
           ) : (
             <div className="space-y-6">
               {scheduledGames.map((game) => (
-                <div key={game.id} className="border rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
+                <div key={game.id} className="glass-row space-y-3 sm:space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <div className="flex items-center justify-between">

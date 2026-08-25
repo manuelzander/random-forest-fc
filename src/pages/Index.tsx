@@ -201,14 +201,14 @@ const Index = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="glass-card p-6 flex flex-col">
+          <div className="stat-tile flex flex-col items-stretch p-6 text-left">
             <span className="text-muted-foreground text-xs uppercase tracking-widest">Total Players</span>
             <span className="font-display text-4xl text-foreground mt-1">{displayedPlayers.length}</span>
             <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
               <div className="h-full bg-primary" style={{ width: '75%' }} />
             </div>
           </div>
-          <div className="glass-card p-6 flex flex-col">
+          <div className="stat-tile flex flex-col items-stretch p-6 text-left">
             <span className="text-muted-foreground text-xs uppercase tracking-widest">Games Played</span>
             <span className="font-display text-4xl text-foreground mt-1">{totalGames}</span>
             <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
@@ -254,7 +254,7 @@ const Index = () => {
                      <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                      <p className="text-muted-foreground">No news articles yet.</p>
                    </div> : <div className="space-y-4">
-                   {news.map(article => <div key={article.id} className="p-4 rounded-xl border border-white/10 bg-white/5">
+                   {news.map(article => <div key={article.id} className="glass-row">
                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 gap-2">
                          <h3 className="text-lg font-semibold text-foreground flex-1">{article.title}</h3>
                          <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">

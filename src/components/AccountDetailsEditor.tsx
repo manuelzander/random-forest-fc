@@ -207,7 +207,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
     <div className="space-y-6">
       {/* Balance Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="stat-tile text-left">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <TrendingDown className="h-4 w-4 text-destructive" />
@@ -221,7 +221,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stat-tile text-left">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-primary" />
@@ -235,7 +235,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="stat-tile text-left">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <PoundSterling className="h-4 w-4" />
@@ -263,7 +263,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         {/* Display Name Section */}
         {playerName !== undefined && (
           <>
-            <div className="space-y-3">
+            <div className="form-field-glass space-y-3">
               <Label className="text-sm font-medium flex items-center gap-2">
                 <UserPen className="h-4 w-4" />
                 Display Name
@@ -294,7 +294,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         )}
 
         {/* Credit Section */}
-        <div className="space-y-3">
+        <div className="form-field-glass space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Banknote className="h-4 w-4" />
             Update Credit
@@ -324,7 +324,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         <Separator />
 
         {/* Email Section */}
-        <div className="space-y-3">
+        <div className="form-field-glass space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Mail className="h-4 w-4" />
             Email Address
@@ -353,7 +353,7 @@ const AccountDetailsEditor = ({ userEmail, debt = 0, credit = 0, onCreditUpdate,
         <Separator />
 
         {/* Password Section */}
-        <div className="space-y-3">
+        <div className="form-field-glass space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
             <Lock className="h-4 w-4" />
             Change Password

@@ -87,16 +87,22 @@ const Auth = () => {
   }
 
   return (
-    <div className="page-container flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
+    <div className="page-container auth-shell flex items-center justify-center p-4">
+      <div className="aurora-blob aurora-blob-emerald animate-aurora -left-24 top-12 h-72 w-72" />
+      <div className="aurora-blob aurora-blob-purple animate-aurora -right-24 bottom-8 h-80 w-80" />
+      <Card className="auth-panel">
+        <CardHeader className="hero-panel items-center border-b border-white/10 bg-white/[0.02] px-6 py-8 text-center">
+          <div className="hero-glow" />
+          <div className="relative flex items-center justify-center gap-3 mb-3">
             <div className="header-brand-primary">
               <Trophy className="h-6 w-6" />
             </div>
-            <CardTitle className="text-xl sm:text-2xl">Random Forest FC</CardTitle>
+            <div>
+              <div className="section-kicker mb-1">Player access</div>
+              <CardTitle className="header-wordmark">Random Forest FC</CardTitle>
+            </div>
           </div>
-          <p className="text-muted-foreground text-sm sm:text-base">Sign in to manage your league</p>
+          <p className="relative text-muted-foreground text-sm sm:text-base">Sign in to manage your league</p>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
@@ -107,7 +113,7 @@ const Auth = () => {
 
             <TabsContent value="signin" className="space-y-4">
               <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
+                <div className="form-field-glass">
                   <Label htmlFor="signin-email">Email</Label>
                   <Input 
                     id="signin-email"
@@ -117,7 +123,7 @@ const Auth = () => {
                     required 
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="form-field-glass">
                   <Label htmlFor="signin-password">Password</Label>
                   <Input 
                     id="signin-password"
@@ -151,7 +157,7 @@ const Auth = () => {
 
             <TabsContent value="signup" className="space-y-4">
               <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
+                <div className="form-field-glass">
                   <Label htmlFor="signup-name">Display Name</Label>
                   <Input 
                     id="signup-name"
@@ -161,7 +167,7 @@ const Auth = () => {
                     required 
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="form-field-glass">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input 
                     id="signup-email"
@@ -171,7 +177,7 @@ const Auth = () => {
                     required 
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="form-field-glass">
                   <Label htmlFor="signup-password">Password</Label>
                   <Input 
                     id="signup-password"
