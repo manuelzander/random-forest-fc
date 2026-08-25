@@ -254,11 +254,15 @@
 
   /* Shared status / achievement badge tokens */
   .status-badge {
-    @apply inline-flex items-center h-5 px-1.5 text-xs font-medium rounded-md !border-0;
+    @apply inline-flex items-center !h-5 !px-1.5 !py-0 !text-xs font-medium rounded-md !border-0;
   }
 
   .status-badge-compact {
-    @apply inline-flex items-center h-4 px-1 text-[10px] font-medium rounded-md !border-0;
+    @apply inline-flex items-center !h-4 !px-1 !py-0 !text-[10px] !leading-none font-medium rounded-md !border-0;
+  }
+
+  .status-badge-compact svg {
+    @apply h-2.5 w-2.5;
   }
 
   .status-badge-verified {
