@@ -334,13 +334,13 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           </div>
 
           {/* Captains Section */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-4">
             {/* Team 1 Captain */}
-            <div className="glass-form-section space-y-2">
-              <Label className="text-lg font-semibold">Team 1 Captain</Label>
+            <div className="space-y-2">
+              <Label className="sr-only">Team 1 Captain</Label>
               <Select value={team1Captain} onValueChange={setTeam1Captain}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Team 1 Captain" />
+                  <SelectValue placeholder="Team 1 captain" />
                 </SelectTrigger>
                 <SelectContent>
                   {team1Players.map((playerId) => (
@@ -353,11 +353,11 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             </div>
 
             {/* Team 2 Captain */}
-            <div className="glass-form-section space-y-2">
-              <Label className="text-lg font-semibold">Team 2 Captain</Label>
+            <div className="space-y-2">
+              <Label className="sr-only">Team 2 Captain</Label>
               <Select value={team2Captain} onValueChange={setTeam2Captain}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Team 2 Captain" />
+                  <SelectValue placeholder="Team 2 captain" />
                 </SelectTrigger>
                 <SelectContent>
                   {team2Players.map((playerId) => (
@@ -371,40 +371,37 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           </div>
 
           {/* Score Section */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="glass-form-section space-y-2">
-              <Label htmlFor="team1Goals">Team 1 Goals</Label>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="team1Goals" className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Team 1 goals</Label>
               <Input
                 id="team1Goals"
                 type="number"
                 min="0"
                 value={team1Goals}
                 onChange={(e) => setTeam1Goals(e.target.value)}
-                className="text-center text-xl font-bold"
+                className="text-center text-xl font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
             </div>
-            <div className="glass-form-section space-y-2">
-              <Label htmlFor="team2Goals">Team 2 Goals</Label>
+            <div className="space-y-2">
+              <Label htmlFor="team2Goals" className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Team 2 goals</Label>
               <Input
                 id="team2Goals"
                 type="number"
                 min="0"
                 value={team2Goals}
                 onChange={(e) => setTeam2Goals(e.target.value)}
-                className="text-center text-xl font-bold"
+                className="text-center text-xl font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
             </div>
           </div>
 
           {/* MVP Section */}
-          <div className="glass-form-section space-y-2">
-            <Label className="text-lg font-semibold flex items-center gap-2">
-              <Award className="h-5 w-5" />
-              MVP Player (Optional)
-            </Label>
+          <div className="space-y-2">
+            <Label className="sr-only">MVP Player (Optional)</Label>
             <Select value={mvpPlayer} onValueChange={setMvpPlayer}>
               <SelectTrigger>
-                <SelectValue placeholder="Select MVP from playing players (optional)" />
+                <SelectValue placeholder="MVP player (optional)" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem key="none" value="none">None</SelectItem>
@@ -418,15 +415,12 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           </div>
 
           {/* YouTube Video Section */}
-          <div className="glass-form-section space-y-2">
-            <Label htmlFor="youtubeUrl" className="text-lg font-semibold flex items-center gap-2">
-              <Video className="h-5 w-5" />
-              YouTube Video (Optional)
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="youtubeUrl" className="sr-only">YouTube Video (Optional)</Label>
             <Input
               id="youtubeUrl"
               type="url"
-              placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+              placeholder="YouTube video URL (optional)"
               value={youtubeUrl}
               onChange={(e) => setYoutubeUrl(e.target.value)}
             />

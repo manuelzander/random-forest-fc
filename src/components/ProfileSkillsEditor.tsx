@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Slider } from '@/components/ui/slider';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { User, Upload, X, Plus, Shuffle, Wand2, Download, MapPin, Clock, Heart, Zap } from 'lucide-react';
+import { User, Upload, X, Plus, Shuffle, Wand2, Download, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProfileData {
@@ -602,33 +602,27 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
         </CardHeader>
         <CardContent className="space-y-5 pt-6">
           {/* Bio */}
-          <div className="form-field-glass">
-            <Label htmlFor="bio" className="form-field-label">
-              <User className="form-field-label-icon" />
-              Bio
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="bio" className="sr-only">Bio</Label>
             <Textarea
               id="bio"
               placeholder="Tell us about yourself and your football journey..."
               value={profile.bio || ''}
               onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
               rows={3}
-              className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0 resize-none"
+              className="resize-none"
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="form-field-glass">
-              <Label htmlFor="position" className="form-field-label">
-                <MapPin className="form-field-label-icon" />
-                Favorite Position
-              </Label>
+            <div className="space-y-2">
+              <Label htmlFor="position" className="sr-only">Favorite Position</Label>
               <Select
                 value={profile.favorite_position || ''}
                 onValueChange={(value) => setProfile(prev => ({ ...prev, favorite_position: value }))}
               >
-                <SelectTrigger className="border-0 bg-transparent px-1 focus:ring-1 focus:ring-primary/50 focus:ring-offset-0">
-                  <SelectValue placeholder="Select a position" />
+                <SelectTrigger>
+                  <SelectValue placeholder="Favorite position" />
                 </SelectTrigger>
                 <SelectContent>
                   {FOOTBALL_POSITIONS.map(position => (
@@ -640,35 +634,28 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
               </Select>
             </div>
             
-            <div className="form-field-glass">
-              <Label htmlFor="years" className="form-field-label">
-                <Clock className="form-field-label-icon" />
-                Years Playing
-              </Label>
+            <div className="space-y-2">
+              <Label htmlFor="years" className="sr-only">Years Playing</Label>
               <Input
                 id="years"
                 type="number"
-                placeholder="Years of experience"
+                placeholder="Years playing"
                 value={profile.years_playing || ''}
                 onChange={(e) => setProfile(prev => ({ 
                   ...prev, 
                   years_playing: e.target.value ? parseInt(e.target.value) : undefined 
                 }))}
-                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
+                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
             </div>
 
-            <div className="form-field-glass">
-              <Label htmlFor="club" className="form-field-label">
-                <Heart className="form-field-label-icon" />
-                Favorite Club
-              </Label>
+            <div className="space-y-2">
+              <Label htmlFor="club" className="sr-only">Favorite Club</Label>
               <Input
                 id="club"
-                placeholder="e.g. Real Madrid, Barcelona"
+                placeholder="Favorite club, e.g. Real Madrid"
                 value={profile.favorite_club || ''}
                 onChange={(e) => setProfile(prev => ({ ...prev, favorite_club: e.target.value }))}
-                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
             </div>
           </div>
@@ -817,19 +804,15 @@ const ProfileSkillsEditor = forwardRef<{ handleSave: () => void }, Props>(({ use
             ))}
           </div>
           
-          <div className="form-field-glass">
-            <Label htmlFor="new-skill" className="form-field-label">
-              <Plus className="form-field-label-icon" />
-              Add Signature Moves
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="new-skill" className="sr-only">Add Signature Moves</Label>
             <div className="flex gap-2">
               <Input
                 id="new-skill"
-                placeholder="Custom signature move..."
+                placeholder="Add a custom signature move..."
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addSkill(newSkill)}
-                className="border-0 bg-transparent px-1 focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-0"
               />
               <Button 
                 onClick={() => addSkill(newSkill)} 
