@@ -312,16 +312,16 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
   return (
     <div className="space-y-6">
       {currentUserPlayer ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserCheck className="h-5 w-5" />
+        <Card className="overflow-hidden">
+          <CardHeader className="card-header-glass py-4">
+            <CardTitle className="card-header-glass-title">
+              <UserCheck className="card-header-glass-icon h-5 w-5" />
               Your Player
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
+              <Avatar className="avatar-glow h-16 w-16">
                 <AvatarImage src={avatarUrl || undefined} />
                 <AvatarFallback>
                   {currentUserPlayer.name.substring(0, 2).toUpperCase()}
@@ -355,9 +355,12 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Get Your Player</CardTitle>
+        <Card className="overflow-hidden">
+          <CardHeader className="card-header-glass py-4">
+            <CardTitle className="card-header-glass-title">
+              <UserPlus className="card-header-glass-icon h-5 w-5" />
+              Get Your Player
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-2">
@@ -390,7 +393,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
                     <h4 className="text-sm font-medium">Players</h4>
                     <div className="grid gap-2">
                       {availablePlayers.map((player) => (
-                        <div key={player.id} className="flex items-center justify-between p-3 border rounded-lg">
+                         <div key={player.id} className="glass-row flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <Avatar>
                               <AvatarFallback>
@@ -417,7 +420,7 @@ export const PlayerClaim = ({ players, currentUserPlayer, onPlayerClaimed }: Pla
                     <h4 className="text-sm font-medium">Guest Players</h4>
                     <div className="grid gap-2">
                       {guests.map((guest) => (
-                        <div key={guest.id} className="flex items-center justify-between p-3 border rounded-lg bg-muted/30">
+                         <div key={guest.id} className="glass-row flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <Avatar>
                               <AvatarFallback>
