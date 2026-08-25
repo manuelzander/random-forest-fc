@@ -113,23 +113,23 @@ const Auth = () => {
 
             <TabsContent value="signin" className="space-y-4">
               <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="form-field-glass">
-                  <Label htmlFor="signin-email">Email</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email" className="sr-only">Email</Label>
                   <Input 
                     id="signin-email"
                     name="email" 
                     type="email" 
-                    placeholder="Enter your email"
+                    placeholder="Email"
                     required 
                   />
                 </div>
-                <div className="form-field-glass">
-                  <Label htmlFor="signin-password">Password</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password" className="sr-only">Password</Label>
                   <Input 
                     id="signin-password"
                     name="password" 
                     type="password" 
-                    placeholder="Enter your password"
+                    placeholder="Password"
                     required 
                   />
                 </div>
@@ -157,33 +157,33 @@ const Auth = () => {
 
             <TabsContent value="signup" className="space-y-4">
               <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="form-field-glass">
-                  <Label htmlFor="signup-name">Display Name</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-name" className="sr-only">Display Name</Label>
                   <Input 
                     id="signup-name"
                     name="displayName" 
                     type="text" 
-                    placeholder="Enter your name"
+                    placeholder="Display name"
                     required 
                   />
                 </div>
-                <div className="form-field-glass">
-                  <Label htmlFor="signup-email">Email</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email" className="sr-only">Email</Label>
                   <Input 
                     id="signup-email"
                     name="email" 
                     type="email" 
-                    placeholder="Enter your email"
+                    placeholder="Email"
                     required 
                   />
                 </div>
-                <div className="form-field-glass">
-                  <Label htmlFor="signup-password">Password</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password" className="sr-only">Password</Label>
                   <Input 
                     id="signup-password"
                     name="password" 
                     type="password" 
-                    placeholder="Enter your password"
+                    placeholder="Password (min. 6 characters)"
                     required 
                     minLength={6}
                   />
