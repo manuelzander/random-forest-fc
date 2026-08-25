@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUp, ArrowDown, Trophy, Target, Users, Award, CheckCircle, User } from 'lucide-react';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import { supabase } from '@/integrations/supabase/client';
+import { useSeasons } from '@/hooks/useSeasons';
+
 
 interface PlayerWithProfile extends Player {
   profile?: {
