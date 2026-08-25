@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSeasons } from '@/hooks/useSeasons';
-import { ChevronDown, History } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
