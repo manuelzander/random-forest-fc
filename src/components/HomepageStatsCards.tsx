@@ -108,13 +108,13 @@ const HomepageStatsCards = ({
         const response = archiveSeasonId
           ? await supabase
               .from('archived_games')
-              .select('id, team1_goals, team2_goals, mvp_player, created_at')
+              .select('id, team1_goals, team2_goals, mvp_player, created_at, team1_players, team2_players')
               .eq('season_id', archiveSeasonId)
               .order('created_at', { ascending: false })
               .limit(1)
           : await supabase
               .from('games')
-              .select('id, team1_goals, team2_goals, mvp_player, created_at')
+              .select('id, team1_goals, team2_goals, mvp_player, created_at, team1_players, team2_players')
               .order('created_at', { ascending: false })
               .limit(1);
 
