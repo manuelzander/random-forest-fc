@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import { CalendarDays, Crown, Trophy, Users } from 'lucide-react';
+import { CalendarDays, Crown, History, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllPages } from '@/lib/fetchAllPages';
@@ -8,7 +8,6 @@ import type { Player } from '@/types';
 
 interface HomepageStatsCardsProps {
   archiveSeasonId?: string | null;
-  totalPlayers: number;
   totalGames: number;
   players: Player[];
   isSeasonDataLoading?: boolean;
@@ -21,11 +20,18 @@ interface SummaryGame {
   pitch_size?: string | null;
 }
 
+interface LastGame {
+  id: string;
+  team1_goals: number;
+  team2_goals: number;
+  mvp_player?: string | null;
+  created_at: string;
+}
+
 const getPitchCapacity = (pitchSize?: string | null) => (pitchSize === 'small' ? 12 : 14);
 
 const HomepageStatsCards = ({
   archiveSeasonId = null,
-  totalPlayers,
   totalGames,
   players,
   isSeasonDataLoading = false,
@@ -34,6 +40,8 @@ const HomepageStatsCards = ({
   const [nextGame, setNextGame] = useState<SummaryGame | null>(null);
   const [nextGameSignupCount, setNextGameSignupCount] = useState(0);
   const [isNextGameLoading, setIsNextGameLoading] = useState(true);
+  const [lastGame, setLastGame] = useState<LastGame | null>(null);
+  const [isLastGameLoading, setIsLastGameLoading] = useState(true);
 
   useEffect(() => {
     let isActive = true;
@@ -41,46 +49,37 @@ const HomepageStatsCards = ({
     const fetchNextGame = async () => {
       setIsNextGameLoading(true);
 
+      // Archived seasons have no upcoming fixtures.
+      if (archiveSeasonId) {
+        if (isActive) {
+          setNextGame(null);
+          setNextGameSignupCount(0);
+          setIsNextGameLoading(false);
+        }
+        return;
+      }
+
       try {
-        const gamesResponse = archiveSeasonId
-          ? await supabase
-              .from('archived_games_schedule')
-              .select('id, scheduled_at, pitch_size')
-              .eq('season_id', archiveSeasonId)
-              .order('scheduled_at', { ascending: true })
-              .limit(1)
-          : await supabase
-              .from('games_schedule')
-              .select('id, scheduled_at, pitch_size')
-              .gte('scheduled_at', new Date().toISOString())
-              .order('scheduled_at', { ascending: true })
-              .limit(1);
+        const gamesResponse = await supabase
+          .from('games_schedule')
+          .select('id, scheduled_at, pitch_size')
+          .gte('scheduled_at', new Date().toISOString())
+          .order('scheduled_at', { ascending: true })
+          .limit(1);
 
         if (gamesResponse.error) throw gamesResponse.error;
         const game = ((gamesResponse.data || [])[0] as SummaryGame | undefined) || null;
 
         let signupCount = 0;
         if (game) {
-          if (archiveSeasonId) {
-            const signups = await fetchAllPages<{ id: string }>((from, to) =>
-              supabase
-                .from('archived_games_schedule_signups')
-                .select('id')
-                .eq('season_id', archiveSeasonId)
-                .eq('game_schedule_id', game.id)
-                .range(from, to),
-            );
-            signupCount = signups.length;
-          } else {
-            const signups = await fetchAllPages<{ id: string }>((from, to) =>
-              supabase
-                .from('games_schedule_signups')
-                .select('id')
-                .eq('game_schedule_id', game.id)
-                .range(from, to),
-            );
-            signupCount = signups.length;
-          }
+          const signups = await fetchAllPages<{ id: string }>((from, to) =>
+            supabase
+              .from('games_schedule_signups')
+              .select('id')
+              .eq('game_schedule_id', game.id)
+              .range(from, to),
+          );
+          signupCount = signups.length;
         }
 
         if (!isActive) return;
@@ -98,7 +97,36 @@ const HomepageStatsCards = ({
       }
     };
 
+    const fetchLastGame = async () => {
+      setIsLastGameLoading(true);
+
+      try {
+        const response = archiveSeasonId
+          ? await supabase
+              .from('archived_games')
+              .select('id, team1_goals, team2_goals, mvp_player, created_at')
+              .eq('season_id', archiveSeasonId)
+              .order('created_at', { ascending: false })
+              .limit(1)
+          : await supabase
+              .from('games')
+              .select('id, team1_goals, team2_goals, mvp_player, created_at')
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+        if (response.error) throw response.error;
+        if (!isActive) return;
+        setLastGame(((response.data || [])[0] as LastGame | undefined) || null);
+      } catch (error) {
+        console.error('Error fetching homepage last game:', error);
+        if (isActive) setLastGame(null);
+      } finally {
+        if (isActive) setIsLastGameLoading(false);
+      }
+    };
+
     fetchNextGame();
+    fetchLastGame();
 
     return () => {
       isActive = false;
@@ -111,10 +139,15 @@ const HomepageStatsCards = ({
       .sort((a, b) => b.mvp_awards - a.mvp_awards || b.points - a.points || a.name.localeCompare(b.name))[0];
   }, [players]);
 
+  const lastGameMvpName = useMemo(() => {
+    if (!lastGame?.mvp_player) return null;
+    return players.find((player) => player.id === lastGame.mvp_player)?.name || null;
+  }, [lastGame, players]);
+
   const pitchCapacity = nextGame ? getPitchCapacity(nextGame.pitch_size) : 14;
   const signupProgress = Math.min(100, Math.round((nextGameSignupCount / pitchCapacity) * 100));
   const nextGameDate = nextGame ? new Date(nextGame.scheduled_at) : null;
-  const nextGameLabel = archiveSeasonId ? 'Season opener' : 'Next game';
+  const lastGameDate = lastGame ? new Date(lastGame.created_at) : null;
 
   return (
     <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5" aria-label="Homepage summary">
@@ -123,16 +156,12 @@ const HomepageStatsCards = ({
         <div className="relative flex min-h-[13rem] flex-col justify-between gap-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <span className="section-kicker">{nextGameLabel}</span>
+              <span className="section-kicker">Next game</span>
               {isNextGameLoading ? (
                 <div className="mt-4 h-8 w-44 animate-pulse rounded-md bg-white/10" />
-              ) : nextGameDate ? (
-                <h2 className="mt-2 font-display text-3xl leading-none tracking-wide text-foreground sm:text-4xl">
-                  {format(nextGameDate, 'EEE, MMM d')}
-                </h2>
               ) : (
                 <h2 className="mt-2 font-display text-3xl leading-none tracking-wide text-foreground sm:text-4xl">
-                  No fixture
+                  {nextGameDate ? format(nextGameDate, 'EEE, MMM d') : 'No fixture'}
                 </h2>
               )}
             </div>
@@ -154,7 +183,7 @@ const HomepageStatsCards = ({
                 <span className="text-muted-foreground/40">•</span>
                 <span>{nextGame.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}</span>
                 <span className="text-muted-foreground/40">•</span>
-                <span>{archiveSeasonId ? format(nextGameDate, 'yyyy') : formatDistanceToNowStrict(nextGameDate, { addSuffix: true })}</span>
+                <span>{formatDistanceToNowStrict(nextGameDate, { addSuffix: true })}</span>
               </p>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -174,7 +203,7 @@ const HomepageStatsCards = ({
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                {archiveSeasonId ? 'No archived schedule is available for this season.' : 'No upcoming game is scheduled yet'}
+                {archiveSeasonId ? 'No more fixtures planned' : 'No upcoming game is scheduled yet'}
               </p>
               {onOpenSchedule && (
                 <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenSchedule}>
@@ -188,12 +217,28 @@ const HomepageStatsCards = ({
 
       <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
         <div className="flex w-full items-start justify-between gap-3">
-          <span className="section-kicker">Total Players</span>
-          <Users className="h-5 w-5 text-primary" />
+          <span className="section-kicker">Last Game</span>
+          <History className="h-5 w-5 text-primary" />
         </div>
-        <div>
-          <span className="font-display text-5xl leading-none text-foreground">{isSeasonDataLoading ? '—' : totalPlayers}</span>
-          <p className="mt-2 text-sm text-muted-foreground">Registered players</p>
+        <div className="min-w-0">
+          {isLastGameLoading ? (
+            <div className="h-10 w-24 animate-pulse rounded-md bg-white/10" />
+          ) : lastGame ? (
+            <>
+              <span className="font-display text-4xl leading-none text-foreground">
+                {lastGame.team1_goals} - {lastGame.team2_goals}
+              </span>
+              <p className="mt-2 truncate text-sm text-muted-foreground">
+                {lastGameDate ? format(lastGameDate, 'EEE, MMM d') : ''}
+                {lastGameMvpName ? ` • MVP ${lastGameMvpName}` : ''}
+              </p>
+            </>
+          ) : (
+            <>
+              <span className="font-display text-3xl leading-none text-foreground">No result</span>
+              <p className="mt-2 text-sm text-muted-foreground">No results recorded yet</p>
+            </>
+          )}
         </div>
       </div>
 
