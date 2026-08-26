@@ -202,7 +202,6 @@ const Index = () => {
         {/* Stats Cards */}
         <HomepageStatsCards
           archiveSeasonId={archiveSeasonId}
-          totalPlayers={displayedPlayers.length}
           totalGames={totalGames}
           players={displayedPlayers}
           isSeasonDataLoading={archivedLoading}
