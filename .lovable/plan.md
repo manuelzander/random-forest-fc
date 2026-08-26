@@ -3,27 +3,27 @@
 ## Changes
 
 1. Next Game card
-   - Remove the year (e.g. "2025") from the archived variant of the meta line.
-   - In an archived season, do not render the Next Game card at all.
+   - Never show a year in the date or meta line, in any season (live or archived).
+   - In an archived season, still render the card, with an empty state: "No more fixtures planned".
 
 2. New Last Game card
    - Replaces the Total Players card.
-   - Shows the most recent recorded result: date, scoreline (e.g. 5 - 3), and MVP name if set.
-   - Works in both live and archived seasons (archived reads the season's archived results).
+   - Shows the most recent recorded result: date (no year), scoreline (e.g. 5 - 3), and MVP name if set.
+   - Works in both live and archived seasons (archived reads that season's archived results).
    - Empty state: "No results recorded yet".
 
 3. Layout
-   - Live season: Next Game (wide) + Last Game + Games Played + MVP Race.
-   - Archived season: Last Game (wide) + Games Played + MVP Race, no Next Game.
-   - Grid column spans adjust so both cases fill the row cleanly on desktop and stack on mobile.
+   - Unchanged structure in both live and archived views: Next Game (wide) + Last Game + Games Played + MVP Race.
+   - Mobile stacks cleanly as today.
 
 ## Technical details
 
-- Edit `src/components/HomepageStatsCards.tsx` only; `Index.tsx` keeps passing the same props (the now-unused `totalPlayers` prop is removed from the component and its call site).
-- Last game source: `games` ordered by `created_at desc limit 1` for the live season; `archived_games` filtered by `season_id` for archived.
-- MVP name resolved from the already-passed `players` list by `mvp_player` id.
-- Skip the next-game fetch entirely when `archiveSeasonId` is set.
-- Reuse existing tokens: `glass-panel`, `stat-tile`, `section-kicker`, no hardcoded colors.
+- Edit `src/components/HomepageStatsCards.tsx` only; the now-unused `totalPlayers` prop is dropped from the component and its call site in `Index.tsx`.
+- Date formats: `EEE, MMM d` headline and `h:mm a` time only — no `yyyy` anywhere in these cards.
+- Next game: live reads upcoming `games_schedule`; archived shows the empty state without fetching a fixture.
+- Last game: `games` ordered by `created_at desc limit 1` for live; `archived_games` filtered by `season_id` for archived.
+- MVP name resolved from the already-passed `players` list via `mvp_player`.
+- Reuse existing tokens: `glass-panel`, `stat-tile`, `section-kicker`; no hardcoded colors.
 
 ## Validation
 
