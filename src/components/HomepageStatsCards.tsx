@@ -12,6 +12,7 @@ interface HomepageStatsCardsProps {
   players: Player[];
   isSeasonDataLoading?: boolean;
   onOpenSchedule?: () => void;
+  onOpenGames?: () => void;
 }
 
 interface SummaryGame {
