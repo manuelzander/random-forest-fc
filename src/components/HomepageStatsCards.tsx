@@ -12,6 +12,7 @@ interface HomepageStatsCardsProps {
   players: Player[];
   isSeasonDataLoading?: boolean;
   onOpenSchedule?: () => void;
+  onOpenGames?: () => void;
 }
 
 interface SummaryGame {
@@ -26,6 +27,8 @@ interface LastGame {
   team2_goals: number;
   mvp_player?: string | null;
   created_at: string;
+  team1_players?: string[] | null;
+  team2_players?: string[] | null;
 }
 
 const getPitchCapacity = (pitchSize?: string | null) => (pitchSize === 'small' ? 12 : 14);
@@ -36,6 +39,7 @@ const HomepageStatsCards = ({
   players,
   isSeasonDataLoading = false,
   onOpenSchedule,
+  onOpenGames,
 }: HomepageStatsCardsProps) => {
   const [nextGame, setNextGame] = useState<SummaryGame | null>(null);
   const [nextGameSignupCount, setNextGameSignupCount] = useState(0);
@@ -104,13 +108,13 @@ const HomepageStatsCards = ({
         const response = archiveSeasonId
           ? await supabase
               .from('archived_games')
-              .select('id, team1_goals, team2_goals, mvp_player, created_at')
+              .select('id, team1_goals, team2_goals, mvp_player, created_at, team1_players, team2_players')
               .eq('season_id', archiveSeasonId)
               .order('created_at', { ascending: false })
               .limit(1)
           : await supabase
               .from('games')
-              .select('id, team1_goals, team2_goals, mvp_player, created_at')
+              .select('id, team1_goals, team2_goals, mvp_player, created_at, team1_players, team2_players')
               .order('created_at', { ascending: false })
               .limit(1);
 
