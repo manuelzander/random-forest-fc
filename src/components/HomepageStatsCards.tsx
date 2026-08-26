@@ -236,7 +236,7 @@ const HomepageStatsCards = ({
           ) : (
             <>
               <span className="font-display text-3xl leading-none text-foreground">No result</span>
-              <p className="mt-2 text-sm text-muted-foreground">No results recorded yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">No results yet</p>
             </>
           )}
         </div>
