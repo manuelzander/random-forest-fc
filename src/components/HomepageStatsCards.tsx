@@ -27,6 +27,8 @@ interface LastGame {
   team2_goals: number;
   mvp_player?: string | null;
   created_at: string;
+  team1_players?: string[] | null;
+  team2_players?: string[] | null;
 }
 
 const getPitchCapacity = (pitchSize?: string | null) => (pitchSize === 'small' ? 12 : 14);
