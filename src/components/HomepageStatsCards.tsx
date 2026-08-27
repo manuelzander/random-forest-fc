@@ -152,9 +152,12 @@ const HomepageStatsCards = ({
   const signupProgress = Math.min(100, Math.round((nextGameSignupCount / pitchCapacity) * 100));
   const nextGameDate = nextGame ? new Date(nextGame.scheduled_at) : null;
   const lastGameDate = lastGame ? new Date(lastGame.created_at) : null;
+  const lastGamePlayerCount = lastGame
+    ? (lastGame.team1_players?.length || 0) + (lastGame.team2_players?.length || 0)
+    : 0;
 
   return (
-    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5" aria-label="Homepage summary">
+    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6" aria-label="Homepage summary">
       <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
         <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex min-h-[13rem] flex-col justify-between gap-6">
@@ -219,29 +222,69 @@ const HomepageStatsCards = ({
         </div>
       </div>
 
-      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
-        <div className="flex w-full items-start justify-between gap-3">
-          <span className="section-kicker">Last Game</span>
-          <History className="h-5 w-5 text-primary" />
-        </div>
-        <div className="min-w-0">
+      <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
+        <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex min-h-[13rem] flex-col justify-between gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <span className="section-kicker">Last game</span>
+              {isLastGameLoading ? (
+                <div className="mt-4 h-8 w-44 animate-pulse rounded-md bg-white/10" />
+              ) : (
+                <h2 className="mt-2 font-display text-3xl leading-none tracking-wide text-foreground sm:text-4xl">
+                  {lastGameDate ? format(lastGameDate, 'EEE, MMM d') : 'No result'}
+                </h2>
+              )}
+            </div>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-primary">
+              <History className="h-5 w-5" />
+            </div>
+          </div>
+
           {isLastGameLoading ? (
-            <div className="h-10 w-24 animate-pulse rounded-md bg-white/10" />
+            <div className="space-y-3">
+              <div className="h-4 w-36 animate-pulse rounded bg-white/10" />
+              <div className="h-8 w-24 animate-pulse rounded bg-white/10" />
+            </div>
           ) : lastGame ? (
-            <>
-              <span className="font-display text-4xl leading-none text-foreground">
-                {lastGame.team1_goals} - {lastGame.team2_goals}
-              </span>
-              <p className="mt-2 truncate text-sm text-muted-foreground">
-                {lastGameDate ? format(lastGameDate, 'EEE, MMM d') : ''}
-                {lastGameMvpName ? ` • MVP ${lastGameMvpName}` : ''}
+            <div className="space-y-4">
+              <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                <span>{lastGameDate ? format(lastGameDate, 'h:mm a') : ''}</span>
+                {lastGamePlayerCount > 0 && (
+                  <>
+                    <span className="text-muted-foreground/40">•</span>
+                    <span>{lastGamePlayerCount} players</span>
+                  </>
+                )}
+                {lastGameMvpName && (
+                  <>
+                    <span className="text-muted-foreground/40">•</span>
+                    <span className="truncate">MVP {lastGameMvpName}</span>
+                  </>
+                )}
               </p>
-            </>
+              <div className="space-y-2">
+                <div className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Result</div>
+                <span className="font-display text-4xl leading-none text-foreground">
+                  {lastGame.team1_goals} - {lastGame.team2_goals}
+                </span>
+              </div>
+              {onOpenGames && (
+                <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenGames}>
+                  View Games
+                </Button>
+              )}
+            </div>
           ) : (
-            <>
-              <span className="font-display text-3xl leading-none text-foreground">No result</span>
-              <p className="mt-2 text-sm text-muted-foreground">No results yet</p>
-            </>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">No results yet</p>
+              {onOpenGames && (
+                <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenGames}>
+                  View Games
+                </Button>
+              )}
+            </div>
           )}
         </div>
       </div>
