@@ -440,6 +440,12 @@
     @apply text-[10px] font-semibold uppercase tracking-[0.2em] text-primary/80;
   }
 
+  .card-action-link {
+    @apply inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary transition-colors hover:text-primary/70;
+  }
+
+
+
 
   /* Aurora background blobs */
   .aurora-blob {
