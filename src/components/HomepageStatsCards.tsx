@@ -160,7 +160,7 @@ const HomepageStatsCards = ({
     <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6" aria-label="Homepage summary">
       <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
         <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative flex min-h-[13rem] flex-col justify-between gap-6">
+        <div className="relative flex min-h-[13rem] flex-col gap-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="section-kicker">Next game</span>
@@ -183,7 +183,7 @@ const HomepageStatsCards = ({
               <div className="h-2 w-full animate-pulse rounded-full bg-white/10" />
             </div>
           ) : nextGameDate ? (
-            <div className="space-y-4">
+            <>
               <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                 <span>{format(nextGameDate, 'h:mm a')}</span>
@@ -192,7 +192,7 @@ const HomepageStatsCards = ({
                 <span className="text-muted-foreground/40">•</span>
                 <span>{formatDistanceToNowStrict(nextGameDate, { addSuffix: true })}</span>
               </p>
-              <div className="space-y-2">
+              <div className="mt-auto space-y-2">
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                   <span>Signed up</span>
                   <span className="text-primary">{nextGameSignupCount} / {pitchCapacity}</span>
@@ -201,22 +201,19 @@ const HomepageStatsCards = ({
                   <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${signupProgress}%` }} />
                 </div>
               </div>
-              {onOpenSchedule && (
-                <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenSchedule}>
-                  View Schedule
-                </Button>
-              )}
-            </div>
+            </>
           ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                {archiveSeasonId ? 'No more fixtures planned' : 'No upcoming game is scheduled yet'}
-              </p>
-              {onOpenSchedule && (
-                <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenSchedule}>
-                  View Schedule
-                </Button>
-              )}
+            <p className="mt-auto text-sm text-muted-foreground">
+              {archiveSeasonId ? 'No more fixtures planned' : 'No upcoming game is scheduled yet'}
+            </p>
+          )}
+
+          {onOpenSchedule && (
+            <div className="border-t border-white/10 pt-3">
+              <button type="button" onClick={onOpenSchedule} className="card-action-link">
+                View Schedule
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
             </div>
           )}
         </div>
@@ -224,7 +221,7 @@ const HomepageStatsCards = ({
 
       <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
         <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative flex min-h-[13rem] flex-col justify-between gap-6">
+        <div className="relative flex min-h-[13rem] flex-col gap-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="section-kicker">Last game</span>
@@ -247,7 +244,7 @@ const HomepageStatsCards = ({
               <div className="h-8 w-24 animate-pulse rounded bg-white/10" />
             </div>
           ) : lastGame ? (
-            <div className="space-y-4">
+            <>
               <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
                 <span>{lastGameDate ? format(lastGameDate, 'h:mm a') : ''}</span>
@@ -264,30 +261,39 @@ const HomepageStatsCards = ({
                   </>
                 )}
               </p>
-              <div className="space-y-2">
-                <div className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Result</div>
-                <span className="font-display text-4xl leading-none text-foreground">
-                  {lastGame.team1_goals} - {lastGame.team2_goals}
+              <div className="mt-auto flex items-center gap-3">
+                <span
+                  className={`font-display text-4xl leading-none ${
+                    lastGame.team1_goals >= lastGame.team2_goals ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                >
+                  {lastGame.team1_goals}
+                </span>
+                <span className="text-sm text-muted-foreground/50">vs</span>
+                <span
+                  className={`font-display text-4xl leading-none ${
+                    lastGame.team2_goals >= lastGame.team1_goals ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                >
+                  {lastGame.team2_goals}
                 </span>
               </div>
-              {onOpenGames && (
-                <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenGames}>
-                  View Games
-                </Button>
-              )}
-            </div>
+            </>
           ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">No results yet</p>
-              {onOpenGames && (
-                <Button type="button" size="sm" variant="outline" className="header-nav-button" onClick={onOpenGames}>
-                  View Games
-                </Button>
-              )}
+            <p className="mt-auto text-sm text-muted-foreground">No results yet</p>
+          )}
+
+          {onOpenGames && (
+            <div className="border-t border-white/10 pt-3">
+              <button type="button" onClick={onOpenGames} className="card-action-link">
+                View Games
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
             </div>
           )}
         </div>
       </div>
+
 
       <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
         <div className="flex w-full items-start justify-between gap-3">
