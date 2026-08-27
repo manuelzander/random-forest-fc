@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import { CalendarDays, Crown, History, Trophy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CalendarDays, ChevronRight, Crown, History, Trophy } from 'lucide-react';
+
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllPages } from '@/lib/fetchAllPages';
 import type { Player } from '@/types';
