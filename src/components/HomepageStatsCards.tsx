@@ -152,9 +152,12 @@ const HomepageStatsCards = ({
   const signupProgress = Math.min(100, Math.round((nextGameSignupCount / pitchCapacity) * 100));
   const nextGameDate = nextGame ? new Date(nextGame.scheduled_at) : null;
   const lastGameDate = lastGame ? new Date(lastGame.created_at) : null;
+  const lastGamePlayerCount = lastGame
+    ? (lastGame.team1_players?.length || 0) + (lastGame.team2_players?.length || 0)
+    : 0;
 
   return (
-    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5" aria-label="Homepage summary">
+    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6" aria-label="Homepage summary">
       <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
         <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex min-h-[13rem] flex-col justify-between gap-6">
