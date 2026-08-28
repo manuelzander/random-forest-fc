@@ -842,74 +842,19 @@ const AdminScheduleManagement = () => {
       <Dialog open={!!editingGame} onOpenChange={(open) => !open && setEditingGame(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Scheduled Game</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">Edit Scheduled Game</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Date</Label>
-              <Popover open={editDatePopoverOpen} onOpenChange={setEditDatePopoverOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !editGameDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {editGameDate ? format(editGameDate, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={editGameDate}
-                    onSelect={(date) => {
-                      setEditGameDate(date);
-                      setEditDatePopoverOpen(false);
-                    }}
-                    initialFocus
-                    className="p-3 pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Time</Label>
-              <Input
-                type="time"
-                value={editGameTime}
-                onChange={(e) => setEditGameTime(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Pitch Size</Label>
-              <Select value={editPitchSize} onValueChange={setEditPitchSize}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select pitch size" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border shadow-lg z-50">
-                  <SelectItem value="none">No preference</SelectItem>
-                  <SelectItem value="small">Small pitch</SelectItem>
-                  <SelectItem value="big">Big pitch</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Total Cost (£)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                value={editTotalCost}
-                onChange={(e) => setEditTotalCost(e.target.value)}
-                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-            </div>
-          </div>
+          <ScheduleFormFields
+            idPrefix="edit-game"
+            date={editGameDate}
+            onDateChange={setEditGameDate}
+            time={editGameTime}
+            onTimeChange={setEditGameTime}
+            pitchSize={editPitchSize}
+            onPitchSizeChange={setEditPitchSize}
+            totalCost={editTotalCost}
+            onTotalCostChange={setEditTotalCost}
+          />
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingGame(null)}>
               Cancel
