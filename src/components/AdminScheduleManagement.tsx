@@ -21,6 +21,110 @@ import { fetchAllPages } from '@/lib/fetchAllPages';
 
 import GuestNameAutocomplete from './GuestNameAutocomplete';
 
+interface ScheduleFormFieldsProps {
+  idPrefix: string;
+  date?: Date;
+  onDateChange: (date?: Date) => void;
+  time: string;
+  onTimeChange: (time: string) => void;
+  pitchSize: string;
+  onPitchSizeChange: (value: string) => void;
+  totalCost: string;
+  onTotalCostChange: (value: string) => void;
+  disablePastDates?: boolean;
+}
+
+const ScheduleFormFields = ({
+  idPrefix,
+  date,
+  onDateChange,
+  time,
+  onTimeChange,
+  pitchSize,
+  onPitchSizeChange,
+  totalCost,
+  onTotalCostChange,
+  disablePastDates,
+}: ScheduleFormFieldsProps) => {
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+
+  return (
+    <div className="space-y-4 py-2">
+      <div className="space-y-2">
+        <Label className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Date</Label>
+        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, "PPP") : "Pick a date"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(value) => {
+                onDateChange(value);
+                setDatePopoverOpen(false);
+              }}
+              disabled={disablePastDates ? (d) => d < new Date(new Date().setHours(0, 0, 0, 0)) : undefined}
+              initialFocus
+              className="p-3 pointer-events-auto"
+              modifiers={{ tuesday: (d) => d.getDay() === 2 }}
+              modifiersClassNames={{
+                tuesday: "bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] hover:bg-[hsl(var(--aurora-blue))]/25 hover:text-[hsl(var(--aurora-blue))]",
+              }}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor={`${idPrefix}-time`} className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Kick-off time</Label>
+        <Input
+          id={`${idPrefix}-time`}
+          type="time"
+          value={time}
+          onChange={(e) => onTimeChange(e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Pitch size</Label>
+        <Select value={pitchSize} onValueChange={onPitchSizeChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Pitch size (optional)" />
+          </SelectTrigger>
+          <SelectContent className="bg-background border shadow-lg z-50">
+            <SelectItem value="none">No preference</SelectItem>
+            <SelectItem value="small">Small pitch</SelectItem>
+            <SelectItem value="big">Big pitch</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor={`${idPrefix}-cost`} className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Total cost (£)</Label>
+        <Input
+          id={`${idPrefix}-cost`}
+          type="number"
+          step="0.01"
+          min="0"
+          value={totalCost}
+          onChange={(e) => onTotalCostChange(e.target.value)}
+          className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+      </div>
+    </div>
+  );
+};
+
 const AdminScheduleManagement = () => {
   const { user } = useAuth();
   const { toast } = useToast();
