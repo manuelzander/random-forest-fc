@@ -569,100 +569,6 @@ const AdminScheduleManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Create New Scheduled Game */}
-      <Card className="overflow-hidden">
-        <CardHeader className="card-header-glass py-4">
-          <CardTitle className="card-header-glass-title">
-            <Plus className="card-header-glass-icon h-5 w-5" />
-            Schedule New Game
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <Label className="sr-only">Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !newGameDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {newGameDate ? format(newGameDate, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={newGameDate}
-                    onSelect={setNewGameDate}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                    className="p-3 pointer-events-auto"
-                    modifiers={{
-                      tuesday: (date) => date.getDay() === 2,
-                    }}
-                    modifiersClassNames={{
-                      tuesday: "bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] hover:bg-[hsl(var(--aurora-blue))]/25 hover:text-[hsl(var(--aurora-blue))]",
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="new-game-time" className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Kick-off time</Label>
-              <Input
-                id="new-game-time"
-                type="time"
-                value={newGameTime}
-                onChange={(e) => setNewGameTime(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="sr-only">Pitch Size (Optional)</Label>
-              <Select value={newPitchSize} onValueChange={setNewPitchSize}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pitch size (optional)" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border shadow-lg z-50">
-                  <SelectItem value="none">No preference</SelectItem>
-                  <SelectItem value="small">Small pitch</SelectItem>
-                  <SelectItem value="big">Big pitch</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="new-total-cost" className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Total cost (£)</Label>
-              <Input
-                id="new-total-cost"
-                type="number"
-                step="0.01"
-                min="0"
-                value={newTotalCost}
-                onChange={(e) => setNewTotalCost(e.target.value)}
-                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-            </div>
-
-            <div className="flex items-end">
-              <Button 
-                onClick={createScheduledGame}
-                disabled={!newGameDate || !newGameTime || isCreating}
-                className="w-full"
-              >
-                {isCreating ? "Creating..." : "Schedule Game"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Scheduled Games List */}
       <Card className="overflow-hidden">
         <CardHeader className="card-header-glass py-4">
@@ -671,16 +577,50 @@ const AdminScheduleManagement = () => {
             Schedule Management
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <CardContent className="p-0">
+          <div className="management-toolbar">
             <h3 className="management-count">Scheduled Games ({scheduledGames.length})</h3>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" onClick={openCreateDialog}>
+                  <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Schedule Game</span>
+                  <span className="sm:hidden">Schedule</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-base sm:text-lg">Schedule New Game</DialogTitle>
+                </DialogHeader>
+                <ScheduleFormFields
+                  idPrefix="new-game"
+                  date={newGameDate}
+                  onDateChange={setNewGameDate}
+                  time={newGameTime}
+                  onTimeChange={setNewGameTime}
+                  pitchSize={newPitchSize}
+                  onPitchSizeChange={setNewPitchSize}
+                  totalCost={newTotalCost}
+                  onTotalCostChange={setNewTotalCost}
+                  disablePastDates
+                />
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={createScheduledGame} disabled={!newGameDate || !newGameTime || isCreating}>
+                    {isCreating ? "Creating..." : "Schedule Game"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
           {scheduledGames.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              No scheduled games yet. Create your first one above!
+              No scheduled games yet. Schedule your first game to get started.
             </p>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-6 p-4 sm:p-6">
               {scheduledGames.map((game) => (
                 <div key={game.id} className="glass-row space-y-3 sm:space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
