@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil } from 'lucide-react';
@@ -170,7 +170,6 @@ const AdminScheduleManagement = () => {
   const [editPitchSize, setEditPitchSize] = useState<string>('');
   const [editTotalCost, setEditTotalCost] = useState<string>('98');
   const [isUpdating, setIsUpdating] = useState(false);
-  const [editDatePopoverOpen, setEditDatePopoverOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
