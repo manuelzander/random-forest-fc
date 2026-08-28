@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil } from 'lucide-react';
@@ -20,6 +20,110 @@ import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 import { fetchAllPages } from '@/lib/fetchAllPages';
 
 import GuestNameAutocomplete from './GuestNameAutocomplete';
+
+interface ScheduleFormFieldsProps {
+  idPrefix: string;
+  date?: Date;
+  onDateChange: (date?: Date) => void;
+  time: string;
+  onTimeChange: (time: string) => void;
+  pitchSize: string;
+  onPitchSizeChange: (value: string) => void;
+  totalCost: string;
+  onTotalCostChange: (value: string) => void;
+  disablePastDates?: boolean;
+}
+
+const ScheduleFormFields = ({
+  idPrefix,
+  date,
+  onDateChange,
+  time,
+  onTimeChange,
+  pitchSize,
+  onPitchSizeChange,
+  totalCost,
+  onTotalCostChange,
+  disablePastDates,
+}: ScheduleFormFieldsProps) => {
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+
+  return (
+    <div className="space-y-4 py-2">
+      <div className="space-y-2">
+        <Label className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Date</Label>
+        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, "PPP") : "Pick a date"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(value) => {
+                onDateChange(value);
+                setDatePopoverOpen(false);
+              }}
+              disabled={disablePastDates ? (d) => d < new Date(new Date().setHours(0, 0, 0, 0)) : undefined}
+              initialFocus
+              className="p-3 pointer-events-auto"
+              modifiers={{ tuesday: (d) => d.getDay() === 2 }}
+              modifiersClassNames={{
+                tuesday: "bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] hover:bg-[hsl(var(--aurora-blue))]/25 hover:text-[hsl(var(--aurora-blue))]",
+              }}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor={`${idPrefix}-time`} className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Kick-off time</Label>
+        <Input
+          id={`${idPrefix}-time`}
+          type="time"
+          value={time}
+          onChange={(e) => onTimeChange(e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Pitch size</Label>
+        <Select value={pitchSize} onValueChange={onPitchSizeChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Pitch size (optional)" />
+          </SelectTrigger>
+          <SelectContent className="bg-background border shadow-lg z-50">
+            <SelectItem value="none">No preference</SelectItem>
+            <SelectItem value="small">Small pitch</SelectItem>
+            <SelectItem value="big">Big pitch</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor={`${idPrefix}-cost`} className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Total cost (£)</Label>
+        <Input
+          id={`${idPrefix}-cost`}
+          type="number"
+          step="0.01"
+          min="0"
+          value={totalCost}
+          onChange={(e) => onTotalCostChange(e.target.value)}
+          className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+      </div>
+    </div>
+  );
+};
 
 const AdminScheduleManagement = () => {
   const { user } = useAuth();
@@ -40,11 +144,24 @@ const AdminScheduleManagement = () => {
     return nextTuesday;
   };
   
-  const [newGameDate, setNewGameDate] = useState<Date>(getNextTuesday());
+  const [newGameDate, setNewGameDate] = useState<Date | undefined>(getNextTuesday());
   const [newGameTime, setNewGameTime] = useState('18:15');
   const [newPitchSize, setNewPitchSize] = useState<string>('small');
   const [newTotalCost, setNewTotalCost] = useState<string>('98');
   const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
+  const resetCreateForm = () => {
+    setNewGameDate(getNextTuesday());
+    setNewGameTime('18:15');
+    setNewPitchSize('small');
+    setNewTotalCost('98');
+  };
+
+  const openCreateDialog = () => {
+    resetCreateForm();
+    setIsCreateDialogOpen(true);
+  };
   
   // Edit game state
   const [editingGame, setEditingGame] = useState<ScheduledGame | null>(null);
@@ -53,7 +170,6 @@ const AdminScheduleManagement = () => {
   const [editPitchSize, setEditPitchSize] = useState<string>('');
   const [editTotalCost, setEditTotalCost] = useState<string>('98');
   const [isUpdating, setIsUpdating] = useState(false);
-  const [editDatePopoverOpen, setEditDatePopoverOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -187,9 +303,8 @@ const AdminScheduleManagement = () => {
         description: "Game scheduled successfully",
       });
 
-      setNewGameDate(undefined);
-      setNewGameTime('');
-      setNewPitchSize('none');
+      resetCreateForm();
+      setIsCreateDialogOpen(false);
       fetchData();
     } catch (error) {
       console.error('Error creating scheduled game:', error);
@@ -465,100 +580,6 @@ const AdminScheduleManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Create New Scheduled Game */}
-      <Card className="overflow-hidden">
-        <CardHeader className="card-header-glass py-4">
-          <CardTitle className="card-header-glass-title">
-            <Plus className="card-header-glass-icon h-5 w-5" />
-            Schedule New Game
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <Label className="sr-only">Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !newGameDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {newGameDate ? format(newGameDate, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={newGameDate}
-                    onSelect={setNewGameDate}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                    className="p-3 pointer-events-auto"
-                    modifiers={{
-                      tuesday: (date) => date.getDay() === 2,
-                    }}
-                    modifiersClassNames={{
-                      tuesday: "bg-[hsl(var(--aurora-blue))]/15 text-[hsl(var(--aurora-blue))] hover:bg-[hsl(var(--aurora-blue))]/25 hover:text-[hsl(var(--aurora-blue))]",
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="new-game-time" className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Kick-off time</Label>
-              <Input
-                id="new-game-time"
-                type="time"
-                value={newGameTime}
-                onChange={(e) => setNewGameTime(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="sr-only">Pitch Size (Optional)</Label>
-              <Select value={newPitchSize} onValueChange={setNewPitchSize}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pitch size (optional)" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border shadow-lg z-50">
-                  <SelectItem value="none">No preference</SelectItem>
-                  <SelectItem value="small">Small pitch</SelectItem>
-                  <SelectItem value="big">Big pitch</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="new-total-cost" className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">Total cost (£)</Label>
-              <Input
-                id="new-total-cost"
-                type="number"
-                step="0.01"
-                min="0"
-                value={newTotalCost}
-                onChange={(e) => setNewTotalCost(e.target.value)}
-                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-            </div>
-
-            <div className="flex items-end">
-              <Button 
-                onClick={createScheduledGame}
-                disabled={!newGameDate || !newGameTime || isCreating}
-                className="w-full"
-              >
-                {isCreating ? "Creating..." : "Schedule Game"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Scheduled Games List */}
       <Card className="overflow-hidden">
         <CardHeader className="card-header-glass py-4">
@@ -567,16 +588,50 @@ const AdminScheduleManagement = () => {
             Schedule Management
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <CardContent className="p-0">
+          <div className="management-toolbar">
             <h3 className="management-count">Scheduled Games ({scheduledGames.length})</h3>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" onClick={openCreateDialog}>
+                  <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Schedule Game</span>
+                  <span className="sm:hidden">Schedule</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-base sm:text-lg">Schedule New Game</DialogTitle>
+                </DialogHeader>
+                <ScheduleFormFields
+                  idPrefix="new-game"
+                  date={newGameDate}
+                  onDateChange={setNewGameDate}
+                  time={newGameTime}
+                  onTimeChange={setNewGameTime}
+                  pitchSize={newPitchSize}
+                  onPitchSizeChange={setNewPitchSize}
+                  totalCost={newTotalCost}
+                  onTotalCostChange={setNewTotalCost}
+                  disablePastDates
+                />
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={createScheduledGame} disabled={!newGameDate || !newGameTime || isCreating}>
+                    {isCreating ? "Creating..." : "Schedule Game"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
           {scheduledGames.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              No scheduled games yet. Create your first one above!
+              No scheduled games yet. Schedule your first game to get started.
             </p>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-6 p-4 sm:p-6">
               {scheduledGames.map((game) => (
                 <div key={game.id} className="glass-row space-y-3 sm:space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -786,74 +841,19 @@ const AdminScheduleManagement = () => {
       <Dialog open={!!editingGame} onOpenChange={(open) => !open && setEditingGame(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Scheduled Game</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">Edit Scheduled Game</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Date</Label>
-              <Popover open={editDatePopoverOpen} onOpenChange={setEditDatePopoverOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !editGameDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {editGameDate ? format(editGameDate, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={editGameDate}
-                    onSelect={(date) => {
-                      setEditGameDate(date);
-                      setEditDatePopoverOpen(false);
-                    }}
-                    initialFocus
-                    className="p-3 pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Time</Label>
-              <Input
-                type="time"
-                value={editGameTime}
-                onChange={(e) => setEditGameTime(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Pitch Size</Label>
-              <Select value={editPitchSize} onValueChange={setEditPitchSize}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select pitch size" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border shadow-lg z-50">
-                  <SelectItem value="none">No preference</SelectItem>
-                  <SelectItem value="small">Small pitch</SelectItem>
-                  <SelectItem value="big">Big pitch</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Total Cost (£)</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                value={editTotalCost}
-                onChange={(e) => setEditTotalCost(e.target.value)}
-                className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-            </div>
-          </div>
+          <ScheduleFormFields
+            idPrefix="edit-game"
+            date={editGameDate}
+            onDateChange={setEditGameDate}
+            time={editGameTime}
+            onTimeChange={setEditGameTime}
+            pitchSize={editPitchSize}
+            onPitchSizeChange={setEditPitchSize}
+            totalCost={editTotalCost}
+            onTotalCostChange={setEditTotalCost}
+          />
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingGame(null)}>
               Cancel
