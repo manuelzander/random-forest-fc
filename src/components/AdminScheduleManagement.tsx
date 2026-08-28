@@ -304,9 +304,8 @@ const AdminScheduleManagement = () => {
         description: "Game scheduled successfully",
       });
 
-      setNewGameDate(undefined);
-      setNewGameTime('');
-      setNewPitchSize('none');
+      resetCreateForm();
+      setIsCreateDialogOpen(false);
       fetchData();
     } catch (error) {
       console.error('Error creating scheduled game:', error);
