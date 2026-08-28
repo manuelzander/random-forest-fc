@@ -247,13 +247,14 @@ const HomepageStatsCards = ({
             <>
               <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-                <span>{lastGameDate ? format(lastGameDate, 'h:mm a') : ''}</span>
+                <span>Final score</span>
                 {lastGamePlayerCount > 0 && (
                   <>
                     <span className="text-muted-foreground/40">•</span>
                     <span>{lastGamePlayerCount} players</span>
                   </>
                 )}
+
                 {lastGameMvpName && (
                   <>
                     <span className="text-muted-foreground/40">•</span>
