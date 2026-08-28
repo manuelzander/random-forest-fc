@@ -144,11 +144,24 @@ const AdminScheduleManagement = () => {
     return nextTuesday;
   };
   
-  const [newGameDate, setNewGameDate] = useState<Date>(getNextTuesday());
+  const [newGameDate, setNewGameDate] = useState<Date | undefined>(getNextTuesday());
   const [newGameTime, setNewGameTime] = useState('18:15');
   const [newPitchSize, setNewPitchSize] = useState<string>('small');
   const [newTotalCost, setNewTotalCost] = useState<string>('98');
   const [newPlayerNames, setNewPlayerNames] = useState<{ [gameId: string]: string }>({});
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
+  const resetCreateForm = () => {
+    setNewGameDate(getNextTuesday());
+    setNewGameTime('18:15');
+    setNewPitchSize('small');
+    setNewTotalCost('98');
+  };
+
+  const openCreateDialog = () => {
+    resetCreateForm();
+    setIsCreateDialogOpen(true);
+  };
   
   // Edit game state
   const [editingGame, setEditingGame] = useState<ScheduledGame | null>(null);
