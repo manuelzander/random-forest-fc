@@ -171,6 +171,7 @@ const PlayerProfile = () => {
         name: basicPlayer.name,
         avatar_url: basicPlayer.avatar_url,
         user_id: basicPlayer.user_id,
+        created_at: basicPlayer.created_at,
         points,
         games_played: wins + draws + losses,
         wins,
