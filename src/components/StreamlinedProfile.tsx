@@ -8,7 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UserCheck, User, UserPlus, Trash2 } from 'lucide-react';
+import { UserCheck, User, UserPlus, Trash2, CalendarDays } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import ProfileSkillsEditor from '@/components/ProfileSkillsEditor';
