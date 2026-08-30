@@ -30,6 +30,7 @@ interface PlayerData {
   avatar_url?: string;
   badges?: any[];
   user_id?: string;
+  created_at?: string;
   recentResults?: ('win' | 'draw' | 'loss')[];
 }
 
