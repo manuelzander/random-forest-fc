@@ -395,6 +395,15 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                         <UserCheck className="h-3 w-3" />
                         Verified
                       </span>
+                      {currentUserPlayer.created_at && (
+                        <span
+                          className="status-badge status-badge-unverified gap-1"
+                          title={new Date(currentUserPlayer.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        >
+                          <CalendarDays className="h-3 w-3" />
+                          Joined {new Date(currentUserPlayer.created_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
