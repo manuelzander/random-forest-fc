@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { SkillRadarChart } from '@/components/SkillRadarChart';
-import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle, Heart, Zap } from 'lucide-react';
+import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut, Shield, LogIn, CheckCircle, Heart, Zap, CalendarDays } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -30,6 +30,7 @@ interface PlayerData {
   avatar_url?: string;
   badges?: any[];
   user_id?: string;
+  created_at?: string;
   recentResults?: ('win' | 'draw' | 'loss')[];
 }
 
@@ -78,7 +79,7 @@ const PlayerProfile = () => {
       // First get the basic player info
       const { data: basicPlayer, error: basicError } = await supabase
         .from('players')
-        .select('id, name, avatar_url, user_id, badges')
+        .select('id, name, avatar_url, user_id, badges, created_at')
         .eq('id', playerId)
         .maybeSingle();
 
@@ -171,6 +172,7 @@ const PlayerProfile = () => {
         name: basicPlayer.name,
         avatar_url: basicPlayer.avatar_url,
         user_id: basicPlayer.user_id,
+        created_at: basicPlayer.created_at,
         points,
         games_played: wins + draws + losses,
         wins,
@@ -395,6 +397,15 @@ const PlayerProfile = () => {
                       <Badge className="status-badge status-badge-unverified gap-1">
                         <User className="h-3 w-3" />
                         <span className="hidden sm:inline">Unverified</span>
+                      </Badge>
+                    )}
+                    {player.created_at && (
+                      <Badge
+                        className="status-badge status-badge-unverified gap-1"
+                        title={new Date(player.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      >
+                        <CalendarDays className="h-3 w-3" />
+                        Joined {new Date(player.created_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
                       </Badge>
                     )}
                     {badges.filter(b => b.name !== 'Verified Player').map((badge, index) => (
