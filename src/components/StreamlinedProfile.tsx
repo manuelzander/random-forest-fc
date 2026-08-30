@@ -167,6 +167,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           user_id: player.user_id,
           avatar_url: player.avatar_url,
           created_by: player.created_by,
+          created_at: player.created_at,
           debt,
         };
       });
