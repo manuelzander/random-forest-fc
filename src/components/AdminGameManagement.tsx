@@ -339,12 +339,11 @@ const AdminGameManagement = () => {
             </div>
           ))}
           {games.length === 0 && (
-            <Alert>
-              <AlertDescription>
-                No games found. Add your first game to get started.
-              </AlertDescription>
-            </Alert>
+            <p className="text-center text-muted-foreground py-8">
+              No games found. Add your first game to get started.
+            </p>
           )}
+
         </div>
 
         {/* Delete Confirmation Dialog */}
