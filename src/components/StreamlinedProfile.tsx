@@ -8,7 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UserCheck, User, UserPlus, Trash2 } from 'lucide-react';
+import { UserCheck, User, UserPlus, Trash2, CalendarDays } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import ProfileSkillsEditor from '@/components/ProfileSkillsEditor';
@@ -167,6 +167,7 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
           user_id: player.user_id,
           avatar_url: player.avatar_url,
           created_by: player.created_by,
+          created_at: player.created_at,
           debt,
         };
       });
@@ -394,6 +395,15 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                         <UserCheck className="h-3 w-3" />
                         Verified
                       </span>
+                      {currentUserPlayer.created_at && (
+                        <span
+                          className="status-badge status-badge-unverified gap-1"
+                          title={new Date(currentUserPlayer.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        >
+                          <CalendarDays className="h-3 w-3" />
+                          Joined {new Date(currentUserPlayer.created_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

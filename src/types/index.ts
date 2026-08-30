@@ -13,6 +13,7 @@ export interface Player {
   avatar_url?: string | null;
   created_by?: string | null;
   debt?: number;
+  created_at?: string;
 }
 
 export interface GameResult {
