@@ -271,19 +271,20 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
                       <div className="flex items-start gap-3">
                         <PlayerAvatarWithDefault player={player} />
                         <div className="flex flex-col gap-1.5 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 min-w-0 flex-nowrap">
                             <Link
                               to={`/player/${player.id}`}
-                              className="text-base font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background whitespace-nowrap"
+                              title={player.name}
+                              className="truncate max-w-[10rem] sm:max-w-[14rem] text-base font-medium text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                             >
                               {player.name}
                             </Link>
                             {(player as any).user_id ? (
-                              <Badge className="status-badge-compact status-badge-verified" title="Verified">
+                              <Badge className="status-badge-compact status-badge-verified shrink-0" title="Verified">
                                 <CheckCircle className="h-3 w-3" />
                               </Badge>
                             ) : (
-                              <Badge className="status-badge-compact status-badge-unverified" title="Unverified">
+                              <Badge className="status-badge-compact status-badge-unverified shrink-0" title="Unverified">
                                 <User className="h-3 w-3" />
                               </Badge>
                             )}
