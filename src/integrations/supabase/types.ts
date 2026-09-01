@@ -17,6 +17,7 @@ export type Database = {
       archived_games: {
         Row: {
           created_at: string
+          game_schedule_id: string | null
           id: string
           mvp_player: string | null
           season_id: string
@@ -31,6 +32,7 @@ export type Database = {
         }
         Insert: {
           created_at: string
+          game_schedule_id?: string | null
           id: string
           mvp_player?: string | null
           season_id: string
@@ -45,6 +47,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          game_schedule_id?: string | null
           id?: string
           mvp_player?: string | null
           season_id?: string
@@ -72,6 +75,8 @@ export type Database = {
           created_at: string
           created_by: string
           id: string
+          mvp_vote_winner: string | null
+          mvp_votes_finalized_at: string | null
           pitch_size: string | null
           scheduled_at: string
           season_id: string
@@ -82,6 +87,8 @@ export type Database = {
           created_at: string
           created_by: string
           id: string
+          mvp_vote_winner?: string | null
+          mvp_votes_finalized_at?: string | null
           pitch_size?: string | null
           scheduled_at: string
           season_id: string
@@ -92,6 +99,8 @@ export type Database = {
           created_at?: string
           created_by?: string
           id?: string
+          mvp_vote_winner?: string | null
+          mvp_votes_finalized_at?: string | null
           pitch_size?: string | null
           scheduled_at?: string
           season_id?: string
@@ -165,9 +174,45 @@ export type Database = {
           },
         ]
       }
+      archived_mvp_votes: {
+        Row: {
+          created_at: string
+          game_schedule_id: string
+          id: string
+          season_id: string
+          voted_player_id: string | null
+          voter_player_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          game_schedule_id: string
+          id?: string
+          season_id: string
+          voted_player_id?: string | null
+          voter_player_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          game_schedule_id?: string
+          id?: string
+          season_id?: string
+          voted_player_id?: string | null
+          voter_player_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "archived_mvp_votes_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       games: {
         Row: {
           created_at: string
+          game_schedule_id: string | null
           id: string
           mvp_player: string | null
           team1_captain: string | null
@@ -181,6 +226,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          game_schedule_id?: string | null
           id?: string
           mvp_player?: string | null
           team1_captain?: string | null
@@ -194,6 +240,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          game_schedule_id?: string | null
           id?: string
           mvp_player?: string | null
           team1_captain?: string | null
@@ -206,6 +253,13 @@ export type Database = {
           youtube_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "games_game_schedule_id_fkey"
+            columns: ["game_schedule_id"]
+            isOneToOne: false
+            referencedRelation: "games_schedule"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "games_mvp_player_fkey"
             columns: ["mvp_player"]
@@ -220,6 +274,8 @@ export type Database = {
           created_at: string
           created_by: string
           id: string
+          mvp_vote_winner: string | null
+          mvp_votes_finalized_at: string | null
           pitch_size: string | null
           scheduled_at: string
           total_cost: number
@@ -229,6 +285,8 @@ export type Database = {
           created_at?: string
           created_by: string
           id?: string
+          mvp_vote_winner?: string | null
+          mvp_votes_finalized_at?: string | null
           pitch_size?: string | null
           scheduled_at: string
           total_cost?: number
@@ -238,12 +296,22 @@ export type Database = {
           created_at?: string
           created_by?: string
           id?: string
+          mvp_vote_winner?: string | null
+          mvp_votes_finalized_at?: string | null
           pitch_size?: string | null
           scheduled_at?: string
           total_cost?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "games_schedule_mvp_vote_winner_fkey"
+            columns: ["mvp_vote_winner"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       games_schedule_signups: {
         Row: {
@@ -338,6 +406,55 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      mvp_votes: {
+        Row: {
+          created_at: string
+          game_schedule_id: string
+          id: string
+          updated_at: string
+          voted_player_id: string
+          voter_player_id: string
+        }
+        Insert: {
+          created_at?: string
+          game_schedule_id: string
+          id?: string
+          updated_at?: string
+          voted_player_id: string
+          voter_player_id: string
+        }
+        Update: {
+          created_at?: string
+          game_schedule_id?: string
+          id?: string
+          updated_at?: string
+          voted_player_id?: string
+          voter_player_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mvp_votes_game_schedule_id_fkey"
+            columns: ["game_schedule_id"]
+            isOneToOne: false
+            referencedRelation: "games_schedule"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mvp_votes_voted_player_id_fkey"
+            columns: ["voted_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mvp_votes_voter_player_id_fkey"
+            columns: ["voter_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       news: {
         Row: {
@@ -506,6 +623,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_vote_mvp: {
+        Args: {
+          _game_schedule_id: string
+          _voted_player_id: string
+          _voter_player_id: string
+        }
+        Returns: boolean
+      }
       get_archived_player_achievements: {
         Args: { p_season_id: string }
         Returns: {
