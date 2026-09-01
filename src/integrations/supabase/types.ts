@@ -631,6 +631,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      finalize_mvp_vote: {
+        Args: { _game_schedule_id: string }
+        Returns: string
+      }
       get_archived_player_achievements: {
         Args: { p_season_id: string }
         Returns: {
@@ -653,6 +657,7 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      get_mvp_vote_state: { Args: { _game_schedule_id: string }; Returns: Json }
       get_player_achievements: {
         Args: never
         Returns: {
@@ -697,6 +702,10 @@ export type Database = {
       merge_guest_to_player: {
         Args: { p_guest_id: string; p_player_id: string }
         Returns: Json
+      }
+      mvp_voting_closed: {
+        Args: { _game_schedule_id: string }
+        Returns: boolean
       }
     }
     Enums: {
