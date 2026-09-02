@@ -281,22 +281,31 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
 
       if (guestsError) throw guestsError;
 
-      // Fetch scheduled games for debt calculation
-      const { data: scheduledGames, error: scheduledError } = await supabase
-        .from('games_schedule')
-        .select('*')
-        .order('scheduled_at', { ascending: false });
+      // Fetch scheduled games for debt calculation (archived when time-travelling)
+      const { data: scheduledGames, error: scheduledError } = archiveSeasonId
+        ? await supabase
+            .from('archived_games_schedule')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('scheduled_at', { ascending: false })
+        : await supabase
+            .from('games_schedule')
+            .select('*')
+            .order('scheduled_at', { ascending: false });
 
       if (scheduledError) throw scheduledError;
 
       // Fetch all signups for debt calculation (paginated past the 1000-row cap)
-      const signupsData = await fetchAllPages((from, to) =>
-        supabase
-          .from('games_schedule_signups')
-          .select('*')
-          .order('signed_up_at', { ascending: true })
-          .range(from, to)
-      );
+      const signupsData = await fetchAllPages((from, to) => {
+        const query = archiveSeasonId
+          ? supabase
+              .from('archived_games_schedule_signups')
+              .select('*')
+              .eq('season_id', archiveSeasonId)
+          : supabase.from('games_schedule_signups').select('*');
+        return query.order('signed_up_at', { ascending: true }).range(from, to);
+      });
+
 
 
       // Prepare data for shared debt calculation
