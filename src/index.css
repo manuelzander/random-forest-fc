@@ -491,3 +491,14 @@
     }
   }
 }
+
+@layer utilities {
+  /* Make native date/time picker icons visible on dark surfaces */
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(2);
+    opacity: 0.9;
+    cursor: pointer;
+  }
+}
