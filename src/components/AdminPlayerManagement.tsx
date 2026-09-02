@@ -105,10 +105,11 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
   const { toast } = useToast();
 
   useEffect(() => {
+    setIsLoading(true);
     fetchPlayers();
     fetchProfiles();
     fetchGuests();
-  }, []);
+  }, [archiveSeasonId]);
 
   const fetchPlayers = async () => {
     try {
@@ -119,32 +120,48 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
 
     if (playersError) throw playersError;
     
-    // Fetch all games to calculate stats
-    const { data: gamesData, error: gamesError } = await supabase
-      .from('games')
-      .select('*');
+    // Fetch all games to calculate stats (archived when time-travelling)
+    const { data: gamesData, error: gamesError } = archiveSeasonId
+      ? await supabase.from('archived_games').select('*').eq('season_id', archiveSeasonId)
+      : await supabase.from('games').select('*');
 
     if (gamesError) throw gamesError;
     
     // Fetch scheduled games for debt calculation
-    const { data: scheduledGames, error: scheduledError } = await supabase
-      .from('games_schedule')
-      .select('*')
-      .order('scheduled_at', { ascending: false });
+    const { data: scheduledGames, error: scheduledError } = archiveSeasonId
+      ? await supabase
+          .from('archived_games_schedule')
+          .select('*')
+          .eq('season_id', archiveSeasonId)
+          .order('scheduled_at', { ascending: false })
+      : await supabase
+          .from('games_schedule')
+          .select('*')
+          .order('scheduled_at', { ascending: false });
 
     if (scheduledError) throw scheduledError;
 
     // Fetch all signups for debt calculation (paginated past the 1000-row cap)
-    const signupsData = await fetchAllPages((from, to) =>
-      supabase
-        .from('games_schedule_signups')
-        .select(`
-          *,
-          players:player_id (id, user_id)
-        `)
-        .order('signed_up_at', { ascending: true })
-        .range(from, to)
-    );
+    const signupsData = archiveSeasonId
+      ? await fetchAllPages((from, to) =>
+          supabase
+            .from('archived_games_schedule_signups')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('signed_up_at', { ascending: true })
+            .range(from, to)
+        )
+      : await fetchAllPages((from, to) =>
+          supabase
+            .from('games_schedule_signups')
+            .select(`
+              *,
+              players:player_id (id, user_id)
+            `)
+            .order('signed_up_at', { ascending: true })
+            .range(from, to)
+        );
+
 
     
     // Fetch all profiles to get credit info
