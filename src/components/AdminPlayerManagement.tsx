@@ -1424,10 +1424,11 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
+                </div>
               </div>
+              );
+            })}
 
-
-            ))}
             {guests.length === 0 && orphanedSignups.length === 0 && (
               <Alert>
                 <AlertDescription>
