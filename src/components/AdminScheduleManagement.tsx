@@ -735,7 +735,12 @@ const AdminScheduleManagement = () => {
                             <span>{game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}</span>
                           </>
                         )}
+                        <span className="text-muted-foreground/40">•</span>
+                        <span className="text-muted-foreground/70">
+                          Created {format(new Date(game.created_at), "PPP")}
+                        </span>
                       </p>
+
 
                       {/* MVP ballot summary (read-only) */}
                       {mvpStatus.phase === 'open' && (
