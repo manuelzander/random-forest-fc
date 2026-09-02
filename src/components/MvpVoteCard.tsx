@@ -65,12 +65,12 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
           {state.is_open ? (
             <span className="relative flex items-center justify-center">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
-              <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold uppercase tracking-wide">
+              <span className="relative bg-primary/10 text-primary text-xs px-3 py-1.5 rounded border border-primary/20 font-bold uppercase tracking-wide">
                 Open
               </span>
             </span>
           ) : (
-            <span className="bg-white/[0.06] text-muted-foreground text-[10px] px-2 py-1 rounded border border-white/10 font-bold uppercase tracking-wide">
+            <span className="bg-white/[0.06] text-muted-foreground text-xs px-3 py-1.5 rounded border border-white/10 font-bold uppercase tracking-wide">
               Closed
             </span>
           )}
