@@ -798,11 +798,6 @@ const AdminScheduleManagement = () => {
 
                   {/* Signups Management */}
                   <div className="space-y-4 sm:space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium hidden sm:block">
-                        Signed Up Players ({(signups[game.id] || []).length})
-                      </h4>
-                    </div>
 
                     {/* Add Players - Side by Side */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 pb-4 sm:pb-6 border-b border-border">
