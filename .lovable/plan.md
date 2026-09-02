@@ -5,7 +5,7 @@ Add a "Bibs" pick to the game result entry, working exactly like MVP: one option
 ## What changes for users
 
 - **Game entry form** — a new optional "Bibs player" dropdown right under the MVP dropdown, listing the same players who played in the game. Also pre-filled when editing an existing result.
-- **Game History** — a small badge next to the bibs player's name in the lineup, same size and shape as the MVP badge but visually distinct: lila (the existing guest-badge lila tone) with a shirt/laundry symbol instead of the gold crown, labelled "Bibs".
+- **Game History** — a small badge next to the bibs player's name in the lineup, same size and shape as the MVP badge but in its own colour: a muted teal ("bibs" token, roughly `hsl(174 55% 52%)` with a soft glass tint), which isn't used anywhere yet — distinct from the primary green, the waitlist blue, the guest lila, the gold trophy and the destructive red. Icon: a shirt glyph rather than the crown, labelled "Bibs".
 - **Points** — the bibs player gets +1 point, added the same way MVP is (3 win / 1 draw / +1 MVP / +1 Bibs). Rankings, profiles and achievements all pick this up automatically since they use the same points source.
 
 No Bibs column in the ranking table, no changes to MVP voting, debt, signups or badges.
