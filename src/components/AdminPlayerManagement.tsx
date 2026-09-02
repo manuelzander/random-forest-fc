@@ -62,7 +62,13 @@ interface OrphanedGuestSignup {
   debt: number;
 }
 
-const AdminPlayerManagement = () => {
+interface AdminPlayerManagementProps {
+  /** when set, the panel shows archived-season stats and becomes read-only */
+  archiveSeasonId?: string | null;
+}
+
+const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagementProps) => {
+  const isArchive = !!archiveSeasonId;
   const [players, setPlayers] = useState<Player[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -99,10 +105,11 @@ const AdminPlayerManagement = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    setIsLoading(true);
     fetchPlayers();
     fetchProfiles();
     fetchGuests();
-  }, []);
+  }, [archiveSeasonId]);
 
   const fetchPlayers = async () => {
     try {
@@ -113,32 +120,48 @@ const AdminPlayerManagement = () => {
 
     if (playersError) throw playersError;
     
-    // Fetch all games to calculate stats
-    const { data: gamesData, error: gamesError } = await supabase
-      .from('games')
-      .select('*');
+    // Fetch all games to calculate stats (archived when time-travelling)
+    const { data: gamesData, error: gamesError } = archiveSeasonId
+      ? await supabase.from('archived_games').select('*').eq('season_id', archiveSeasonId)
+      : await supabase.from('games').select('*');
 
     if (gamesError) throw gamesError;
     
     // Fetch scheduled games for debt calculation
-    const { data: scheduledGames, error: scheduledError } = await supabase
-      .from('games_schedule')
-      .select('*')
-      .order('scheduled_at', { ascending: false });
+    const { data: scheduledGames, error: scheduledError } = archiveSeasonId
+      ? await supabase
+          .from('archived_games_schedule')
+          .select('*')
+          .eq('season_id', archiveSeasonId)
+          .order('scheduled_at', { ascending: false })
+      : await supabase
+          .from('games_schedule')
+          .select('*')
+          .order('scheduled_at', { ascending: false });
 
     if (scheduledError) throw scheduledError;
 
     // Fetch all signups for debt calculation (paginated past the 1000-row cap)
-    const signupsData = await fetchAllPages((from, to) =>
-      supabase
-        .from('games_schedule_signups')
-        .select(`
-          *,
-          players:player_id (id, user_id)
-        `)
-        .order('signed_up_at', { ascending: true })
-        .range(from, to)
-    );
+    const signupsData = archiveSeasonId
+      ? await fetchAllPages((from, to) =>
+          supabase
+            .from('archived_games_schedule_signups')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('signed_up_at', { ascending: true })
+            .range(from, to)
+        )
+      : await fetchAllPages((from, to) =>
+          supabase
+            .from('games_schedule_signups')
+            .select(`
+              *,
+              players:player_id (id, user_id)
+            `)
+            .order('signed_up_at', { ascending: true })
+            .range(from, to)
+        );
+
 
     
     // Fetch all profiles to get credit info
@@ -176,9 +199,15 @@ const AdminPlayerManagement = () => {
               losses++;
             }
             
+            // MVP and bibs each add a bonus point (matches the ranking logic)
             if (game.mvp_player === player.id) {
               mvp_awards++;
+              points += 1;
             }
+            if (game.bibs_player === player.id) {
+              points += 1;
+            }
+
           }
         });
       }
@@ -258,22 +287,31 @@ const AdminPlayerManagement = () => {
 
       if (guestsError) throw guestsError;
 
-      // Fetch scheduled games for debt calculation
-      const { data: scheduledGames, error: scheduledError } = await supabase
-        .from('games_schedule')
-        .select('*')
-        .order('scheduled_at', { ascending: false });
+      // Fetch scheduled games for debt calculation (archived when time-travelling)
+      const { data: scheduledGames, error: scheduledError } = archiveSeasonId
+        ? await supabase
+            .from('archived_games_schedule')
+            .select('*')
+            .eq('season_id', archiveSeasonId)
+            .order('scheduled_at', { ascending: false })
+        : await supabase
+            .from('games_schedule')
+            .select('*')
+            .order('scheduled_at', { ascending: false });
 
       if (scheduledError) throw scheduledError;
 
       // Fetch all signups for debt calculation (paginated past the 1000-row cap)
-      const signupsData = await fetchAllPages((from, to) =>
-        supabase
-          .from('games_schedule_signups')
-          .select('*')
-          .order('signed_up_at', { ascending: true })
-          .range(from, to)
-      );
+      const signupsData = await fetchAllPages((from, to) => {
+        const query = archiveSeasonId
+          ? supabase
+              .from('archived_games_schedule_signups')
+              .select('*')
+              .eq('season_id', archiveSeasonId)
+          : supabase.from('games_schedule_signups').select('*');
+        return query.order('signed_up_at', { ascending: true }).range(from, to);
+      });
+
 
 
       // Prepare data for shared debt calculation
@@ -1014,7 +1052,17 @@ const AdminPlayerManagement = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
+        {isArchive && (
+          <div className="info-note m-4 sm:m-6 mb-0">
+            <Info className="info-note-icon" />
+            <span>
+              Archived season view: games played, debt and guest signups reflect the selected season.
+              Credit balances are current and editing is disabled — switch back to the live season to make changes.
+            </span>
+          </div>
+        )}
         <div className="management-toolbar">
+
           <h3 className="management-count">Players ({players.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
@@ -1023,13 +1071,16 @@ const AdminPlayerManagement = () => {
               setNewPlayerName('');
             }
           }}>
-            <DialogTrigger asChild>
-              <Button size="sm" onClick={() => openDialog()}>
-                <Plus className="mr-1 sm:mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">Add Player</span>
-                <span className="sm:hidden">Add</span>
-              </Button>
-            </DialogTrigger>
+            {!isArchive && (
+              <DialogTrigger asChild>
+                <Button size="sm" onClick={() => openDialog()}>
+                  <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Add Player</span>
+                  <span className="sm:hidden">Add</span>
+                </Button>
+              </DialogTrigger>
+            )}
+
             <DialogContent className="max-w-md mx-2 sm:mx-auto">
               <DialogHeader>
                 <DialogTitle className="text-base sm:text-lg">
@@ -1217,7 +1268,7 @@ const AdminPlayerManagement = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-center gap-1 sm:gap-2 flex-shrink-0">
+                <div className={`flex justify-center gap-1 sm:gap-2 flex-shrink-0 ${isArchive ? "hidden" : ""}`}>
                   <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
                     <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
@@ -1329,7 +1380,7 @@ const AdminPlayerManagement = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-center gap-1 sm:gap-2 flex-shrink-0">
+                <div className={`flex justify-center gap-1 sm:gap-2 flex-shrink-0 ${isArchive ? "hidden" : ""}`}>
                   <Button 
                     size="sm" 
                     variant="outline" 
@@ -1424,7 +1475,7 @@ const AdminPlayerManagement = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex justify-center gap-1 sm:gap-2 flex-shrink-0">
+                    <div className={`flex justify-center gap-1 sm:gap-2 flex-shrink-0 ${isArchive ? "hidden" : ""}`}>
                       <Button
                         size="sm"
                         variant="outline"
