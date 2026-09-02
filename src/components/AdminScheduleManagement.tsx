@@ -136,7 +136,8 @@ const MVP_WINDOW_HOURS = 72;
 const getMvpStatus = (
   game: ScheduledGame,
   gameSignups: GameScheduleSignup[],
-  tally?: MvpVoteTally
+  tally?: MvpVoteTally,
+  allPlayers: Player[] = []
 ) => {
   const kickoff = new Date(game.scheduled_at).getTime();
   const closesAt = kickoff + MVP_WINDOW_HOURS * 60 * 60 * 1000;
@@ -167,13 +168,19 @@ const getMvpStatus = (
   );
   const winnerId = game.mvp_vote_winner || top?.playerId || null;
   const winner = winnerId ? tally?.byPlayer[winnerId] : undefined;
+  // An admin can override the winner to someone who received no votes — fall back to the roster name
+  const winnerName =
+    winner?.name ?? (winnerId ? allPlayers.find(p => p.id === winnerId)?.name ?? null : null);
 
   return {
     phase: 'closed' as const,
-    winnerName: winner?.name ?? null,
+    winnerName,
     winnerVotes: winner?.votes ?? 0,
+    votesCast: tally?.total ?? 0,
+    eligibleVoters,
   };
 };
+
 
 const AdminScheduleManagement = () => {
   const { user } = useAuth();
