@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil } from 'lucide-react';
+import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { sendTelegramNotification, sendNewGameNotification, sendGameCancelledNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
@@ -125,11 +125,62 @@ const ScheduleFormFields = ({
   );
 };
 
+interface MvpVoteTally {
+  total: number;
+  byPlayer: { [playerId: string]: { name: string; votes: number } };
+}
+
+const MVP_WINDOW_HOURS = 72;
+
+// Read-only MVP ballot summary for one scheduled game
+const getMvpStatus = (
+  game: ScheduledGame,
+  gameSignups: GameScheduleSignup[],
+  tally?: MvpVoteTally
+) => {
+  const kickoff = new Date(game.scheduled_at).getTime();
+  const closesAt = kickoff + MVP_WINDOW_HOURS * 60 * 60 * 1000;
+  const now = Date.now();
+
+  if (now < kickoff) return { phase: 'pending' as const };
+
+  // Playing roster only: first 12/14 signups by signup order, no dropouts, account required
+  const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+  const eligibleVoters = gameSignups
+    .slice(0, pitchCapacity)
+    .filter(s => !s.last_minute_dropout && s.player?.user_id).length;
+
+  if (now < closesAt) {
+    return {
+      phase: 'open' as const,
+      votesCast: tally?.total ?? 0,
+      eligibleVoters,
+    };
+  }
+
+  const entries = Object.entries(tally?.byPlayer || {});
+  // Votes arrive ordered by created_at, so a strict comparison keeps the earliest-vote tie-break
+  const top = entries.reduce<{ playerId: string; name: string; votes: number } | null>(
+    (best, [playerId, entry]) =>
+      !best || entry.votes > best.votes ? { playerId, ...entry } : best,
+    null
+  );
+  const winnerId = game.mvp_vote_winner || top?.playerId || null;
+  const winner = winnerId ? tally?.byPlayer[winnerId] : undefined;
+
+  return {
+    phase: 'closed' as const,
+    winnerName: winner?.name ?? null,
+    winnerVotes: winner?.votes ?? 0,
+  };
+};
+
 const AdminScheduleManagement = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [scheduledGames, setScheduledGames] = useState<ScheduledGame[]>([]);
   const [signups, setSignups] = useState<{ [gameId: string]: GameScheduleSignup[] }>({});
+  const [mvpVotes, setMvpVotes] = useState<{ [gameId: string]: MvpVoteTally }>({});
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -224,6 +275,31 @@ const AdminScheduleManagement = () => {
         });
       });
       setSignups(groupedSignups);
+
+      // MVP votes (aggregate only — no per-voter detail is shown)
+      const votesData = await fetchAllPages((from, to) =>
+        supabase
+          .from('mvp_votes')
+          .select('game_schedule_id, voted_player_id, created_at, players:voted_player_id (name)')
+          .order('created_at', { ascending: true })
+          .range(from, to)
+      );
+
+      const groupedVotes: { [gameId: string]: MvpVoteTally } = {};
+      (votesData || []).forEach((vote: any) => {
+        const tally =
+          groupedVotes[vote.game_schedule_id] ||
+          (groupedVotes[vote.game_schedule_id] = { total: 0, byPlayer: {} });
+        tally.total += 1;
+        const entry =
+          tally.byPlayer[vote.voted_player_id] ||
+          (tally.byPlayer[vote.voted_player_id] = {
+            name: vote.players?.name || 'Unknown player',
+            votes: 0,
+          });
+        entry.votes += 1;
+      });
+      setMvpVotes(groupedVotes);
 
       // Fetch all players
       const { data: playersData, error: playersError } = await supabase
@@ -632,7 +708,9 @@ const AdminScheduleManagement = () => {
             </p>
           ) : (
             <div className="space-y-6 p-4 sm:p-6">
-              {scheduledGames.map((game) => (
+              {scheduledGames.map((game) => {
+                const mvpStatus = getMvpStatus(game, signups[game.id] || [], mvpVotes[game.id]);
+                return (
                 <div key={game.id} className="glass-row space-y-3 sm:space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
@@ -647,7 +725,7 @@ const AdminScheduleManagement = () => {
                           </Badge>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <p className="text-sm text-muted-foreground hidden sm:block">
                           Created {format(new Date(game.created_at), "PPP")}
                         </p>
@@ -655,6 +733,30 @@ const AdminScheduleManagement = () => {
                           <Badge variant="outline" className="text-xs hidden sm:inline-flex">
                             {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
                           </Badge>
+                        )}
+                        {/* MVP ballot summary (read-only) */}
+                        {mvpStatus.phase === 'pending' && (
+                          <span className="text-xs text-muted-foreground">MVP: not open yet</span>
+                        )}
+                        {mvpStatus.phase === 'open' && (
+                          <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <Badge className="status-badge status-badge-verified">
+                              <Trophy className="h-3 w-3 mr-1" />
+                              Voting open
+                            </Badge>
+                            {mvpStatus.votesCast} of {mvpStatus.eligibleVoters} voted
+                          </span>
+                        )}
+                        {mvpStatus.phase === 'closed' && (
+                          mvpStatus.winnerName ? (
+                            <Badge className="badge-trophy">
+                              <span>👑</span>
+                              {mvpStatus.winnerName} · {mvpStatus.winnerVotes}{' '}
+                              {mvpStatus.winnerVotes === 1 ? 'vote' : 'votes'}
+                            </Badge>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">MVP: no votes cast</span>
+                          )
                         )}
                       </div>
                     </div>
@@ -831,7 +933,8 @@ const AdminScheduleManagement = () => {
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
