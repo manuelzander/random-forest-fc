@@ -63,7 +63,7 @@ const PlayerProfile = () => {
   const { toast } = useToast();
   const { user, userRole, signOut } = useAuth();
   const isMobile = useIsMobile();
-  const { archiveSeasonId } = useSeasons();
+  const { archiveSeasonId, selectedSeason } = useSeasons();
   const [player, setPlayer] = useState<PlayerData | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
