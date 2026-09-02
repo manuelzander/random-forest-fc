@@ -802,14 +802,18 @@ const GameSignup = () => {
                   </div>
                 </div>}
 
-              {isPastGame && <div className="info-note">
-                  <Clock className="info-note-icon" />
-                  <span>This game has already taken place. The roster below is shown for reference.</span>
-                </div>}
             </div>
+
+            {/* MVP voting — appears from kick-off, closes 72h later */}
+            {gameId && (
+              <div className="bg-white/[0.02] border-t border-white/10 p-6 sm:p-8 empty:hidden">
+                <MvpVoteCard gameScheduleId={gameId} candidates={mvpCandidates} />
+              </div>
+            )}
 
             {/* Player List Section */}
             <div className="bg-white/[0.02] border-t border-white/10 p-6 sm:p-8">
+
               <div className="flex justify-between items-center mb-6">
                 <h3 className="font-display text-2xl text-foreground tracking-wide">PLAYERS SIGNED UP</h3>
                 <span className="relative flex items-center justify-center">
@@ -885,13 +889,6 @@ const GameSignup = () => {
                 </div>}
             </div>
           </div>
-
-          {/* MVP voting — appears from kick-off, closes 72h later */}
-          {gameId && (
-            <div className="mt-6">
-              <MvpVoteCard gameScheduleId={gameId} candidates={mvpCandidates} />
-            </div>
-          )}
         </div>
 
       </div>

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Crown, Trophy, Check, Lock } from 'lucide-react';
@@ -55,30 +55,25 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
   };
 
   return (
-    <Card>
-      <CardHeader className="card-header-glass py-4">
-        <CardTitle className="card-header-glass-title justify-between">
-          <span className="flex items-center gap-2">
-            <Trophy className="card-header-glass-icon h-5 w-5" />
-            MVP Vote
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-display text-2xl text-foreground tracking-wide">MVP VOTE</h3>
+        {state.is_open ? (
+          <span className="relative flex items-center justify-center">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+            <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold uppercase tracking-wide">
+              Open
+            </span>
           </span>
-          {state.is_open ? (
-            <span className="relative flex items-center justify-center">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
-              <span className="relative bg-primary/10 text-primary text-xs px-3 py-1.5 rounded border border-primary/20 font-bold uppercase tracking-wide">
-                Open
-              </span>
-            </span>
-          ) : (
-            <span className="bg-white/[0.06] text-muted-foreground text-xs px-3 py-1.5 rounded border border-white/10 font-bold uppercase tracking-wide">
-              Closed
-            </span>
-          )}
-        </CardTitle>
-      </CardHeader>
+        ) : (
+          <span className="bg-white/[0.06] text-muted-foreground text-[10px] px-2 py-1 rounded border border-white/10 font-bold uppercase tracking-wide">
+            Closed
+          </span>
+        )}
+      </div>
 
+      <div className="space-y-5">
 
-      <CardContent className="pt-6 space-y-5">
         {/* Meta line */}
         <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
@@ -227,8 +222,9 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
             )}
           </>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 };
 
