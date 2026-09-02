@@ -447,7 +447,13 @@ const PlayerProfile = () => {
               </CardTitle>
              </CardHeader>
               <CardContent className="space-y-6 pt-6">
+                {archiveSeasonId && (
+                  <p className="info-note">
+                    Showing {selectedSeason?.name} archived season statistics.
+                  </p>
+                )}
                 {/* Win/Draw/Loss at the top */}
+
                 <div className="grid grid-cols-3 gap-4">
                   <div className="stat-tile stat-tile-primary p-3">
                     <div className="stat-tile-value text-primary">{player.wins}</div>
