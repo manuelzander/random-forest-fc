@@ -76,7 +76,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
 
         {/* Meta line */}
         <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+          <span className={`inline-block w-1.5 h-1.5 rounded-full ${state.is_open ? 'bg-primary animate-pulse' : 'bg-muted-foreground/40'}`} />
           <span>
             {state.is_open
               ? `Closes in ${formatDistanceToNowStrict(new Date(state.closes_at))}`
