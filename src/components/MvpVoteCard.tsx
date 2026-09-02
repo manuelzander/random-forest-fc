@@ -222,8 +222,9 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
             )}
           </>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+
   );
 };
 
