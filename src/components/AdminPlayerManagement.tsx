@@ -1052,7 +1052,17 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
+        {isArchive && (
+          <div className="info-note m-4 sm:m-6 mb-0">
+            <Info className="info-note-icon" />
+            <span>
+              Archived season view: games played, debt and guest signups reflect the selected season.
+              Credit balances are current and editing is disabled — switch back to the live season to make changes.
+            </span>
+          </div>
+        )}
         <div className="management-toolbar">
+
           <h3 className="management-count">Players ({players.length})</h3>
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
