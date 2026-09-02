@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -1051,14 +1051,14 @@ const AdminPlayerManagement = () => {
                     <Info className="info-note-icon" />
                     <span>Statistics (points, games, wins, etc.) are automatically calculated from game results. Only the player name can be edited.</span>
                   </div>
-                  <div className="flex justify-end gap-2">
+                  <DialogFooter>
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSavingPlayer}>
                       Cancel
                     </Button>
                     <Button type="submit" disabled={isSavingPlayer}>
                       {isSavingPlayer ? 'Saving...' : 'Update Player'}
                     </Button>
-                  </div>
+                  </DialogFooter>
                 </form>
               ) : (
                 <div className="space-y-4">
@@ -1146,11 +1146,11 @@ const AdminPlayerManagement = () => {
                       Creating player...
                     </div>
                   )}
-                  <div className="flex justify-end">
+                  <DialogFooter>
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancel
                     </Button>
-                  </div>
+                  </DialogFooter>
                 </div>
               )}
             </DialogContent>
@@ -1522,14 +1522,14 @@ const AdminPlayerManagement = () => {
                   defaultValue={editingGuest?.notes || ''}
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setIsGuestDialogOpen(false)} disabled={isSavingGuest}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isSavingGuest}>
                   {isSavingGuest ? 'Saving...' : 'Update Guest'}
                 </Button>
-              </div>
+              </DialogFooter>
             </form>
           </DialogContent>
         </Dialog>
@@ -1657,7 +1657,7 @@ const AdminPlayerManagement = () => {
                 );
               })()}
 
-              <div className="flex justify-end gap-2">
+              <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setMergeDialogOpen(false)}>
                   Cancel
                 </Button>
@@ -1669,7 +1669,7 @@ const AdminPlayerManagement = () => {
                   <GitMerge className="h-4 w-4 mr-2" />
                   Confirm Merge
                 </Button>
-              </div>
+              </DialogFooter>
             </div>
           </DialogContent>
         </Dialog>
@@ -1698,11 +1698,11 @@ const AdminPlayerManagement = () => {
                     ))}
                 </SelectContent>
               </Select>
-              <div className="flex justify-end gap-2">
+              <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setIsClaimDialogOpen(false)}>
                   Cancel
                 </Button>
-              </div>
+              </DialogFooter>
             </div>
           </DialogContent>
         </Dialog>
@@ -1854,7 +1854,7 @@ const AdminPlayerManagement = () => {
                 );
               })()}
 
-              <div className="flex justify-end gap-2">
+              <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setOrphanMergeDialogOpen(false)}>
                   Cancel
                 </Button>
@@ -1866,7 +1866,7 @@ const AdminPlayerManagement = () => {
                   <GitMerge className="h-4 w-4 mr-2" />
                   Confirm Merge
                 </Button>
-              </div>
+              </DialogFooter>
             </div>
           </DialogContent>
         </Dialog>
