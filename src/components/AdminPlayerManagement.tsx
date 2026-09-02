@@ -1061,13 +1061,16 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
               setNewPlayerName('');
             }
           }}>
-            <DialogTrigger asChild>
-              <Button size="sm" onClick={() => openDialog()}>
-                <Plus className="mr-1 sm:mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">Add Player</span>
-                <span className="sm:hidden">Add</span>
-              </Button>
-            </DialogTrigger>
+            {!isArchive && (
+              <DialogTrigger asChild>
+                <Button size="sm" onClick={() => openDialog()}>
+                  <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Add Player</span>
+                  <span className="sm:hidden">Add</span>
+                </Button>
+              </DialogTrigger>
+            )}
+
             <DialogContent className="max-w-md mx-2 sm:mx-auto">
               <DialogHeader>
                 <DialogTitle className="text-base sm:text-lg">
