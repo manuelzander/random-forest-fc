@@ -751,7 +751,7 @@ const AdminScheduleManagement = () => {
                         <div className="flex items-center gap-2 mt-2">
                           {mvpStatus.winnerName ? (
                             <>
-                              <Badge className="badge-trophy">
+                              <Badge className="badge-trophy h-auto w-fit">
                                 <span>👑</span>
                                 {mvpStatus.winnerName}
                               </Badge>
