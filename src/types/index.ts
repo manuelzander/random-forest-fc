@@ -56,6 +56,8 @@ export interface ScheduledGame {
   updated_at: string;
   pitch_size?: string | null;
   total_cost?: number | null;
+  mvp_vote_winner?: string | null;
+  mvp_votes_finalized_at?: string | null;
 }
 
 export interface Guest {
