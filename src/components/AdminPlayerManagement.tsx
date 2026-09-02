@@ -1318,7 +1318,9 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
+                </div>
               </div>
+
 
             );
           })}
