@@ -678,7 +678,7 @@ const GameSignup = () => {
               <h1 className="font-display text-4xl sm:text-5xl text-foreground tracking-tight leading-none mb-2">
                 JOIN THIS GAME
               </h1>
-              <p className="text-muted-foreground text-sm mb-6 sm:mb-8 flex items-center gap-2">
+              <p className={`text-muted-foreground text-sm flex items-center gap-2 ${isPastGame ? '' : 'mb-6 sm:mb-8'}`}>
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 <span className="capitalize">{format(gameDate, "EEEE, MMM d")}</span>
                 <span className="text-muted-foreground/40">•</span>
