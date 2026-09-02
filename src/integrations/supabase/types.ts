@@ -633,42 +633,7 @@ export type Database = {
       }
     }
     Views: {
-      public_profiles: {
-        Row: {
-          bio: string | null
-          created_at: string | null
-          display_name: string | null
-          favorite_club: string | null
-          favorite_position: string | null
-          football_skills: Json | null
-          skill_ratings: Json | null
-          user_id: string | null
-          years_playing: number | null
-        }
-        Insert: {
-          bio?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          favorite_club?: string | null
-          favorite_position?: string | null
-          football_skills?: Json | null
-          skill_ratings?: Json | null
-          user_id?: string | null
-          years_playing?: number | null
-        }
-        Update: {
-          bio?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          favorite_club?: string | null
-          favorite_position?: string | null
-          football_skills?: Json | null
-          skill_ratings?: Json | null
-          user_id?: string | null
-          years_playing?: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       can_vote_mvp: {
@@ -738,6 +703,19 @@ export type Database = {
           points: number
           user_id: string
           wins: number
+        }[]
+      }
+      get_public_profile: {
+        Args: { p_user_id: string }
+        Returns: {
+          bio: string
+          display_name: string
+          favorite_club: string
+          favorite_position: string
+          football_skills: Json
+          skill_ratings: Json
+          user_id: string
+          years_playing: number
         }[]
       }
       has_role: {
