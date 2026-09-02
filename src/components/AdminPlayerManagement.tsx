@@ -1334,91 +1334,85 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
 
           <div className="space-y-2">
             {guests.map((guest) => (
-              <div key={guest.id} className="glass-row flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <Avatar className="h-11 w-11 flex-shrink-0 border border-white/10">
-                    <AvatarFallback className="bg-white/10 text-xs text-foreground">
-                      {guest.name.substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className="flex items-center gap-2 min-w-0 flex-nowrap">
-                      <h4 className="truncate text-sm sm:text-base font-medium text-foreground" title={guest.name}>{guest.name}</h4>
-                      <Badge className="status-badge-compact status-badge-guest shrink-0" title="Guest">
-                        <Users className="h-3 w-3" />
-                      </Badge>
-                    </div>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {guest.signupsCount || 0} signups
-                      {guest.phone ? <span className="text-muted-foreground/60"> · {guest.phone}</span> : null}
-                    </p>
+              <div key={guest.id} className="glass-row !p-3 flex items-center gap-3">
+                <Avatar className="h-10 w-10 flex-shrink-0 border border-white/10">
+                  <AvatarFallback className="bg-[hsl(var(--aurora-purple))]/15 text-xs text-[hsl(var(--aurora-purple))]">
+                    {guest.name.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-nowrap">
+                    <h4 className="truncate text-sm font-medium text-foreground" title={guest.name}>{guest.name}</h4>
+                    <Users className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--aurora-purple))]" title="Guest" />
                   </div>
+                  <p className="truncate text-xs text-muted-foreground/70">
+                    {guest.signupsCount || 0} signups
+                    {guest.phone ? ` · ${guest.phone}` : ''}
+                  </p>
                 </div>
-                <div className="flex items-center justify-between gap-2 sm:justify-end sm:gap-3">
-                  <div className="flex items-center gap-2 text-xs">
-                    {guest.debt > 0 && (
-                      <span className="text-muted-foreground">Debt <span className="font-medium text-destructive">£{guest.debt.toFixed(2)}</span></span>
-                    )}
-                    {guest.credit > 0 && (
-                      <span className="text-muted-foreground">Credit <span className="font-medium text-primary">£{guest.credit.toFixed(2)}</span></span>
-                    )}
-                    <span
-                      className={`meta-pill !px-2.5 !py-0.5 font-medium ${
-                        (guest.credit - guest.debt) >= 0 ? '!text-primary' : '!text-destructive'
-                      }`}
-                      title="Net balance"
-                    >
-                      {(guest.credit - guest.debt) < 0 ? '-' : ''}£{Math.abs(guest.credit - guest.debt).toFixed(2)}
+
+                <div className="flex flex-shrink-0 flex-col items-end leading-none">
+                  <span
+                    className={`font-display text-base tracking-wide ${
+                      (guest.credit - guest.debt) > 0
+                        ? 'text-primary'
+                        : (guest.credit - guest.debt) < 0
+                          ? 'text-destructive'
+                          : 'text-muted-foreground'
+                    }`}
+                    title={`Credit £${guest.credit.toFixed(2)} · Debt £${guest.debt.toFixed(2)}`}
+                  >
+                    {(guest.credit - guest.debt) < 0 ? '-' : ''}£{Math.abs(guest.credit - guest.debt).toFixed(2)}
+                  </span>
+                  {(guest.debt > 0 || guest.credit > 0) && (
+                    <span className="mt-0.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
+                      {guest.debt > 0 && guest.credit > 0 ? 'Debt / Credit' : guest.debt > 0 ? 'Debt' : 'Credit'}
                     </span>
-                  </div>
-                  <div className={`flex flex-shrink-0 items-center gap-1 ${isArchive ? "hidden" : ""}`}>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="icon-action"
-                      onClick={() => {
-                        setEditingGuest(guest);
-                        setIsGuestDialogOpen(true);
-                      }}
-                      title="Edit guest"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="icon-action"
-                      onClick={() => handleCreatePlayerFromGuest(guest)}
-                      disabled={creatingPlayerFromGuest === guest.id}
-                      title="Create player from guest"
-                    >
-                      {creatingPlayerFromGuest === guest.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <UserPlus className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="icon-action"
-                      onClick={() => openMergeDialog(guest)}
-                      title="Merge into existing player"
-                    >
-                      <GitMerge className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="icon-action hover:!text-destructive hover:!border-destructive/30 hover:!bg-destructive/10"
-                      onClick={() => openDeleteGuestDialog(guest)}
-                      title="Delete guest"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  )}
                 </div>
+
+                {!isArchive && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="outline" className="icon-action flex-shrink-0" title="Guest actions">
+                        {creatingPlayerFromGuest === guest.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <MoreHorizontal className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-52">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setEditingGuest(guest);
+                          setIsGuestDialogOpen(true);
+                        }}
+                      >
+                        <Edit2 className="mr-2 h-4 w-4" /> Edit guest
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleCreatePlayerFromGuest(guest)}
+                        disabled={creatingPlayerFromGuest === guest.id}
+                      >
+                        <UserPlus className="mr-2 h-4 w-4" /> Create player
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => openMergeDialog(guest)}>
+                        <GitMerge className="mr-2 h-4 w-4" /> Merge into player
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => openDeleteGuestDialog(guest)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" /> Delete guest
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
+
 
             ))}
             {guests.length === 0 && orphanedSignups.length === 0 && (
