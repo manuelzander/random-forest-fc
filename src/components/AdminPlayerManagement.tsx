@@ -1212,115 +1212,107 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
           {players.map((player) => {
             const profile = getProfileByUserId(player.user_id);
             return (
-              <div key={player.id} className="glass-row flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <Avatar key={`${player.id}-${player.avatar_url}`} className="h-11 w-11 flex-shrink-0 border border-white/10">
-                    <AvatarImage src={player.avatar_url || undefined} />
-                    <AvatarFallback className="bg-white/10 text-xs text-foreground">
-                      {player.name.substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className="flex items-center gap-2 min-w-0 flex-nowrap">
-                      <Link
-                        to={`/player/${player.id}`}
-                        title={player.name}
-                        className="truncate text-sm sm:text-base font-medium text-foreground transition-colors hover:text-primary"
-                      >
-                        {player.name}
-                      </Link>
-                      {player.user_id ? (
-                        <Badge className="status-badge-compact status-badge-verified shrink-0" title="Verified">
-                          <UserCheck className="h-3 w-3" />
-                        </Badge>
-                      ) : (
-                        <Badge className="status-badge-compact status-badge-unverified shrink-0" title="Unverified">
-                          <AlertTriangle className="h-3 w-3" />
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {player.games_played} games
-                      {profile?.email ? <span className="text-muted-foreground/60"> · {profile.email}</span> : null}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between gap-2 sm:justify-end sm:gap-3">
-                  <div className="flex items-center gap-2 text-xs">
-                    {player.debt > 0 && (
-                      <span className="text-muted-foreground">Debt <span className="font-medium text-destructive">£{player.debt.toFixed(2)}</span></span>
-                    )}
-                    {player.credit > 0 && (
-                      <span className="text-muted-foreground">Credit <span className="font-medium text-primary">£{player.credit.toFixed(2)}</span></span>
-                    )}
-                    <span
-                      className={`meta-pill !px-2.5 !py-0.5 font-medium ${
-                        (player.credit - player.debt) >= 0 ? '!text-primary' : '!text-destructive'
-                      }`}
-                      title="Net balance"
+              <div key={player.id} className="glass-row !p-3 flex items-center gap-3">
+                <Avatar key={`${player.id}-${player.avatar_url}`} className="h-10 w-10 flex-shrink-0 border border-white/10">
+                  <AvatarImage src={player.avatar_url || undefined} />
+                  <AvatarFallback className="bg-white/10 text-xs text-foreground">
+                    {player.name.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-nowrap">
+                    <Link
+                      to={`/player/${player.id}`}
+                      title={player.name}
+                      className="truncate text-sm font-medium text-foreground transition-colors hover:text-primary"
                     >
-                      {(player.credit - player.debt) < 0 ? '-' : ''}£{Math.abs(player.credit - player.debt).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className={`flex flex-shrink-0 items-center gap-1 ${isArchive ? "hidden" : ""}`}>
-                    <Button size="sm" variant="outline" className="icon-action" onClick={() => openDialog(player)} title="Edit player">
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="icon-action"
-                      onClick={() => generateAvatar(player)}
-                      disabled={generatingAvatarFor === player.id}
-                      title="Generate Avatar"
-                    >
-                      {generatingAvatarFor === player.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Wand2 className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="icon-action"
-                      onClick={() => openRemoveAvatarDialog(player)}
-                      disabled={removingAvatarFor === player.id || !player.avatar_url}
-                      title="Remove Avatar"
-                    >
-                      {removingAvatarFor === player.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <ImageOff className="h-4 w-4" />
-                      )}
-                    </Button>
+                      {player.name}
+                    </Link>
                     {player.user_id ? (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="icon-action hover:!text-destructive hover:!border-destructive/30 hover:!bg-destructive/10"
-                        onClick={() => openDisconnectDialog(player)}
-                        title="Disconnect account"
-                      >
-                        <UserX className="h-4 w-4" />
-                      </Button>
+                      <UserCheck className="h-3.5 w-3.5 shrink-0 text-primary" title="Verified" />
                     ) : (
-                      <Button size="sm" variant="outline" className="icon-action" onClick={() => openClaimDialog(player)} title="Link account">
-                        <UserCheck className="h-4 w-4" />
-                      </Button>
+                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-muted-foreground/70" title="Unverified" />
                     )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="icon-action hover:!text-destructive hover:!border-destructive/30 hover:!bg-destructive/10"
-                      onClick={() => openDeleteDialog(player)}
-                      title="Delete player"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
+                  <p className="truncate text-xs text-muted-foreground/70">
+                    {player.games_played} {player.games_played === 1 ? 'game' : 'games'}
+                    {profile?.email ? ` · ${profile.email}` : ''}
+                  </p>
                 </div>
+
+                <div className="flex flex-shrink-0 flex-col items-end leading-none">
+                  <span
+                    className={`font-display text-base tracking-wide ${
+                      (player.credit - player.debt) > 0
+                        ? 'text-primary'
+                        : (player.credit - player.debt) < 0
+                          ? 'text-destructive'
+                          : 'text-muted-foreground'
+                    }`}
+                    title={`Credit £${player.credit.toFixed(2)} · Debt £${player.debt.toFixed(2)}`}
+                  >
+                    {(player.credit - player.debt) < 0 ? '-' : ''}£{Math.abs(player.credit - player.debt).toFixed(2)}
+                  </span>
+                  {(player.debt > 0 || player.credit > 0) && (
+                    <span className="mt-0.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
+                      {player.debt > 0 && player.credit > 0
+                        ? 'Debt / Credit'
+                        : player.debt > 0
+                          ? 'Debt'
+                          : 'Credit'}
+                    </span>
+                  )}
+                </div>
+
+                {!isArchive && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="outline" className="icon-action flex-shrink-0" title="Player actions">
+                        {generatingAvatarFor === player.id || removingAvatarFor === player.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <MoreHorizontal className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-52">
+                      <DropdownMenuItem onClick={() => openDialog(player)}>
+                        <Edit2 className="mr-2 h-4 w-4" /> Edit player
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => generateAvatar(player)}
+                        disabled={generatingAvatarFor === player.id}
+                      >
+                        <Wand2 className="mr-2 h-4 w-4" /> Generate avatar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => openRemoveAvatarDialog(player)}
+                        disabled={removingAvatarFor === player.id || !player.avatar_url}
+                      >
+                        <ImageOff className="mr-2 h-4 w-4" /> Remove avatar
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {player.user_id ? (
+                        <DropdownMenuItem onClick={() => openDisconnectDialog(player)}>
+                          <UserX className="mr-2 h-4 w-4" /> Disconnect account
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem onClick={() => openClaimDialog(player)}>
+                          <UserCheck className="mr-2 h-4 w-4" /> Link account
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem
+                        onClick={() => openDeleteDialog(player)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" /> Delete player
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
+
             );
           })}
           {players.length === 0 && (
