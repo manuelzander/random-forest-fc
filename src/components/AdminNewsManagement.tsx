@@ -271,10 +271,7 @@ const AdminNewsManagement = () => {
                     Publish immediately
                   </label>
                 </div>
-                <div className="flex gap-2">
-                  <Button type="submit" disabled={isSavingNews}>
-                    {isSavingNews ? 'Saving...' : editingItem ? 'Update Article' : 'Create Article'}
-                  </Button>
+                <DialogFooter>
                   <Button 
                     type="button" 
                     variant="outline" 
@@ -283,7 +280,11 @@ const AdminNewsManagement = () => {
                   >
                     Cancel
                   </Button>
-                </div>
+                  <Button type="submit" disabled={isSavingNews}>
+                    {isSavingNews ? 'Saving...' : editingItem ? 'Update Article' : 'Create Article'}
+                  </Button>
+                </DialogFooter>
+
               </form>
             </DialogContent>
           </Dialog>
