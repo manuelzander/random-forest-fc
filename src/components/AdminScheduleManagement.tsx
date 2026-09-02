@@ -725,7 +725,9 @@ const AdminScheduleManagement = () => {
                         {format(new Date(game.scheduled_at), "EEEE, MMM d")}
                       </h3>
                       <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
-                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        {mvpStatus.phase !== 'open' && (
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        )}
                         <span>{format(new Date(game.scheduled_at), "h:mm a")}</span>
                         {game.pitch_size && (
                           <>
@@ -737,10 +739,12 @@ const AdminScheduleManagement = () => {
 
                       {/* MVP ballot summary (read-only) */}
                       {mvpStatus.phase === 'open' && (
-                        <p className="text-xs text-muted-foreground mt-2">
-                          {`MVP voting open · ${mvpStatus.votesCast} of ${mvpStatus.eligibleVoters} voted`}
+                        <p className="text-sm text-muted-foreground mt-2 flex items-center gap-2 flex-wrap">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                          <span>{`MVP voting open · ${mvpStatus.votesCast} of ${mvpStatus.eligibleVoters} voted`}</span>
                         </p>
                       )}
+
                       {mvpStatus.phase === 'closed' && (mvpStatus.winnerName || mvpStatus.votesCast > 0) && (
                         <div className="flex items-center gap-2 mt-2">
                           {mvpStatus.winnerName ? (
@@ -749,15 +753,16 @@ const AdminScheduleManagement = () => {
                                 <span>👑</span>
                                 {mvpStatus.winnerName}
                               </Badge>
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-sm text-muted-foreground">
                                 {`${mvpStatus.winnerVotes} of ${mvpStatus.votesCast} votes`}
                               </span>
                             </>
                           ) : (
-                            <span className="text-xs text-muted-foreground">MVP: no winner set</span>
+                            <span className="text-sm text-muted-foreground">MVP: no winner set</span>
                           )}
                         </div>
                       )}
+
 
                       <p className="text-xs text-muted-foreground/70 mt-2">
                         Created {format(new Date(game.created_at), "PPP")}
