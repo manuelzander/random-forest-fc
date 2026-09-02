@@ -130,6 +130,7 @@ const AdminScheduleManagement = () => {
   const { toast } = useToast();
   const [scheduledGames, setScheduledGames] = useState<ScheduledGame[]>([]);
   const [signups, setSignups] = useState<{ [gameId: string]: GameScheduleSignup[] }>({});
+  const [mvpVotes, setMvpVotes] = useState<{ [gameId: string]: MvpVoteTally }>({});
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
