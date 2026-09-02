@@ -933,7 +933,8 @@ const AdminScheduleManagement = () => {
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
