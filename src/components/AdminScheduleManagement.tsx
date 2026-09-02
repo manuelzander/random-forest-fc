@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil } from 'lucide-react';
+import { CalendarIcon, Plus, Copy, Trash2, UserPlus, UserMinus, CheckCircle, User, Clock, AlertTriangle, Pencil, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { sendTelegramNotification, sendNewGameNotification, sendGameCancelledNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
