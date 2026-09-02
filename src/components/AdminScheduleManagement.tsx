@@ -736,9 +736,8 @@ const AdminScheduleManagement = () => {
                           </>
                         )}
                         <span className="text-muted-foreground/40">•</span>
-                        <span className="text-muted-foreground/70">
-                          Created {format(new Date(game.created_at), "PPP")}
-                        </span>
+                        <span>Created {format(new Date(game.created_at), "PPP")}</span>
+
                       </p>
 
 
