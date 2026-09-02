@@ -35,6 +35,7 @@ export interface GameInput {
   team1Captain: string;
   team2Captain: string;
   mvpPlayer: string | null;
+  bibsPlayer?: string | null;
   youtubeUrl?: string;
 }
 

@@ -26,6 +26,7 @@ interface GameInputProps {
     team1Captain: string;
     team2Captain: string;
     mvpPlayer: string;
+    bibsPlayer?: string;
     youtubeUrl?: string;
   };
   isEditing?: boolean;
@@ -41,6 +42,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
   const [team1Captain, setTeam1Captain] = useState(initialData?.team1Captain || '');
   const [team2Captain, setTeam2Captain] = useState(initialData?.team2Captain || '');
   const [mvpPlayer, setMvpPlayer] = useState(initialData?.mvpPlayer || '');
+  const [bibsPlayer, setBibsPlayer] = useState(initialData?.bibsPlayer || '');
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl || '');
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [playerToRemove, setPlayerToRemove] = useState<{playerId: string, playerName: string, teamNumber: 1 | 2} | null>(null);
@@ -187,6 +189,16 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       return;
     }
 
+    // Bibs validation - optional, but if selected must be valid
+    if (bibsPlayer && bibsPlayer !== "none" && !allGamePlayers.includes(bibsPlayer)) {
+      toast({
+        title: "Error",
+        description: "Please select a valid bibs player from the playing players",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Validate YouTube URL if provided
     if (youtubeUrl && !isValidYouTubeUrl(youtubeUrl)) {
       toast({
@@ -205,6 +217,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       team1Captain,
       team2Captain,
       mvpPlayer: mvpPlayer === "none" ? null : mvpPlayer || null,
+      bibsPlayer: bibsPlayer === "none" ? null : bibsPlayer || null,
       youtubeUrl: youtubeUrl || undefined,
     };
 
@@ -219,6 +232,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       setTeam1Captain('');
       setTeam2Captain('');
       setMvpPlayer('');
+      setBibsPlayer('');
       setYoutubeUrl('');
       
       toast({
@@ -402,6 +416,24 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             <Select value={mvpPlayer} onValueChange={setMvpPlayer}>
               <SelectTrigger>
                 <SelectValue placeholder="MVP player (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem key="none" value="none">None</SelectItem>
+                {allGamePlayers.map((playerId) => (
+                  <SelectItem key={playerId} value={playerId}>
+                    {getPlayerName(playerId)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Bibs Section */}
+          <div className="space-y-2">
+            <Label className="sr-only">Bibs Player (Optional)</Label>
+            <Select value={bibsPlayer} onValueChange={setBibsPlayer}>
+              <SelectTrigger>
+                <SelectValue placeholder="Bibs player (optional)" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem key="none" value="none">None</SelectItem>
