@@ -1231,9 +1231,9 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                       {player.name}
                     </Link>
                     {player.user_id ? (
-                      <UserCheck className="h-3.5 w-3.5 shrink-0 text-primary" title="Verified" />
+                      <span title="Verified" className="shrink-0"><UserCheck className="h-3.5 w-3.5 text-primary" /></span>
                     ) : (
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-muted-foreground/70" title="Unverified" />
+                      <span title="Unverified" className="shrink-0"><AlertTriangle className="h-3.5 w-3.5 text-muted-foreground/70" /></span>
                     )}
                   </div>
                   <p className="truncate text-xs text-muted-foreground/70">
@@ -1345,7 +1345,7 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 min-w-0 flex-nowrap">
                     <h4 className="truncate text-sm font-medium text-foreground" title={guest.name}>{guest.name}</h4>
-                    <Users className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--aurora-purple))]" title="Guest" />
+                    <span title="Guest" className="shrink-0"><Users className="h-3.5 w-3.5 text-[hsl(var(--aurora-purple))]" /></span>
                   </div>
                   <p className="truncate text-xs text-muted-foreground/70">
                     {guest.signupsCount || 0} signups
