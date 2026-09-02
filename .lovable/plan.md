@@ -19,7 +19,9 @@ No Bibs column in the ranking table, no changes to MVP voting, debt, signups or 
 **Frontend**
 - `src/components/GameInput.tsx` — `bibsPlayer` state, select mirroring the MVP one, same "must be a playing player" validation, included in the submitted payload.
 - `src/components/AdminGameManagement.tsx` — persist `bibs_player` on insert and update, pass it back into the edit form, and show the Bibs badge in its lineup lists.
-- `src/components/GamesList.tsx` — render the Bibs badge next to the player name, reusing the lila `status-badge status-badge-guest` token with a `Shirt` lucide icon (distinct from the gold MVP crown).
+- `src/index.css` — new `badge-bibs` token in the same family as `badge-trophy`/`status-badge-*`, built on a new `--aurora-teal` variable (muted teal, unused elsewhere).
+- `src/components/GamesList.tsx` — render the Bibs badge next to the player name using `badge-bibs` and the lucide `Shirt` icon (structurally identical to the MVP badge, different colour and glyph).
+
 - `src/types/index.ts` and local game interfaces — add `bibs_player?: string | null`.
 
 Season archiving copies whole rows, so archived results keep their bibs pick once the column exists.
