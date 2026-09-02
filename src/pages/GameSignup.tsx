@@ -12,6 +12,8 @@ import { Calendar, Users, ArrowLeft, Clock, CheckCircle, User, UserMinus, AlertT
 import { sendTelegramNotification, sendGameFullNotification, sendWaitlistPromotedNotification } from '@/utils/telegramNotify';
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 import GuestNameAutocomplete from '@/components/GuestNameAutocomplete';
+import MvpVoteCard, { type MvpCandidate } from '@/components/MvpVoteCard';
+
 const GameSignup = () => {
   const {
     gameId
