@@ -721,20 +721,23 @@ const AdminScheduleManagement = () => {
                 <div key={game.id} className="glass-row space-y-3 sm:space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="font-semibold text-base sm:text-lg">
-                          <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM d, h:mm a")}</span>
-                          <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "PPP 'at' p")}</span>
-                        </h3>
+                      <h3 className="font-display text-2xl sm:text-3xl text-foreground tracking-tight leading-none mb-2 uppercase">
+                        {format(new Date(game.scheduled_at), "EEEE, MMM d")}
+                      </h3>
+                      <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span>{format(new Date(game.scheduled_at), "h:mm a")}</span>
                         {game.pitch_size && (
-                          <Badge variant="outline" className="text-xs">
-                            {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
-                          </Badge>
+                          <>
+                            <span className="text-muted-foreground/40">•</span>
+                            <span>{game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}</span>
+                          </>
                         )}
-                      </div>
+                      </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         Created {format(new Date(game.created_at), "PPP")}
                       </p>
+
                       {/* MVP ballot summary (read-only) */}
                       {mvpStatus.phase === 'open' && (
                         <div className="flex items-center gap-2 mt-2">
