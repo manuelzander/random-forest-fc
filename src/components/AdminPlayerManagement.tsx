@@ -1209,58 +1209,68 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
           </Dialog>
         </div>
 
-        <div className="space-y-2 p-4 sm:p-6">
+        <div className="mx-auto max-w-3xl space-y-3 p-4 sm:p-6">
           {players.map((player) => {
             const profile = getProfileByUserId(player.user_id);
+            const net = player.credit - player.debt;
             return (
-              <div key={player.id} className="glass-row !p-3 flex items-center gap-3">
-                <Avatar key={`${player.id}-${player.avatar_url}`} className="h-10 w-10 flex-shrink-0 border border-white/10">
+              <div
+                key={player.id}
+                className={`glass-row !p-3 flex flex-col items-center gap-3 sm:flex-row sm:gap-4 ${
+                  net < 0 ? 'hover:!border-destructive/30' : 'hover:!border-primary/30'
+                }`}
+              >
+                <Avatar key={`${player.id}-${player.avatar_url}`} className="h-12 w-12 flex-shrink-0 border border-white/10">
                   <AvatarImage src={player.avatar_url || undefined} />
-                  <AvatarFallback className="bg-white/10 text-xs text-foreground">
+                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-[hsl(var(--aurora-blue))]/20 text-xs font-semibold text-primary">
                     {player.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
 
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 min-w-0 flex-nowrap">
+                <div className="min-w-0 flex-1 text-center sm:text-left">
+                  <div className="flex items-center justify-center gap-2 min-w-0 flex-nowrap sm:justify-start">
                     <Link
                       to={`/player/${player.id}`}
                       title={player.name}
-                      className="truncate text-sm font-medium text-foreground transition-colors hover:text-primary"
+                      className="truncate text-sm font-semibold text-foreground transition-colors hover:text-primary"
                     >
                       {player.name}
                     </Link>
                     {player.user_id ? (
-                      <span title="Verified" className="shrink-0"><UserCheck className="h-3.5 w-3.5 text-primary" /></span>
+                      <span className="shrink-0 rounded border border-primary/30 bg-primary/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary">
+                        Verified
+                      </span>
                     ) : (
-                      <span title="Unverified" className="shrink-0"><AlertTriangle className="h-3.5 w-3.5 text-muted-foreground/70" /></span>
+                      <span className="shrink-0 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
+                        Unverified
+                      </span>
                     )}
                   </div>
-                  <p className="truncate text-xs text-muted-foreground/70">
-                    {player.games_played} {player.games_played === 1 ? 'game' : 'games'}
-                    {profile?.email ? ` · ${profile.email}` : ''}
+                  <p className="truncate text-xs text-muted-foreground/60">
+                    {profile?.email || '—'}
                   </p>
                 </div>
 
-                <div className="flex flex-shrink-0 flex-col items-end leading-none">
-                  <span
-                    className={`font-display text-base tracking-wide ${
-                      (player.credit - player.debt) > 0
-                        ? 'text-primary'
-                        : (player.credit - player.debt) < 0
-                          ? 'text-destructive'
-                          : 'text-muted-foreground'
-                    }`}
-                    title={`Credit £${player.credit.toFixed(2)} · Debt £${player.debt.toFixed(2)}`}
-                  >
-                    {(player.credit - player.debt) < 0 ? '-' : ''}£{Math.abs(player.credit - player.debt).toFixed(2)}
-                  </span>
-                  {(player.debt > 0 || player.credit > 0) && (
-                    <span className="mt-0.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
+                <div className="flex flex-row items-center gap-3 border-white/5 px-4 sm:flex-col sm:items-start sm:gap-0 sm:border-x">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50">Games</span>
+                  <span className="font-display text-xl leading-none tracking-wide text-foreground/90">{player.games_played}</span>
+                </div>
+
+                <div className="flex flex-row items-center gap-4">
+                  <div className="text-right leading-none">
+                    <span className="mb-1 block text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50">
                       {player.debt > 0 && player.credit > 0 ? 'Net' : player.debt > 0 ? 'Debt' : 'Credit'}
                     </span>
-                  )}
-                </div>
+                    <span
+                      className={`font-display text-2xl leading-none tracking-tight ${
+                        net > 0 ? 'text-primary' : net < 0 ? 'text-destructive' : 'text-muted-foreground'
+                      }`}
+                      title={`Credit £${player.credit.toFixed(2)} · Debt £${player.debt.toFixed(2)}`}
+                    >
+                      {net < 0 ? '-' : ''}£{Math.abs(net).toFixed(2)}
+                    </span>
+                  </div>
+
 
                 {!isArchive && (
                   <DropdownMenu>
