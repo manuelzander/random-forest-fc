@@ -62,7 +62,13 @@ interface OrphanedGuestSignup {
   debt: number;
 }
 
-const AdminPlayerManagement = () => {
+interface AdminPlayerManagementProps {
+  /** when set, the panel shows archived-season stats and becomes read-only */
+  archiveSeasonId?: string | null;
+}
+
+const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagementProps) => {
+  const isArchive = !!archiveSeasonId;
   const [players, setPlayers] = useState<Player[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
