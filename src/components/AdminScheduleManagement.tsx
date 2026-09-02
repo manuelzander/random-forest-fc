@@ -719,7 +719,7 @@ const AdminScheduleManagement = () => {
                 const mvpStatus = getMvpStatus(game, signups[game.id] || [], mvpVotes[game.id], players);
                 return (
                 <div key={game.id} className="glass-row space-y-3 sm:space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div className="min-w-0">
                       <h3 className="font-display text-2xl sm:text-3xl text-foreground tracking-tight leading-none mb-2 uppercase">
                         {format(new Date(game.scheduled_at), "EEEE, MMM d")}
@@ -734,21 +734,12 @@ const AdminScheduleManagement = () => {
                           </>
                         )}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Created {format(new Date(game.created_at), "PPP")}
-                      </p>
 
                       {/* MVP ballot summary (read-only) */}
                       {mvpStatus.phase === 'open' && (
-                        <div className="flex items-center gap-2 mt-2">
-                          <Badge className="status-badge status-badge-verified">
-                            <Trophy className="h-3 w-3 mr-1" />
-                            MVP voting open
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {`${mvpStatus.votesCast} of ${mvpStatus.eligibleVoters} voted`}
-                          </span>
-                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {`MVP voting open · ${mvpStatus.votesCast} of ${mvpStatus.eligibleVoters} voted`}
+                        </p>
                       )}
                       {mvpStatus.phase === 'closed' && (mvpStatus.winnerName || mvpStatus.votesCast > 0) && (
                         <div className="flex items-center gap-2 mt-2">
@@ -767,9 +758,14 @@ const AdminScheduleManagement = () => {
                           )}
                         </div>
                       )}
+
+                      <p className="text-xs text-muted-foreground/70 mt-2">
+                        Created {format(new Date(game.created_at), "PPP")}
+                      </p>
                     </div>
 
                     <div className="flex items-center gap-2 w-full sm:w-auto sm:justify-end">
+
                       <Button
                         variant="outline"
                         size="sm"
