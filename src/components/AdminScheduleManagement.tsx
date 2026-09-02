@@ -225,6 +225,31 @@ const AdminScheduleManagement = () => {
       });
       setSignups(groupedSignups);
 
+      // MVP votes (aggregate only — no per-voter detail is shown)
+      const votesData = await fetchAllPages((from, to) =>
+        supabase
+          .from('mvp_votes')
+          .select('game_schedule_id, voted_player_id, created_at, players:voted_player_id (name)')
+          .order('created_at', { ascending: true })
+          .range(from, to)
+      );
+
+      const groupedVotes: { [gameId: string]: MvpVoteTally } = {};
+      (votesData || []).forEach((vote: any) => {
+        const tally =
+          groupedVotes[vote.game_schedule_id] ||
+          (groupedVotes[vote.game_schedule_id] = { total: 0, byPlayer: {} });
+        tally.total += 1;
+        const entry =
+          tally.byPlayer[vote.voted_player_id] ||
+          (tally.byPlayer[vote.voted_player_id] = {
+            name: vote.players?.name || 'Unknown player',
+            votes: 0,
+          });
+        entry.votes += 1;
+      });
+      setMvpVotes(groupedVotes);
+
       // Fetch all players
       const { data: playersData, error: playersError } = await supabase
         .from('players')
