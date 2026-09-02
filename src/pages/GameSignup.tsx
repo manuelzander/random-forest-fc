@@ -651,6 +651,16 @@ const GameSignup = () => {
   const isWithin24Hours = hoursUntilGame <= 24 && hoursUntilGame > 0;
   const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
 
+  // MVP candidates: rostered players who did not drop out
+  const mvpCandidates: MvpCandidate[] = signups
+    .filter(s => !s.last_minute_dropout && s.player?.id)
+    .map(s => ({
+      playerId: s.player!.id,
+      name: s.player!.name,
+      avatarUrl: s.player!.avatar_url ?? null,
+    }));
+
+
   return <div className="page-container">
       <div className="page-main-content relative overflow-hidden">
         {/* Animated Aurora background glows */}
