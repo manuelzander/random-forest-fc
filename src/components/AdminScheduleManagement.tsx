@@ -710,7 +710,7 @@ const AdminScheduleManagement = () => {
             </Dialog>
           </div>
           {scheduledGames.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">
+            <p className="text-center text-sm text-muted-foreground py-8">
               No scheduled games yet. Schedule your first game to get started.
             </p>
           ) : (

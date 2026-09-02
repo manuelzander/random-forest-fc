@@ -359,7 +359,7 @@ const AdminGameManagement = () => {
             </div>
           ))}
           {games.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">
+            <p className="text-center text-sm text-muted-foreground py-8">
               No games found. Add your first game to get started.
             </p>
           )}
