@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       archived_games: {
         Row: {
+          bibs_player: string | null
           created_at: string
           game_schedule_id: string | null
           id: string
@@ -31,6 +32,7 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          bibs_player?: string | null
           created_at: string
           game_schedule_id?: string | null
           id: string
@@ -46,6 +48,7 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          bibs_player?: string | null
           created_at?: string
           game_schedule_id?: string | null
           id?: string
@@ -211,6 +214,7 @@ export type Database = {
       }
       games: {
         Row: {
+          bibs_player: string | null
           created_at: string
           game_schedule_id: string | null
           id: string
@@ -225,6 +229,7 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          bibs_player?: string | null
           created_at?: string
           game_schedule_id?: string | null
           id?: string
@@ -239,6 +244,7 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          bibs_player?: string | null
           created_at?: string
           game_schedule_id?: string | null
           id?: string
@@ -253,6 +259,13 @@ export type Database = {
           youtube_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "games_bibs_player_fkey"
+            columns: ["bibs_player"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "games_game_schedule_id_fkey"
             columns: ["game_schedule_id"]
