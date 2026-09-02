@@ -57,7 +57,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
       if (gameIds.length === 0) {
         signupsData = [];
       } else if (archiveSeasonId) {
-        const [signupRows, playersRes] = await Promise.all([
+        const [signupRows, playersRes, resultsRes, votesRes] = await Promise.all([
           fetchAllSignups((from, to) =>
             supabase
               .from('archived_games_schedule_signups')
@@ -68,6 +68,14 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
               .range(from, to),
           ),
           supabase.from('players').select('id, name, avatar_url, user_id'),
+          supabase
+            .from('archived_games')
+            .select('game_schedule_id, mvp_player')
+            .eq('season_id', archiveSeasonId),
+          supabase
+            .from('archived_mvp_votes')
+            .select('game_schedule_id, voted_player_id')
+            .eq('season_id', archiveSeasonId),
         ]);
 
         if (playersRes.error) throw playersRes.error;
@@ -78,6 +86,30 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
           players: s.player_id ? playerMap.get(s.player_id) ?? null : null,
           guests: null,
         }));
+
+        // Archived MVP: prefer the ballot winner, fall back to the MVP recorded on the game result
+        const voteCounts: { [gameId: string]: { [playerId: string]: number } } = {};
+        (votesRes.data || []).forEach((v: any) => {
+          if (!v.game_schedule_id || !v.voted_player_id) return;
+          const perGame = voteCounts[v.game_schedule_id] || (voteCounts[v.game_schedule_id] = {});
+          perGame[v.voted_player_id] = (perGame[v.voted_player_id] || 0) + 1;
+        });
+
+        const resultMvp = new Map<string, string>();
+        (resultsRes.data || []).forEach((g: any) => {
+          if (g.game_schedule_id && g.mvp_player) resultMvp.set(g.game_schedule_id, g.mvp_player);
+        });
+
+        const winners: { [gameId: string]: { name: string; votes: number } } = {};
+        ((games as ScheduledGame[]) || []).forEach((g) => {
+          const winnerId = g.mvp_vote_winner || resultMvp.get(g.id) || null;
+          if (!winnerId) return;
+          const name = playerMap.get(winnerId)?.name;
+          if (!name) return;
+          winners[g.id] = { name, votes: voteCounts[g.id]?.[winnerId] || 0 };
+        });
+        setMvpWinners(winners);
+
       } else {
         signupsData = await fetchAllSignups((from, to) =>
           supabase
