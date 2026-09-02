@@ -753,15 +753,16 @@ const AdminScheduleManagement = () => {
                                 <span>👑</span>
                                 {mvpStatus.winnerName}
                               </Badge>
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-sm text-muted-foreground">
                                 {`${mvpStatus.winnerVotes} of ${mvpStatus.votesCast} votes`}
                               </span>
                             </>
                           ) : (
-                            <span className="text-xs text-muted-foreground">MVP: no winner set</span>
+                            <span className="text-sm text-muted-foreground">MVP: no winner set</span>
                           )}
                         </div>
                       )}
+
 
                       <p className="text-xs text-muted-foreground/70 mt-2">
                         Created {format(new Date(game.created_at), "PPP")}
