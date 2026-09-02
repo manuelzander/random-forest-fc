@@ -114,7 +114,7 @@ const Admin = () => {
           </TabsList>
 
           <TabsContent value="players">
-            <AdminPlayerManagement />
+            <AdminPlayerManagement archiveSeasonId={archiveSeasonId} />
           </TabsContent>
 
           <TabsContent value="games">
