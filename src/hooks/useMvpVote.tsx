@@ -16,6 +16,7 @@ export interface MvpVoteState {
   eligible_voters: number;
   votes_cast: number;
   my_player_id: string | null;
+  am_eligible: boolean;
   my_vote: string | null;
   winner_player_id: string | null;
   results: MvpVoteResult[];
@@ -75,7 +76,8 @@ export const useMvpVote = (gameScheduleId?: string) => {
 
   const castVote = useCallback(
     async (votedPlayerId: string) => {
-      if (!gameScheduleId || !state?.my_player_id) return { error: 'Not eligible to vote' };
+      if (!gameScheduleId || !state?.my_player_id || !state?.am_eligible)
+        return { error: 'Only players on this game roster can vote' };
       setIsVoting(true);
       try {
         const { error } = await supabase.from('mvp_votes').upsert(
@@ -96,11 +98,12 @@ export const useMvpVote = (gameScheduleId?: string) => {
         setIsVoting(false);
       }
     },
-    [gameScheduleId, state?.my_player_id, fetchState]
+    [gameScheduleId, state?.my_player_id, state?.am_eligible, fetchState]
   );
 
   const clearVote = useCallback(async () => {
-    if (!gameScheduleId || !state?.my_player_id) return { error: 'Not eligible to vote' };
+    if (!gameScheduleId || !state?.my_player_id || !state?.am_eligible)
+        return { error: 'Only players on this game roster can vote' };
     setIsVoting(true);
     try {
       const { error } = await supabase
@@ -117,7 +120,7 @@ export const useMvpVote = (gameScheduleId?: string) => {
     } finally {
       setIsVoting(false);
     }
-  }, [gameScheduleId, state?.my_player_id, fetchState]);
+  }, [gameScheduleId, state?.my_player_id, state?.am_eligible, fetchState]);
 
   return { state, loading, isVoting, castVote, clearVote, refresh: fetchState };
 };
