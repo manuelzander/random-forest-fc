@@ -699,6 +699,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_on_playing_roster: {
+        Args: { _game_schedule_id: string; _player_id: string }
+        Returns: boolean
+      }
       merge_guest_to_player: {
         Args: { p_guest_id: string; p_player_id: string }
         Returns: Json

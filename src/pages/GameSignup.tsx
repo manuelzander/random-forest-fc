@@ -653,8 +653,10 @@ const GameSignup = () => {
   const isMvpVotingOpen = hoursUntilGame <= 0 && hoursUntilGame > -72;
   const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
 
-  // MVP candidates: rostered players who did not drop out
+  // MVP candidates: the playing roster only — within pitch capacity by signup order,
+  // excluding waitlisted signups and dropouts (matches can_vote_mvp in the database)
   const mvpCandidates: MvpCandidate[] = signups
+    .slice(0, pitchCapacity)
     .filter(s => !s.last_minute_dropout && s.player?.id)
     .map(s => ({
       playerId: s.player!.id,
