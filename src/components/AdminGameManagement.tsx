@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Edit2, Trash2, History, Plus, Crown } from 'lucide-react';
+import { Edit2, Trash2, History, Plus, Crown, Shirt } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import GameInput from '@/components/GameInput';
@@ -20,6 +20,7 @@ interface Game {
   team1_captain: string | null;
   team2_captain: string | null;
   mvp_player: string | null;
+  bibs_player: string | null;
   created_at: string;
   youtube_url?: string | null;
 }
@@ -129,6 +130,7 @@ const AdminGameManagement = () => {
             team1_captain: gameData.team1Captain,
             team2_captain: gameData.team2Captain,
             mvp_player: gameData.mvpPlayer,
+            bibs_player: gameData.bibsPlayer ?? null,
             youtube_url: gameData.youtubeUrl || null,
           })
           .eq('id', editingGame.id);
@@ -149,6 +151,7 @@ const AdminGameManagement = () => {
             team1_captain: gameData.team1Captain,
             team2_captain: gameData.team2Captain,
             mvp_player: gameData.mvpPlayer,
+            bibs_player: gameData.bibsPlayer ?? null,
             youtube_url: gameData.youtubeUrl || null,
           }]);
 
@@ -243,6 +246,7 @@ const AdminGameManagement = () => {
                   team1Captain: editingGame.team1_captain || '',
                   team2Captain: editingGame.team2_captain || '',
                   mvpPlayer: editingGame.mvp_player || '',
+                  bibsPlayer: editingGame.bibs_player || '',
                   youtubeUrl: editingGame.youtube_url || '',
                 } : undefined}
                 isEditing={!!editingGame}
@@ -285,12 +289,20 @@ const AdminGameManagement = () => {
                                 </Badge>
                               )}
                             </div>
-                            {game.mvp_player === playerId && (
-                              <Badge className="badge-trophy h-auto w-fit">
-                                <span>👑</span>
-                                MVP
-                              </Badge>
-                            )}
+                            <div className="flex gap-1">
+                              {game.mvp_player === playerId && (
+                                <Badge className="badge-trophy h-auto w-fit">
+                                  <span>👑</span>
+                                  MVP
+                                </Badge>
+                              )}
+                              {game.bibs_player === playerId && (
+                                <Badge className="badge-bibs h-auto w-fit">
+                                  <Shirt className="h-3 w-3" />
+                                  Bibs
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -310,12 +322,20 @@ const AdminGameManagement = () => {
                                 </Badge>
                               )}
                             </div>
-                            {game.mvp_player === playerId && (
-                              <Badge className="badge-trophy h-auto w-fit">
-                                <span>👑</span>
-                                MVP
-                              </Badge>
-                            )}
+                            <div className="flex gap-1">
+                              {game.mvp_player === playerId && (
+                                <Badge className="badge-trophy h-auto w-fit">
+                                  <span>👑</span>
+                                  MVP
+                                </Badge>
+                              )}
+                              {game.bibs_player === playerId && (
+                                <Badge className="badge-bibs h-auto w-fit">
+                                  <Shirt className="h-3 w-3" />
+                                  Bibs
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { History, Crown, Video, ExternalLink } from 'lucide-react';
+import { History, Crown, Video, ExternalLink, Shirt } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { getYouTubeEmbedUrl } from '@/utils/youtube';
@@ -20,6 +20,7 @@ interface Game {
   team1_captain: string | null;
   team2_captain: string | null;
   mvp_player: string | null;
+  bibs_player?: string | null;
   created_at: string;
   youtube_url?: string | null;
 }
@@ -164,6 +165,12 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                     <Badge className="badge-trophy h-auto w-fit">
                       <span>👑</span>
                       MVP
+                    </Badge>
+                  )}
+                  {game.bibs_player === playerId && (
+                    <Badge className="badge-bibs h-auto w-fit">
+                      <Shirt className="h-3 w-3" />
+                      Bibs
                     </Badge>
                   )}
                 </div>
