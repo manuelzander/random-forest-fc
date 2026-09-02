@@ -1321,8 +1321,6 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                   </div>
                 </div>
               </div>
-
-              </div>
             );
           })}
           {players.length === 0 && (
