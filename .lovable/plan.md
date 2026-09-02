@@ -5,7 +5,7 @@ Add a "Bibs" pick to the game result entry, working exactly like MVP: one option
 ## What changes for users
 
 - **Game entry form** — a new optional "Bibs player" dropdown right under the MVP dropdown, listing the same players who played in the game. Also pre-filled when editing an existing result.
-- **Game History** — a small badge next to the bibs player's name in the lineup, styled like the existing MVP badge but with its own label ("Bibs").
+- **Game History** — a small badge next to the bibs player's name in the lineup, same size and shape as the MVP badge but visually distinct: lila (the existing guest-badge lila tone) with a shirt/laundry symbol instead of the gold crown, labelled "Bibs".
 - **Points** — the bibs player gets +1 point, added the same way MVP is (3 win / 1 draw / +1 MVP / +1 Bibs). Rankings, profiles and achievements all pick this up automatically since they use the same points source.
 
 No Bibs column in the ranking table, no changes to MVP voting, debt, signups or badges.
@@ -19,7 +19,7 @@ No Bibs column in the ranking table, no changes to MVP voting, debt, signups or 
 **Frontend**
 - `src/components/GameInput.tsx` — `bibsPlayer` state, select mirroring the MVP one, same "must be a playing player" validation, included in the submitted payload.
 - `src/components/AdminGameManagement.tsx` — persist `bibs_player` on insert and update, pass it back into the edit form, and show the Bibs badge in its lineup lists.
-- `src/components/GamesList.tsx` — render the Bibs badge next to the player name (reusing existing badge tokens, distinct from the gold MVP crown).
+- `src/components/GamesList.tsx` — render the Bibs badge next to the player name, reusing the lila `status-badge status-badge-guest` token with a `Shirt` lucide icon (distinct from the gold MVP crown).
 - `src/types/index.ts` and local game interfaces — add `bibs_player?: string | null`.
 
 Season archiving copies whole rows, so archived results keep their bibs pick once the column exists.
