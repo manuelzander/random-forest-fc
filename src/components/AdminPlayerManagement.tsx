@@ -1334,7 +1334,7 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
         </div>
 
         {/* Guest Management Section */}
-        <div className="border-t border-white/10 px-4 pb-4 pt-6 sm:px-6 sm:pb-6">
+        <div className="mx-auto max-w-3xl border-t border-white/10 px-4 pb-4 pt-6 sm:px-6 sm:pb-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
             <h3 className="management-count">
               Guests ({guests.length})
