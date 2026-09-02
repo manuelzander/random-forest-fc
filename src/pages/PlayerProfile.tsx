@@ -10,6 +10,7 @@ import { ArrowLeft, Trophy, Target, Calendar, User, MapPin, Clock, Home, LogOut,
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSeasons } from '@/hooks/useSeasons';
 import { getCachedBadges } from '@/utils/badgeCache';
 import { type Player as BadgePlayer, type ProfileData as BadgeProfileData } from '@/utils/badges';
 
@@ -62,6 +63,7 @@ const PlayerProfile = () => {
   const { toast } = useToast();
   const { user, userRole, signOut } = useAuth();
   const isMobile = useIsMobile();
+  const { archiveSeasonId, selectedSeason } = useSeasons();
   const [player, setPlayer] = useState<PlayerData | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -70,7 +72,7 @@ const PlayerProfile = () => {
     if (playerId) {
       fetchPlayerData();
     }
-  }, [playerId]);
+  }, [playerId, archiveSeasonId]);
 
   const fetchPlayerData = async () => {
     try {
@@ -91,11 +93,20 @@ const PlayerProfile = () => {
       }
 
       // Then calculate stats from games
-      const { data: statsData, error: statsError } = await supabase
-        .from('games')
-        .select('team1_players, team2_players, team1_goals, team2_goals, mvp_player, team1_captain, team2_captain, created_at')
-        .or(`team1_players.cs.{${playerId}},team2_players.cs.{${playerId}}`)
-        .order('created_at', { ascending: false });
+      const statsSelect =
+        'team1_players, team2_players, team1_goals, team2_goals, mvp_player, bibs_player, team1_captain, team2_captain, created_at';
+      const { data: statsData, error: statsError } = archiveSeasonId
+        ? await supabase
+            .from('archived_games')
+            .select(statsSelect)
+            .eq('season_id', archiveSeasonId)
+            .or(`team1_players.cs.{${playerId}},team2_players.cs.{${playerId}}`)
+            .order('created_at', { ascending: false })
+        : await supabase
+            .from('games')
+            .select(statsSelect)
+            .or(`team1_players.cs.{${playerId}},team2_players.cs.{${playerId}}`)
+            .order('created_at', { ascending: false });
 
       if (statsError) throw statsError;
 
@@ -162,6 +173,10 @@ const PlayerProfile = () => {
             if (game.mvp_player === playerId) {
               mvp_awards++;
               points += 1; // Add 1 point for MVP award
+            }
+
+            if (game.bibs_player === playerId) {
+              points += 1; // Add 1 point for taking the bibs home
             }
           }
         });
@@ -432,7 +447,13 @@ const PlayerProfile = () => {
               </CardTitle>
              </CardHeader>
               <CardContent className="space-y-6 pt-6">
+                {archiveSeasonId && (
+                  <p className="info-note">
+                    Showing {selectedSeason?.name} archived season statistics.
+                  </p>
+                )}
                 {/* Win/Draw/Loss at the top */}
+
                 <div className="grid grid-cols-3 gap-4">
                   <div className="stat-tile stat-tile-primary p-3">
                     <div className="stat-tile-value text-primary">{player.wins}</div>

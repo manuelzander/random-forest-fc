@@ -131,8 +131,14 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
                 losses++;
               }
               
+              // MVP and bibs each add a bonus point (matches the ranking logic)
               if (game.mvp_player === player.id) {
                 mvp_awards++;
+                points += 1;
+              }
+
+              if (game.bibs_player === player.id) {
+                points += 1;
               }
             }
           });
