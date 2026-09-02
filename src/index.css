@@ -314,6 +314,14 @@
     @apply inline-flex items-center gap-1 h-5 px-1.5 text-xs font-medium rounded-md !border-0 !bg-amber-300/15 !text-amber-200;
   }
 
+  /* Bibs award — muted teal, not used by any other badge */
+  .badge-bibs {
+    @apply inline-flex items-center gap-1 h-5 px-1.5 text-xs font-medium rounded-md !border-0;
+    background: hsl(174 55% 52% / 0.16);
+    color: hsl(174 60% 74%);
+  }
+
+
   /* Info notes — one shared subtle glass style */
   .info-note {
     @apply flex items-start gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-muted-foreground;
