@@ -1257,11 +1257,7 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                   </span>
                   {(player.debt > 0 || player.credit > 0) && (
                     <span className="mt-0.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
-                      {player.debt > 0 && player.credit > 0
-                        ? 'Debt / Credit'
-                        : player.debt > 0
-                          ? 'Debt'
-                          : 'Credit'}
+                      {player.debt > 0 && player.credit > 0 ? 'Net' : player.debt > 0 ? 'Debt' : 'Credit'}
                     </span>
                   )}
                 </div>
@@ -1368,7 +1364,7 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                   </span>
                   {(guest.debt > 0 || guest.credit > 0) && (
                     <span className="mt-0.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
-                      {guest.debt > 0 && guest.credit > 0 ? 'Debt / Credit' : guest.debt > 0 ? 'Debt' : 'Credit'}
+                      {guest.debt > 0 && guest.credit > 0 ? 'Net' : guest.debt > 0 ? 'Debt' : 'Credit'}
                     </span>
                   )}
                 </div>
