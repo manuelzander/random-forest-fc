@@ -716,57 +716,56 @@ const AdminScheduleManagement = () => {
           ) : (
             <div className="space-y-6 p-4 sm:p-6">
               {scheduledGames.map((game) => {
-                const mvpStatus = getMvpStatus(game, signups[game.id] || [], mvpVotes[game.id]);
+                const mvpStatus = getMvpStatus(game, signups[game.id] || [], mvpVotes[game.id], players);
                 return (
                 <div key={game.id} className="glass-row space-y-3 sm:space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <div>
-                      <div className="flex items-center justify-between">
+                    <div className="min-w-0">
+                      <div className="flex items-center justify-between gap-2">
                         <h3 className="font-semibold text-base sm:text-lg">
                           <span className="sm:hidden">{format(new Date(game.scheduled_at), "MMM d, h:mm a")}</span>
                           <span className="hidden sm:inline">{format(new Date(game.scheduled_at), "PPP 'at' p")}</span>
                         </h3>
                         {game.pitch_size && (
-                          <Badge variant="outline" className="text-xs sm:hidden">
+                          <Badge variant="outline" className="text-xs">
                             {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
                           </Badge>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <p className="text-sm text-muted-foreground hidden sm:block">
-                          Created {format(new Date(game.created_at), "PPP")}
-                        </p>
-                        {game.pitch_size && (
-                          <Badge variant="outline" className="text-xs hidden sm:inline-flex">
-                            {game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Created {format(new Date(game.created_at), "PPP")}
+                      </p>
+                      {/* MVP ballot summary (read-only) */}
+                      {mvpStatus.phase === 'open' && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge className="status-badge status-badge-verified">
+                            <Trophy className="h-3 w-3 mr-1" />
+                            MVP voting open
                           </Badge>
-                        )}
-                        {/* MVP ballot summary (read-only) */}
-                        {mvpStatus.phase === 'pending' && (
-                          <span className="text-xs text-muted-foreground">MVP: not open yet</span>
-                        )}
-                        {mvpStatus.phase === 'open' && (
-                          <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Badge className="status-badge status-badge-verified">
-                              <Trophy className="h-3 w-3 mr-1" />
-                              Voting open
-                            </Badge>
-                            {mvpStatus.votesCast} of {mvpStatus.eligibleVoters} voted
+                          <span className="text-xs text-muted-foreground">
+                            {`${mvpStatus.votesCast} of ${mvpStatus.eligibleVoters} voted`}
                           </span>
-                        )}
-                        {mvpStatus.phase === 'closed' && (
-                          mvpStatus.winnerName ? (
-                            <Badge className="badge-trophy">
-                              <span>👑</span>
-                              {mvpStatus.winnerName} · {mvpStatus.winnerVotes}{' '}
-                              {mvpStatus.winnerVotes === 1 ? 'vote' : 'votes'}
-                            </Badge>
+                        </div>
+                      )}
+                      {mvpStatus.phase === 'closed' && (mvpStatus.winnerName || mvpStatus.votesCast > 0) && (
+                        <div className="flex items-center gap-2 mt-2">
+                          {mvpStatus.winnerName ? (
+                            <>
+                              <Badge className="badge-trophy">
+                                <span>👑</span>
+                                {mvpStatus.winnerName}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">
+                                {`${mvpStatus.winnerVotes} of ${mvpStatus.votesCast} votes`}
+                              </span>
+                            </>
                           ) : (
-                            <span className="text-xs text-muted-foreground">MVP: no votes cast</span>
-                          )
-                        )}
-                      </div>
+                            <span className="text-xs text-muted-foreground">MVP: no winner set</span>
+                          )}
+                        </div>
+                      )}
                     </div>
+
                     <div className="flex items-center gap-2 w-full sm:w-auto sm:justify-end">
                       <Button
                         variant="outline"
