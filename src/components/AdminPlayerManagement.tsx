@@ -13,8 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus, Info, MoreHorizontal } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { calculatePlayerDebt, calculateGuestDebt, type GameScheduleForDebt, type SignupForDebt } from '@/utils/debtCalculation';
 import PlayerNameAutocomplete from './PlayerNameAutocomplete';
@@ -1209,119 +1208,115 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
           </Dialog>
         </div>
 
-        <div className="mx-auto max-w-3xl space-y-3 p-4 sm:p-6">
+        <div className="space-y-2 p-4 sm:p-6">
           {players.map((player) => {
             const profile = getProfileByUserId(player.user_id);
-            const net = player.credit - player.debt;
             return (
-              <div
-                key={player.id}
-                className={`glass-row !p-3 flex flex-col items-center gap-3 sm:flex-row sm:gap-4 ${
-                  net < 0 ? 'hover:!border-destructive/30' : 'hover:!border-primary/30'
-                }`}
-              >
-                <Avatar key={`${player.id}-${player.avatar_url}`} className="h-12 w-12 flex-shrink-0 border border-white/10">
-                  <AvatarImage src={player.avatar_url || undefined} />
-                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-[hsl(var(--aurora-blue))]/20 text-xs font-semibold text-primary">
-                    {player.name.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="min-w-0 flex-1 text-center sm:text-left">
-                  <div className="flex items-center justify-center gap-2 min-w-0 flex-nowrap sm:justify-start">
-                    <Link
-                      to={`/player/${player.id}`}
-                      title={player.name}
-                      className="truncate text-sm font-semibold text-foreground transition-colors hover:text-primary"
-                    >
-                      {player.name}
-                    </Link>
-                    {player.user_id ? (
-                      <span className="shrink-0 rounded border border-primary/30 bg-primary/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary">
-                        Verified
-                      </span>
-                    ) : (
-                      <span className="shrink-0 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
-                        Unverified
-                      </span>
-                    )}
-                  </div>
-                  <p className="truncate text-xs text-muted-foreground/60">
-                    {profile?.email || '—'}
-                  </p>
-                </div>
-
-                <div className="flex flex-row items-center gap-3 border-white/5 px-4 sm:flex-col sm:items-start sm:gap-0 sm:border-x">
-                  <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50">Games</span>
-                  <span className="font-display text-xl leading-none tracking-wide text-foreground/90">{player.games_played}</span>
-                </div>
-
-                <div className="flex flex-row items-center gap-4">
-                  <div className="text-right leading-none">
-                    <span className="mb-1 block text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50">
-                      {player.debt > 0 && player.credit > 0 ? 'Net' : player.debt > 0 ? 'Debt' : 'Credit'}
-                    </span>
-                    <span
-                      className={`font-display text-2xl leading-none tracking-tight ${
-                        net > 0 ? 'text-primary' : net < 0 ? 'text-destructive' : 'text-muted-foreground'
-                      }`}
-                      title={`Credit £${player.credit.toFixed(2)} · Debt £${player.debt.toFixed(2)}`}
-                    >
-                      {net < 0 ? '-' : ''}£{Math.abs(net).toFixed(2)}
-                    </span>
-                  </div>
-
-
-                {!isArchive && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button size="sm" variant="outline" className="icon-action flex-shrink-0" title="Player actions">
-                        {generatingAvatarFor === player.id || removingAvatarFor === player.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <MoreHorizontal className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-52">
-                      <DropdownMenuItem onClick={() => openDialog(player)}>
-                        <Edit2 className="mr-2 h-4 w-4" /> Edit player
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => generateAvatar(player)}
-                        disabled={generatingAvatarFor === player.id}
+              <div key={player.id} className="glass-row flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex items-center gap-3 flex-1">
+                  <Avatar key={`${player.id}-${player.avatar_url}`} className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0">
+                    <AvatarImage src={player.avatar_url || undefined} />
+                    <AvatarFallback>
+                      {player.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <Link 
+                        to={`/player/${player.id}`} 
+                        className="hover:text-primary transition-colors"
                       >
-                        <Wand2 className="mr-2 h-4 w-4" /> Generate avatar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => openRemoveAvatarDialog(player)}
-                        disabled={removingAvatarFor === player.id || !player.avatar_url}
-                      >
-                        <ImageOff className="mr-2 h-4 w-4" /> Remove avatar
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
+                        <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
+                      </Link>
                       {player.user_id ? (
-                        <DropdownMenuItem onClick={() => openDisconnectDialog(player)}>
-                          <UserX className="mr-2 h-4 w-4" /> Disconnect account
-                        </DropdownMenuItem>
+                        <Badge className="status-badge status-badge-verified">
+                          <UserCheck className="h-3 w-3 mr-1" />
+                          <span className="hidden sm:inline">Verified</span>
+                        </Badge>
                       ) : (
-                        <DropdownMenuItem onClick={() => openClaimDialog(player)}>
-                          <UserCheck className="mr-2 h-4 w-4" /> Link account
-                        </DropdownMenuItem>
+                        <Badge className="status-badge status-badge-unverified">
+                          <AlertTriangle className="h-3 w-3 mr-1" />
+                          <span className="hidden sm:inline">Unverified</span>
+                        </Badge>
                       )}
-                      <DropdownMenuItem
-                        onClick={() => openDeleteDialog(player)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete player
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
+                    </div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {player.games_played} games played
+                    </p>
+                    {profile && (
+                      <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                        <span className="hidden sm:inline">Connected to: </span>
+                        {profile.email}
+                      </p>
+                    )}
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
+                      <p>
+                        Debt: <span className="font-medium text-destructive">£{player.debt.toFixed(2)}</span>
+                      </p>
+                      <p>
+                        Credit: <span className="font-medium text-primary">£{player.credit.toFixed(2)}</span>
+                      </p>
+                      <p>
+                        Net: <span className={`font-bold ${
+                          (player.credit - player.debt) >= 0 
+                            ? 'text-primary' 
+                            : 'text-destructive'
+                        }`}>
+                          £{Math.abs(player.credit - player.debt).toFixed(2)}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className={`flex justify-center gap-1 sm:gap-2 flex-shrink-0 ${isArchive ? "hidden" : ""}`}>
+                  <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
+                    <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => generateAvatar(player)}
+                    disabled={generatingAvatarFor === player.id}
+                    title="Generate Avatar"
+                  >
+                    {generatingAvatarFor === player.id ? (
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                    ) : (
+                      <Wand2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openRemoveAvatarDialog(player)}
+                    disabled={removingAvatarFor === player.id || !player.avatar_url}
+                    title="Remove Avatar"
+                  >
+                    {removingAvatarFor === player.id ? (
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                    ) : (
+                      <ImageOff className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </Button>
+                  {player.user_id ? (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => openDisconnectDialog(player)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <UserX className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="outline" onClick={() => openClaimDialog(player)}>
+                      <UserCheck className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" onClick={() => openDeleteDialog(player)}>
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
                 </div>
               </div>
-
-
             );
           })}
           {players.length === 0 && (
@@ -1334,101 +1329,101 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
         </div>
 
         {/* Guest Management Section */}
-        <div className="mx-auto max-w-3xl border-t border-white/10 px-4 pb-4 pt-6 sm:px-6 sm:pb-6">
+        <div className="border-t border-white/10 px-4 pb-4 pt-6 sm:px-6 sm:pb-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
             <h3 className="management-count">
               Guests ({guests.length})
             </h3>
           </div>
 
-          <div className="space-y-3">
-            {guests.map((guest) => {
-              const guestNet = guest.credit - guest.debt;
-              return (
-              <div key={guest.id} className="glass-row !p-3 flex flex-col items-center gap-3 sm:flex-row sm:gap-4 hover:!border-[hsl(var(--aurora-purple))]/30">
-                <Avatar className="h-12 w-12 flex-shrink-0 border border-white/10">
-                  <AvatarFallback className="bg-gradient-to-br from-[hsl(var(--aurora-purple))]/25 to-[hsl(var(--aurora-blue))]/20 text-xs font-semibold text-[hsl(var(--aurora-purple))]">
-                    {guest.name.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="min-w-0 flex-1 text-center sm:text-left">
-                  <div className="flex items-center justify-center gap-2 min-w-0 flex-nowrap sm:justify-start">
-                    <h4 className="truncate text-sm font-semibold text-foreground" title={guest.name}>{guest.name}</h4>
-                    <span className="shrink-0 rounded border border-[hsl(var(--aurora-purple))]/30 bg-[hsl(var(--aurora-purple))]/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-[hsl(var(--aurora-purple))]">
-                      Guest
-                    </span>
+          <div className="space-y-2">
+            {guests.map((guest) => (
+              <div key={guest.id} className="glass-row flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex items-center gap-3 flex-1">
+                  <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 bg-muted">
+                    <AvatarFallback>
+                      {guest.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-semibold text-sm sm:text-base truncate">{guest.name}</h4>
+                      <Badge className="status-badge status-badge-guest">
+                        <Users className="h-3 w-3 mr-1" />
+                        <span className="hidden sm:inline">Guest</span>
+                      </Badge>
+                    </div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {guest.signupsCount || 0} signups
+                    </p>
+                    {guest.phone && (
+                      <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                        Phone: {guest.phone}
+                      </p>
+                    )}
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
+                      <p>
+                        Debt: <span className="font-medium text-destructive">£{guest.debt.toFixed(2)}</span>
+                      </p>
+                      <p>
+                        Credit: <span className="font-medium text-primary">£{guest.credit.toFixed(2)}</span>
+                      </p>
+                      <p>
+                        Net: <span className={`font-bold ${
+                          (guest.credit - guest.debt) >= 0 
+                            ? 'text-primary' 
+                            : 'text-destructive'
+                        }`}>
+                          £{Math.abs(guest.credit - guest.debt).toFixed(2)}
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                  <p className="truncate text-xs text-muted-foreground/60">
-                    {guest.phone || '—'}
-                  </p>
                 </div>
-
-                <div className="flex flex-row items-center gap-3 border-white/5 px-4 sm:flex-col sm:items-start sm:gap-0 sm:border-x">
-                  <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50">Signups</span>
-                  <span className="font-display text-xl leading-none tracking-wide text-foreground/90">{guest.signupsCount || 0}</span>
-                </div>
-
-                <div className="flex flex-row items-center gap-4">
-                  <div className="text-right leading-none">
-                    <span className="mb-1 block text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50">
-                      {guest.debt > 0 && guest.credit > 0 ? 'Net' : guest.debt > 0 ? 'Debt' : 'Credit'}
-                    </span>
-                    <span
-                      className={`font-display text-2xl leading-none tracking-tight ${
-                        guestNet > 0 ? 'text-primary' : guestNet < 0 ? 'text-destructive' : 'text-muted-foreground'
-                      }`}
-                      title={`Credit £${guest.credit.toFixed(2)} · Debt £${guest.debt.toFixed(2)}`}
-                    >
-                      {guestNet < 0 ? '-' : ''}£{Math.abs(guestNet).toFixed(2)}
-                    </span>
-                  </div>
-
-                {!isArchive && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button size="sm" variant="outline" className="icon-action flex-shrink-0" title="Guest actions">
-                        {creatingPlayerFromGuest === guest.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <MoreHorizontal className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent align="end" className="w-52">
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setEditingGuest(guest);
-                          setIsGuestDialogOpen(true);
-                        }}
-                      >
-                        <Edit2 className="mr-2 h-4 w-4" /> Edit guest
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleCreatePlayerFromGuest(guest)}
-                        disabled={creatingPlayerFromGuest === guest.id}
-                      >
-                        <UserPlus className="mr-2 h-4 w-4" /> Create player
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => openMergeDialog(guest)}>
-                        <GitMerge className="mr-2 h-4 w-4" /> Merge into player
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => openDeleteGuestDialog(guest)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete guest
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
+                <div className={`flex justify-center gap-1 sm:gap-2 flex-shrink-0 ${isArchive ? "hidden" : ""}`}>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => {
+                      setEditingGuest(guest);
+                      setIsGuestDialogOpen(true);
+                    }}
+                    title="Edit guest"
+                  >
+                    <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => handleCreatePlayerFromGuest(guest)}
+                    disabled={creatingPlayerFromGuest === guest.id}
+                    title="Create player from guest"
+                  >
+                    {creatingPlayerFromGuest === guest.id ? (
+                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                    ) : (
+                      <UserPlus className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => openMergeDialog(guest)}
+                    title="Merge into existing player"
+                  >
+                    <GitMerge className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => openDeleteGuestDialog(guest)}
+                    title="Delete guest"
+                  >
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
                 </div>
               </div>
-              );
-            })}
-
+            ))}
             {guests.length === 0 && orphanedSignups.length === 0 && (
               <Alert>
                 <AlertDescription>
