@@ -1341,45 +1341,48 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
             </h3>
           </div>
 
-          <div className="space-y-2">
-            {guests.map((guest) => (
-              <div key={guest.id} className="glass-row !p-3 flex items-center gap-3">
-                <Avatar className="h-10 w-10 flex-shrink-0 border border-white/10">
-                  <AvatarFallback className="bg-[hsl(var(--aurora-purple))]/15 text-xs text-[hsl(var(--aurora-purple))]">
+          <div className="space-y-3">
+            {guests.map((guest) => {
+              const guestNet = guest.credit - guest.debt;
+              return (
+              <div key={guest.id} className="glass-row !p-3 flex flex-col items-center gap-3 sm:flex-row sm:gap-4 hover:!border-[hsl(var(--aurora-purple))]/30">
+                <Avatar className="h-12 w-12 flex-shrink-0 border border-white/10">
+                  <AvatarFallback className="bg-gradient-to-br from-[hsl(var(--aurora-purple))]/25 to-[hsl(var(--aurora-blue))]/20 text-xs font-semibold text-[hsl(var(--aurora-purple))]">
                     {guest.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
 
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 min-w-0 flex-nowrap">
-                    <h4 className="truncate text-sm font-medium text-foreground" title={guest.name}>{guest.name}</h4>
-                    <span title="Guest" className="shrink-0"><Users className="h-3.5 w-3.5 text-[hsl(var(--aurora-purple))]" /></span>
+                <div className="min-w-0 flex-1 text-center sm:text-left">
+                  <div className="flex items-center justify-center gap-2 min-w-0 flex-nowrap sm:justify-start">
+                    <h4 className="truncate text-sm font-semibold text-foreground" title={guest.name}>{guest.name}</h4>
+                    <span className="shrink-0 rounded border border-[hsl(var(--aurora-purple))]/30 bg-[hsl(var(--aurora-purple))]/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-[hsl(var(--aurora-purple))]">
+                      Guest
+                    </span>
                   </div>
-                  <p className="truncate text-xs text-muted-foreground/70">
-                    {guest.signupsCount || 0} signups
-                    {guest.phone ? ` · ${guest.phone}` : ''}
+                  <p className="truncate text-xs text-muted-foreground/60">
+                    {guest.phone || '—'}
                   </p>
                 </div>
 
-                <div className="flex flex-shrink-0 flex-col items-end leading-none">
-                  <span
-                    className={`font-display text-base tracking-wide ${
-                      (guest.credit - guest.debt) > 0
-                        ? 'text-primary'
-                        : (guest.credit - guest.debt) < 0
-                          ? 'text-destructive'
-                          : 'text-muted-foreground'
-                    }`}
-                    title={`Credit £${guest.credit.toFixed(2)} · Debt £${guest.debt.toFixed(2)}`}
-                  >
-                    {(guest.credit - guest.debt) < 0 ? '-' : ''}£{Math.abs(guest.credit - guest.debt).toFixed(2)}
-                  </span>
-                  {(guest.debt > 0 || guest.credit > 0) && (
-                    <span className="mt-0.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/60">
+                <div className="flex flex-row items-center gap-3 border-white/5 px-4 sm:flex-col sm:items-start sm:gap-0 sm:border-x">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50">Signups</span>
+                  <span className="font-display text-xl leading-none tracking-wide text-foreground/90">{guest.signupsCount || 0}</span>
+                </div>
+
+                <div className="flex flex-row items-center gap-4">
+                  <div className="text-right leading-none">
+                    <span className="mb-1 block text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50">
                       {guest.debt > 0 && guest.credit > 0 ? 'Net' : guest.debt > 0 ? 'Debt' : 'Credit'}
                     </span>
-                  )}
-                </div>
+                    <span
+                      className={`font-display text-2xl leading-none tracking-tight ${
+                        guestNet > 0 ? 'text-primary' : guestNet < 0 ? 'text-destructive' : 'text-muted-foreground'
+                      }`}
+                      title={`Credit £${guest.credit.toFixed(2)} · Debt £${guest.debt.toFixed(2)}`}
+                    >
+                      {guestNet < 0 ? '-' : ''}£{Math.abs(guestNet).toFixed(2)}
+                    </span>
+                  </div>
 
                 {!isArchive && (
                   <DropdownMenu>
@@ -1392,6 +1395,7 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                         )}
                       </Button>
                     </DropdownMenuTrigger>
+
                     <DropdownMenuContent align="end" className="w-52">
                       <DropdownMenuItem
                         onClick={() => {
