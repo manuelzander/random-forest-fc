@@ -118,8 +118,9 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
                 <div className="info-note">
                   <Crown className="info-note-icon" />
                   <span>
-                    Pick the player of the match. Votes stay secret until the ballot closes 48 hours
-                    after kick-off, then the winner is awarded automatically.
+                    Tap a name to pick the player of the match — tap again to undo. Votes stay secret
+                    until the ballot closes 48 hours after kick-off, then the winner is awarded
+                    automatically.
                   </span>
                 </div>
                 <div className="space-y-2">
