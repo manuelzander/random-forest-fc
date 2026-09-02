@@ -811,7 +811,9 @@ const GameSignup = () => {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="font-display text-2xl text-foreground tracking-wide">PLAYERS SIGNED UP</h3>
                 <span className="relative flex items-center justify-center">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+                  {!isMvpVotingOpen && (
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+                  )}
                   <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold">
                     {signups.length} / {pitchCapacity}
                   </span>
