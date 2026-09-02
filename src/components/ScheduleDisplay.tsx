@@ -30,6 +30,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
 
   const fetchScheduledGames = async () => {
     setLoading(true);
+    setMvpWinners({});
     try {
       // Live: upcoming games only. Archive: the full season schedule, newest first.
       const { data: games, error: gamesError } = archiveSeasonId
