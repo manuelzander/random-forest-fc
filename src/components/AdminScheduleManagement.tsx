@@ -768,11 +768,8 @@ const AdminScheduleManagement = () => {
                         </div>
                       )}
 
-
-                      <p className="text-xs text-muted-foreground/70 mt-2">
-                        Created {format(new Date(game.created_at), "PPP")}
-                      </p>
                     </div>
+
 
                     <div className="flex items-center gap-2 w-full sm:w-auto sm:justify-end">
 
