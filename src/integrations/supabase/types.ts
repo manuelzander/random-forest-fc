@@ -633,7 +633,42 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          favorite_club: string | null
+          favorite_position: string | null
+          football_skills: Json | null
+          skill_ratings: Json | null
+          user_id: string | null
+          years_playing: number | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          favorite_club?: string | null
+          favorite_position?: string | null
+          football_skills?: Json | null
+          skill_ratings?: Json | null
+          user_id?: string | null
+          years_playing?: number | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          favorite_club?: string | null
+          favorite_position?: string | null
+          football_skills?: Json | null
+          skill_ratings?: Json | null
+          user_id?: string | null
+          years_playing?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_vote_mvp: {
