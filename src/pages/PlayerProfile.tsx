@@ -203,26 +203,30 @@ const PlayerProfile = () => {
         recentResults
       });
 
-      // Fetch profile data if player has a user_id
+      // Fetch public profile data if player has a user_id (never exposes email/credit)
       if (basicPlayer.user_id) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('bio, football_skills, favorite_position, years_playing, favorite_club, skill_ratings')
-          .eq('user_id', basicPlayer.user_id)
-          .maybeSingle();
+        const { data: profileRows, error: profileError } = await supabase
+          .rpc('get_public_profile', { p_user_id: basicPlayer.user_id });
 
         if (profileError) {
           console.error('Error fetching profile:', profileError);
         } else {
-          setProfile({
-            ...profileData,
-            football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
-            skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object') 
-              ? profileData.skill_ratings as ProfileData['skill_ratings'] 
-              : {}
-          });
+          const profileData = profileRows?.[0];
+          if (profileData) {
+            setProfile({
+              bio: profileData.bio,
+              favorite_position: profileData.favorite_position,
+              years_playing: profileData.years_playing,
+              favorite_club: profileData.favorite_club,
+              football_skills: Array.isArray(profileData.football_skills) ? profileData.football_skills as string[] : [],
+              skill_ratings: (profileData.skill_ratings && typeof profileData.skill_ratings === 'object')
+                ? profileData.skill_ratings as ProfileData['skill_ratings']
+                : {}
+            });
+          }
         }
       }
+
     } catch (error) {
       console.error('Error fetching player:', error);
       toast({
