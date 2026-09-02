@@ -161,17 +161,6 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
                     );
                   })}
                 </div>
-                {state.my_vote && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="header-nav-button"
-                    disabled={isVoting}
-                    onClick={() => clearVote()}
-                  >
-                    Withdraw my vote
-                  </Button>
-                )}
               </>
             )}
           </>
