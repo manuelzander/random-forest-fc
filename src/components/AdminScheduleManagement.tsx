@@ -125,6 +125,56 @@ const ScheduleFormFields = ({
   );
 };
 
+interface MvpVoteTally {
+  total: number;
+  byPlayer: { [playerId: string]: { name: string; votes: number } };
+}
+
+const MVP_WINDOW_HOURS = 72;
+
+// Read-only MVP ballot summary for one scheduled game
+const getMvpStatus = (
+  game: ScheduledGame,
+  gameSignups: GameScheduleSignup[],
+  tally?: MvpVoteTally
+) => {
+  const kickoff = new Date(game.scheduled_at).getTime();
+  const closesAt = kickoff + MVP_WINDOW_HOURS * 60 * 60 * 1000;
+  const now = Date.now();
+
+  if (now < kickoff) return { phase: 'pending' as const };
+
+  // Playing roster only: first 12/14 signups by signup order, no dropouts, account required
+  const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+  const eligibleVoters = gameSignups
+    .slice(0, pitchCapacity)
+    .filter(s => !s.last_minute_dropout && s.player?.user_id).length;
+
+  if (now < closesAt) {
+    return {
+      phase: 'open' as const,
+      votesCast: tally?.total ?? 0,
+      eligibleVoters,
+    };
+  }
+
+  const entries = Object.entries(tally?.byPlayer || {});
+  // Votes arrive ordered by created_at, so a strict comparison keeps the earliest-vote tie-break
+  const top = entries.reduce<{ playerId: string; name: string; votes: number } | null>(
+    (best, [playerId, entry]) =>
+      !best || entry.votes > best.votes ? { playerId, ...entry } : best,
+    null
+  );
+  const winnerId = game.mvp_vote_winner || top?.playerId || null;
+  const winner = winnerId ? tally?.byPlayer[winnerId] : undefined;
+
+  return {
+    phase: 'closed' as const,
+    winnerName: winner?.name ?? null,
+    winnerVotes: winner?.votes ?? 0,
+  };
+};
+
 const AdminScheduleManagement = () => {
   const { user } = useAuth();
   const { toast } = useToast();
