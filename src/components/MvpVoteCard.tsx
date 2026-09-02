@@ -31,7 +31,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
 
   if (loading || !state || !kickedOff) return null;
 
-  const canVote = state.is_open && !!state.my_player_id;
+  const canVote = state.is_open && !!state.my_player_id && state.am_eligible;
   const votableCandidates = candidates.filter(c => c.playerId !== state.my_player_id);
   const winner = state.results.find(r => r.player_id === state.winner_player_id);
   const topVotes = state.results[0]?.votes ?? 0;
@@ -103,7 +103,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
 
         {state.is_open && (
           <>
-            {!state.my_player_id ? (
+            {!canVote ? (
               <div className="info-note">
                 <Lock className="info-note-icon" />
                 <span>Only signed-in players on this game's roster can vote for MVP.</span>

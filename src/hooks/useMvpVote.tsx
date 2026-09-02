@@ -16,6 +16,7 @@ export interface MvpVoteState {
   eligible_voters: number;
   votes_cast: number;
   my_player_id: string | null;
+  am_eligible: boolean;
   my_vote: string | null;
   winner_player_id: string | null;
   results: MvpVoteResult[];
