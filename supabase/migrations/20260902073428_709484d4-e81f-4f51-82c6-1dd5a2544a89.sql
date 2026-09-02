@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.cleanup_mvp_votes_on_roster_change() FROM PUBLIC, anon, authenticated;
