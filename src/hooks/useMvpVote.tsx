@@ -50,7 +50,18 @@ export const useMvpVote = (gameScheduleId?: string) => {
     fetchState();
   }, [fetchState]);
 
-  // Live progress while the ballot is open
+  // Live progress while the ballot is open.
+  // Other players' votes are hidden by RLS until the ballot closes, so realtime
+  // never delivers them — poll the aggregate state instead.
+  useEffect(() => {
+    if (!gameScheduleId || !state?.is_open) return;
+    const interval = window.setInterval(() => {
+      fetchState();
+    }, 30000);
+    return () => window.clearInterval(interval);
+  }, [gameScheduleId, state?.is_open, fetchState]);
+
+  // Own vote changes still arrive over realtime
   useEffect(() => {
     if (!gameScheduleId) return;
     const channel = supabase
@@ -73,6 +84,7 @@ export const useMvpVote = (gameScheduleId?: string) => {
       supabase.removeChannel(channel);
     };
   }, [gameScheduleId, fetchState]);
+
 
   const castVote = useCallback(
     async (votedPlayerId: string) => {

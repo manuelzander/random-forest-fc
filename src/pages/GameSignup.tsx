@@ -884,7 +884,7 @@ const GameSignup = () => {
             </div>
           </div>
 
-          {/* MVP voting — appears from kick-off, closes 48h later */}
+          {/* MVP voting — appears from kick-off, closes 72h later */}
           {gameId && (
             <div className="mt-6">
               <MvpVoteCard gameScheduleId={gameId} candidates={mvpCandidates} />
