@@ -726,7 +726,13 @@ const AdminScheduleManagement = () => {
                       </h3>
                       <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
                         {mvpStatus.phase !== 'open' && (
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                          <span
+                            className={`inline-block w-1.5 h-1.5 rounded-full ${
+                              mvpStatus.phase === 'closed'
+                                ? 'bg-muted-foreground/40'
+                                : 'bg-primary animate-pulse'
+                            }`}
+                          />
                         )}
                         <span>{format(new Date(game.scheduled_at), "h:mm a")}</span>
                         {game.pitch_size && (
@@ -749,10 +755,13 @@ const AdminScheduleManagement = () => {
                         </p>
                       )}
 
-                      {mvpStatus.phase === 'closed' && (mvpStatus.winnerName || mvpStatus.votesCast > 0) && (
-                        <div className="flex items-center gap-2 mt-2">
+                      {mvpStatus.phase === 'closed' && (
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
                           {mvpStatus.winnerName ? (
                             <>
+                              <span className="text-sm text-muted-foreground">MVP voting closed</span>
+                              <span className="text-muted-foreground/40">•</span>
                               <Badge className="badge-trophy h-auto w-fit">
                                 <span>👑</span>
                                 {mvpStatus.winnerName}
@@ -762,10 +771,13 @@ const AdminScheduleManagement = () => {
                               </span>
                             </>
                           ) : (
-                            <span className="text-sm text-muted-foreground">MVP: no winner set</span>
+                            <span className="text-sm text-muted-foreground">
+                              MVP voting closed · no votes cast
+                            </span>
                           )}
                         </div>
                       )}
+
 
                     </div>
 
