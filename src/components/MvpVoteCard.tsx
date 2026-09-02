@@ -64,18 +64,20 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
             MVP Vote
           </span>
           {state.is_open ? (
-            <Badge className="status-badge status-badge-verified">
-              <Clock className="h-3 w-3 mr-1" />
-              Open
-            </Badge>
+            <span className="relative flex items-center justify-center">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+              <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold uppercase tracking-wide">
+                Open
+              </span>
+            </span>
           ) : (
-            <Badge className="status-badge status-badge-unverified">
-              <Lock className="h-3 w-3 mr-1" />
+            <span className="bg-white/[0.06] text-muted-foreground text-[10px] px-2 py-1 rounded border border-white/10 font-bold uppercase tracking-wide">
               Closed
-            </Badge>
+            </span>
           )}
         </CardTitle>
       </CardHeader>
+
 
       <CardContent className="pt-6 space-y-5">
         {/* Meta line */}
