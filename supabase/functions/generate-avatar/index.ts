@@ -55,8 +55,21 @@ serve(async (req) => {
     }
 
     if (player.user_id !== user.id) {
-      throw new Error('Unauthorized: You can only generate avatars for your own player')
+      // Admins may generate avatars for any player (including guests without accounts)
+      const { data: isAdmin, error: roleError } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin',
+      })
+
+      if (roleError) {
+        console.error('Role check failed:', roleError)
+      }
+
+      if (!isAdmin) {
+        throw new Error('Unauthorized: You can only generate avatars for your own player')
+      }
     }
+
 
     console.log(`Generating avatar for player: ${playerName}`, imageToImage ? 'with base image' : 'random', favoriteClub ? `for ${favoriteClub}` : '')
 
