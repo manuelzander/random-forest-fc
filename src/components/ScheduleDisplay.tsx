@@ -21,6 +21,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
   const { toast } = useToast();
   const [scheduledGames, setScheduledGames] = useState<ScheduledGame[]>([]);
   const [signups, setSignups] = useState<{ [gameId: string]: GameScheduleSignup[] }>({});
+  const [mvpWinners, setMvpWinners] = useState<{ [gameId: string]: { name: string; votes: number } }>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -221,6 +222,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
             const gameSignups = signups[game.id] || [];
             const gameDate = new Date(game.scheduled_at);
             const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+            const mvp = mvpWinners[game.id];
 
             return (
               <div key={game.id} className="glass-panel overflow-hidden">
@@ -240,6 +242,19 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                           </>
                         )}
                       </p>
+                      {mvp && (
+                        <div className="flex items-center gap-2 mt-3">
+                          <Badge className="badge-trophy h-auto w-fit">
+                            <span>👑</span>
+                            {mvp.name}
+                          </Badge>
+                          {mvp.votes > 0 && (
+                            <span className="text-xs text-muted-foreground">
+                              {`${mvp.votes} ${mvp.votes === 1 ? 'vote' : 'votes'}`}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     {!archiveSeasonId && (
                       <Button
