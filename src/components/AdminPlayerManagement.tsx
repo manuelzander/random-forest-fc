@@ -13,7 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus, Info } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, UserCheck, UserX, Wand2, Loader2, ImageOff, UserCog, GitMerge, AlertTriangle, UserPlus, Info, Mail, Trophy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { calculatePlayerDebt, calculateGuestDebt, type GameScheduleForDebt, type SignupForDebt } from '@/utils/debtCalculation';
 import PlayerNameAutocomplete from './PlayerNameAutocomplete';
@@ -1220,53 +1220,62 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                       {player.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Link 
-                        to={`/player/${player.id}`} 
-                        className="hover:text-primary transition-colors"
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Link
+                        to={`/player/${player.id}`}
+                        className="hover:text-primary transition-colors min-w-0"
                       >
-                        <h4 className="font-semibold text-sm sm:text-base truncate">{player.name}</h4>
+                        <h4 className="font-display uppercase tracking-[0.04em] leading-none text-base sm:text-xl truncate">
+                          {player.name}
+                        </h4>
                       </Link>
                       {player.user_id ? (
-                        <Badge className="status-badge status-badge-verified">
+                        <Badge className="status-badge status-badge-verified flex-shrink-0">
                           <UserCheck className="h-3 w-3 mr-1" />
                           <span className="hidden sm:inline">Verified</span>
                         </Badge>
                       ) : (
-                        <Badge className="status-badge status-badge-unverified">
+                        <Badge className="status-badge status-badge-unverified flex-shrink-0">
                           <AlertTriangle className="h-3 w-3 mr-1" />
                           <span className="hidden sm:inline">Unverified</span>
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      {player.games_played} games played
-                    </p>
-                    {profile && (
-                      <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                        <span className="hidden sm:inline">Connected to: </span>
-                        {profile.email}
-                      </p>
-                    )}
-                    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
-                      <p>
-                        Debt: <span className="font-medium text-destructive">£{player.debt.toFixed(2)}</span>
-                      </p>
-                      <p>
-                        Credit: <span className="font-medium text-primary">£{player.credit.toFixed(2)}</span>
-                      </p>
-                      <p>
-                        Net: <span className={`font-bold ${
-                          (player.credit - player.debt) >= 0 
-                            ? 'text-primary' 
-                            : 'text-destructive'
-                        }`}>
-                          £{Math.abs(player.credit - player.debt).toFixed(2)}
+
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="meta-pill">
+                        <Trophy className="h-3 w-3 text-muted-foreground" />
+                        {player.games_played} <span className="text-muted-foreground">games</span>
+                      </span>
+                      {profile?.email && (
+                        <span className="meta-pill max-w-full min-w-0" title={profile.email}>
+                          <Mail className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
+                          <span className="truncate">{profile.email}</span>
                         </span>
-                      </p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="meta-pill border-destructive/20 bg-destructive/10">
+                        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Debt</span>
+                        <span className="font-semibold text-destructive">£{player.debt.toFixed(2)}</span>
+                      </span>
+                      <span className="meta-pill border-primary/20 bg-primary/10">
+                        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Credit</span>
+                        <span className="font-semibold text-primary">£{player.credit.toFixed(2)}</span>
+                      </span>
+                      <span className="meta-pill">
+                        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Net</span>
+                        <span className={`font-semibold ${
+                          (player.credit - player.debt) >= 0 ? 'text-primary' : 'text-destructive'
+                        }`}>
+                          {(player.credit - player.debt) < 0 ? '−' : ''}£{Math.abs(player.credit - player.debt).toFixed(2)}
+                        </span>
+                      </span>
                     </div>
                   </div>
+
                 </div>
                 <div className={`flex justify-center gap-1 sm:gap-2 flex-shrink-0 ${isArchive ? "hidden" : ""}`}>
                   <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
