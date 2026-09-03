@@ -980,6 +980,11 @@ const GameSignup = () => {
                           <Button onClick={signUpAsUser} disabled={isSigningUp} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_25px_rgba(16,185,129,0.2)] hover:shadow-[0_0_35px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all" size="lg">
                             {isSigningUp ? "Signing up..." : "Sign Me Up"}
                           </Button>
+
+                          {/* Offer to cancel the other same-day signup as well */}
+                          <div className="text-left">
+                            <SameDayGamePrompt games={sameDayLeaveGames} mode="leave" busyId={leavingSameDayId} onAction={leaveSameDayGame} />
+                          </div>
                         </div>}
                       </div>;
                     })() : <div className="space-y-4">
