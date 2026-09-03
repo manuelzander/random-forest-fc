@@ -1220,13 +1220,13 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                       {player.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="min-w-0 flex-1 space-y-2">
+                  <div className="min-w-0 flex-1 space-y-1.5">
                     <div className="flex items-center gap-2 min-w-0">
                       <Link
                         to={`/player/${player.id}`}
                         className="hover:text-primary transition-colors min-w-0"
                       >
-                        <h4 className="font-display uppercase tracking-[0.04em] leading-none text-base sm:text-xl truncate">
+                        <h4 className="font-display uppercase tracking-[0.04em] leading-none text-lg sm:text-2xl truncate">
                           {player.name}
                         </h4>
                       </Link>
@@ -1243,40 +1243,39 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                       )}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="meta-pill">
-                        <Trophy className="h-3 w-3 text-muted-foreground" />
-                        {player.games_played} <span className="text-muted-foreground">games</span>
-                      </span>
-                      {profile?.email && (
-                        <span className="meta-pill max-w-full min-w-0" title={profile.email}>
-                          <Mail className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
-                          <span className="truncate">{profile.email}</span>
-                        </span>
-                      )}
-                    </div>
+                    <p
+                      className="truncate text-xs text-muted-foreground"
+                      title={profile?.email || undefined}
+                    >
+                      {player.games_played} games
+                      {profile?.email && <span> · {profile.email}</span>}
+                    </p>
+                  </div>
+                </div>
 
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="meta-pill border-destructive/20 bg-destructive/10">
-                        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Debt</span>
-                        <span className="font-semibold text-destructive">£{player.debt.toFixed(2)}</span>
-                      </span>
-                      <span className="meta-pill border-primary/20 bg-primary/10">
-                        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Credit</span>
-                        <span className="font-semibold text-primary">£{player.credit.toFixed(2)}</span>
-                      </span>
-                      <span className="meta-pill">
-                        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Net</span>
-                        <span className={`font-semibold ${
-                          (player.credit - player.debt) >= 0 ? 'text-primary' : 'text-destructive'
-                        }`}>
-                          {(player.credit - player.debt) < 0 ? '−' : ''}£{Math.abs(player.credit - player.debt).toFixed(2)}
-                        </span>
-                      </span>
+                <div className="flex items-start gap-5 sm:gap-6 flex-shrink-0 sm:mr-2">
+                  <div className="min-w-[3.5rem] text-left sm:text-right">
+                    <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Debt</div>
+                    <div className="mt-0.5 text-sm font-semibold tabular-nums text-destructive">
+                      £{player.debt.toFixed(2)}
                     </div>
                   </div>
-
+                  <div className="min-w-[3.5rem] text-left sm:text-right">
+                    <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Credit</div>
+                    <div className="mt-0.5 text-sm font-semibold tabular-nums text-primary">
+                      £{player.credit.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="min-w-[3.5rem] text-left sm:text-right">
+                    <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Net</div>
+                    <div className={`mt-0.5 text-sm font-bold tabular-nums ${
+                      (player.credit - player.debt) >= 0 ? 'text-primary' : 'text-destructive'
+                    }`}>
+                      {(player.credit - player.debt) < 0 ? '−' : ''}£{Math.abs(player.credit - player.debt).toFixed(2)}
+                    </div>
+                  </div>
                 </div>
+
                 <div className={`flex justify-center gap-1 sm:gap-2 flex-shrink-0 ${isArchive ? "hidden" : ""}`}>
                   <Button size="sm" variant="outline" onClick={() => openDialog(player)}>
                     <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
