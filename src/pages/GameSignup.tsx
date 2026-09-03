@@ -13,6 +13,8 @@ import { sendTelegramNotification, sendGameFullNotification, sendWaitlistPromote
 import type { ScheduledGame, GameScheduleSignup, Player } from '@/types';
 import GuestNameAutocomplete from '@/components/GuestNameAutocomplete';
 import MvpVoteCard, { type MvpCandidate } from '@/components/MvpVoteCard';
+import SameDayGamePrompt, { type SameDayGame } from '@/components/SameDayGamePrompt';
+import { fetchAllPages } from '@/lib/fetchAllPages';
 
 const GameSignup = () => {
   const {
