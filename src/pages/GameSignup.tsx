@@ -103,6 +103,14 @@ const GameSignup = () => {
           setDropoutSignupId(null);
         }
       }
+
+      // Other upcoming games scheduled on the same calendar day that the
+      // logged-in player has not joined yet (used for the "also playing today" prompt)
+      if (user) {
+        await fetchSameDayGames(gameData, user.id);
+      } else {
+        setSameDayGames([]);
+      }
     } catch (error) {
       console.error('Error fetching game data:', error);
       toast({
