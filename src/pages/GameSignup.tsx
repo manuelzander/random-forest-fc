@@ -122,6 +122,120 @@ const GameSignup = () => {
       setLoading(false);
     }
   };
+
+  const fetchSameDayGames = async (currentGame: ScheduledGame, userId: string) => {
+    try {
+      const current = new Date(currentGame.scheduled_at);
+      if (current < new Date()) {
+        setSameDayGames([]);
+        return;
+      }
+      const dayStart = new Date(current);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(current);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      const { data: others, error } = await supabase
+        .from('games_schedule')
+        .select('*')
+        .neq('id', currentGame.id)
+        .gte('scheduled_at', dayStart.toISOString())
+        .lte('scheduled_at', dayEnd.toISOString())
+        .order('scheduled_at', { ascending: true });
+      if (error) throw error;
+
+      const upcoming = ((others as ScheduledGame[]) || []).filter(
+        g => new Date(g.scheduled_at) > new Date(),
+      );
+      if (upcoming.length === 0) {
+        setSameDayGames([]);
+        return;
+      }
+
+      const otherIds = upcoming.map(g => g.id);
+      const otherSignups = await fetchAllPages<any>((from, to) =>
+        supabase
+          .from('games_schedule_signups')
+          .select('id, game_schedule_id, last_minute_dropout, players:player_id (user_id)')
+          .in('game_schedule_id', otherIds)
+          .order('signed_up_at', { ascending: true })
+          .range(from, to),
+      );
+
+      const entries: SameDayGame[] = upcoming
+        .filter(g => !otherSignups.some(s => s.game_schedule_id === g.id && s.players?.user_id === userId))
+        .map(g => ({
+          game: g,
+          signupCount: otherSignups.filter(s => s.game_schedule_id === g.id).length,
+          capacity: g.pitch_size === 'small' ? 12 : 14,
+        }));
+
+      setSameDayGames(entries);
+    } catch (err) {
+      console.error('Error fetching same-day games:', err);
+      setSameDayGames([]);
+    }
+  };
+
+  const joinSameDayGame = async (entry: SameDayGame) => {
+    if (!user) return;
+    setJoiningSameDayId(entry.game.id);
+    try {
+      let { data: existingPlayer } = await supabase
+        .from('players')
+        .select('id, name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      let playerId = existingPlayer?.id;
+      let name = existingPlayer?.name;
+
+      if (!playerId) {
+        const newPlayerName = user.email?.split('@')[0] || 'Anonymous Player';
+        const { data: newPlayer, error: createError } = await supabase
+          .from('players')
+          .insert({ name: newPlayerName, user_id: user.id, created_by: user.id })
+          .select('id, name')
+          .single();
+        if (createError) throw createError;
+        playerId = newPlayer.id;
+        name = newPlayer.name;
+      }
+
+      const { error } = await supabase.from('games_schedule_signups').insert({
+        game_schedule_id: entry.game.id,
+        player_id: playerId,
+        is_guest: false,
+      });
+      if (error) throw error;
+
+      const newSignupCount = entry.signupCount + 1;
+      sendTelegramNotification({
+        playerName: name || 'Unknown',
+        gameDate: entry.game.scheduled_at,
+        signupCount: newSignupCount,
+        pitchSize: entry.game.pitch_size,
+      });
+      if (newSignupCount === entry.capacity) {
+        sendGameFullNotification(entry.game.scheduled_at, entry.game.pitch_size);
+      }
+
+      toast({
+        title: "Success",
+        description: `You're also signed up for the ${format(new Date(entry.game.scheduled_at), 'h:mm a')} game!`,
+      });
+      fetchGameData();
+    } catch (err) {
+      console.error('Error joining same-day game:', err);
+      toast({
+        title: "Error",
+        description: "Failed to sign up for the other game",
+        variant: "destructive",
+      });
+    } finally {
+      setJoiningSameDayId(null);
+    }
+  };
   const signUpAsUser = async () => {
     if (!user || !gameId) return;
     setIsSigningUp(true);
