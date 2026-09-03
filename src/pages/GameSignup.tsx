@@ -972,7 +972,7 @@ const GameSignup = () => {
                             </div>
 
                             {/* Offer the other game scheduled on the same day */}
-                            <SameDayGamePrompt games={sameDayGames} joiningId={joiningSameDayId} onJoin={joinSameDayGame} />
+                            <SameDayGamePrompt games={sameDayGames} busyId={joiningSameDayId} onAction={joinSameDayGame} />
                           </div> : <div className="text-center space-y-3">
                           <p className="text-muted-foreground text-sm">
                             Ready to play? Sign up now!
