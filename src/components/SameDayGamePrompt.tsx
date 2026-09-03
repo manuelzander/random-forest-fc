@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, isToday, isTomorrow } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import type { ScheduledGame } from '@/types';
 
@@ -29,6 +29,11 @@ const SameDayGamePrompt = ({ games, mode = 'join', busyId, onAction }: SameDayGa
         const isBusy = busyId === entry.game.id;
         const kickoff = new Date(entry.game.scheduled_at);
         const within24h = kickoff.getTime() - Date.now() < 24 * 60 * 60 * 1000;
+        const dayLabel = isToday(kickoff)
+          ? 'today'
+          : isTomorrow(kickoff)
+            ? 'tomorrow'
+            : `on ${format(kickoff, 'EEE, MMM d')}`;
         const inRoster = (entry.position ?? Infinity) <= entry.capacity;
         const willDropout = mode === 'leave' && within24h && inRoster;
 
@@ -59,7 +64,7 @@ const SameDayGamePrompt = ({ games, mode = 'join', busyId, onAction }: SameDayGa
                       : 'inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/50'
                   }
                 />
-                {mode === 'join' ? 'Also playing today' : 'Still signed up today'}
+                {mode === 'join' ? `Also playing ${dayLabel}` : `Still signed up ${dayLabel}`}
               </p>
               <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
                 <span>{format(kickoff, 'h:mm a')}</span>
