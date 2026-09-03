@@ -128,6 +128,7 @@ const GameSignup = () => {
       const current = new Date(currentGame.scheduled_at);
       if (current < new Date()) {
         setSameDayGames([]);
+        setSameDayLeaveGames([]);
         return;
       }
       const dayStart = new Date(current);
@@ -149,6 +150,7 @@ const GameSignup = () => {
       );
       if (upcoming.length === 0) {
         setSameDayGames([]);
+        setSameDayLeaveGames([]);
         return;
       }
 
@@ -156,24 +158,116 @@ const GameSignup = () => {
       const otherSignups = await fetchAllPages<any>((from, to) =>
         supabase
           .from('games_schedule_signups')
-          .select('id, game_schedule_id, last_minute_dropout, players:player_id (user_id)')
+          .select('id, game_schedule_id, last_minute_dropout, guest_name, players:player_id (user_id, name), guests:guest_id (name)')
           .in('game_schedule_id', otherIds)
           .order('signed_up_at', { ascending: true })
           .range(from, to),
       );
 
-      const entries: SameDayGame[] = upcoming
-        .filter(g => !otherSignups.some(s => s.game_schedule_id === g.id && s.players?.user_id === userId))
-        .map(g => ({
-          game: g,
-          signupCount: otherSignups.filter(s => s.game_schedule_id === g.id).length,
-          capacity: g.pitch_size === 'small' ? 12 : 14,
-        }));
+      const joinEntries: SameDayGame[] = [];
+      const leaveEntries: SameDayGame[] = [];
 
-      setSameDayGames(entries);
+      upcoming.forEach(g => {
+        const capacity = g.pitch_size === 'small' ? 12 : 14;
+        const gameSignups = otherSignups.filter(s => s.game_schedule_id === g.id);
+        const activeSignups = gameSignups.filter(s => !s.last_minute_dropout);
+        const ownIndex = activeSignups.findIndex(s => s.players?.user_id === userId);
+
+        if (ownIndex === -1) {
+          joinEntries.push({ game: g, signupCount: activeSignups.length, capacity });
+        } else {
+          leaveEntries.push({
+            game: g,
+            signupCount: activeSignups.length,
+            capacity,
+            signupId: activeSignups[ownIndex].id,
+            position: ownIndex + 1,
+          });
+        }
+      });
+
+      setSameDayGames(joinEntries);
+      setSameDayLeaveGames(leaveEntries);
+      sameDaySignupsRef.current = otherSignups;
     } catch (err) {
       console.error('Error fetching same-day games:', err);
       setSameDayGames([]);
+      setSameDayLeaveGames([]);
+    }
+  };
+
+  const leaveSameDayGame = async (entry: SameDayGame) => {
+    if (!user || !entry.signupId) return;
+    setLeavingSameDayId(entry.game.id);
+    try {
+      const kickoff = new Date(entry.game.scheduled_at);
+      const within24h = kickoff.getTime() - Date.now() < 24 * 60 * 60 * 1000;
+      const inRoster = (entry.position ?? Infinity) <= entry.capacity;
+      const markDropout = within24h && inRoster;
+
+      const activeSignups = sameDaySignupsRef.current
+        .filter(s => s.game_schedule_id === entry.game.id && !s.last_minute_dropout);
+      const own = activeSignups.find(s => s.id === entry.signupId);
+      const droppingPlayerName = own?.players?.name || user.email?.split('@')[0] || 'Unknown';
+
+      if (markDropout) {
+        const { error } = await supabase
+          .from('games_schedule_signups')
+          .update({ last_minute_dropout: true })
+          .eq('id', entry.signupId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('games_schedule_signups')
+          .delete()
+          .eq('id', entry.signupId);
+        if (error) throw error;
+      }
+
+      sendTelegramNotification({
+        playerName: droppingPlayerName,
+        gameDate: entry.game.scheduled_at,
+        signupCount: markDropout ? entry.signupCount : entry.signupCount - 1,
+        pitchSize: entry.game.pitch_size,
+        isRemoval: true,
+        isDropout: markDropout,
+      });
+
+      // Promote the first waitlisted player if a roster slot opened up
+      if (inRoster) {
+        const waitlistPlayer = activeSignups[entry.capacity];
+        if (waitlistPlayer) {
+          const promotedName =
+            waitlistPlayer.players?.name ||
+            waitlistPlayer.guests?.name ||
+            waitlistPlayer.guest_name ||
+            'Unknown';
+          sendWaitlistPromotedNotification(
+            entry.game.scheduled_at,
+            activeSignups.length - 1,
+            entry.game.pitch_size,
+            promotedName,
+            droppingPlayerName,
+          );
+        }
+      }
+
+      toast({
+        title: markDropout ? "Marked as Last Minute Dropout" : "Success",
+        description: markDropout
+          ? `You were in the top players for the ${format(kickoff, 'h:mm a')} game and still owe payment.`
+          : `Removed from the ${format(kickoff, 'h:mm a')} game too.`,
+      });
+      fetchGameData();
+    } catch (err) {
+      console.error('Error leaving same-day game:', err);
+      toast({
+        title: "Error",
+        description: "Failed to cancel the other signup",
+        variant: "destructive",
+      });
+    } finally {
+      setLeavingSameDayId(null);
     }
   };
 
