@@ -59,7 +59,7 @@ const SameDayGamePrompt = ({ games, mode = 'join', busyId, onAction }: SameDayGa
                       : 'inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/50'
                   }
                 />
-                {mode === 'join' ? 'Also playing today' : 'Still signed up today'}
+                {mode === 'join' ? `Also playing ${dayLabel}` : `Still signed up ${dayLabel}`}
               </p>
               <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
                 <span>{format(kickoff, 'h:mm a')}</span>
