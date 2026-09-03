@@ -873,6 +873,9 @@ const GameSignup = () => {
                                 {isWithin24Hours && isUserInTopPositions ? "Cancel (Will Mark as Dropout)" : isUserWaitlisted ? "Remove from Waitlist" : "Cancel Signup"}
                               </Button>
                             </div>
+
+                            {/* Offer the other game scheduled on the same day */}
+                            <SameDayGamePrompt games={sameDayGames} joiningId={joiningSameDayId} onJoin={joinSameDayGame} />
                           </div> : <div className="text-center space-y-3">
                           <p className="text-muted-foreground text-sm">
                             Ready to play? Sign up now!
