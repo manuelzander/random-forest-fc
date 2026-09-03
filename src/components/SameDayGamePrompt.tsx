@@ -29,6 +29,11 @@ const SameDayGamePrompt = ({ games, mode = 'join', busyId, onAction }: SameDayGa
         const isBusy = busyId === entry.game.id;
         const kickoff = new Date(entry.game.scheduled_at);
         const within24h = kickoff.getTime() - Date.now() < 24 * 60 * 60 * 1000;
+        const dayLabel = isToday(kickoff)
+          ? 'today'
+          : isTomorrow(kickoff)
+            ? 'tomorrow'
+            : `on ${format(kickoff, 'EEE, MMM d')}`;
         const inRoster = (entry.position ?? Infinity) <= entry.capacity;
         const willDropout = mode === 'leave' && within24h && inRoster;
 
