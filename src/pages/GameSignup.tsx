@@ -935,14 +935,6 @@ const GameSignup = () => {
                               {isSigningUp ? "Rejoining..." : "Rejoin Game"}
                             </Button>
                           </div>
-                        ) : null}
-
-                        {/* Offer to cancel the other same-day signup as well */}
-                        {isDropout && (
-                          <SameDayGamePrompt games={sameDayLeaveGames} mode="leave" busyId={leavingSameDayId} onAction={leaveSameDayGame} />
-                        )}
-
-                        {isDropout ? null : (
                         ) : isSignedUp ? <div className="space-y-3">
                             {/* Alerts based on position */}
                             {isWithin24Hours && isUserInTopPositions && <div className="info-note">
