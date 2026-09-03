@@ -38,7 +38,10 @@ const GameSignup = () => {
   const [dropoutSignupId, setDropoutSignupId] = useState<string | null>(null);
   const [confirmReplacement, setConfirmReplacement] = useState(false);
   const [sameDayGames, setSameDayGames] = useState<SameDayGame[]>([]);
+  const [sameDayLeaveGames, setSameDayLeaveGames] = useState<SameDayGame[]>([]);
   const [joiningSameDayId, setJoiningSameDayId] = useState<string | null>(null);
+  const [leavingSameDayId, setLeavingSameDayId] = useState<string | null>(null);
+  const sameDaySignupsRef = useRef<any[]>([]);
   useEffect(() => {
     if (gameId) {
       fetchGameData();
