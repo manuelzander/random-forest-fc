@@ -1353,41 +1353,47 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
                       {guest.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-semibold text-sm sm:text-base truncate">{guest.name}</h4>
-                      <Badge className="status-badge status-badge-guest">
+                  <div className="min-w-0 flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <h4 className="font-display uppercase tracking-[0.04em] leading-none text-lg sm:text-2xl truncate">
+                        {guest.name}
+                      </h4>
+                      <Badge className="status-badge status-badge-guest flex-shrink-0">
                         <Users className="h-3 w-3 mr-1" />
                         <span className="hidden sm:inline">Guest</span>
                       </Badge>
                     </div>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
+
+                    <p className="truncate text-xs text-muted-foreground" title={guest.phone || undefined}>
                       {guest.signupsCount || 0} signups
+                      {guest.phone && <span> · {guest.phone}</span>}
                     </p>
-                    {guest.phone && (
-                      <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                        Phone: {guest.phone}
-                      </p>
-                    )}
-                    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
-                      <p>
-                        Debt: <span className="font-medium text-destructive">£{guest.debt.toFixed(2)}</span>
-                      </p>
-                      <p>
-                        Credit: <span className="font-medium text-primary">£{guest.credit.toFixed(2)}</span>
-                      </p>
-                      <p>
-                        Net: <span className={`font-bold ${
-                          (guest.credit - guest.debt) >= 0 
-                            ? 'text-primary' 
-                            : 'text-destructive'
-                        }`}>
-                          £{Math.abs(guest.credit - guest.debt).toFixed(2)}
-                        </span>
-                      </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-5 sm:gap-6 flex-shrink-0 sm:mr-2">
+                  <div className="min-w-[3.5rem] text-left sm:text-right">
+                    <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Debt</div>
+                    <div className="mt-0.5 text-sm font-semibold tabular-nums text-destructive">
+                      £{guest.debt.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="min-w-[3.5rem] text-left sm:text-right">
+                    <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Credit</div>
+                    <div className="mt-0.5 text-sm font-semibold tabular-nums text-primary">
+                      £{guest.credit.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="min-w-[3.5rem] text-left sm:text-right">
+                    <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Net</div>
+                    <div className={`mt-0.5 text-sm font-bold tabular-nums ${
+                      (guest.credit - guest.debt) >= 0 ? 'text-primary' : 'text-destructive'
+                    }`}>
+                      {(guest.credit - guest.debt) < 0 ? '−' : ''}£{Math.abs(guest.credit - guest.debt).toFixed(2)}
                     </div>
                   </div>
                 </div>
+
                 <div className={`flex justify-center gap-1 sm:gap-2 flex-shrink-0 ${isArchive ? "hidden" : ""}`}>
                   <Button 
                     size="sm" 
