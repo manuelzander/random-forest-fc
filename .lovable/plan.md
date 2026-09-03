@@ -8,7 +8,7 @@ On `/signup/:gameId`, right under the "You're signed up for this game!" confirma
 
 ```text
 ┌──────────────────────────────────────────────┐
-│ ● Also playing later today                   │
+│ ● Also playing today                         │
 │   8:30 PM • Big pitch • 9/14                 │
 │                          [ Join this too ]   │
 └──────────────────────────────────────────────┘
