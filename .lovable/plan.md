@@ -1,33 +1,49 @@
-# Tied MVP votes: admin decides the winner
+# Tied MVP votes: shared award
 
-Today a tie is silently broken by whoever received their first vote earliest, so a joint result quietly becomes one player's award. Instead, a tie stays a tie until an admin picks the winner.
+A tie is currently broken invisibly (whoever got their first vote earliest wins), so a genuinely joint result becomes one player's award. Instead, a tie makes both (or all) tied players MVP of that game.
+
+## Recommendation: share the award, not the point
+
+Two ways to share:
+
+- **Joint MVP, full point each** (recommended) — both tied players get the MVP badge and +1 point. Everything stays whole numbers, the ranking table, badges, points-per-game and trophies keep working exactly as they do now, and the game result screen simply lets you pick more than one MVP.
+- **Half a point each** — needs points to become decimals everywhere: the ranking column, the archived season figures, the MVP-count trophies (is "1.5 MVPs" five MVPs for the badge?), and the result screen would have to show and store fractions. It makes every number in the app fuzzier for very little gain, and ties are rare. Not worth it.
+
+So: ties give a joint MVP, and each shares the same +1 point a solo MVP gets. If you'd rather have half points, say so and I'll re-plan around decimal points.
 
 ## What changes
 
-- When voting closes with two or more players on the same top vote count, no MVP is awarded automatically.
-- The MVP card on the game signup page shows the full tally as it does now, plus a clear line: "Tied on 4 votes — the winner will be confirmed shortly." The tied players are highlighted instead of one gold winner tile.
-- In Admin → Schedule Management, the game's MVP row reads "MVP voting tied · Sam / Alex on 4 votes" with a small "Pick winner" action next to it. Choosing a name confirms the MVP, and the row switches to the usual gold winner badge.
-- Once confirmed, the winner flows through exactly as before: it gets written onto the game result and counts for the MVP point.
-- A clear single-winner result behaves exactly as it does today — awarded automatically, no admin step.
-- Nobody voted: unchanged, the card says voting closed with no votes and an admin can still set the MVP by hand when entering the result.
+- **Voting closes on a tie** — all tied players are shown as joint MVPs on the game signup card: a gold tile each ("Joint MVP · 4 votes"), not one winner over the other. No admin action needed.
+- **Game result screen** — the MVP field becomes a multi-pick: tapping names toggles them, chosen ones show the gold crown chip, and it pre-fills with the vote result (one player, or several on a tie). An admin can still override to whoever they want, including one player only.
+- **Game History** — every joint MVP gets the same crown badge next to their name.
+- **Ranking and trophies** — each joint MVP counts one MVP award and one extra point, same as a solo MVP.
+- **Admin → Schedule** — the MVP row reads "Joint MVP · Sam T. / Alex R. · 4 votes each".
+- **Nobody voted** — unchanged: card says voting closed with no votes, admin can set the MVP by hand.
+- Bibs stays a single player, unchanged.
 
 ```text
 Sep 1, 6:15 PM · Big pitch · Created Aug 26
-● MVP voting tied · Sam T. / Alex R. on 4 votes   [ Pick winner ]
+● Joint MVP · Sam T. / Alex R. · 4 votes each
 ```
 
 ## Technical scope
 
 **Database (migration)**
-- `finalize_mvp_vote(_game_schedule_id)`: replace the earliest-vote tie-break with a tie check. If exactly one player holds the top count, behave as now (set `mvp_vote_winner`, stamp `mvp_votes_finalized_at`, push to `games.mvp_player` when empty). If two or more tie, leave `mvp_vote_winner` NULL and do not stamp `mvp_votes_finalized_at`, so the ballot stays resolvable.
-- `get_mvp_vote_state(_game_schedule_id)`: add `is_tie` (boolean) and `tied_player_ids` (array) to the returned JSON, derived from the closed tally.
-- New `resolve_mvp_tie(_game_schedule_id uuid, _winner_player_id uuid)` security-definer function, admin-only via `has_role(auth.uid(),'admin')`: validates the chosen player is among the tied top-vote players, sets `mvp_vote_winner` + `mvp_votes_finalized_at`, and applies `games.mvp_player` when still empty.
-- No new tables, no grant/RLS changes needed (admins already manage `games_schedule`).
+- `games.mvp_players uuid[] default '{}'` and the same on `archived_games`; backfilled from the existing `mvp_player`. `mvp_player` stays populated with the first winner so nothing that still reads it breaks, and remains the single-MVP shorthand.
+- `games_schedule.mvp_vote_winners uuid[]` alongside the existing `mvp_vote_winner` (first winner), same on `archived_games_schedule`.
+- `finalize_mvp_vote`: stop the earliest-vote tie-break. Collect every player on the top vote count into `mvp_vote_winners` (and the first into `mvp_vote_winner`), stamp `mvp_votes_finalized_at`, and push the whole set onto `games.mvp_players` when that game has no MVP yet.
+- `get_mvp_vote_state`: return `winner_player_ids` (array) in addition to `winner_player_id`.
+- `get_player_achievements`, `get_archived_player_achievements`, `get_player_stats`: change the MVP test from `player_id = mvp_player` to `player_id = ANY(mvp_players)` so each joint MVP scores +1 point and +1 MVP award. Bibs logic untouched.
+- `link_game_to_schedule` trigger: carry the winners array through as well.
+- Season archiving: copy the new array columns.
 
 **Frontend**
-- `src/hooks/useMvpVote.tsx` — extend `MvpVoteState` with the two new fields.
-- `src/components/MvpVoteCard.tsx` — tie branch in the closed state: tied rows highlighted, explanatory line, no gold winner tile until resolved.
-- `src/components/AdminScheduleManagement.tsx` — `getMvpStatus` gains a `tied` phase (top count shared by more than one player and no `mvp_vote_winner`); render the tie line plus a small dropdown/dialog calling `resolve_mvp_tie`, then refresh.
-- `src/components/GameInput.tsx` — unchanged behaviour; an unresolved tie simply leaves the MVP field empty for manual selection.
+- `src/components/GameInput.tsx` — MVP single select becomes a toggleable multi-select (max sensible: the lineup), pre-filled from the vote; submits `mvpPlayers: string[]`.
+- `src/components/AdminGameManagement.tsx` — persist and edit `mvp_players`; keeps writing `mvp_player` as the first entry.
+- `src/types/index.ts` — `mvpPlayers: string[]` on `GameInput`, plus the new fields on `ScheduledGame`.
+- `src/components/GamesList.tsx` — crown badge for any player in `mvp_players`.
+- `src/hooks/useMvpVote.tsx` + `src/components/MvpVoteCard.tsx` — joint-winner state: one gold tile per tied player, "Joint MVP" label, remaining players listed with counts as today.
+- `src/components/AdminScheduleManagement.tsx` — `getMvpStatus` returns a list of winners; closed row renders one or several names with "votes each" on a tie.
+- `src/pages/PlayerProfile.tsx`, `src/components/StreamlinedProfile.tsx`, `src/components/AdminPlayerManagement.tsx` — MVP bonus counting switches to array membership.
 
-Archived seasons are read-only and keep whatever winner they already have.
+Unchanged: signup/dropout rules, debt and credit, the 72-hour window, Bibs, and archived data other than the backfill.
