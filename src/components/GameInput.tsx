@@ -91,7 +91,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
     return [label, time, pitch].filter(Boolean).join(' · ');
   };
 
-  const voteHint = (() => {
+  const voteHint = () => {
     if (isEditing || !gameScheduleId || gameScheduleId === 'none') return '';
     if (totalVotes === 0) return 'No player votes for this game.';
     const names = suggestedWinners.map(getPlayerName).filter(Boolean).join(' & ');
@@ -99,7 +99,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
     if (suggestedWinners.length === 0) return `Player vote ended in a ${leaders.length}-way tie, so no MVP is awarded.`;
     if (suggestedWinners.length === 2) return `Player vote: joint MVP ${names} — pre-selected below.`;
     return `Player vote winner: ${names} — pre-selected below.`;
-  })();
+  };
+
 
 
   // Update local players when props change
