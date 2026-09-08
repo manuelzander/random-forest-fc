@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -34,6 +34,15 @@ const Index = () => {
   } = useToast();
   const { players, isLoading, error, refetch } = usePlayerAchievements();
   const [activeTab, setActiveTab] = useState('ranking');
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  // Homepage cards switch tab and scroll the section into view
+  const openTab = (tab: string) => {
+    setActiveTab(tab);
+    requestAnimationFrame(() => {
+      tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsLoading, setNewsLoading] = useState(false);
   const [totalGames, setTotalGames] = useState(0);
@@ -206,12 +215,12 @@ const Index = () => {
           totalGames={totalGames}
           players={displayedPlayers}
           isSeasonDataLoading={archivedLoading}
-          onOpenSchedule={() => setActiveTab('schedule')}
-          onOpenGames={() => setActiveTab('games')}
+          onOpenSchedule={() => openTab('schedule')}
+          onOpenGames={() => openTab('games')}
         />
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+        <Tabs ref={tabsRef} value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
           <TabsList className="grid w-full grid-cols-5">
 
             <TabsTrigger value="ranking" className="text-xs sm:text-base">Ranking</TabsTrigger>
