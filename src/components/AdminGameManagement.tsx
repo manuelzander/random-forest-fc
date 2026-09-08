@@ -20,6 +20,7 @@ interface Game {
   team1_captain: string | null;
   team2_captain: string | null;
   mvp_player: string | null;
+  mvp_players?: string[] | null;
   bibs_player: string | null;
   created_at: string;
   youtube_url?: string | null;
