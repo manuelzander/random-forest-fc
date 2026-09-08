@@ -522,23 +522,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             {voteHint && (
               <p className="text-xs text-muted-foreground">{voteHint}</p>
             )}
-            {tallies.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {tallies.map((tally) => (
-                  <button
-                    key={tally.playerId}
-                    type="button"
-                    onClick={() => toggleMvpPlayer(tally.playerId)}
-                    className="text-xs"
-                    title="Select as MVP"
-                  >
-                    <Badge variant="outline" className="h-auto w-fit">
-                      {getPlayerName(tally.playerId) || 'Unknown player'} · {tally.votes}
-                    </Badge>
-                  </button>
-                ))}
-              </div>
-            )}
+
             <Select value="" onValueChange={toggleMvpPlayer}>
               <SelectTrigger>
                 <SelectValue
