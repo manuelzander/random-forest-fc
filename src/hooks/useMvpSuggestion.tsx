@@ -119,11 +119,26 @@ export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
 
   const selectedFixture = fixtures.find(f => f.id === selectedFixtureId) || null;
   const topVotes = tallies.length > 0 ? tallies[0].votes : 0;
-  const leaders = tallies.filter(t => t.votes === topVotes && topVotes > 0).map(t => t.playerId);
+  const tallyLeaders = tallies.filter(t => t.votes === topVotes && topVotes > 0).map(t => t.playerId);
   const isClosed = !!selectedFixture?.mvp_votes_finalized_at;
 
+  // Once the ballot is settled, the recorded winners are authoritative
+  const recordedWinners = isClosed
+    ? (selectedFixture?.mvp_vote_winners?.length
+        ? selectedFixture.mvp_vote_winners
+        : selectedFixture?.mvp_vote_winner
+          ? [selectedFixture.mvp_vote_winner]
+          : [])
+    : [];
+
+  const leaders = isClosed && recordedWinners.length > 0 ? recordedWinners : tallyLeaders;
+
   // A tie of three or more awards nobody
-  const suggestedWinners = leaders.length > 0 && leaders.length <= 2 ? leaders : [];
+  const suggestedWinners = isClosed && recordedWinners.length > 0
+    ? recordedWinners
+    : tallyLeaders.length > 0 && tallyLeaders.length <= 2
+      ? tallyLeaders
+      : [];
 
   return {
     fixtures,
