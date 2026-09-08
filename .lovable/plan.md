@@ -1,29 +1,40 @@
-# MVP suggestions in the match result form
+# Link the result to a fixture explicitly, with MVP vote suggestions
 
-## Goal
+## What the data shows right now
 
-When an admin enters a match result, the MVP field should already know what the players voted, instead of being an empty list of names.
+Three past fixtures have no result entered yet:
 
-## How it works today
+- Tue Sep 1, 18:15 (big pitch) — voting closed, winner already decided, 6 votes
+- Tue Sep 8, 18:15 (big pitch) — 1 vote, voting still open
+- Tue Sep 8, 20:00 (small pitch) — 1 vote, voting still open
 
-The result form has no knowledge of votes. The vote outcome is only applied silently after saving: if the MVP field was left empty, the result is matched to the most recent scheduled game (within the last 7 days) that has no result yet, and the winners from that vote are filled in. Nothing is shown while typing the result.
+So the automatic matching is currently wrong for the Sep 1 game in two ways:
 
-## What we add
+1. It only looks back 7 days, and the Sep 1 game has just fallen outside that window. Entering a result now would attach it to a Sep 8 game instead.
+2. Two games happen on the same day, and it silently picks the earlier one — so a result for the later game lands on the wrong fixture.
 
-When the form opens, it finds the same fixture the result will attach to and shows its vote picture:
+## What we change
 
-- A small line above the MVP field, in the existing style: "Player vote: Tom 5 · Ben 3 · Alex 1" with the names clickable to select them as MVP.
-- Vote counts shown next to names inside the MVP dropdown, and vote leaders listed at the top.
-- If voting has already closed with a clear outcome (one winner, or two tied players sharing it), those names are pre-selected in the field, still fully editable.
-- If three or more players tie, nothing is pre-selected and a short note explains that a three-way tie awards no MVP.
-- If voting is still open, counts are shown as a live snapshot with a note that voting is still running.
-- If there is no matching fixture or no votes, the field behaves exactly as it does now.
+**1. The admin picks the fixture (main fix).**
+At the top of the result form, a "Game" selector lists every past fixture with no result yet, newest first, shown as date + time + pitch (e.g. "Tue 1 Sep · 18:15 · Big pitch"). It defaults to the most recent unmatched fixture. The existing automatic matching stays as the fallback when nothing is chosen, so old behaviour is unchanged.
 
-Everything stays a suggestion: whatever the admin leaves in the field when saving is what counts.
+**2. MVP suggestions follow the chosen fixture.**
+Once a fixture is selected:
+
+- A small line above the MVP field shows the vote picture: "Player vote: Tom 5 · Ben 3 · Alex 1", names clickable to select as MVP.
+- Vote counts also appear next to names in the MVP dropdown.
+- If voting closed with a clear outcome (one winner, or two tied sharing it), those names are pre-selected and still editable.
+- Three or more tied: nothing pre-selected, with a short note that a three-way tie awards no MVP.
+- Voting still open: counts shown as a live snapshot with a note.
+- No votes: the field behaves exactly as today.
+
+**3. Optional convenience:** a "fill from signups" hint listing the players who were on that fixture's roster, so lineups are quicker to enter. Can be dropped if it feels like clutter.
+
+Whatever is in the MVP field on save is what counts — the suggestions never override the admin.
 
 ## Technical notes
 
-- New hook (e.g. `src/hooks/useMvpSuggestion.tsx`): resolves the target fixture with the same rule as the `link_game_to_schedule` trigger (earliest `games_schedule.scheduled_at <= now()` within 7 days having no row in `games`), then reads `mvp_votes` tallies for it plus `mvp_vote_winners` / `mvp_votes_finalized_at`.
-- Admin read access already exists: the "Admins can view mvp votes" policy on `mvp_votes` covers open ballots, so counts are visible before closing.
-- Player names resolve through the `players` list already passed into `GameInput`; suggestions are filtered to players present in the entered lineups (with the roster names offered as hints when the lineup is still empty).
-- `GameInput.tsx` only: suggestion line, dropdown annotations, and initial pre-selection. No database changes, no change to the existing finalization/trigger logic, and edit mode keeps showing the saved MVPs.
+- `GameInput.tsx` gains a `gameScheduleId` state and selector; `AdminGameManagement.tsx` (and the homepage submit path in `Index.tsx`) pass it through to the `games` insert as `game_schedule_id`.
+- The `link_game_to_schedule` trigger already skips its lookup when `game_schedule_id` is provided, so no migration is required. Its 7-day window remains as fallback only; optionally widen it to 30 days in a follow-up migration.
+- New hook `src/hooks/useMvpSuggestion.tsx`: lists unmatched fixtures (`games_schedule` rows with `scheduled_at <= now()` and no `games` row) and, for the selected one, tallies `mvp_votes` plus `mvp_vote_winners` / `mvp_votes_finalized_at`. Admin read access already exists via the "Admins can view mvp votes" policy.
+- Player names resolve from the `players` list already passed to `GameInput`; suggestions are limited to the entered lineups once players are added. Edit mode keeps the saved fixture and MVPs.
