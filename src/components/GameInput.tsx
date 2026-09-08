@@ -25,7 +25,7 @@ interface GameInputProps {
     team2Players: string[];
     team1Captain: string;
     team2Captain: string;
-    mvpPlayer: string;
+    mvpPlayers?: string[];
     bibsPlayer?: string;
     youtubeUrl?: string;
   };
@@ -41,7 +41,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
   const [team2Goals, setTeam2Goals] = useState<string>(initialData?.team2Goals?.toString() || '');
   const [team1Captain, setTeam1Captain] = useState(initialData?.team1Captain || '');
   const [team2Captain, setTeam2Captain] = useState(initialData?.team2Captain || '');
-  const [mvpPlayer, setMvpPlayer] = useState(initialData?.mvpPlayer || '');
+  const [mvpPlayers, setMvpPlayers] = useState<string[]>(initialData?.mvpPlayers || []);
   const [bibsPlayer, setBibsPlayer] = useState(initialData?.bibsPlayer || '');
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl || '');
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
@@ -179,11 +179,20 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       return;
     }
 
-    // MVP validation - optional, but if selected must be valid
-    if (mvpPlayer && mvpPlayer !== "none" && !allGamePlayers.includes(mvpPlayer)) {
+    // MVP validation - optional, up to two joint MVPs from the playing players
+    if (mvpPlayers.some(id => !allGamePlayers.includes(id))) {
       toast({
         title: "Error",
         description: "Please select a valid MVP from the playing players",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (mvpPlayers.length > 2) {
+      toast({
+        title: "Error",
+        description: "An MVP award can be shared by at most two players",
         variant: "destructive",
       });
       return;
