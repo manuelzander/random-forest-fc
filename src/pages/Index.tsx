@@ -278,6 +278,8 @@ const Index = () => {
             </Card>
           </TabsContent>
         </Tabs>
+        </div>
+
       </div>
     </div>
   );
