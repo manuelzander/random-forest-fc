@@ -36,13 +36,18 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('ranking');
   const tabsRef = useRef<HTMLDivElement>(null);
 
-  // Homepage cards switch tab and scroll the section into view
+  // Homepage cards switch tab and scroll the section into view (offset for sticky header)
   const openTab = (tab: string) => {
     setActiveTab(tab);
-    requestAnimationFrame(() => {
-      tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    setTimeout(() => {
+      const el = tabsRef.current;
+      if (!el) return;
+      const headerOffset = window.innerWidth >= 640 ? 96 : 80;
+      const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+      window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+    }, 60);
   };
+
   const [news, setNews] = useState<NewsItem[]>([]);
   const [newsLoading, setNewsLoading] = useState(false);
   const [totalGames, setTotalGames] = useState(0);
@@ -220,7 +225,9 @@ const Index = () => {
         />
 
         {/* Tabs */}
-        <Tabs ref={tabsRef} value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+        <div ref={tabsRef} className="scroll-mt-24">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+
           <TabsList className="grid w-full grid-cols-5">
 
             <TabsTrigger value="ranking" className="text-xs sm:text-base">Ranking</TabsTrigger>
@@ -271,6 +278,8 @@ const Index = () => {
             </Card>
           </TabsContent>
         </Tabs>
+        </div>
+
       </div>
     </div>
   );
