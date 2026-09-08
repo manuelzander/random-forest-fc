@@ -94,11 +94,13 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
   const voteHint = (() => {
     if (isEditing || !gameScheduleId || gameScheduleId === 'none') return '';
     if (totalVotes === 0) return 'No player votes for this game.';
-    if (!isClosed) return `Player vote so far (${totalVotes} cast) — voting is still open.`;
-    if (leaders.length > 2) return `Player vote: ${leaders.length}-way tie, so no MVP point is awarded.`;
-    if (leaders.length === 2) return 'Player vote: two players tied — both share the MVP point.';
-    return 'Player vote result — pre-selected below, change it if you like.';
+    const names = suggestedWinners.map(getPlayerName).filter(Boolean).join(' & ');
+    if (!isClosed) return `Voting still open — leading so far: ${names || '—'} (${totalVotes} votes cast).`;
+    if (suggestedWinners.length === 0) return `Player vote ended in a ${leaders.length}-way tie, so no MVP is awarded.`;
+    if (suggestedWinners.length === 2) return `Player vote: joint MVP ${names} — pre-selected below.`;
+    return `Player vote winner: ${names} — pre-selected below.`;
   })();
+
 
   // Update local players when props change
   React.useEffect(() => {
