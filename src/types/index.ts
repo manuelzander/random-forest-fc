@@ -34,7 +34,8 @@ export interface GameInput {
   team2Goals: number;
   team1Captain: string;
   team2Captain: string;
-  mvpPlayer: string | null;
+  /** Up to two joint MVPs. Empty when no MVP was awarded. */
+  mvpPlayers: string[];
   bibsPlayer?: string | null;
   youtubeUrl?: string;
 }
@@ -58,6 +59,7 @@ export interface ScheduledGame {
   pitch_size?: string | null;
   total_cost?: number | null;
   mvp_vote_winner?: string | null;
+  mvp_vote_winners?: string[] | null;
   mvp_votes_finalized_at?: string | null;
 }
 
