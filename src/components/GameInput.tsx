@@ -13,6 +13,8 @@ import { useToast } from '@/hooks/use-toast';
 import { isValidYouTubeUrl } from '@/utils/youtube';
 import { supabase } from '@/integrations/supabase/client';
 import PlayerNameAutocomplete from './PlayerNameAutocomplete';
+import { useMvpSuggestion } from '@/hooks/useMvpSuggestion';
+
 
 interface GameInputProps {
   players: Player[];
