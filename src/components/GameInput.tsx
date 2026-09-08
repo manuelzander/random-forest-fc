@@ -522,8 +522,8 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           {/* MVP Section — up to two joint MVPs */}
           <div className="space-y-2">
             <Label className="sr-only">MVP Player (Optional)</Label>
-            {voteHint && (
-              <p className="text-xs text-muted-foreground">{voteHint}</p>
+            {voteHint() && (
+              <p className="text-xs text-muted-foreground">{voteHint()}</p>
             )}
 
             <Select value="" onValueChange={toggleMvpPlayer}>
