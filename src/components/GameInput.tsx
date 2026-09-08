@@ -91,14 +91,17 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
     return [label, time, pitch].filter(Boolean).join(' · ');
   };
 
-  const voteHint = (() => {
+  const voteHint = () => {
     if (isEditing || !gameScheduleId || gameScheduleId === 'none') return '';
     if (totalVotes === 0) return 'No player votes for this game.';
-    if (!isClosed) return `Player vote so far (${totalVotes} cast) — voting is still open.`;
-    if (leaders.length > 2) return `Player vote: ${leaders.length}-way tie, so no MVP point is awarded.`;
-    if (leaders.length === 2) return 'Player vote: two players tied — both share the MVP point.';
-    return 'Player vote result — pre-selected below, change it if you like.';
-  })();
+    const names = suggestedWinners.map(getPlayerName).filter(Boolean).join(' & ');
+    if (!isClosed) return `Voting still open — leading so far: ${names || '—'} (${totalVotes} votes cast).`;
+    if (suggestedWinners.length === 0) return `Player vote ended in a ${leaders.length}-way tie, so no MVP is awarded.`;
+    if (suggestedWinners.length === 2) return `Player vote: joint MVP ${names} — pre-selected below.`;
+    return `Player vote winner: ${names} — pre-selected below.`;
+  };
+
+
 
   // Update local players when props change
   React.useEffect(() => {
@@ -519,26 +522,10 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           {/* MVP Section — up to two joint MVPs */}
           <div className="space-y-2">
             <Label className="sr-only">MVP Player (Optional)</Label>
-            {voteHint && (
-              <p className="text-xs text-muted-foreground">{voteHint}</p>
+            {voteHint() && (
+              <p className="text-xs text-muted-foreground">{voteHint()}</p>
             )}
-            {tallies.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {tallies.map((tally) => (
-                  <button
-                    key={tally.playerId}
-                    type="button"
-                    onClick={() => toggleMvpPlayer(tally.playerId)}
-                    className="text-xs"
-                    title="Select as MVP"
-                  >
-                    <Badge variant="outline" className="h-auto w-fit">
-                      {getPlayerName(tally.playerId) || 'Unknown player'} · {tally.votes}
-                    </Badge>
-                  </button>
-                ))}
-              </div>
-            )}
+
             <Select value="" onValueChange={toggleMvpPlayer}>
               <SelectTrigger>
                 <SelectValue
