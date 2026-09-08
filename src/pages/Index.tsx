@@ -206,12 +206,12 @@ const Index = () => {
           totalGames={totalGames}
           players={displayedPlayers}
           isSeasonDataLoading={archivedLoading}
-          onOpenSchedule={() => setActiveTab('schedule')}
-          onOpenGames={() => setActiveTab('games')}
+          onOpenSchedule={() => openTab('schedule')}
+          onOpenGames={() => openTab('games')}
         />
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+        <Tabs ref={tabsRef} value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
           <TabsList className="grid w-full grid-cols-5">
 
             <TabsTrigger value="ranking" className="text-xs sm:text-base">Ranking</TabsTrigger>
