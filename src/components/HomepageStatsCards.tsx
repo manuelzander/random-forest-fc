@@ -145,8 +145,16 @@ const HomepageStatsCards = ({
   }, [players]);
 
   const lastGameMvpName = useMemo(() => {
-    if (!lastGame?.mvp_player) return null;
-    return players.find((player) => player.id === lastGame.mvp_player)?.name || null;
+    if (!lastGame) return null;
+    const ids = lastGame.mvp_players?.length
+      ? lastGame.mvp_players
+      : lastGame.mvp_player
+        ? [lastGame.mvp_player]
+        : [];
+    const names = ids
+      .map((id) => players.find((player) => player.id === id)?.name)
+      .filter((name): name is string => !!name);
+    return names.length ? names.join(' & ') : null;
   }, [lastGame, players]);
 
   const pitchCapacity = nextGame ? getPitchCapacity(nextGame.pitch_size) : 14;
