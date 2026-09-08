@@ -12,9 +12,11 @@ Above the game card, a row of small glass pills:
 
 - **Home** pill, always shown, on the left; goes to the main page.
 - One pill per other game scheduled on the same calendar day as this game, on the right, labelled with its kick-off time and pitch size. Tapping it opens that game's signup page.
-- If there is no second game that day, only the Home pill shows.
+- Deliberately quiet styling: muted text, hairline border, faint glass fill, colour only on hover. Nothing pulses or glows, so the row reads as navigation rather than an action.
+- If there is no second game that day, the single Home pill sits alone on the left at the same height and spacing — the row keeps its shape, so it still looks balanced rather than half-empty.
 - Visible to everyone, signed in or not, and also on past games (so you can hop between both games of a day afterwards too).
 - Pills wrap onto a second line on narrow screens.
+
 
 ## Technical notes
 
