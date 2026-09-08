@@ -156,7 +156,9 @@ const AdminGameManagement = () => {
             mvp_player: gameData.mvpPlayers?.[0] ?? null,
             bibs_player: gameData.bibsPlayer ?? null,
             youtube_url: gameData.youtubeUrl || null,
+            game_schedule_id: gameData.gameScheduleId ?? null,
           }]);
+
 
         if (error) throw error;
         
