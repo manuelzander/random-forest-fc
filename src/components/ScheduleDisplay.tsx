@@ -21,7 +21,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
   const { toast } = useToast();
   const [scheduledGames, setScheduledGames] = useState<ScheduledGame[]>([]);
   const [signups, setSignups] = useState<{ [gameId: string]: GameScheduleSignup[] }>({});
-  const [mvpWinners, setMvpWinners] = useState<{ [gameId: string]: { name: string; votes: number } }>({});
+  const [mvpWinners, setMvpWinners] = useState<{ [gameId: string]: { name: string; votes: number }[] }>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
           supabase.from('players').select('id, name, avatar_url, user_id'),
           supabase
             .from('archived_games')
-            .select('game_schedule_id, mvp_player')
+            .select('game_schedule_id, mvp_player, mvp_players')
             .eq('season_id', archiveSeasonId),
           supabase
             .from('archived_mvp_votes')
@@ -97,18 +97,24 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
           perGame[v.voted_player_id] = (perGame[v.voted_player_id] || 0) + 1;
         });
 
-        const resultMvp = new Map<string, string>();
+        const resultMvp = new Map<string, string[]>();
         (resultsRes.data || []).forEach((g: any) => {
-          if (g.game_schedule_id && g.mvp_player) resultMvp.set(g.game_schedule_id, g.mvp_player);
+          if (!g.game_schedule_id) return;
+          const ids = g.mvp_players?.length ? g.mvp_players : g.mvp_player ? [g.mvp_player] : [];
+          if (ids.length) resultMvp.set(g.game_schedule_id, ids);
         });
 
-        const winners: { [gameId: string]: { name: string; votes: number } } = {};
+        const winners: { [gameId: string]: { name: string; votes: number }[] } = {};
         ((games as ScheduledGame[]) || []).forEach((g) => {
-          const winnerId = g.mvp_vote_winner || resultMvp.get(g.id) || null;
-          if (!winnerId) return;
-          const name = playerMap.get(winnerId)?.name;
-          if (!name) return;
-          winners[g.id] = { name, votes: voteCounts[g.id]?.[winnerId] || 0 };
+          const winnerIds = g.mvp_vote_winners?.length
+            ? g.mvp_vote_winners
+            : g.mvp_vote_winner
+              ? [g.mvp_vote_winner]
+              : resultMvp.get(g.id) || [];
+          const named = winnerIds
+            .map((id) => ({ name: playerMap.get(id)?.name, votes: voteCounts[g.id]?.[id] || 0 }))
+            .filter((w): w is { name: string; votes: number } => !!w.name);
+          if (named.length) winners[g.id] = named;
         });
         setMvpWinners(winners);
 
