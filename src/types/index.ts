@@ -38,7 +38,10 @@ export interface GameInput {
   mvpPlayers: string[];
   bibsPlayer?: string | null;
   youtubeUrl?: string;
+  /** Scheduled fixture this result belongs to. Null lets the database match it automatically. */
+  gameScheduleId?: string | null;
 }
+
 
 export interface NewsItem {
   id: string;
