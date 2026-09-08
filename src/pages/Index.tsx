@@ -120,8 +120,10 @@ const Index = () => {
         team2_captain: gameData.team2Captain,
         mvp_players: gameData.mvpPlayers,
         mvp_player: gameData.mvpPlayers[0] ?? null,
-        youtube_url: gameData.youtubeUrl || null
+        youtube_url: gameData.youtubeUrl || null,
+        game_schedule_id: gameData.gameScheduleId ?? null
       }]);
+
       if (gameError) throw gameError;
 
       clearPlayerAchievementsCache();

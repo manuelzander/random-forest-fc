@@ -13,6 +13,8 @@ import { useToast } from '@/hooks/use-toast';
 import { isValidYouTubeUrl } from '@/utils/youtube';
 import { supabase } from '@/integrations/supabase/client';
 import PlayerNameAutocomplete from './PlayerNameAutocomplete';
+import { useMvpSuggestion } from '@/hooks/useMvpSuggestion';
+
 
 interface GameInputProps {
   players: Player[];
@@ -44,16 +46,65 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
   const [mvpPlayers, setMvpPlayers] = useState<string[]>(initialData?.mvpPlayers || []);
   const [bibsPlayer, setBibsPlayer] = useState(initialData?.bibsPlayer || '');
   const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl || '');
+  const [gameScheduleId, setGameScheduleId] = useState<string>('');
+  const [mvpPrefilledFor, setMvpPrefilledFor] = useState<string>('');
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [playerToRemove, setPlayerToRemove] = useState<{playerId: string, playerName: string, teamNumber: 1 | 2} | null>(null);
   const [team1Input, setTeam1Input] = useState('');
   const [team2Input, setTeam2Input] = useState('');
   const [localPlayers, setLocalPlayers] = useState<Player[]>(players);
-  
+
+  const {
+    fixtures,
+    tallies,
+    leaders,
+    suggestedWinners,
+    isClosed,
+    totalVotes,
+  } = useMvpSuggestion(gameScheduleId === 'none' ? '' : gameScheduleId, !isEditing);
+
+  // Default to the most recent fixture without a result
+  React.useEffect(() => {
+    if (!isEditing && !gameScheduleId && fixtures.length > 0) {
+      setGameScheduleId(fixtures[0].id);
+    }
+  }, [fixtures, gameScheduleId, isEditing]);
+
+  // Pre-select the vote outcome once per fixture, when voting has closed with a clear result
+  React.useEffect(() => {
+    if (isEditing || !gameScheduleId || gameScheduleId === 'none') return;
+    if (mvpPrefilledFor === gameScheduleId) return;
+    if (!isClosed) return;
+    setMvpPrefilledFor(gameScheduleId);
+    if (suggestedWinners.length > 0) {
+      setMvpPlayers(suggestedWinners);
+    }
+  }, [gameScheduleId, isClosed, suggestedWinners, mvpPrefilledFor, isEditing]);
+
+  const voteCount = (playerId: string) => tallies.find(t => t.playerId === playerId)?.votes || 0;
+
+  const formatFixture = (fixture: { scheduled_at: string; pitch_size: string | null }) => {
+    const date = new Date(fixture.scheduled_at);
+    const label = date.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+    const time = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    const pitch = fixture.pitch_size === 'small' ? 'Small pitch' : fixture.pitch_size === 'big' ? 'Big pitch' : '';
+    return [label, time, pitch].filter(Boolean).join(' · ');
+  };
+
+  const voteHint = (() => {
+    if (isEditing || !gameScheduleId || gameScheduleId === 'none') return '';
+    if (totalVotes === 0) return 'No player votes for this game.';
+    if (!isClosed) return `Player vote so far (${totalVotes} cast) — voting is still open.`;
+    if (leaders.length > 2) return `Player vote: ${leaders.length}-way tie, so no MVP point is awarded.`;
+    if (leaders.length === 2) return 'Player vote: two players tied — both share the MVP point.';
+    return 'Player vote result — pre-selected below, change it if you like.';
+  })();
+
   // Update local players when props change
   React.useEffect(() => {
     setLocalPlayers(players);
   }, [players]);
+
 
   const availablePlayersForTeam1 = localPlayers.filter(p => !team2Players.includes(p.id) && !team1Players.includes(p.id));
   const availablePlayersForTeam2 = localPlayers.filter(p => !team1Players.includes(p.id) && !team2Players.includes(p.id));
@@ -249,7 +300,9 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       mvpPlayers,
       bibsPlayer: bibsPlayer === "none" ? null : bibsPlayer || null,
       youtubeUrl: youtubeUrl || undefined,
+      gameScheduleId: !isEditing && gameScheduleId && gameScheduleId !== 'none' ? gameScheduleId : null,
     };
+
 
     onGameSubmit(gameData);
     
@@ -264,6 +317,9 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       setMvpPlayers([]);
       setBibsPlayer('');
       setYoutubeUrl('');
+      setGameScheduleId('');
+      setMvpPrefilledFor('');
+
       
       toast({
         title: "Game Recorded!",
@@ -440,9 +496,49 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             </div>
           </div>
 
+          {/* Fixture picker — determines which vote the result belongs to */}
+          {!isEditing && (
+            <div className="space-y-2">
+              <Label className="sr-only">Scheduled game</Label>
+              <Select value={gameScheduleId} onValueChange={setGameScheduleId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Scheduled game (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Not linked to a scheduled game</SelectItem>
+                  {fixtures.map((fixture) => (
+                    <SelectItem key={fixture.id} value={fixture.id}>
+                      {formatFixture(fixture)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           {/* MVP Section — up to two joint MVPs */}
           <div className="space-y-2">
             <Label className="sr-only">MVP Player (Optional)</Label>
+            {voteHint && (
+              <p className="text-xs text-muted-foreground">{voteHint}</p>
+            )}
+            {tallies.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tallies.map((tally) => (
+                  <button
+                    key={tally.playerId}
+                    type="button"
+                    onClick={() => toggleMvpPlayer(tally.playerId)}
+                    className="text-xs"
+                    title="Select as MVP"
+                  >
+                    <Badge variant="outline" className="h-auto w-fit">
+                      {getPlayerName(tally.playerId) || 'Unknown player'} · {tally.votes}
+                    </Badge>
+                  </button>
+                ))}
+              </div>
+            )}
             <Select value="" onValueChange={toggleMvpPlayer}>
               <SelectTrigger>
                 <SelectValue
@@ -459,6 +555,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                   <SelectItem key={playerId} value={playerId}>
                     {mvpPlayers.includes(playerId) ? '👑 ' : ''}
                     {getPlayerName(playerId)}
+                    {voteCount(playerId) > 0 ? ` · ${voteCount(playerId)} votes` : ''}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -487,6 +584,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
               </div>
             )}
           </div>
+
 
           {/* Bibs Section */}
           <div className="space-y-2">
