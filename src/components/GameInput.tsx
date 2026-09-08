@@ -59,6 +59,27 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
   const availablePlayersForTeam2 = localPlayers.filter(p => !team1Players.includes(p.id) && !team2Players.includes(p.id));
   const allGamePlayers = [...team1Players, ...team2Players];
 
+  // An MVP award can be shared by at most two players
+  const toggleMvpPlayer = (playerId: string) => {
+    if (playerId === 'none') {
+      setMvpPlayers([]);
+      return;
+    }
+    if (mvpPlayers.includes(playerId)) {
+      setMvpPlayers(mvpPlayers.filter(id => id !== playerId));
+      return;
+    }
+    if (mvpPlayers.length >= 2) {
+      toast({
+        title: 'Two MVPs maximum',
+        description: 'An MVP award can be shared by at most two players.',
+      });
+      return;
+    }
+    setMvpPlayers([...mvpPlayers, playerId]);
+  };
+
+
   const addPlayerToTeam = (teamNumber: 1 | 2, playerId: string) => {
     if (teamNumber === 1) {
       setTeam1Players([...team1Players, playerId]);
