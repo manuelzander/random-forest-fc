@@ -20,6 +20,7 @@ interface Game {
   team1_captain: string | null;
   team2_captain: string | null;
   mvp_player: string | null;
+  mvp_players?: string[] | null;
   bibs_player?: string | null;
   created_at: string;
   youtube_url?: string | null;
@@ -161,7 +162,9 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                       <span className="hidden sm:inline">Captain</span>
                     </Badge>
                   )}
-                  {game.mvp_player === playerId && (
+                  {(game.mvp_players?.length
+                    ? game.mvp_players.includes(playerId)
+                    : game.mvp_player === playerId) && (
                     <Badge className="badge-trophy h-auto w-fit">
                       <span>👑</span>
                       MVP

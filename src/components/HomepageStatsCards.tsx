@@ -26,6 +26,7 @@ interface LastGame {
   team1_goals: number;
   team2_goals: number;
   mvp_player?: string | null;
+  mvp_players?: string[] | null;
   created_at: string;
   team1_players?: string[] | null;
   team2_players?: string[] | null;
@@ -108,13 +109,13 @@ const HomepageStatsCards = ({
         const response = archiveSeasonId
           ? await supabase
               .from('archived_games')
-              .select('id, team1_goals, team2_goals, mvp_player, created_at, team1_players, team2_players')
+              .select('id, team1_goals, team2_goals, mvp_player, mvp_players, created_at, team1_players, team2_players')
               .eq('season_id', archiveSeasonId)
               .order('created_at', { ascending: false })
               .limit(1)
           : await supabase
               .from('games')
-              .select('id, team1_goals, team2_goals, mvp_player, created_at, team1_players, team2_players')
+              .select('id, team1_goals, team2_goals, mvp_player, mvp_players, created_at, team1_players, team2_players')
               .order('created_at', { ascending: false })
               .limit(1);
 
@@ -144,8 +145,16 @@ const HomepageStatsCards = ({
   }, [players]);
 
   const lastGameMvpName = useMemo(() => {
-    if (!lastGame?.mvp_player) return null;
-    return players.find((player) => player.id === lastGame.mvp_player)?.name || null;
+    if (!lastGame) return null;
+    const ids = lastGame.mvp_players?.length
+      ? lastGame.mvp_players
+      : lastGame.mvp_player
+        ? [lastGame.mvp_player]
+        : [];
+    const names = ids
+      .map((id) => players.find((player) => player.id === id)?.name)
+      .filter((name): name is string => !!name);
+    return names.length ? names.join(' & ') : null;
   }, [lastGame, players]);
 
   const pitchCapacity = nextGame ? getPitchCapacity(nextGame.pitch_size) : 14;

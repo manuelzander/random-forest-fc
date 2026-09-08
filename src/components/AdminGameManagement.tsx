@@ -20,6 +20,7 @@ interface Game {
   team1_captain: string | null;
   team2_captain: string | null;
   mvp_player: string | null;
+  mvp_players?: string[] | null;
   bibs_player: string | null;
   created_at: string;
   youtube_url?: string | null;
@@ -129,7 +130,8 @@ const AdminGameManagement = () => {
             team2_players: gameData.team2Players,
             team1_captain: gameData.team1Captain,
             team2_captain: gameData.team2Captain,
-            mvp_player: gameData.mvpPlayer,
+            mvp_players: gameData.mvpPlayers ?? [],
+            mvp_player: gameData.mvpPlayers?.[0] ?? null,
             bibs_player: gameData.bibsPlayer ?? null,
             youtube_url: gameData.youtubeUrl || null,
           })
@@ -150,7 +152,8 @@ const AdminGameManagement = () => {
             team2_players: gameData.team2Players,
             team1_captain: gameData.team1Captain,
             team2_captain: gameData.team2Captain,
-            mvp_player: gameData.mvpPlayer,
+            mvp_players: gameData.mvpPlayers ?? [],
+            mvp_player: gameData.mvpPlayers?.[0] ?? null,
             bibs_player: gameData.bibsPlayer ?? null,
             youtube_url: gameData.youtubeUrl || null,
           }]);
@@ -162,7 +165,9 @@ const AdminGameManagement = () => {
         const team2PlayerNames = gameData.team2Players.map((id: string) => getPlayerName(id));
         const team1CaptainName = gameData.team1Captain ? getPlayerName(gameData.team1Captain) : undefined;
         const team2CaptainName = gameData.team2Captain ? getPlayerName(gameData.team2Captain) : undefined;
-        const mvpName = gameData.mvpPlayer ? getPlayerName(gameData.mvpPlayer) : undefined;
+        const mvpName = gameData.mvpPlayers?.length
+          ? gameData.mvpPlayers.map((id: string) => getPlayerName(id)).join(' & ')
+          : undefined;
         
         sendGameResultNotification(
           gameData.team1Goals,
@@ -245,7 +250,11 @@ const AdminGameManagement = () => {
                   team2Players: editingGame.team2_players,
                   team1Captain: editingGame.team1_captain || '',
                   team2Captain: editingGame.team2_captain || '',
-                  mvpPlayer: editingGame.mvp_player || '',
+                  mvpPlayers: editingGame.mvp_players?.length
+                    ? editingGame.mvp_players
+                    : editingGame.mvp_player
+                      ? [editingGame.mvp_player]
+                      : [],
                   bibsPlayer: editingGame.bibs_player || '',
                   youtubeUrl: editingGame.youtube_url || '',
                 } : undefined}
@@ -290,7 +299,7 @@ const AdminGameManagement = () => {
                               )}
                             </div>
                             <div className="flex gap-1">
-                              {game.mvp_player === playerId && (
+                              {(game.mvp_players?.length ? game.mvp_players.includes(playerId) : game.mvp_player === playerId) && (
                                 <Badge className="badge-trophy h-auto w-fit">
                                   <span>👑</span>
                                   MVP
@@ -323,7 +332,7 @@ const AdminGameManagement = () => {
                               )}
                             </div>
                             <div className="flex gap-1">
-                              {game.mvp_player === playerId && (
+                              {(game.mvp_players?.length ? game.mvp_players.includes(playerId) : game.mvp_player === playerId) && (
                                 <Badge className="badge-trophy h-auto w-fit">
                                   <span>👑</span>
                                   MVP

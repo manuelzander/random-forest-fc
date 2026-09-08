@@ -94,7 +94,7 @@ const PlayerProfile = () => {
 
       // Then calculate stats from games
       const statsSelect =
-        'team1_players, team2_players, team1_goals, team2_goals, mvp_player, bibs_player, team1_captain, team2_captain, created_at';
+        'team1_players, team2_players, team1_goals, team2_goals, mvp_player, mvp_players, bibs_player, team1_captain, team2_captain, created_at';
       const { data: statsData, error: statsError } = archiveSeasonId
         ? await supabase
             .from('archived_games')
@@ -170,7 +170,13 @@ const PlayerProfile = () => {
               if (recentResults.length < 6) recentResults.push('loss');
             }
             
-            if (game.mvp_player === playerId) {
+            // Up to two joint MVPs each earn the award and the bonus point
+            const mvpIds = game.mvp_players?.length
+              ? game.mvp_players
+              : game.mvp_player
+                ? [game.mvp_player]
+                : [];
+            if (mvpIds.includes(playerId)) {
               mvp_awards++;
               points += 1; // Add 1 point for MVP award
             }

@@ -160,23 +160,34 @@ const getMvpStatus = (
   }
 
   const entries = Object.entries(tally?.byPlayer || {});
-  // Votes arrive ordered by created_at, so a strict comparison keeps the earliest-vote tie-break
-  const top = entries.reduce<{ playerId: string; name: string; votes: number } | null>(
-    (best, [playerId, entry]) =>
-      !best || entry.votes > best.votes ? { playerId, ...entry } : best,
-    null
-  );
-  const winnerId = game.mvp_vote_winner || top?.playerId || null;
-  const winner = winnerId ? tally?.byPlayer[winnerId] : undefined;
+  const topVotes = entries.reduce((max, [, entry]) => Math.max(max, entry.votes), 0);
+  const tiedIds = entries.filter(([, entry]) => entry.votes === topVotes).map(([id]) => id);
+
+  // Stored winners win. Otherwise: one or two tied players share the award, three or more get none.
+  const storedWinners = game.mvp_vote_winners?.length
+    ? game.mvp_vote_winners
+    : game.mvp_vote_winner
+      ? [game.mvp_vote_winner]
+      : [];
+  const winnerIds = storedWinners.length
+    ? storedWinners
+    : topVotes > 0 && tiedIds.length <= 2
+      ? tiedIds
+      : [];
+
   // An admin can override the winner to someone who received no votes — fall back to the roster name
-  const winnerName =
-    winner?.name ?? (winnerId ? allPlayers.find(p => p.id === winnerId)?.name ?? null : null);
+  const winners = winnerIds.map(id => ({
+    id,
+    name:
+      tally?.byPlayer[id]?.name ?? allPlayers.find(p => p.id === id)?.name ?? 'Unknown player',
+    votes: tally?.byPlayer[id]?.votes ?? 0,
+  }));
 
   return {
     phase: 'closed' as const,
-    winnerName,
-    winnerVotes: winner?.votes ?? 0,
+    winners,
     votesCast: tally?.total ?? 0,
+    tiedCount: topVotes > 0 ? tiedIds.length : 0,
     eligibleVoters,
   };
 };
@@ -758,21 +769,25 @@ const AdminScheduleManagement = () => {
                       {mvpStatus.phase === 'closed' && (
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
                           <span className="inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
-                          {mvpStatus.winnerName ? (
+                          {mvpStatus.winners.length > 0 ? (
                             <>
                               <span className="text-sm text-muted-foreground">MVP voting closed</span>
                               <span className="text-muted-foreground/40">•</span>
-                              <Badge className="badge-trophy h-auto w-fit">
-                                <span>👑</span>
-                                {mvpStatus.winnerName}
-                              </Badge>
+                              {mvpStatus.winners.map(winner => (
+                                <Badge key={winner.id} className="badge-trophy h-auto w-fit">
+                                  <span>👑</span>
+                                  {winner.name}
+                                </Badge>
+                              ))}
                               <span className="text-sm text-muted-foreground">
-                                {`${mvpStatus.winnerVotes} of ${mvpStatus.votesCast} votes`}
+                                {`${mvpStatus.winners[0].votes} of ${mvpStatus.votesCast} votes`}
                               </span>
                             </>
                           ) : (
                             <span className="text-sm text-muted-foreground">
-                              MVP voting closed · no votes cast
+                              {mvpStatus.tiedCount > 2
+                                ? `MVP voting closed · tied between ${mvpStatus.tiedCount} players, no award`
+                                : 'MVP voting closed · no votes cast'}
                             </span>
                           )}
                         </div>

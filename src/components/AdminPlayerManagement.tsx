@@ -199,8 +199,14 @@ const AdminPlayerManagement = ({ archiveSeasonId = null }: AdminPlayerManagement
               losses++;
             }
             
-            // MVP and bibs each add a bonus point (matches the ranking logic)
-            if (game.mvp_player === player.id) {
+            // MVP and bibs each add a bonus point (matches the ranking logic).
+            // Up to two joint MVPs both count.
+            const mvpIds = game.mvp_players?.length
+              ? game.mvp_players
+              : game.mvp_player
+                ? [game.mvp_player]
+                : [];
+            if (mvpIds.includes(player.id)) {
               mvp_awards++;
               points += 1;
             }

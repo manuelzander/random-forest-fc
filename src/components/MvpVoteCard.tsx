@@ -33,8 +33,11 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
 
   const canVote = state.is_open && !!state.my_player_id && state.am_eligible;
   const votableCandidates = candidates.filter(c => c.playerId !== state.my_player_id);
-  const winner = state.results.find(r => r.player_id === state.winner_player_id);
+  const winnerIds = state.winner_player_ids ?? (state.winner_player_id ? [state.winner_player_id] : []);
+  const winners = state.results.filter(r => winnerIds.includes(r.player_id));
   const topVotes = state.results[0]?.votes ?? 0;
+  // Three or more players on the top count means no award at all
+  const noAwardTie = state.is_closed && winners.length === 0 && (state.tied_count ?? 0) > 2;
 
   const handleVote = async (playerId: string) => {
     if (state.my_vote === playerId) {
@@ -170,15 +173,28 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
               </div>
             ) : (
               <div className="space-y-2">
-                {winner && (
-                  <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/10">
+                {noAwardTie && (
+                  <div className="info-note">
+                    <Trophy className="info-note-icon" />
+                    <span>
+                      The vote ended tied between {state.tied_count} players, so no MVP was awarded
+                      for this game.
+                    </span>
+                  </div>
+                )}
+
+                {winners.map(winner => (
+                  <div
+                    key={winner.player_id}
+                    className="flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/10"
+                  >
                     <Avatar className="h-11 w-11 avatar-glow">
                       <AvatarImage src={winner.avatar_url || undefined} />
                       <AvatarFallback>{winner.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
                       <p className="text-[10px] uppercase tracking-widest text-primary font-bold">
-                        Player of the match
+                        {winners.length > 1 ? 'Joint player of the match' : 'Player of the match'}
                       </p>
                       <p className="font-display text-2xl text-foreground leading-none truncate">
                         {winner.name}
@@ -189,10 +205,10 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
                       {winner.votes} {winner.votes === 1 ? 'vote' : 'votes'}
                     </Badge>
                   </div>
-                )}
+                ))}
 
                 {state.results
-                  .filter(r => r.player_id !== state.winner_player_id)
+                  .filter(r => !winnerIds.includes(r.player_id))
                   .map(result => (
                     <div
                       key={result.player_id}

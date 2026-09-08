@@ -21,6 +21,7 @@ export type Database = {
           game_schedule_id: string | null
           id: string
           mvp_player: string | null
+          mvp_players: string[]
           season_id: string
           team1_captain: string | null
           team1_goals: number
@@ -37,6 +38,7 @@ export type Database = {
           game_schedule_id?: string | null
           id: string
           mvp_player?: string | null
+          mvp_players?: string[]
           season_id: string
           team1_captain?: string | null
           team1_goals: number
@@ -53,6 +55,7 @@ export type Database = {
           game_schedule_id?: string | null
           id?: string
           mvp_player?: string | null
+          mvp_players?: string[]
           season_id?: string
           team1_captain?: string | null
           team1_goals?: number
@@ -79,6 +82,7 @@ export type Database = {
           created_by: string
           id: string
           mvp_vote_winner: string | null
+          mvp_vote_winners: string[]
           mvp_votes_finalized_at: string | null
           pitch_size: string | null
           scheduled_at: string
@@ -91,6 +95,7 @@ export type Database = {
           created_by: string
           id: string
           mvp_vote_winner?: string | null
+          mvp_vote_winners?: string[]
           mvp_votes_finalized_at?: string | null
           pitch_size?: string | null
           scheduled_at: string
@@ -103,6 +108,7 @@ export type Database = {
           created_by?: string
           id?: string
           mvp_vote_winner?: string | null
+          mvp_vote_winners?: string[]
           mvp_votes_finalized_at?: string | null
           pitch_size?: string | null
           scheduled_at?: string
@@ -219,6 +225,7 @@ export type Database = {
           game_schedule_id: string | null
           id: string
           mvp_player: string | null
+          mvp_players: string[]
           team1_captain: string | null
           team1_goals: number
           team1_players: string[]
@@ -234,6 +241,7 @@ export type Database = {
           game_schedule_id?: string | null
           id?: string
           mvp_player?: string | null
+          mvp_players?: string[]
           team1_captain?: string | null
           team1_goals: number
           team1_players: string[]
@@ -249,6 +257,7 @@ export type Database = {
           game_schedule_id?: string | null
           id?: string
           mvp_player?: string | null
+          mvp_players?: string[]
           team1_captain?: string | null
           team1_goals?: number
           team1_players?: string[]
@@ -288,6 +297,7 @@ export type Database = {
           created_by: string
           id: string
           mvp_vote_winner: string | null
+          mvp_vote_winners: string[]
           mvp_votes_finalized_at: string | null
           pitch_size: string | null
           scheduled_at: string
@@ -299,6 +309,7 @@ export type Database = {
           created_by: string
           id?: string
           mvp_vote_winner?: string | null
+          mvp_vote_winners?: string[]
           mvp_votes_finalized_at?: string | null
           pitch_size?: string | null
           scheduled_at: string
@@ -310,6 +321,7 @@ export type Database = {
           created_by?: string
           id?: string
           mvp_vote_winner?: string | null
+          mvp_vote_winners?: string[]
           mvp_votes_finalized_at?: string | null
           pitch_size?: string | null
           scheduled_at?: string
