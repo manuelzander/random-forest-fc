@@ -26,6 +26,7 @@ interface LastGame {
   team1_goals: number;
   team2_goals: number;
   mvp_player?: string | null;
+  mvp_players?: string[] | null;
   created_at: string;
   team1_players?: string[] | null;
   team2_players?: string[] | null;
@@ -108,13 +109,13 @@ const HomepageStatsCards = ({
         const response = archiveSeasonId
           ? await supabase
               .from('archived_games')
-              .select('id, team1_goals, team2_goals, mvp_player, created_at, team1_players, team2_players')
+              .select('id, team1_goals, team2_goals, mvp_player, mvp_players, created_at, team1_players, team2_players')
               .eq('season_id', archiveSeasonId)
               .order('created_at', { ascending: false })
               .limit(1)
           : await supabase
               .from('games')
-              .select('id, team1_goals, team2_goals, mvp_player, created_at, team1_players, team2_players')
+              .select('id, team1_goals, team2_goals, mvp_player, mvp_players, created_at, team1_players, team2_players')
               .order('created_at', { ascending: false })
               .limit(1);
 
