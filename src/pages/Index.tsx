@@ -225,7 +225,9 @@ const Index = () => {
         />
 
         {/* Tabs */}
-        <Tabs ref={tabsRef} value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+        <div ref={tabsRef} className="scroll-mt-24">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+
           <TabsList className="grid w-full grid-cols-5">
 
             <TabsTrigger value="ranking" className="text-xs sm:text-base">Ranking</TabsTrigger>
