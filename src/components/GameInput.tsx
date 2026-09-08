@@ -225,7 +225,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       team2Goals: parseInt(team2Goals) || 0,
       team1Captain,
       team2Captain,
-      mvpPlayer: mvpPlayer === "none" ? null : mvpPlayer || null,
+      mvpPlayers,
       bibsPlayer: bibsPlayer === "none" ? null : bibsPlayer || null,
       youtubeUrl: youtubeUrl || undefined,
     };
@@ -240,7 +240,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       setTeam2Goals('');
       setTeam1Captain('');
       setTeam2Captain('');
-      setMvpPlayer('');
+      setMvpPlayers([]);
       setBibsPlayer('');
       setYoutubeUrl('');
       
@@ -419,22 +419,52 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             </div>
           </div>
 
-          {/* MVP Section */}
+          {/* MVP Section — up to two joint MVPs */}
           <div className="space-y-2">
             <Label className="sr-only">MVP Player (Optional)</Label>
-            <Select value={mvpPlayer} onValueChange={setMvpPlayer}>
+            <Select value="" onValueChange={toggleMvpPlayer}>
               <SelectTrigger>
-                <SelectValue placeholder="MVP player (optional)" />
+                <SelectValue
+                  placeholder={
+                    mvpPlayers.length === 0
+                      ? 'MVP player (optional, up to two)'
+                      : mvpPlayers.map(getPlayerName).join(' & ')
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem key="none" value="none">None</SelectItem>
                 {allGamePlayers.map((playerId) => (
                   <SelectItem key={playerId} value={playerId}>
+                    {mvpPlayers.includes(playerId) ? '👑 ' : ''}
                     {getPlayerName(playerId)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {mvpPlayers.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {mvpPlayers.map((playerId) => (
+                  <button
+                    key={playerId}
+                    type="button"
+                    onClick={() => toggleMvpPlayer(playerId)}
+                    title="Remove MVP"
+                  >
+                    <Badge className="badge-trophy h-auto w-fit">
+                      <span>👑</span>
+                      {getPlayerName(playerId)}
+                      <span className="ml-1 text-muted-foreground">✕</span>
+                    </Badge>
+                  </button>
+                ))}
+                {mvpPlayers.length === 2 && (
+                  <span className="text-xs text-muted-foreground self-center">
+                    Joint MVP — both get the point
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Bibs Section */}
