@@ -16,7 +16,7 @@ So the automatic matching is currently wrong for the Sep 1 game in two ways:
 ## What we change
 
 **1. The admin picks the fixture (main fix).**
-At the top of the result form, a "Game" selector lists every past fixture with no result yet, newest first, shown as date + time + pitch (e.g. "Tue 1 Sep · 18:15 · Big pitch"). It defaults to the most recent unmatched fixture. The existing automatic matching stays as the fallback when nothing is chosen, so old behaviour is unchanged.
+Directly above the MVP field — the only part of the form it affects — a "Game" selector lists every past fixture that no saved result points at yet, newest first, shown as date + time + pitch (e.g. "Tue 1 Sep · 18:15 · Big pitch"). It defaults to the most recent of those. A saved result carries a single reference to its scheduled fixture, so "no result yet" means no saved result references that fixture. The existing automatic matching stays as the fallback when nothing is chosen, so old behaviour is unchanged.
 
 **2. MVP suggestions follow the chosen fixture.**
 Once a fixture is selected:
