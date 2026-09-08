@@ -769,21 +769,25 @@ const AdminScheduleManagement = () => {
                       {mvpStatus.phase === 'closed' && (
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
                           <span className="inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
-                          {mvpStatus.winnerName ? (
+                          {mvpStatus.winners.length > 0 ? (
                             <>
                               <span className="text-sm text-muted-foreground">MVP voting closed</span>
                               <span className="text-muted-foreground/40">•</span>
-                              <Badge className="badge-trophy h-auto w-fit">
-                                <span>👑</span>
-                                {mvpStatus.winnerName}
-                              </Badge>
+                              {mvpStatus.winners.map(winner => (
+                                <Badge key={winner.id} className="badge-trophy h-auto w-fit">
+                                  <span>👑</span>
+                                  {winner.name}
+                                </Badge>
+                              ))}
                               <span className="text-sm text-muted-foreground">
-                                {`${mvpStatus.winnerVotes} of ${mvpStatus.votesCast} votes`}
+                                {`${mvpStatus.winners[0].votes} of ${mvpStatus.votesCast} votes`}
                               </span>
                             </>
                           ) : (
                             <span className="text-sm text-muted-foreground">
-                              MVP voting closed · no votes cast
+                              {mvpStatus.tiedCount > 2
+                                ? `MVP voting closed · tied between ${mvpStatus.tiedCount} players, no award`
+                                : 'MVP voting closed · no votes cast'}
                             </span>
                           )}
                         </div>
