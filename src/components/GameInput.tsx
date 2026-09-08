@@ -317,6 +317,9 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       setMvpPlayers([]);
       setBibsPlayer('');
       setYoutubeUrl('');
+      setGameScheduleId('');
+      setMvpPrefilledFor('');
+
       
       toast({
         title: "Game Recorded!",
