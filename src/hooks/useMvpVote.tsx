@@ -19,6 +19,10 @@ export interface MvpVoteState {
   am_eligible: boolean;
   my_vote: string | null;
   winner_player_id: string | null;
+  /** Up to two joint winners. Empty when a wider tie means no award. */
+  winner_player_ids: string[];
+  /** How many players shared the top vote count (0 when nobody voted). */
+  tied_count: number;
   results: MvpVoteResult[];
 }
 
