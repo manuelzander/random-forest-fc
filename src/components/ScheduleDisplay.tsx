@@ -229,7 +229,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
             const gameSignups = signups[game.id] || [];
             const gameDate = new Date(game.scheduled_at);
             const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
-            const mvp = mvpWinners[game.id];
+            const mvps = mvpWinners[game.id] || [];
 
             return (
               <div key={game.id} className="glass-panel overflow-hidden">
@@ -249,15 +249,17 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                           </>
                         )}
                       </p>
-                      {mvp && (
-                        <div className="flex items-center gap-2 mt-3">
-                          <Badge className="badge-trophy h-auto w-fit">
-                            <span>👑</span>
-                            {mvp.name}
-                          </Badge>
-                          {mvp.votes > 0 && (
+                      {mvps.length > 0 && (
+                        <div className="flex items-center gap-2 mt-3 flex-wrap">
+                          {mvps.map((mvp) => (
+                            <Badge key={mvp.name} className="badge-trophy h-auto w-fit">
+                              <span>👑</span>
+                              {mvp.name}
+                            </Badge>
+                          ))}
+                          {mvps[0].votes > 0 && (
                             <span className="text-xs text-muted-foreground">
-                              {`${mvp.votes} ${mvp.votes === 1 ? 'vote' : 'votes'}`}
+                              {`${mvps[0].votes} ${mvps[0].votes === 1 ? 'vote' : 'votes'}`}
                             </span>
                           )}
                         </div>
