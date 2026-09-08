@@ -440,9 +440,49 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
             </div>
           </div>
 
+          {/* Fixture picker — determines which vote the result belongs to */}
+          {!isEditing && (
+            <div className="space-y-2">
+              <Label className="sr-only">Scheduled game</Label>
+              <Select value={gameScheduleId} onValueChange={setGameScheduleId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Scheduled game (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Not linked to a scheduled game</SelectItem>
+                  {fixtures.map((fixture) => (
+                    <SelectItem key={fixture.id} value={fixture.id}>
+                      {formatFixture(fixture)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           {/* MVP Section — up to two joint MVPs */}
           <div className="space-y-2">
             <Label className="sr-only">MVP Player (Optional)</Label>
+            {voteHint && (
+              <p className="text-xs text-muted-foreground">{voteHint}</p>
+            )}
+            {tallies.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tallies.map((tally) => (
+                  <button
+                    key={tally.playerId}
+                    type="button"
+                    onClick={() => toggleMvpPlayer(tally.playerId)}
+                    className="text-xs"
+                    title="Select as MVP"
+                  >
+                    <Badge variant="outline" className="h-auto w-fit">
+                      {getPlayerName(tally.playerId) || 'Unknown player'} · {tally.votes}
+                    </Badge>
+                  </button>
+                ))}
+              </div>
+            )}
             <Select value="" onValueChange={toggleMvpPlayer}>
               <SelectTrigger>
                 <SelectValue
@@ -459,6 +499,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                   <SelectItem key={playerId} value={playerId}>
                     {mvpPlayers.includes(playerId) ? '👑 ' : ''}
                     {getPlayerName(playerId)}
+                    {voteCount(playerId) > 0 ? ` · ${voteCount(playerId)} votes` : ''}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -487,6 +528,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
               </div>
             )}
           </div>
+
 
           {/* Bibs Section */}
           <div className="space-y-2">
