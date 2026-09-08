@@ -130,7 +130,8 @@ const AdminGameManagement = () => {
             team2_players: gameData.team2Players,
             team1_captain: gameData.team1Captain,
             team2_captain: gameData.team2Captain,
-            mvp_player: gameData.mvpPlayer,
+            mvp_players: gameData.mvpPlayers ?? [],
+            mvp_player: gameData.mvpPlayers?.[0] ?? null,
             bibs_player: gameData.bibsPlayer ?? null,
             youtube_url: gameData.youtubeUrl || null,
           })
@@ -151,7 +152,8 @@ const AdminGameManagement = () => {
             team2_players: gameData.team2Players,
             team1_captain: gameData.team1Captain,
             team2_captain: gameData.team2Captain,
-            mvp_player: gameData.mvpPlayer,
+            mvp_players: gameData.mvpPlayers ?? [],
+            mvp_player: gameData.mvpPlayers?.[0] ?? null,
             bibs_player: gameData.bibsPlayer ?? null,
             youtube_url: gameData.youtubeUrl || null,
           }]);
@@ -163,7 +165,9 @@ const AdminGameManagement = () => {
         const team2PlayerNames = gameData.team2Players.map((id: string) => getPlayerName(id));
         const team1CaptainName = gameData.team1Captain ? getPlayerName(gameData.team1Captain) : undefined;
         const team2CaptainName = gameData.team2Captain ? getPlayerName(gameData.team2Captain) : undefined;
-        const mvpName = gameData.mvpPlayer ? getPlayerName(gameData.mvpPlayer) : undefined;
+        const mvpName = gameData.mvpPlayers?.length
+          ? gameData.mvpPlayers.map((id: string) => getPlayerName(id)).join(' & ')
+          : undefined;
         
         sendGameResultNotification(
           gameData.team1Goals,
