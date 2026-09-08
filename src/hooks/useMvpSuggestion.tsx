@@ -6,6 +6,7 @@ export interface UnmatchedFixture {
   scheduled_at: string;
   pitch_size: string | null;
   mvp_vote_winners: string[];
+  mvp_vote_winner: string | null;
   mvp_votes_finalized_at: string | null;
 }
 
@@ -35,7 +36,7 @@ export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
         const [scheduleRes, gamesRes] = await Promise.all([
           supabase
             .from('games_schedule')
-            .select('id, scheduled_at, pitch_size, mvp_vote_winners, mvp_votes_finalized_at')
+            .select('id, scheduled_at, pitch_size, mvp_vote_winners, mvp_vote_winner, mvp_votes_finalized_at')
             .lte('scheduled_at', new Date().toISOString())
             .order('scheduled_at', { ascending: false })
             .limit(50),
@@ -53,8 +54,11 @@ export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
             scheduled_at: f.scheduled_at as string,
             pitch_size: (f.pitch_size ?? null) as string | null,
             mvp_vote_winners: (f.mvp_vote_winners ?? []) as string[],
+            mvp_vote_winner: (f.mvp_vote_winner ?? null) as string | null,
             mvp_votes_finalized_at: (f.mvp_votes_finalized_at ?? null) as string | null,
-          }));
+          }))
+          // oldest unmatched fixture first
+          .sort((a, b) => a.scheduled_at.localeCompare(b.scheduled_at));
 
         if (!cancelled) setFixtures(open);
       } catch (error) {
