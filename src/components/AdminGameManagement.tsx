@@ -250,7 +250,11 @@ const AdminGameManagement = () => {
                   team2Players: editingGame.team2_players,
                   team1Captain: editingGame.team1_captain || '',
                   team2Captain: editingGame.team2_captain || '',
-                  mvpPlayer: editingGame.mvp_player || '',
+                  mvpPlayers: editingGame.mvp_players?.length
+                    ? editingGame.mvp_players
+                    : editingGame.mvp_player
+                      ? [editingGame.mvp_player]
+                      : [],
                   bibsPlayer: editingGame.bibs_player || '',
                   youtubeUrl: editingGame.youtube_url || '',
                 } : undefined}
@@ -295,7 +299,7 @@ const AdminGameManagement = () => {
                               )}
                             </div>
                             <div className="flex gap-1">
-                              {game.mvp_player === playerId && (
+                              {(game.mvp_players?.length ? game.mvp_players.includes(playerId) : game.mvp_player === playerId) && (
                                 <Badge className="badge-trophy h-auto w-fit">
                                   <span>👑</span>
                                   MVP
@@ -328,7 +332,7 @@ const AdminGameManagement = () => {
                               )}
                             </div>
                             <div className="flex gap-1">
-                              {game.mvp_player === playerId && (
+                              {(game.mvp_players?.length ? game.mvp_players.includes(playerId) : game.mvp_player === playerId) && (
                                 <Badge className="badge-trophy h-auto w-fit">
                                   <span>👑</span>
                                   MVP
