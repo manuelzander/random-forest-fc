@@ -9,15 +9,16 @@ Two ways to share:
 - **Joint MVP, full point each** (recommended) — both tied players get the MVP badge and +1 point. Everything stays whole numbers, the ranking table, badges, points-per-game and trophies keep working exactly as they do now, and the game result screen simply lets you pick more than one MVP.
 - **Half a point each** — needs points to become decimals everywhere: the ranking column, the archived season figures, the MVP-count trophies (is "1.5 MVPs" five MVPs for the badge?), and the result screen would have to show and store fractions. It makes every number in the app fuzzier for very little gain, and ties are rare. Not worth it.
 
-So: ties give a joint MVP, and each shares the same +1 point a solo MVP gets. If you'd rather have half points, say so and I'll re-plan around decimal points.
+So: a two-way tie gives a joint MVP, and each shares the same +1 point a solo MVP gets. A tie of three or more players is treated as no result — nobody is MVP and nobody gets the point.
 
 ## What changes
 
-- **Voting closes on a tie** — all tied players are shown as joint MVPs on the game signup card: a gold tile each ("Joint MVP · 4 votes"), not one winner over the other. No admin action needed.
-- **Game result screen** — the MVP field becomes a multi-pick: tapping names toggles them, chosen ones show the gold crown chip, and it pre-fills with the vote result (one player, or several on a tie). An admin can still override to whoever they want, including one player only.
-- **Game History** — every joint MVP gets the same crown badge next to their name.
+- **Two-way tie** — both players are shown as joint MVPs on the game signup card: a gold tile each ("Joint MVP · 4 votes"). No admin action needed.
+- **Three-way or bigger tie** — no MVP awarded. The card says "Vote tied between 3 players — no MVP awarded", the tally is still shown, and nobody gets the extra point. An admin can still set an MVP by hand when entering the result if they want to.
+- **Game result screen** — the MVP field becomes a multi-pick capped at two players: tapping names toggles them, chosen ones show the gold crown chip, and it pre-fills with the vote result (one player, two on a two-way tie, none otherwise). Picking a third is blocked with a short hint.
+- **Game History** — both joint MVPs get the same crown badge next to their name.
 - **Ranking and trophies** — each joint MVP counts one MVP award and one extra point, same as a solo MVP.
-- **Admin → Schedule** — the MVP row reads "Joint MVP · Sam T. / Alex R. · 4 votes each".
+- **Admin → Schedule** — the MVP row reads "Joint MVP · Sam T. / Alex R. · 4 votes each", or "Tied between 3 players · no MVP".
 - **Nobody voted** — unchanged: card says voting closed with no votes, admin can set the MVP by hand.
 - Bibs stays a single player, unchanged.
 
