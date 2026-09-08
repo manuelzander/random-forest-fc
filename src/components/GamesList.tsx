@@ -162,7 +162,9 @@ const GamesList = ({ archiveSeasonId = null }: GamesListProps) => {
                       <span className="hidden sm:inline">Captain</span>
                     </Badge>
                   )}
-                  {game.mvp_player === playerId && (
+                  {(game.mvp_players?.length
+                    ? game.mvp_players.includes(playerId)
+                    : game.mvp_player === playerId) && (
                     <Badge className="badge-trophy h-auto w-fit">
                       <span>👑</span>
                       MVP
