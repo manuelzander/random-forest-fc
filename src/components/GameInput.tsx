@@ -300,7 +300,9 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
       mvpPlayers,
       bibsPlayer: bibsPlayer === "none" ? null : bibsPlayer || null,
       youtubeUrl: youtubeUrl || undefined,
+      gameScheduleId: !isEditing && gameScheduleId && gameScheduleId !== 'none' ? gameScheduleId : null,
     };
+
 
     onGameSubmit(gameData);
     
