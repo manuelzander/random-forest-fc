@@ -160,23 +160,34 @@ const getMvpStatus = (
   }
 
   const entries = Object.entries(tally?.byPlayer || {});
-  // Votes arrive ordered by created_at, so a strict comparison keeps the earliest-vote tie-break
-  const top = entries.reduce<{ playerId: string; name: string; votes: number } | null>(
-    (best, [playerId, entry]) =>
-      !best || entry.votes > best.votes ? { playerId, ...entry } : best,
-    null
-  );
-  const winnerId = game.mvp_vote_winner || top?.playerId || null;
-  const winner = winnerId ? tally?.byPlayer[winnerId] : undefined;
+  const topVotes = entries.reduce((max, [, entry]) => Math.max(max, entry.votes), 0);
+  const tiedIds = entries.filter(([, entry]) => entry.votes === topVotes).map(([id]) => id);
+
+  // Stored winners win. Otherwise: one or two tied players share the award, three or more get none.
+  const storedWinners = game.mvp_vote_winners?.length
+    ? game.mvp_vote_winners
+    : game.mvp_vote_winner
+      ? [game.mvp_vote_winner]
+      : [];
+  const winnerIds = storedWinners.length
+    ? storedWinners
+    : topVotes > 0 && tiedIds.length <= 2
+      ? tiedIds
+      : [];
+
   // An admin can override the winner to someone who received no votes — fall back to the roster name
-  const winnerName =
-    winner?.name ?? (winnerId ? allPlayers.find(p => p.id === winnerId)?.name ?? null : null);
+  const winners = winnerIds.map(id => ({
+    id,
+    name:
+      tally?.byPlayer[id]?.name ?? allPlayers.find(p => p.id === id)?.name ?? 'Unknown player',
+    votes: tally?.byPlayer[id]?.votes ?? 0,
+  }));
 
   return {
     phase: 'closed' as const,
-    winnerName,
-    winnerVotes: winner?.votes ?? 0,
+    winners,
     votesCast: tally?.total ?? 0,
+    tiedCount: topVotes > 0 ? tiedIds.length : 0,
     eligibleVoters,
   };
 };
