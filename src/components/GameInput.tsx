@@ -82,7 +82,7 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
   // Re-picking a fixture (including the same one) re-applies its vote outcome
   const handleFixtureChange = (value: string) => {
     setGameScheduleId(value);
-    setMvpPrefilledFor(null);
+    setMvpPrefilledFor('');
     setMvpPlayers([]);
   };
 
