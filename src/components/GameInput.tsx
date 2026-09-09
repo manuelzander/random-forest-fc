@@ -554,30 +554,11 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                 ))}
               </SelectContent>
             </Select>
-            {mvpPlayers.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {mvpPlayers.map((playerId) => (
-                  <button
-                    key={playerId}
-                    type="button"
-                    onClick={() => toggleMvpPlayer(playerId)}
-                    title="Remove MVP"
-                  >
-                    <Badge className="badge-trophy h-auto w-fit">
-                      <span>👑</span>
-                      {getPlayerName(playerId)}
-                      <span className="ml-1 text-muted-foreground">✕</span>
-                    </Badge>
-                  </button>
-                ))}
-                {mvpPlayers.length === 2 && (
-                  <span className="text-xs text-muted-foreground self-center">
-                    Joint MVP — both get the point
-                  </span>
-                )}
-              </div>
+            {mvpPlayers.length === 2 && (
+              <p className="text-xs text-muted-foreground">Joint MVP — both get the point</p>
             )}
           </div>
+
 
 
           {/* Bibs Section */}
