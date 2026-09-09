@@ -107,6 +107,9 @@ const GameSignup = () => {
         }
       }
 
+      // Other games scheduled the same calendar day — used for the quick nav links
+      await fetchSameDayLinks(gameData);
+
       // Other upcoming games scheduled on the same calendar day that the
       // logged-in player has not joined yet (used for the "also playing today" prompt)
       if (user) {
@@ -114,6 +117,7 @@ const GameSignup = () => {
       } else {
         setSameDayGames([]);
       }
+
     } catch (error) {
       console.error('Error fetching game data:', error);
       toast({
