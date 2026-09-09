@@ -76,10 +76,16 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
     if (mvpPrefilledFor === gameScheduleId) return;
     if (!isClosed) return;
     setMvpPrefilledFor(gameScheduleId);
-    if (suggestedWinners.length > 0) {
-      setMvpPlayers(suggestedWinners);
-    }
+    setMvpPlayers(suggestedWinners);
   }, [gameScheduleId, isClosed, suggestedWinners, mvpPrefilledFor, isEditing]);
+
+  // Re-picking a fixture (including the same one) re-applies its vote outcome
+  const handleFixtureChange = (value: string) => {
+    setGameScheduleId(value);
+    setMvpPrefilledFor(null);
+    setMvpPlayers([]);
+  };
+
 
   const voteCount = (playerId: string) => tallies.find(t => t.playerId === playerId)?.votes || 0;
 
