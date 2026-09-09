@@ -76,10 +76,16 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
     if (mvpPrefilledFor === gameScheduleId) return;
     if (!isClosed) return;
     setMvpPrefilledFor(gameScheduleId);
-    if (suggestedWinners.length > 0) {
-      setMvpPlayers(suggestedWinners);
-    }
+    setMvpPlayers(suggestedWinners);
   }, [gameScheduleId, isClosed, suggestedWinners, mvpPrefilledFor, isEditing]);
+
+  // Re-picking a fixture (including the same one) re-applies its vote outcome
+  const handleFixtureChange = (value: string) => {
+    setGameScheduleId(value);
+    setMvpPrefilledFor('');
+    setMvpPlayers([]);
+  };
+
 
   const voteCount = (playerId: string) => tallies.find(t => t.playerId === playerId)?.votes || 0;
 
@@ -503,19 +509,20 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           {!isEditing && (
             <div className="space-y-2">
               <Label className="sr-only">Scheduled game</Label>
-              <Select value={gameScheduleId} onValueChange={setGameScheduleId}>
+              <Select value={gameScheduleId} onValueChange={handleFixtureChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Scheduled game (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Not linked to a scheduled game</SelectItem>
+                  <SelectItem value="none" onClick={() => handleFixtureChange('none')}>Not linked to a scheduled game</SelectItem>
                   {fixtures.map((fixture) => (
-                    <SelectItem key={fixture.id} value={fixture.id}>
+                    <SelectItem key={fixture.id} value={fixture.id} onClick={() => handleFixtureChange(fixture.id)}>
                       {formatFixture(fixture)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+
             </div>
           )}
 
@@ -547,30 +554,11 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                 ))}
               </SelectContent>
             </Select>
-            {mvpPlayers.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {mvpPlayers.map((playerId) => (
-                  <button
-                    key={playerId}
-                    type="button"
-                    onClick={() => toggleMvpPlayer(playerId)}
-                    title="Remove MVP"
-                  >
-                    <Badge className="badge-trophy h-auto w-fit">
-                      <span>👑</span>
-                      {getPlayerName(playerId)}
-                      <span className="ml-1 text-muted-foreground">✕</span>
-                    </Badge>
-                  </button>
-                ))}
-                {mvpPlayers.length === 2 && (
-                  <span className="text-xs text-muted-foreground self-center">
-                    Joint MVP — both get the point
-                  </span>
-                )}
-              </div>
+            {mvpPlayers.length === 2 && (
+              <p className="text-xs text-muted-foreground">Joint MVP — both get the point</p>
             )}
           </div>
+
 
 
           {/* Bibs Section */}
