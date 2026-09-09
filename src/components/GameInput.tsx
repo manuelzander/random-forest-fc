@@ -509,19 +509,20 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
           {!isEditing && (
             <div className="space-y-2">
               <Label className="sr-only">Scheduled game</Label>
-              <Select value={gameScheduleId} onValueChange={setGameScheduleId}>
+              <Select value={gameScheduleId} onValueChange={handleFixtureChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Scheduled game (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Not linked to a scheduled game</SelectItem>
+                  <SelectItem value="none" onClick={() => handleFixtureChange('none')}>Not linked to a scheduled game</SelectItem>
                   {fixtures.map((fixture) => (
-                    <SelectItem key={fixture.id} value={fixture.id}>
+                    <SelectItem key={fixture.id} value={fixture.id} onClick={() => handleFixtureChange(fixture.id)}>
                       {formatFixture(fixture)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+
             </div>
           )}
 
