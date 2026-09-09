@@ -132,6 +132,31 @@ const GameSignup = () => {
     }
   };
 
+  // Every other scheduled game on the same calendar day — plain navigation, no login needed
+  const fetchSameDayLinks = async (currentGame: ScheduledGame) => {
+    try {
+      const current = new Date(currentGame.scheduled_at);
+      const dayStart = new Date(current);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(current);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      const { data, error } = await supabase
+        .from('games_schedule')
+        .select('id, scheduled_at, pitch_size')
+        .neq('id', currentGame.id)
+        .gte('scheduled_at', dayStart.toISOString())
+        .lte('scheduled_at', dayEnd.toISOString())
+        .order('scheduled_at', { ascending: true });
+      if (error) throw error;
+      setSameDayLinks(data || []);
+    } catch (err) {
+      console.error('Error fetching same-day links:', err);
+      setSameDayLinks([]);
+    }
+  };
+
+
   const fetchSameDayGames = async (currentGame: ScheduledGame, userId: string) => {
     try {
       const current = new Date(currentGame.scheduled_at);
