@@ -927,7 +927,34 @@ const GameSignup = () => {
         <div className="aurora-blob aurora-blob-blue w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-aurora" style={{ animationDelay: '-10s' }} />
 
         <div className="relative z-10 max-w-md mx-auto">
+          {/* Quiet nav row — home, plus the other game(s) on this day */}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <Link
+              to="/"
+              className="header-nav-button inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Home
+            </Link>
+            {sameDayLinks.length > 0 && (
+              <div className="ml-auto flex flex-wrap items-center gap-2">
+                {sameDayLinks.map(other => (
+                  <Link
+                    key={other.id}
+                    to={`/signup/${other.id}`}
+                    className="header-nav-button inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium"
+                  >
+                    {format(new Date(other.scheduled_at), 'h:mm a')}
+                    <span className="text-muted-foreground/40">•</span>
+                    {other.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
           <div className="glass-panel shadow-2xl overflow-hidden">
+
             <div className="p-6 sm:p-8">
               <h1 className="font-display text-4xl sm:text-5xl text-foreground tracking-tight leading-none mb-2">
                 JOIN THIS GAME
