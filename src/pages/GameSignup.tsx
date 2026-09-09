@@ -41,7 +41,9 @@ const GameSignup = () => {
   const [sameDayLeaveGames, setSameDayLeaveGames] = useState<SameDayGame[]>([]);
   const [joiningSameDayId, setJoiningSameDayId] = useState<string | null>(null);
   const [leavingSameDayId, setLeavingSameDayId] = useState<string | null>(null);
+  const [sameDayLinks, setSameDayLinks] = useState<Pick<ScheduledGame, 'id' | 'scheduled_at' | 'pitch_size'>[]>([]);
   const sameDaySignupsRef = useRef<any[]>([]);
+
   useEffect(() => {
     if (gameId) {
       fetchGameData();
