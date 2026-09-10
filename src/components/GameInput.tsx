@@ -538,15 +538,34 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                   <SelectValue placeholder="Scheduled game (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none" onClick={() => handleFixtureChange('none')}>Not linked to a scheduled game</SelectItem>
-                  {fixtures.map((fixture) => (
-                    <SelectItem key={fixture.id} value={fixture.id} onClick={() => handleFixtureChange(fixture.id)}>
-                      {formatFixture(fixture)}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="none">Not linked to a scheduled game</SelectItem>
+                  {fixtures.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Needs a result</SelectLabel>
+                      {fixtures.map((fixture) => (
+                        <SelectItem key={fixture.id} value={fixture.id}>
+                          {formatFixture(fixture)} · {fixtureVoteState(fixture)}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  {matched.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Already has a result</SelectLabel>
+                      {matched.map((fixture) => (
+                        <SelectItem key={fixture.id} value={fixture.id}>
+                          {formatFixture(fixture)} · {fixtureVoteState(fixture)}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
                 </SelectContent>
               </Select>
-
+              {selectedFixture?.hasResult && (
+                <p className="text-xs text-amber-400/90">
+                  This game already has a result saved — saving will add a second one.
+                </p>
+              )}
             </div>
           )}
 
@@ -578,8 +597,28 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                 ))}
               </SelectContent>
             </Select>
+            {mvpPlayers.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {mvpPlayers.map((playerId) => (
+                  <Badge key={playerId} variant="secondary" className="flex items-center gap-1">
+                    <Award className="h-3 w-3" />
+                    {getPlayerName(playerId)}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0 hover:bg-transparent"
+                      onClick={() => toggleMvpPlayer(playerId)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            )}
             {mvpPlayers.length === 2 && (
               <p className="text-xs text-muted-foreground">Joint MVP — both get the point</p>
+
             )}
           </div>
 
