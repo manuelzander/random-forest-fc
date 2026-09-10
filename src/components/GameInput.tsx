@@ -100,6 +100,27 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
     return [label, time, pitch].filter(Boolean).join(' · ');
   };
 
+  // Short vote state shown next to each fixture in the list
+  const fixtureVoteState = (fixture: {
+    voteCount: number;
+    mvp_votes_finalized_at: string | null;
+    mvp_vote_winners: string[];
+    mvp_vote_winner: string | null;
+  }) => {
+    if (fixture.voteCount === 0) return 'no votes';
+    if (fixture.mvp_votes_finalized_at) {
+      const winners = fixture.mvp_vote_winners?.length
+        ? fixture.mvp_vote_winners
+        : fixture.mvp_vote_winner
+          ? [fixture.mvp_vote_winner]
+          : [];
+      const names = winners.map(getPlayerName).filter(Boolean).join(' & ');
+      return names ? `closed · winner ${names}` : 'closed · no MVP';
+    }
+    return `voting open · ${fixture.voteCount} votes`;
+  };
+
+
   const voteHint = () => {
     if (isEditing || !gameScheduleId || gameScheduleId === 'none') return '';
     if (totalVotes === 0) return 'No player votes for this game.';
