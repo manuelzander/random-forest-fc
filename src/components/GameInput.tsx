@@ -56,12 +56,15 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
 
   const {
     fixtures,
+    matched,
+    selectedFixture,
     tallies,
     leaders,
     suggestedWinners,
     isClosed,
     totalVotes,
   } = useMvpSuggestion(gameScheduleId === 'none' ? '' : gameScheduleId, !isEditing);
+
 
   // Default to the most recent fixture without a result
   React.useEffect(() => {
