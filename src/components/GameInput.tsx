@@ -66,12 +66,17 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
   } = useMvpSuggestion(gameScheduleId === 'none' ? '' : gameScheduleId, !isEditing);
 
 
-  // Default to the most recent fixture without a result
+  // Default to the oldest fixture without a result, or the most recent fixture
+  // when every past fixture already has one
   React.useEffect(() => {
-    if (!isEditing && !gameScheduleId && fixtures.length > 0) {
+    if (isEditing || gameScheduleId) return;
+    if (fixtures.length > 0) {
       setGameScheduleId(fixtures[0].id);
+    } else if (matched.length > 0) {
+      setGameScheduleId(matched[0].id);
     }
-  }, [fixtures, gameScheduleId, isEditing]);
+  }, [fixtures, matched, gameScheduleId, isEditing]);
+
 
   // Pre-select the vote outcome once per fixture, when voting has closed with a clear result
   React.useEffect(() => {
