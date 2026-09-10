@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Plus, Trash2, Users, Target, Award, Video } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -56,12 +56,15 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
 
   const {
     fixtures,
+    matched,
+    selectedFixture,
     tallies,
     leaders,
     suggestedWinners,
     isClosed,
     totalVotes,
   } = useMvpSuggestion(gameScheduleId === 'none' ? '' : gameScheduleId, !isEditing);
+
 
   // Default to the most recent fixture without a result
   React.useEffect(() => {
@@ -96,6 +99,27 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
     const pitch = fixture.pitch_size === 'small' ? 'Small pitch' : fixture.pitch_size === 'big' ? 'Big pitch' : '';
     return [label, time, pitch].filter(Boolean).join(' · ');
   };
+
+  // Short vote state shown next to each fixture in the list
+  const fixtureVoteState = (fixture: {
+    voteCount: number;
+    mvp_votes_finalized_at: string | null;
+    mvp_vote_winners: string[];
+    mvp_vote_winner: string | null;
+  }) => {
+    if (fixture.voteCount === 0) return 'no votes';
+    if (fixture.mvp_votes_finalized_at) {
+      const winners = fixture.mvp_vote_winners?.length
+        ? fixture.mvp_vote_winners
+        : fixture.mvp_vote_winner
+          ? [fixture.mvp_vote_winner]
+          : [];
+      const names = winners.map(getPlayerName).filter(Boolean).join(' & ');
+      return names ? `closed · winner ${names}` : 'closed · no MVP';
+    }
+    return `voting open · ${fixture.voteCount} votes`;
+  };
+
 
   const voteHint = () => {
     if (isEditing || !gameScheduleId || gameScheduleId === 'none') return '';
@@ -514,15 +538,34 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                   <SelectValue placeholder="Scheduled game (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none" onClick={() => handleFixtureChange('none')}>Not linked to a scheduled game</SelectItem>
-                  {fixtures.map((fixture) => (
-                    <SelectItem key={fixture.id} value={fixture.id} onClick={() => handleFixtureChange(fixture.id)}>
-                      {formatFixture(fixture)}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="none">Not linked to a scheduled game</SelectItem>
+                  {fixtures.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Needs a result</SelectLabel>
+                      {fixtures.map((fixture) => (
+                        <SelectItem key={fixture.id} value={fixture.id}>
+                          {formatFixture(fixture)} · {fixtureVoteState(fixture)}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  {matched.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Already has a result</SelectLabel>
+                      {matched.map((fixture) => (
+                        <SelectItem key={fixture.id} value={fixture.id}>
+                          {formatFixture(fixture)} · {fixtureVoteState(fixture)}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
                 </SelectContent>
               </Select>
-
+              {selectedFixture?.hasResult && (
+                <p className="text-xs text-amber-400/90">
+                  This game already has a result saved — saving will add a second one.
+                </p>
+              )}
             </div>
           )}
 
@@ -554,8 +597,28 @@ const GameInput: React.FC<GameInputProps> = ({ players, onGameSubmit, onPlayersC
                 ))}
               </SelectContent>
             </Select>
+            {mvpPlayers.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {mvpPlayers.map((playerId) => (
+                  <Badge key={playerId} variant="secondary" className="flex items-center gap-1">
+                    <Award className="h-3 w-3" />
+                    {getPlayerName(playerId)}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0 hover:bg-transparent"
+                      onClick={() => toggleMvpPlayer(playerId)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            )}
             {mvpPlayers.length === 2 && (
               <p className="text-xs text-muted-foreground">Joint MVP — both get the point</p>
+
             )}
           </div>
 

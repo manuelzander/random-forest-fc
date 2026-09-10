@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface UnmatchedFixture {
+export interface FixtureOption {
   id: string;
   scheduled_at: string;
   pitch_size: string | null;
   mvp_vote_winners: string[];
   mvp_vote_winner: string | null;
   mvp_votes_finalized_at: string | null;
+  /** Number of MVP votes cast for this fixture */
+  voteCount: number;
+  /** True when a saved result already points at this fixture */
+  hasResult: boolean;
 }
+
+// Kept for backwards compatibility with earlier imports
+export type UnmatchedFixture = FixtureOption;
 
 export interface VoteTally {
   playerId: string;
@@ -16,12 +23,13 @@ export interface VoteTally {
 }
 
 /**
- * Lists past scheduled fixtures that no saved result points at yet, and exposes
- * the MVP vote tallies for the selected fixture so the result form can suggest
- * the players' choice.
+ * Lists past scheduled fixtures — those without a saved result first, then those
+ * that already have one — and exposes the MVP vote tallies for the selected
+ * fixture so the result form can suggest the players' choice.
  */
 export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
-  const [fixtures, setFixtures] = useState<UnmatchedFixture[]>([]);
+  const [unmatched, setUnmatched] = useState<FixtureOption[]>([]);
+  const [matched, setMatched] = useState<FixtureOption[]>([]);
   const [isLoadingFixtures, setIsLoadingFixtures] = useState(false);
   const [tallies, setTallies] = useState<VoteTally[]>([]);
   const [isLoadingVotes, setIsLoadingVotes] = useState(false);
@@ -33,7 +41,7 @@ export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
     const load = async () => {
       setIsLoadingFixtures(true);
       try {
-        const [scheduleRes, gamesRes] = await Promise.all([
+        const [scheduleRes, gamesRes, votesRes] = await Promise.all([
           supabase
             .from('games_schedule')
             .select('id, scheduled_at, pitch_size, mvp_vote_winners, mvp_vote_winner, mvp_votes_finalized_at')
@@ -41,14 +49,21 @@ export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
             .order('scheduled_at', { ascending: false })
             .limit(50),
           supabase.from('games').select('game_schedule_id').not('game_schedule_id', 'is', null),
+          supabase.from('mvp_votes').select('game_schedule_id'),
         ]);
 
         if (scheduleRes.error) throw scheduleRes.error;
         if (gamesRes.error) throw gamesRes.error;
+        if (votesRes.error) throw votesRes.error;
 
         const linked = new Set((gamesRes.data || []).map((g: any) => g.game_schedule_id as string));
-        const open = (scheduleRes.data || [])
-          .filter((f: any) => !linked.has(f.id))
+        const voteCounts = new Map<string, number>();
+        (votesRes.data || []).forEach((v: any) => {
+          const id = v.game_schedule_id as string;
+          voteCounts.set(id, (voteCounts.get(id) || 0) + 1);
+        });
+
+        const all: FixtureOption[] = (scheduleRes.data || [])
           .map((f: any) => ({
             id: f.id as string,
             scheduled_at: f.scheduled_at as string,
@@ -56,14 +71,23 @@ export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
             mvp_vote_winners: (f.mvp_vote_winners ?? []) as string[],
             mvp_vote_winner: (f.mvp_vote_winner ?? null) as string | null,
             mvp_votes_finalized_at: (f.mvp_votes_finalized_at ?? null) as string | null,
+            voteCount: voteCounts.get(f.id as string) || 0,
+            hasResult: linked.has(f.id as string),
           }))
-          // oldest unmatched fixture first
+          // oldest fixture first
           .sort((a, b) => a.scheduled_at.localeCompare(b.scheduled_at));
 
-        if (!cancelled) setFixtures(open);
+        if (!cancelled) {
+          setUnmatched(all.filter(f => !f.hasResult));
+          // most recent first for the "already has a result" group
+          setMatched(all.filter(f => f.hasResult).reverse());
+        }
       } catch (error) {
-        console.error('Error loading unmatched fixtures:', error);
-        if (!cancelled) setFixtures([]);
+        console.error('Error loading fixtures:', error);
+        if (!cancelled) {
+          setUnmatched([]);
+          setMatched([]);
+        }
       } finally {
         if (!cancelled) setIsLoadingFixtures(false);
       }
@@ -117,7 +141,8 @@ export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
     };
   }, [enabled, selectedFixtureId]);
 
-  const selectedFixture = fixtures.find(f => f.id === selectedFixtureId) || null;
+  const selectedFixture =
+    unmatched.find(f => f.id === selectedFixtureId) || matched.find(f => f.id === selectedFixtureId) || null;
   const topVotes = tallies.length > 0 ? tallies[0].votes : 0;
   const tallyLeaders = tallies.filter(t => t.votes === topVotes && topVotes > 0).map(t => t.playerId);
   const isClosed = !!selectedFixture?.mvp_votes_finalized_at;
@@ -141,7 +166,11 @@ export const useMvpSuggestion = (selectedFixtureId: string, enabled = true) => {
       : [];
 
   return {
-    fixtures,
+    /** Fixtures with no saved result, oldest first */
+    fixtures: unmatched,
+    unmatched,
+    /** Fixtures that already have a saved result, most recent first */
+    matched,
     isLoadingFixtures,
     tallies,
     isLoadingVotes,
