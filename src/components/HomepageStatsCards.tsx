@@ -48,6 +48,7 @@ const HomepageStatsCards = ({
   const [isNextGameLoading, setIsNextGameLoading] = useState(true);
   const [lastGame, setLastGame] = useState<LastGame | null>(null);
   const [isLastGameLoading, setIsLastGameLoading] = useState(true);
+  const [openVotes, setOpenVotes] = useState<SummaryGame[]>([]);
 
   useEffect(() => {
     let isActive = true;
