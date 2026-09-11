@@ -408,28 +408,45 @@ const HomepageStatsCards = ({
       )}
 
       {hasOpenVotes && earliestOpenVote && earliestOpenVoteDate && (
-        <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
-          <div className="flex w-full items-start justify-between gap-3">
-            <span className="section-kicker">MVP Vote</span>
-            <Vote className="h-5 w-5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <span className="block font-display text-3xl leading-none text-foreground">
-              {format(earliestOpenVoteDate, 'EEE, MMM d')}
-            </span>
-            <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <div className="glass-panel relative overflow-hidden p-5 sm:p-6">
+          <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
+          <div className="relative flex min-h-[13rem] flex-col gap-5">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <span className="section-kicker">MVP Vote</span>
+                <h2 className="mt-2 font-display text-3xl leading-none tracking-wide text-foreground">
+                  {format(earliestOpenVoteDate, 'EEE, MMM d')}
+                </h2>
+              </div>
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-primary">
+                <Vote className="h-5 w-5" />
+              </div>
+            </div>
+
+            <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              <span>
-                {openVotes.length > 1 ? `${openVotes.length} ballots open` : `${format(earliestOpenVoteDate, 'h:mm a')} · open`}
-              </span>
+              <span>{format(earliestOpenVoteDate, 'h:mm a')}</span>
+              <span className="text-muted-foreground/40">•</span>
+              <span>Voting open</span>
             </p>
-            <Link to={`/signup/${earliestOpenVote.id}`} className="card-action-link mt-3">
-              Cast your vote
-              <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
+
+            <div className="mt-auto">
+              <span className="font-display text-4xl leading-none text-primary">{openVotes.length}</span>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {openVotes.length === 1 ? 'Ballot open' : 'Ballots open'}
+              </p>
+            </div>
+
+            <div className="border-t border-white/10 pt-3">
+              <Link to={`/signup/${earliestOpenVote.id}`} className="card-action-link">
+                Cast your vote
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </div>
         </div>
       )}
+
 
 
 
