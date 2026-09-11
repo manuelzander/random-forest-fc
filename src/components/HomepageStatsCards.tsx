@@ -132,8 +132,35 @@ const HomepageStatsCards = ({
       }
     };
 
+    const fetchOpenVotes = async () => {
+      if (archiveSeasonId) {
+        if (isActive) setOpenVotes([]);
+        return;
+      }
+
+      try {
+        const now = Date.now();
+        const windowStart = new Date(now - 72 * 60 * 60 * 1000).toISOString();
+        const { data, error } = await supabase
+          .from('games_schedule')
+          .select('id, scheduled_at, pitch_size')
+          .gte('scheduled_at', windowStart)
+          .lte('scheduled_at', new Date(now).toISOString())
+          .is('mvp_votes_finalized_at', null)
+          .order('scheduled_at', { ascending: true });
+
+        if (error) throw error;
+        if (!isActive) return;
+        setOpenVotes((data || []) as SummaryGame[]);
+      } catch (error) {
+        console.error('Error fetching open MVP votes:', error);
+        if (isActive) setOpenVotes([]);
+      }
+    };
+
     fetchNextGame();
     fetchLastGame();
+    fetchOpenVotes();
 
     return () => {
       isActive = false;
