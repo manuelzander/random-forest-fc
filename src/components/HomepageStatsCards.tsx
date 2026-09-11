@@ -200,7 +200,7 @@ const HomepageStatsCards = ({
 
   return (
     <section
-      className={`grid grid-cols-1 gap-4 md:grid-cols-2 ${hasOpenVotes ? 'lg:grid-cols-7' : 'lg:grid-cols-6'}`}
+      className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6"
       aria-label="Homepage summary"
     >
       <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
