@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import { CalendarDays, ChevronRight, Crown, History, Trophy } from 'lucide-react';
+import { CalendarDays, ChevronRight, Crown, History, Trophy, Vote } from 'lucide-react';
 
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllPages } from '@/lib/fetchAllPages';
