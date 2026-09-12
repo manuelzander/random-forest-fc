@@ -16,9 +16,11 @@ export interface MvpCandidate {
 interface MvpVoteCardProps {
   gameScheduleId: string;
   candidates: MvpCandidate[];
+  /** Overrides the "MVP VOTE" heading, e.g. with the fixture date */
+  heading?: string;
 }
 
-const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
+const MvpVoteCard = ({ gameScheduleId, candidates, heading }: MvpVoteCardProps) => {
   const { state, loading, isVoting, castVote, clearVote } = useMvpVote(gameScheduleId);
   const { toast } = useToast();
 
@@ -60,7 +62,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates }: MvpVoteCardProps) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h3 className="font-display text-2xl text-foreground tracking-wide">MVP VOTE</h3>
+        <h3 className="font-display text-2xl text-foreground tracking-wide">{heading ?? 'MVP VOTE'}</h3>
         {state.is_open ? (
           <span className="relative flex items-center justify-center">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
