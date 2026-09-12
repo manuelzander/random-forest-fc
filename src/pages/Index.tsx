@@ -10,6 +10,7 @@ import GameInput from '@/components/GameInput';
 import GamesList from '@/components/GamesList';
 import HomepageStatsCards from '@/components/HomepageStatsCards';
 import AchievementsTable from '@/components/AchievementsTable';
+import MvpTab from '@/components/MvpTab';
 import ScheduleDisplay from '@/components/ScheduleDisplay';
 import { PlayerClaim } from '@/components/PlayerClaim';
 import SeasonBanner from '@/components/SeasonBanner';
@@ -230,9 +231,10 @@ const Index = () => {
         <div ref={tabsRef} className="scroll-mt-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
 
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
 
             <TabsTrigger value="ranking" className="text-xs sm:text-base">Ranking</TabsTrigger>
+            <TabsTrigger value="mvp" className="text-xs sm:text-base">MVP</TabsTrigger>
             <TabsTrigger value="achievements" className="text-xs sm:text-base">Trophies</TabsTrigger>
             <TabsTrigger value="games" className="text-xs sm:text-base">Games</TabsTrigger>
             <TabsTrigger value="schedule" className="text-xs sm:text-base">Schedule</TabsTrigger>
@@ -240,6 +242,9 @@ const Index = () => {
           </TabsList>
           <TabsContent value="ranking">
             {archivedLoading ? <div className="p-8 text-center text-muted-foreground">Loading...</div> : <PlayerTable players={displayedPlayers} />}
+          </TabsContent>
+          <TabsContent value="mvp">
+            {archivedLoading ? <div className="p-8 text-center text-muted-foreground">Loading...</div> : <MvpTab archiveSeasonId={archiveSeasonId} players={displayedPlayers} />}
           </TabsContent>
           <TabsContent value="achievements">
             {archivedLoading ? <div className="p-8 text-center text-muted-foreground">Loading...</div> : <AchievementsTable players={displayedPlayers} />}
