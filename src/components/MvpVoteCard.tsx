@@ -63,8 +63,8 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="font-display text-2xl text-foreground tracking-wide">{heading ?? 'MVP VOTE'}</h3>
+      <div className={`flex justify-between items-center ${compact ? 'mb-4' : 'mb-6'}`}>
+        <h3 className={`font-display text-foreground tracking-wide ${compact ? 'text-xl' : 'text-2xl'}`}>{heading ?? 'MVP VOTE'}</h3>
         {state.is_open ? (
           <span className="relative flex items-center justify-center">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
