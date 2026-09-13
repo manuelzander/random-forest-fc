@@ -18,9 +18,11 @@ interface MvpVoteCardProps {
   candidates: MvpCandidate[];
   /** Overrides the "MVP VOTE" heading, e.g. with the fixture date */
   heading?: string;
+  /** Tighter layout for grid usage: no instruction note, no bars, trimmed tally */
+  compact?: boolean;
 }
 
-const MvpVoteCard = ({ gameScheduleId, candidates, heading }: MvpVoteCardProps) => {
+const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: MvpVoteCardProps) => {
   const { state, loading, isVoting, castVote, clearVote } = useMvpVote(gameScheduleId);
   const { toast } = useToast();
 
