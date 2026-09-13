@@ -79,7 +79,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
         )}
       </div>
 
-      <div className="space-y-5">
+      <div className={compact ? 'space-y-3' : 'space-y-5'}>
 
         {/* Meta line */}
         <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
