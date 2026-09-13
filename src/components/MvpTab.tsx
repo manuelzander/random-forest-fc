@@ -170,69 +170,65 @@ const MvpTab = ({ archiveSeasonId = null, players }: MvpTabProps) => {
   return (
     <div className="space-y-6">
       {/* MVP votes per fixture */}
-      <Card>
-        <CardHeader className="card-header-glass py-4">
-          <CardTitle className="card-header-glass-title">
-            <Crown className="card-header-glass-icon h-6 w-6" />
-            MVP Votes
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4">
-          {loading ? (
-            <div className="p-8 text-center text-muted-foreground">Loading...</div>
-          ) : fixtures.length === 0 ? (
-            <div className="empty-tile">
-              <Crown className="h-6 w-6 text-muted-foreground" />
-              <p>No MVP votes yet.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {fixtures.map(({ game, candidates, archivedWinners }) => (
-                <div key={game.id} className="glass-row-static p-4 sm:p-5">
+      <div className="space-y-3">
+        <h2 className="card-header-glass-title flex items-center gap-2">
+          <Crown className="card-header-glass-icon h-6 w-6" />
+          MVP Votes
+        </h2>
+
+        {loading ? (
+          <div className="p-8 text-center text-muted-foreground">Loading...</div>
+        ) : fixtures.length === 0 ? (
+          <div className="empty-tile">
+            <Crown className="h-6 w-6 text-muted-foreground" />
+            <p>No MVP votes yet.</p>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 items-start">
+            {fixtures.map(({ game, candidates, archivedWinners }) => (
+              <Card key={game.id} className="h-full">
+                <CardContent className="p-4 sm:p-5">
                   {archiveSeasonId ? (
                     <>
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-display text-2xl text-foreground tracking-wide uppercase">
+                        <h3 className="font-display text-xl text-foreground tracking-wide uppercase">
                           {format(new Date(game.scheduled_at), 'EEE d MMM')}
                         </h3>
                         <span className="bg-white/[0.06] text-muted-foreground text-[10px] px-2 py-1 rounded border border-white/10 font-bold uppercase tracking-wide">
                           Closed
                         </span>
                       </div>
-                      <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap mb-4">
+                      <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap mb-3">
                         <span className="inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
                         <span>{format(new Date(game.scheduled_at), 'h:mm a')}</span>
                         <span className="text-muted-foreground/40">•</span>
                         <span>{game.pitch_size === 'small' ? 'Small pitch' : 'Big pitch'}</span>
                       </p>
                       {archivedWinners.length === 0 ? (
-                        <div className="empty-tile">
-                          <Trophy className="h-6 w-6 text-muted-foreground" />
-                          <p>No MVP recorded for this game.</p>
-                        </div>
+                        <p className="text-xs text-muted-foreground">No MVP recorded for this game.</p>
                       ) : (
                         <div className="space-y-2">
                           {archivedWinners.map(winner => (
                             <div
                               key={winner.name}
-                              className="flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/10"
+                              className="flex items-center gap-3 p-3 rounded-xl border border-primary/30 bg-primary/10"
                             >
-                              <Avatar className="h-11 w-11 avatar-glow">
+                              <Avatar className="h-10 w-10 avatar-glow">
                                 <AvatarImage src={winner.avatarUrl || undefined} />
                                 <AvatarFallback>{winner.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                               </Avatar>
                               <div className="min-w-0">
                                 <p className="text-[10px] uppercase tracking-widest text-primary font-bold">
-                                  {archivedWinners.length > 1 ? 'Joint player of the match' : 'Player of the match'}
+                                  {archivedWinners.length > 1 ? 'Joint MVP' : 'Player of the match'}
                                 </p>
-                                <p className="font-display text-2xl text-foreground leading-none truncate">
+                                <p className="font-display text-xl text-foreground leading-none truncate">
                                   {winner.name}
                                 </p>
                               </div>
                               {winner.votes > 0 && (
                                 <Badge className="badge-trophy ml-auto shrink-0">
                                   <span>👑</span>
-                                  {winner.votes} {winner.votes === 1 ? 'vote' : 'votes'}
+                                  {winner.votes}
                                 </Badge>
                               )}
                             </div>
@@ -242,17 +238,19 @@ const MvpTab = ({ archiveSeasonId = null, players }: MvpTabProps) => {
                     </>
                   ) : (
                     <MvpVoteCard
+                      compact
                       gameScheduleId={game.id}
                       candidates={candidates}
                       heading={format(new Date(game.scheduled_at), 'EEE d MMM').toUpperCase()}
                     />
                   )}
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
 
       {/* MVP leaders */}
       <Card>
