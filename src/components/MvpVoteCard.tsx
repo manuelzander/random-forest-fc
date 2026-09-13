@@ -106,10 +106,17 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
         {state.is_open && (
           <>
             {!canVote ? (
-              <div className="info-note">
-                <Lock className="info-note-icon" />
-                <span>Only signed-in players on this game's roster can vote for MVP.</span>
-              </div>
+              compact ? (
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <Lock className="h-3 w-3 shrink-0" />
+                  <span>Roster players only</span>
+                </p>
+              ) : (
+                <div className="info-note">
+                  <Lock className="info-note-icon" />
+                  <span>Only signed-in players on this game's roster can vote for MVP.</span>
+                </div>
+              )
             ) : votableCandidates.length === 0 ? (
               <div className="empty-tile">
                 <Trophy className="h-6 w-6 text-muted-foreground" />
