@@ -220,33 +220,45 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
                   </div>
                 ))}
 
-                {state.results
-                  .filter(r => !winnerIds.includes(r.player_id))
-                  .map(result => (
-                    <div
-                      key={result.player_id}
-                      className="flex items-center gap-3 p-2 -mx-2 rounded-xl transition-all duration-300 hover:bg-white/5"
-                    >
-                      <Avatar className="h-8 w-8 border border-white/10">
-                        <AvatarImage src={result.avatar_url || undefined} />
-                        <AvatarFallback className="text-xs">
-                          {result.name.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium truncate text-sm sm:text-base text-foreground flex-1">
-                        {result.name}
-                      </span>
-                      <div className="hidden sm:block w-28 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                {(() => {
+                  const rest = state.results.filter(r => !winnerIds.includes(r.player_id));
+                  const shown = compact ? rest.slice(0, 3) : rest;
+                  const hidden = rest.length - shown.length;
+                  return (
+                    <>
+                      {shown.map(result => (
                         <div
-                          className="h-full rounded-full bg-primary/50"
-                          style={{ width: `${topVotes ? (result.votes / topVotes) * 100 : 0}%` }}
-                        />
-                      </div>
-                      <span className="font-display text-base text-muted-foreground w-6 text-right">
-                        {result.votes}
-                      </span>
-                    </div>
-                  ))}
+                          key={result.player_id}
+                          className="flex items-center gap-3 p-2 -mx-2 rounded-xl transition-all duration-300 hover:bg-white/5"
+                        >
+                          <Avatar className="h-8 w-8 border border-white/10">
+                            <AvatarImage src={result.avatar_url || undefined} />
+                            <AvatarFallback className="text-xs">
+                              {result.name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium truncate text-sm sm:text-base text-foreground flex-1">
+                            {result.name}
+                          </span>
+                          {!compact && (
+                            <div className="hidden sm:block w-28 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-primary/50"
+                                style={{ width: `${topVotes ? (result.votes / topVotes) * 100 : 0}%` }}
+                              />
+                            </div>
+                          )}
+                          <span className="font-display text-base text-muted-foreground w-6 text-right">
+                            {result.votes}
+                          </span>
+                        </div>
+                      ))}
+                      {hidden > 0 && (
+                        <p className="text-xs text-muted-foreground pl-1">+{hidden} more</p>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             )}
           </>
