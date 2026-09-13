@@ -18,9 +18,11 @@ interface MvpVoteCardProps {
   candidates: MvpCandidate[];
   /** Overrides the "MVP VOTE" heading, e.g. with the fixture date */
   heading?: string;
+  /** Tighter layout for grid usage: no instruction note, no bars, trimmed tally */
+  compact?: boolean;
 }
 
-const MvpVoteCard = ({ gameScheduleId, candidates, heading }: MvpVoteCardProps) => {
+const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: MvpVoteCardProps) => {
   const { state, loading, isVoting, castVote, clearVote } = useMvpVote(gameScheduleId);
   const { toast } = useToast();
 
@@ -61,8 +63,8 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading }: MvpVoteCardProps) 
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="font-display text-2xl text-foreground tracking-wide">{heading ?? 'MVP VOTE'}</h3>
+      <div className={`flex justify-between items-center ${compact ? 'mb-4' : 'mb-6'}`}>
+        <h3 className={`font-display text-foreground tracking-wide ${compact ? 'text-xl' : 'text-2xl'}`}>{heading ?? 'MVP VOTE'}</h3>
         {state.is_open ? (
           <span className="relative flex items-center justify-center">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
@@ -77,7 +79,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading }: MvpVoteCardProps) 
         )}
       </div>
 
-      <div className="space-y-5">
+      <div className={compact ? 'space-y-3' : 'space-y-5'}>
 
         {/* Meta line */}
         <p className="text-muted-foreground text-sm flex items-center gap-2 flex-wrap">
@@ -104,10 +106,17 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading }: MvpVoteCardProps) 
         {state.is_open && (
           <>
             {!canVote ? (
-              <div className="info-note">
-                <Lock className="info-note-icon" />
-                <span>Only signed-in players on this game's roster can vote for MVP.</span>
-              </div>
+              compact ? (
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <Lock className="h-3 w-3 shrink-0" />
+                  <span>Roster players only</span>
+                </p>
+              ) : (
+                <div className="info-note">
+                  <Lock className="info-note-icon" />
+                  <span>Only signed-in players on this game's roster can vote for MVP.</span>
+                </div>
+              )
             ) : votableCandidates.length === 0 ? (
               <div className="empty-tile">
                 <Trophy className="h-6 w-6 text-muted-foreground" />
@@ -115,14 +124,16 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading }: MvpVoteCardProps) 
               </div>
             ) : (
               <>
-                <div className="info-note">
-                  <Crown className="info-note-icon" />
-                  <span>
-                    Tap a name to pick the player of the match — tap again to undo. Votes stay secret
-                    until the ballot closes 3 days after kick-off, then the winner is awarded
-                    automatically.
-                  </span>
-                </div>
+                {!compact && (
+                  <div className="info-note">
+                    <Crown className="info-note-icon" />
+                    <span>
+                      Tap a name to pick the player of the match — tap again to undo. Votes stay secret
+                      until the ballot closes 3 days after kick-off, then the winner is awarded
+                      automatically.
+                    </span>
+                  </div>
+                )}
                 <div className="space-y-2">
                   {votableCandidates.map(candidate => {
                     const isPick = state.my_vote === candidate.playerId;
@@ -209,33 +220,45 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading }: MvpVoteCardProps) 
                   </div>
                 ))}
 
-                {state.results
-                  .filter(r => !winnerIds.includes(r.player_id))
-                  .map(result => (
-                    <div
-                      key={result.player_id}
-                      className="flex items-center gap-3 p-2 -mx-2 rounded-xl transition-all duration-300 hover:bg-white/5"
-                    >
-                      <Avatar className="h-8 w-8 border border-white/10">
-                        <AvatarImage src={result.avatar_url || undefined} />
-                        <AvatarFallback className="text-xs">
-                          {result.name.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium truncate text-sm sm:text-base text-foreground flex-1">
-                        {result.name}
-                      </span>
-                      <div className="hidden sm:block w-28 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                {(() => {
+                  const rest = state.results.filter(r => !winnerIds.includes(r.player_id));
+                  const shown = compact ? rest.slice(0, 3) : rest;
+                  const hidden = rest.length - shown.length;
+                  return (
+                    <>
+                      {shown.map(result => (
                         <div
-                          className="h-full rounded-full bg-primary/50"
-                          style={{ width: `${topVotes ? (result.votes / topVotes) * 100 : 0}%` }}
-                        />
-                      </div>
-                      <span className="font-display text-base text-muted-foreground w-6 text-right">
-                        {result.votes}
-                      </span>
-                    </div>
-                  ))}
+                          key={result.player_id}
+                          className="flex items-center gap-3 p-2 -mx-2 rounded-xl transition-all duration-300 hover:bg-white/5"
+                        >
+                          <Avatar className="h-8 w-8 border border-white/10">
+                            <AvatarImage src={result.avatar_url || undefined} />
+                            <AvatarFallback className="text-xs">
+                              {result.name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium truncate text-sm sm:text-base text-foreground flex-1">
+                            {result.name}
+                          </span>
+                          {!compact && (
+                            <div className="hidden sm:block w-28 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-primary/50"
+                                style={{ width: `${topVotes ? (result.votes / topVotes) * 100 : 0}%` }}
+                              />
+                            </div>
+                          )}
+                          <span className="font-display text-base text-muted-foreground w-6 text-right">
+                            {result.votes}
+                          </span>
+                        </div>
+                      ))}
+                      {hidden > 0 && (
+                        <p className="text-xs text-muted-foreground pl-1">+{hidden} more</p>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             )}
           </>
