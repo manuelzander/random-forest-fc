@@ -124,14 +124,16 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
               </div>
             ) : (
               <>
-                <div className="info-note">
-                  <Crown className="info-note-icon" />
-                  <span>
-                    Tap a name to pick the player of the match — tap again to undo. Votes stay secret
-                    until the ballot closes 3 days after kick-off, then the winner is awarded
-                    automatically.
-                  </span>
-                </div>
+                {!compact && (
+                  <div className="info-note">
+                    <Crown className="info-note-icon" />
+                    <span>
+                      Tap a name to pick the player of the match — tap again to undo. Votes stay secret
+                      until the ballot closes 3 days after kick-off, then the winner is awarded
+                      automatically.
+                    </span>
+                  </div>
+                )}
                 <div className="space-y-2">
                   {votableCandidates.map(candidate => {
                     const isPick = state.my_vote === candidate.playerId;
