@@ -44,13 +44,13 @@ const MvpTab = ({ archiveSeasonId = null, players }: MvpTabProps) => {
               .select('*')
               .eq('season_id', archiveSeasonId)
               .order('scheduled_at', { ascending: false })
-              .limit(5)
+              .limit(3)
           : await supabase
               .from('games_schedule')
               .select('*')
               .lte('scheduled_at', nowIso)
               .order('scheduled_at', { ascending: false })
-              .limit(5);
+              .limit(3);
 
         if (gamesError) throw gamesError;
 
