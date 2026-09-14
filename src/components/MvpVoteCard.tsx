@@ -199,17 +199,19 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
                 {winners.map(winner => (
                   <div
                     key={winner.player_id}
-                    className="flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/10"
+                    className="flex items-center gap-3 p-2.5 rounded-xl border border-primary/30 bg-primary/10"
                   >
-                    <Avatar className="h-11 w-11 avatar-glow">
+                    <Avatar className="h-9 w-9 border border-white/10">
                       <AvatarImage src={winner.avatar_url || undefined} />
-                      <AvatarFallback>{winner.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="text-xs">
+                        {winner.name.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
-                      <p className="text-[10px] uppercase tracking-widest text-primary font-bold">
-                        {winners.length > 1 ? 'Joint player of the match' : 'Player of the match'}
+                      <p className="text-[9px] uppercase tracking-widest text-primary font-bold leading-none mb-1">
+                        {winners.length > 1 ? 'Joint MVP' : 'MVP'}
                       </p>
-                      <p className="font-display text-2xl text-foreground leading-none truncate">
+                      <p className="font-display text-base text-foreground leading-none truncate">
                         {winner.name}
                       </p>
                     </div>
