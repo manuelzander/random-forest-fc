@@ -203,7 +203,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
                   >
                     <span className="relative flex shrink-0 items-center justify-center">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-25" />
-                      <Avatar className="relative h-9 w-9 ring-2 ring-primary/70">
+                      <Avatar className="relative h-9 w-9 border border-white/10">
                         <AvatarImage src={winner.avatar_url || undefined} />
                         <AvatarFallback className="text-xs">
                           {winner.name.substring(0, 2).toUpperCase()}
