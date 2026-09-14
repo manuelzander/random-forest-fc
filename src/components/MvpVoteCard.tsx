@@ -199,26 +199,26 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
                 {winners.map(winner => (
                   <div
                     key={winner.player_id}
-                    className="flex items-center gap-3 p-2.5 rounded-xl border border-primary/30 bg-primary/10"
+                    className="flex items-center gap-3 p-2 -mx-2 rounded-xl border-b border-primary/20"
                   >
-                    <Avatar className="h-9 w-9 border border-white/10">
-                      <AvatarImage src={winner.avatar_url || undefined} />
-                      <AvatarFallback className="text-xs">
-                        {winner.name.substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="text-[9px] uppercase tracking-widest text-primary font-bold leading-none mb-1">
-                        {winners.length > 1 ? 'Joint MVP' : 'MVP'}
-                      </p>
-                      <p className="font-display text-base text-foreground leading-none truncate">
-                        {winner.name}
-                      </p>
-                    </div>
-                    <Badge className="badge-trophy ml-auto shrink-0">
-                      <span>👑</span>
-                      {winner.votes} {winner.votes === 1 ? 'vote' : 'votes'}
-                    </Badge>
+                    <span className="relative flex shrink-0 items-center justify-center">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+                      <Avatar className="relative h-9 w-9 border border-primary/40">
+                        <AvatarImage src={winner.avatar_url || undefined} />
+                        <AvatarFallback className="text-xs">
+                          {winner.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </span>
+                    <span className="font-display text-base text-foreground leading-none truncate flex-1">
+                      {winner.name}
+                    </span>
+                    <span className="text-[9px] uppercase tracking-widest text-primary font-bold shrink-0">
+                      {winners.length > 1 ? 'Joint MVP' : 'MVP'}
+                    </span>
+                    <span className="font-display text-base text-primary w-6 text-right shrink-0">
+                      {winner.votes}
+                    </span>
                   </div>
                 ))}
 
