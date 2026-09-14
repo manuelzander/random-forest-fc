@@ -210,7 +210,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
                         </AvatarFallback>
                       </Avatar>
                     </span>
-                    <span className="font-display text-base text-foreground leading-none truncate flex-1">
+                    <span className="font-medium truncate text-sm sm:text-base text-foreground flex-1">
                       {winner.name}
                     </span>
                     <span className="text-[9px] uppercase tracking-widest text-primary font-bold shrink-0">
