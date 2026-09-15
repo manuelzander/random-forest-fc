@@ -284,6 +284,9 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                       PLAYERS SIGNED UP
                     </h4>
                     <span className="relative flex items-center justify-center">
+                      {gameDate.getTime() > Date.now() && (
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+                      )}
                       <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold">
                         {gameSignups.length} / {pitchCapacity}
                       </span>
