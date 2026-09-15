@@ -7,6 +7,9 @@ import { format, formatDistanceToNowStrict } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useMvpVote } from '@/hooks/useMvpVote';
 
+/** Aligns every ping animation to the same 1s wall-clock phase so pulses stay in sync */
+const syncedPing = () => ({ animationDelay: `-${Date.now() % 1000}ms` });
+
 export interface MvpCandidate {
   playerId: string;
   name: string;
@@ -67,7 +70,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
         <h3 className={`font-display text-foreground tracking-wide ${compact ? 'text-xl' : 'text-2xl'}`}>{heading ?? 'MVP VOTE'}</h3>
         {state.is_open ? (
           <span className="relative flex items-center justify-center">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+            <span style={syncedPing()} className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
             <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold uppercase tracking-wide">
               Open
             </span>
@@ -202,7 +205,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
                     className="flex items-center gap-3 p-2 -mx-2 rounded-xl border border-primary/40 bg-primary/[0.07]"
                   >
                     <span className="relative flex shrink-0 items-center justify-center">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-25" />
+                      <span style={syncedPing()} className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-25" />
                       <Avatar className="relative h-9 w-9 border border-white/10">
                         <AvatarImage src={winner.avatar_url || undefined} />
                         <AvatarFallback className="text-xs">
