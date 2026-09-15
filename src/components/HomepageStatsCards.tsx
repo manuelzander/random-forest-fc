@@ -13,6 +13,8 @@ interface HomepageStatsCardsProps {
   isSeasonDataLoading?: boolean;
   onOpenSchedule?: () => void;
   onOpenGames?: () => void;
+  onOpenMvp?: () => void;
+
 }
 
 interface SummaryGame {
@@ -41,7 +43,9 @@ const HomepageStatsCards = ({
   isSeasonDataLoading = false,
   onOpenSchedule,
   onOpenGames,
+  onOpenMvp,
 }: HomepageStatsCardsProps) => {
+
   const [nextGame, setNextGame] = useState<SummaryGame | null>(null);
   const [nextGameSignupCount, setNextGameSignupCount] = useState(0);
   const [isNextGameLoading, setIsNextGameLoading] = useState(true);
@@ -300,18 +304,7 @@ const HomepageStatsCards = ({
       </div>
 
 
-      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
-        <div className="flex w-full items-start justify-between gap-3">
-          <span className="section-kicker">Games Played</span>
-          <Trophy className="h-5 w-5 text-primary" />
-        </div>
-        <div>
-          <span className="font-display text-5xl leading-none text-foreground">{totalGames}</span>
-          <p className="mt-2 text-sm text-muted-foreground">Recorded results</p>
-        </div>
-      </div>
-
-      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
+      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between gap-4 p-5 text-left sm:p-6">
         <div className="flex w-full items-start justify-between gap-3">
           <span className="section-kicker">MVP Race</span>
           <Crown className="h-5 w-5 text-primary" />
@@ -324,7 +317,27 @@ const HomepageStatsCards = ({
             {mvpLeader ? `${mvpLeader.mvp_awards} award${mvpLeader.mvp_awards === 1 ? '' : 's'}` : 'Awaiting first award'}
           </p>
         </div>
+        {onOpenMvp && (
+          <div className="w-full border-t border-white/10 pt-3">
+            <button type="button" onClick={onOpenMvp} className="card-action-link">
+              View MVP
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
       </div>
+
+      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
+        <div className="flex w-full items-start justify-between gap-3">
+          <span className="section-kicker">Games Played</span>
+          <Trophy className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <span className="font-display text-5xl leading-none text-foreground">{totalGames}</span>
+          <p className="mt-2 text-sm text-muted-foreground">Recorded results</p>
+        </div>
+      </div>
+
     </section>
   );
 };
