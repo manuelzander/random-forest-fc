@@ -265,12 +265,13 @@ const MvpTab = ({ archiveSeasonId = null, players }: MvpTabProps) => {
             <span>{gamesWithMvp} {gamesWithMvp === 1 ? 'award' : 'awards'} given</span>
             <span className="text-muted-foreground/40">•</span>
             <span>{totalVotes} {totalVotes === 1 ? 'vote' : 'votes'} cast</span>
-            {leaders[0] && (
+            {leaders.length > 1 && (
               <>
                 <span className="text-muted-foreground/40">•</span>
-                <span>Leader {leaders[0].name}</span>
+                <span>{leaders.length} different winners</span>
               </>
             )}
+
           </p>
 
           {leaders.length === 0 ? (
