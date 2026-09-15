@@ -43,7 +43,9 @@ const HomepageStatsCards = ({
   isSeasonDataLoading = false,
   onOpenSchedule,
   onOpenGames,
+  onOpenMvp,
 }: HomepageStatsCardsProps) => {
+
   const [nextGame, setNextGame] = useState<SummaryGame | null>(null);
   const [nextGameSignupCount, setNextGameSignupCount] = useState(0);
   const [isNextGameLoading, setIsNextGameLoading] = useState(true);
