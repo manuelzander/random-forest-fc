@@ -255,7 +255,7 @@ const HomepageStatsCards = ({
           ) : lastGame ? (
             <>
               <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
                 {lastGamePlayerCount > 0 && <span>{lastGamePlayerCount} players</span>}
 
                 {lastGameMvpName && (
