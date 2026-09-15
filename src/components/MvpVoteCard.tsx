@@ -70,7 +70,7 @@ const MvpVoteCard = ({ gameScheduleId, candidates, heading, compact = false }: M
         <h3 className={`font-display text-foreground tracking-wide ${compact ? 'text-xl' : 'text-2xl'}`}>{heading ?? 'MVP VOTE'}</h3>
         {state.is_open ? (
           <span className="relative flex items-center justify-center">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
+            <span style={syncedPing()} className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
             <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold uppercase tracking-wide">
               Open
             </span>
