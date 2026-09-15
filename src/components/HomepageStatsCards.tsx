@@ -13,6 +13,8 @@ interface HomepageStatsCardsProps {
   isSeasonDataLoading?: boolean;
   onOpenSchedule?: () => void;
   onOpenGames?: () => void;
+  onOpenMvp?: () => void;
+
 }
 
 interface SummaryGame {
