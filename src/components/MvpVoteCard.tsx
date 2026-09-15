@@ -7,6 +7,9 @@ import { format, formatDistanceToNowStrict } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useMvpVote } from '@/hooks/useMvpVote';
 
+/** Aligns every ping animation to the same 1s wall-clock phase so pulses stay in sync */
+const syncedPing = () => ({ animationDelay: `-${Date.now() % 1000}ms` });
+
 export interface MvpCandidate {
   playerId: string;
   name: string;
