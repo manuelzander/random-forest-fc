@@ -225,6 +225,8 @@ const Index = () => {
           isSeasonDataLoading={archivedLoading}
           onOpenSchedule={() => openTab('schedule')}
           onOpenGames={() => openTab('games')}
+          onOpenMvp={() => openTab('mvp')}
+
         />
 
         {/* Tabs */}
