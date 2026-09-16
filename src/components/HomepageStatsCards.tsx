@@ -171,9 +171,9 @@ const HomepageStatsCards = ({
 
   return (
     <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6" aria-label="Homepage summary">
-      <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
+      <div className="glass-panel relative flex flex-col overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
         <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative flex min-h-[13rem] flex-col gap-5">
+        <div className="relative flex min-h-[13rem] flex-1 flex-col">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="section-kicker">Next game</span>
@@ -191,13 +191,13 @@ const HomepageStatsCards = ({
           </div>
 
           {isNextGameLoading ? (
-            <div className="space-y-3">
+            <div className="mt-auto space-y-3">
               <div className="h-4 w-36 animate-pulse rounded bg-white/10" />
               <div className="h-2 w-full animate-pulse rounded-full bg-white/10" />
             </div>
           ) : nextGameDate ? (
             <>
-              <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              <p className="mt-5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                 <span>{format(nextGameDate, 'h:mm a')}</span>
                 <span className="text-muted-foreground/40">•</span>
@@ -222,7 +222,7 @@ const HomepageStatsCards = ({
           )}
 
           {onOpenSchedule && (
-            <div className="border-t border-white/10 pt-3">
+            <div className="mt-3 border-t border-white/10 pt-3">
               <button type="button" onClick={onOpenSchedule} className="card-action-link">
                 View Schedule
                 <ChevronRight className="h-3.5 w-3.5" />
@@ -232,9 +232,9 @@ const HomepageStatsCards = ({
         </div>
       </div>
 
-      <div className="glass-panel relative overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
+      <div className="glass-panel relative flex flex-col overflow-hidden p-5 sm:p-6 md:col-span-2 lg:col-span-2">
         <div className="absolute -right-12 -top-16 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative flex min-h-[13rem] flex-col gap-5">
+        <div className="relative flex min-h-[13rem] flex-1 flex-col">
           <div className="flex items-start justify-between gap-4">
             <div>
               <span className="section-kicker">Last game</span>
@@ -252,13 +252,13 @@ const HomepageStatsCards = ({
           </div>
 
           {isLastGameLoading ? (
-            <div className="space-y-3">
+            <div className="mt-auto space-y-3">
               <div className="h-4 w-36 animate-pulse rounded bg-white/10" />
               <div className="h-8 w-24 animate-pulse rounded bg-white/10" />
             </div>
           ) : lastGame ? (
             <>
-              <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              <p className="mt-5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 
                 {lastGamePlayerCount > 0 && <span>{lastGamePlayerCount} players</span>}
 
@@ -293,7 +293,7 @@ const HomepageStatsCards = ({
           )}
 
           {onOpenGames && (
-            <div className="border-t border-white/10 pt-3">
+            <div className="mt-3 border-t border-white/10 pt-3">
               <button type="button" onClick={onOpenGames} className="card-action-link">
                 View Games
                 <ChevronRight className="h-3.5 w-3.5" />
@@ -304,12 +304,12 @@ const HomepageStatsCards = ({
       </div>
 
 
-      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between gap-4 p-5 text-left sm:p-6">
+      <div className="stat-tile flex min-h-[13rem] flex-col items-start p-5 text-left sm:p-6">
         <div className="flex w-full items-start justify-between gap-3">
           <span className="section-kicker">MVP Race</span>
           <Crown className="h-5 w-5 text-primary" />
         </div>
-        <div className="min-w-0">
+        <div className="mt-auto min-w-0">
           <span className="block truncate font-display text-3xl leading-none text-foreground">
             {isSeasonDataLoading ? '—' : mvpLeader?.name || 'No MVP yet'}
           </span>
@@ -318,7 +318,7 @@ const HomepageStatsCards = ({
           </p>
         </div>
         {onOpenMvp && (
-          <div className="w-full border-t border-white/10 pt-3">
+          <div className="mt-3 w-full border-t border-white/10 pt-3">
             <button type="button" onClick={onOpenMvp} className="card-action-link">
               View MVP
               <ChevronRight className="h-3.5 w-3.5" />
@@ -327,12 +327,12 @@ const HomepageStatsCards = ({
         )}
       </div>
 
-      <div className="stat-tile flex min-h-[13rem] flex-col items-start justify-between p-5 text-left sm:p-6">
+      <div className="stat-tile flex min-h-[13rem] flex-col p-5 text-left sm:p-6">
         <div className="flex w-full items-start justify-between gap-3">
           <span className="section-kicker">Games Played</span>
           <Trophy className="h-5 w-5 text-primary" />
         </div>
-        <div>
+        <div className="mt-auto">
           <span className="font-display text-5xl leading-none text-foreground">{totalGames}</span>
           <p className="mt-2 text-sm text-muted-foreground">Recorded results</p>
         </div>
