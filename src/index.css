@@ -519,6 +519,45 @@
 }
 
 @layer utilities {
+  /* Player profile hero motion — breathing avatar, drifting glow, underline shimmer */
+  @keyframes avatar-aura {
+    0%, 100% {
+      box-shadow: 0 0 35px -10px hsl(var(--primary) / 0.6), 0 0 0 0 hsl(var(--primary) / 0.0);
+    }
+    50% {
+      box-shadow: 0 0 55px -6px hsl(var(--primary) / 0.8), 0 0 0 6px hsl(var(--primary) / 0.06);
+    }
+  }
+
+  @keyframes hero-glow-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
+    50% { transform: translate(14px, 10px) scale(1.12); opacity: 1; }
+  }
+
+  @keyframes hero-shimmer {
+    0%, 55% { transform: translateX(-100%); opacity: 0; }
+    62% { opacity: 1; }
+    90%, 100% { transform: translateX(100%); opacity: 0; }
+  }
+
+  @keyframes mvp-glow {
+    0%, 100% { box-shadow: 0 0 10px -4px hsl(45 90% 60% / 0.35); }
+    50% { box-shadow: 0 0 18px -2px hsl(45 90% 60% / 0.65); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .avatar-aura-pulse,
+    .mvp-pill-pulse,
+    .hero-glow {
+      animation: none;
+    }
+    .hero-panel::before {
+      display: none;
+    }
+  }
+}
+
+@layer utilities {
   /* Make native date/time picker icons visible on dark surfaces */
   input[type="time"]::-webkit-calendar-picker-indicator,
   input[type="date"]::-webkit-calendar-picker-indicator,
