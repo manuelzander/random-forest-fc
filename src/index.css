@@ -374,6 +374,22 @@
            px-3 py-1 text-xs font-medium text-foreground/85 backdrop-blur-xl;
   }
 
+  /* MVP hero pill — gold, matching the app's trophy tones */
+  .meta-pill-mvp {
+    background: hsl(45 90% 60% / 0.10);
+    color: hsl(45 95% 78%);
+    border-color: hsl(45 90% 60% / 0.35);
+  }
+
+  .mvp-pill-pulse {
+    animation: mvp-glow 2.4s ease-in-out infinite;
+  }
+
+  /* Avatar aura — the hero glow ring gently breathes */
+  .avatar-aura-pulse {
+    animation: avatar-aura 3s ease-in-out infinite;
+  }
+
   /* Shared stat tiles */
   .stat-tile {
     @apply text-center rounded-xl border border-white/10 bg-white/[0.04] p-4
