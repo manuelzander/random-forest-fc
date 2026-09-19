@@ -344,6 +344,15 @@
     @apply relative overflow-hidden;
   }
 
+  /* Occasional shine sweeping across the hero underline */
+  .hero-panel::before {
+    content: '';
+    @apply pointer-events-none absolute bottom-0 left-0 h-px w-full;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.9), transparent);
+    transform: translateX(-100%);
+    animation: hero-shimmer 9s ease-in-out infinite;
+  }
+
   .hero-panel::after {
     content: '';
     @apply absolute inset-x-0 bottom-0 h-px;
@@ -359,10 +368,11 @@
   .hero-glow {
     @apply pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full blur-[90px];
     background: hsl(var(--aurora-emerald) / 0.22);
+    animation: hero-glow-drift 12s ease-in-out infinite;
   }
 
   .avatar-glow {
-    @apply ring-2 ring-primary/30 shadow-[0_0_35px_-10px_hsl(var(--primary)/0.6)];
+    @apply ring-2 ring-primary/30;
   }
 
   .hero-name {
@@ -372,6 +382,22 @@
   .meta-pill {
     @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06]
            px-3 py-1 text-xs font-medium text-foreground/85 backdrop-blur-xl;
+  }
+
+  /* MVP hero pill — gold, matching the app's trophy tones */
+  .meta-pill-mvp {
+    background: hsl(45 90% 60% / 0.10);
+    color: hsl(45 95% 78%);
+    border-color: hsl(45 90% 60% / 0.35);
+  }
+
+  .mvp-pill-pulse {
+    animation: mvp-glow 2.4s ease-in-out infinite;
+  }
+
+  /* Avatar aura — the hero glow ring gently breathes */
+  .avatar-aura-pulse {
+    animation: avatar-aura 3s ease-in-out infinite;
   }
 
   /* Shared stat tiles */
@@ -488,6 +514,45 @@
   @media (prefers-reduced-motion: reduce) {
     .animate-aurora {
       animation: none;
+    }
+  }
+}
+
+@layer utilities {
+  /* Player profile hero motion — breathing avatar, drifting glow, underline shimmer */
+  @keyframes avatar-aura {
+    0%, 100% {
+      box-shadow: 0 0 35px -10px hsl(var(--primary) / 0.6), 0 0 0 0 hsl(var(--primary) / 0.0);
+    }
+    50% {
+      box-shadow: 0 0 55px -6px hsl(var(--primary) / 0.8), 0 0 0 6px hsl(var(--primary) / 0.06);
+    }
+  }
+
+  @keyframes hero-glow-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
+    50% { transform: translate(14px, 10px) scale(1.12); opacity: 1; }
+  }
+
+  @keyframes hero-shimmer {
+    0%, 55% { transform: translateX(-100%); opacity: 0; }
+    62% { opacity: 1; }
+    90%, 100% { transform: translateX(100%); opacity: 0; }
+  }
+
+  @keyframes mvp-glow {
+    0%, 100% { box-shadow: 0 0 10px -4px hsl(45 90% 60% / 0.35); }
+    50% { box-shadow: 0 0 18px -2px hsl(45 90% 60% / 0.65); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .avatar-aura-pulse,
+    .mvp-pill-pulse,
+    .hero-glow {
+      animation: none;
+    }
+    .hero-panel::before {
+      display: none;
     }
   }
 }
