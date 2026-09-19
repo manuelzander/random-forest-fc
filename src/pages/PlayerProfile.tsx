@@ -361,7 +361,7 @@ const PlayerProfile = () => {
           <div className="hero-glow" />
           <CardContent className="relative p-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <Avatar className="avatar-glow h-28 w-28 sm:h-32 sm:w-32 flex-shrink-0">
+              <Avatar className="avatar-glow avatar-aura-pulse h-28 w-28 sm:h-32 sm:w-32 flex-shrink-0">
                 <AvatarImage src={player.avatar_url} />
                 <AvatarFallback className="text-lg sm:text-2xl font-display">
                   {player.name.charAt(0).toUpperCase()}
@@ -377,9 +377,15 @@ const PlayerProfile = () => {
                      {player.points} Points
                    </span>
                    <span className="meta-pill">
-                     <Target className="h-3.5 w-3.5 text-[hsl(var(--aurora-blue))]" />
-                     {getWinRate()}% Win Rate
-                   </span>
+                      <Target className="h-3.5 w-3.5 text-[hsl(var(--aurora-blue))]" />
+                      {getWinRate()}% Win Rate
+                    </span>
+                    {player.mvp_awards > 0 && (
+                      <span className="meta-pill meta-pill-mvp mvp-pill-pulse" title="Player of the match awards">
+                        <Trophy className="h-3.5 w-3.5 text-amber-300" />
+                        {player.mvp_awards} MVP{player.mvp_awards === 1 ? '' : 's'}
+                      </span>
+                    )}
                  </div>
 
                  {/* Profile details - responsive layout */}
