@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.check-low-signups]
 verify_jwt = false
+
+[functions.mvp-vote-reminder]
+verify_jwt = false
