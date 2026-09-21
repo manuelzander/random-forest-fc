@@ -14,6 +14,7 @@ import MvpTab from '@/components/MvpTab';
 import ScheduleDisplay from '@/components/ScheduleDisplay';
 import { PlayerClaim } from '@/components/PlayerClaim';
 import SeasonBanner from '@/components/SeasonBanner';
+import MvpVoteReminder from '@/components/MvpVoteReminder';
 import { useSeasons } from '@/hooks/useSeasons';
 import { useArchivedAchievements } from '@/hooks/useArchivedAchievements';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -214,6 +215,9 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="page-main-content space-y-8 relative z-10">
+        {/* MVP vote reminder for roster players who have not voted yet */}
+        <MvpVoteReminder />
+
         {/* Season Banner */}
         <SeasonBanner />
 
