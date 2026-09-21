@@ -50,6 +50,15 @@ const GameSignup = () => {
       fetchGameData();
     }
   }, [gameId, user]);
+
+  // Arriving from the "Vote now" reminder: scroll to the MVP section once rendered
+  useEffect(() => {
+    if (loading || window.location.hash !== '#mvp-vote') return;
+    const timer = window.setTimeout(() => {
+      document.getElementById('mvp-vote')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [loading]);
   const fetchGameData = async () => {
     if (!gameId) return;
     setLoading(true);
