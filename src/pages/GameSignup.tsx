@@ -927,6 +927,9 @@ const GameSignup = () => {
         <div className="aurora-blob aurora-blob-blue w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-aurora" style={{ animationDelay: '-10s' }} />
 
         <div className="relative z-10 max-w-md mx-auto">
+          {/* Reminder about other open MVP votes (never this game's own) */}
+          <MvpVoteReminder excludeGameScheduleId={gameId} className="mb-4" />
+
           {/* Quiet nav row — home, plus the other game(s) on this day */}
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <Link
@@ -1097,7 +1100,7 @@ const GameSignup = () => {
 
             {/* MVP voting — appears from kick-off, closes 72h later */}
             {gameId && (
-              <div className="bg-white/[0.02] border-t border-white/10 p-6 sm:p-8 empty:hidden">
+              <div id="mvp-vote" className="bg-white/[0.02] border-t border-white/10 p-6 sm:p-8 empty:hidden scroll-mt-24">
                 <MvpVoteCard gameScheduleId={gameId} candidates={mvpCandidates} />
               </div>
             )}
