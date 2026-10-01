@@ -255,10 +255,11 @@ const GameSignup = () => {
       const droppingPlayerName = own?.players?.name || user.email?.split('@')[0] || 'Unknown';
 
       if (markDropout) {
-        const { error } = await supabase
+        const { data: updatedRows, error } = await supabase
           .from('games_schedule_signups')
           .update({ last_minute_dropout: true })
-          .eq('id', entry.signupId);
+          .eq('id', entry.signupId).select('id');
+        if (!error && (!updatedRows || updatedRows.length === 0)) throw new Error('Signup update was not saved');
         if (error) throw error;
       } else {
         const { error } = await supabase
@@ -450,10 +451,11 @@ const GameSignup = () => {
     setIsSigningUp(true);
     try {
       // Just clear the dropout flag - keep the original slot
-      const { error } = await supabase
+      const { data: updatedRows, error } = await supabase
         .from('games_schedule_signups')
         .update({ last_minute_dropout: false })
-        .eq('id', dropoutSignupId);
+        .eq('id', dropoutSignupId).select('id');
+        if (!error && (!updatedRows || updatedRows.length === 0)) throw new Error('Signup update was not saved');
       
       if (error) throw error;
 
@@ -663,10 +665,11 @@ const GameSignup = () => {
       // Only mark as dropout if within 24 hours AND in top 12/14 positions
       if (isWithin24Hours && isInTopPositions) {
         // Mark as dropout instead of deleting
-        const { error } = await supabase
+        const { data: updatedRows, error } = await supabase
           .from('games_schedule_signups')
           .update({ last_minute_dropout: true })
-          .eq('id', userSignup.id);
+          .eq('id', userSignup.id).select('id');
+        if (!error && (!updatedRows || updatedRows.length === 0)) throw new Error('Signup update was not saved');
         
         if (error) throw error;
         
@@ -786,10 +789,11 @@ const GameSignup = () => {
       // Only mark as dropout if within 24 hours AND in top 12/14 positions
       if (isWithin24Hours && isInTopPositions) {
         // Mark as dropout instead of deleting
-        const { error } = await supabase
+        const { data: updatedRows, error } = await supabase
           .from('games_schedule_signups')
           .update({ last_minute_dropout: true })
-          .eq('id', signupId);
+          .eq('id', signupId).select('id');
+        if (!error && (!updatedRows || updatedRows.length === 0)) throw new Error('Signup update was not saved');
         
         if (error) throw error;
         
