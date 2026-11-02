@@ -516,16 +516,13 @@ const GameSignup = () => {
         return;
       }
 
-      // Check if guest already exists in guests table first
-      let { data: existingGuest, error: guestError } = await supabase
-        .from('guests')
-        .select('id')
-        .ilike('name', guestName)
-        .maybeSingle();
-
-      if (guestError) {
-        console.error('Error checking existing guest:', guestError);
+      // Find or create the guest server-side (visitors can't read the guests list directly)
+      const { data: resolvedGuestId, error: guestError } = await supabase
+        .rpc('find_or_create_guest' as any, { p_name: guestName });
+      if (guestError || !resolvedGuestId) {
+        throw new Error(`Failed to create guest: ${guestError?.message ?? 'unknown error'}`);
       }
+      const existingGuest = { id: resolvedGuestId as unknown as string };
 
       // Check if this guest is already signed up for this game (check both guest_name and guest_id)
       const signupQuery = supabase
@@ -553,22 +550,7 @@ const GameSignup = () => {
         return;
       }
 
-      let guestId = existingGuest?.id;
-
-      // If guest doesn't exist, create new guest record
-      if (!guestId) {
-        const { data: newGuest, error: createError } = await supabase
-          .from('guests')
-          .insert({ name: guestName })
-          .select('id')
-          .single();
-        
-        if (createError) {
-          console.error('Error creating guest:', createError);
-          throw new Error(`Failed to create guest: ${createError.message}`);
-        }
-        guestId = newGuest.id;
-      }
+      const guestId = existingGuest.id;
 
       // Validate we have the required data
       if (!guestId) {
