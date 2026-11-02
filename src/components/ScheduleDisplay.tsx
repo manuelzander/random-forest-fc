@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { computeWaitlisted, slotLabels } from "@/lib/roster";
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -301,7 +302,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                   ) : (
                       <div className="space-y-2">
                         {gameSignups.map((signup, index) => {
-                          const isWaitlisted = index >= pitchCapacity;
+                          const isWaitlisted = computeWaitlisted(SIGS, pitchCapacity)[index];
                           const isLastMinuteDropout = signup.last_minute_dropout === true;
 
                           return (
@@ -310,7 +311,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                             }`}>
                               <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                                 <Badge variant="outline" className="slot-number">
-                                  {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
+                                  {slotLabels(SIGS, pitchCapacity)[index]}
                                 </Badge>
 
                                 <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-destructive' : 'text-foreground'}`}>
