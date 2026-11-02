@@ -302,7 +302,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                   ) : (
                       <div className="space-y-2">
                         {gameSignups.map((signup, index) => {
-                          const isWaitlisted = computeWaitlisted(SIGS, pitchCapacity)[index];
+                          const isWaitlisted = computeWaitlisted(gameSignups, pitchCapacity)[index];
                           const isLastMinuteDropout = signup.last_minute_dropout === true;
 
                           return (
@@ -311,7 +311,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                             }`}>
                               <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                                 <Badge variant="outline" className="slot-number">
-                                  {slotLabels(SIGS, pitchCapacity)[index]}
+                                  {slotLabels(gameSignups, pitchCapacity)[index]}
                                 </Badge>
 
                                 <span className={`font-medium truncate text-sm sm:text-base ${isLastMinuteDropout ? 'line-through text-destructive' : 'text-foreground'}`}>
