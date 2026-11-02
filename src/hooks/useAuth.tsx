@@ -130,7 +130,7 @@ export const useAuth = () => {
   const signUp = async (email: string, password: string, displayName?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -140,7 +140,9 @@ export const useAuth = () => {
         },
       },
     });
-    return { error };
+    // Supabase returns a fake success (no email sent) when the address is already registered
+    const alreadyRegistered = !error && !!data.user && (data.user.identities?.length ?? 0) === 0;
+    return { error, alreadyRegistered };
   };
 
   const signOut = async () => {
@@ -157,10 +159,18 @@ export const useAuth = () => {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { error };
+  };
+
   return {
     ...authState,
     signIn,
     signUp,
     signOut,
+    resetPassword,
   };
 };
