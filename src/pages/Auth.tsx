@@ -11,10 +11,28 @@ import { Trophy, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
-  const { user, isLoading, signIn, signUp } = useAuth();
+  const { user, isLoading, signIn, signUp, resetPassword } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleForgot = async () => {
+    const email = (document.getElementById('signin-email') as HTMLInputElement | null)?.value.trim();
+    if (!email) {
+      setError('Enter your email above, then tap "Forgot password?"');
+      return;
+    }
+    setIsSubmitting(true);
+    setError(null);
+    const { error } = await resetPassword(email);
+    setIsSubmitting(false);
+    if (error) {
+      setError(error.message);
+      toast({ title: "Couldn't send reset email", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Check your email", description: `If ${email} has an account, a reset link is on its way (check spam too).` });
+    }
+  };
 
   // Redirect if already authenticated
   if (user && !isLoading) {
@@ -59,7 +77,7 @@ const Auth = () => {
     const password = formData.get('password') as string;
     const displayName = formData.get('displayName') as string;
 
-    const { error } = await signUp(email, password, displayName);
+    const { error, alreadyRegistered } = await signUp(email, password, displayName);
 
     if (error) {
       setError(error.message);
@@ -68,10 +86,14 @@ const Auth = () => {
         description: error.message,
         variant: "destructive",
       });
+    } else if (alreadyRegistered) {
+      const msg = "An account with this email already exists. Sign in, or use \"Forgot password?\" to reset it.";
+      setError(msg);
+      toast({ title: "Account already exists", description: msg, variant: "destructive" });
     } else {
       toast({
         title: "Account created!",
-        description: "Please check your email to verify your account.",
+        description: "Please check your email (and spam folder) to verify your account.",
       });
     }
 
@@ -152,6 +174,14 @@ const Auth = () => {
                     'Sign In'
                   )}
                 </Button>
+                <button
+                  type="button"
+                  onClick={handleForgot}
+                  disabled={isSubmitting}
+                  className="block w-full text-center text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Forgot password?
+                </button>
               </form>
             </TabsContent>
 
