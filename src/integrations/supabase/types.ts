@@ -660,6 +660,7 @@ export type Database = {
         Args: { _game_schedule_id: string }
         Returns: string
       }
+      find_or_create_guest: { Args: { p_name: string }; Returns: string }
       get_archived_player_achievements: {
         Args: { p_season_id: string }
         Returns: {
