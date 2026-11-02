@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { computeWaitlisted, slotLabels } from "@/lib/roster";
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -891,7 +892,7 @@ const AdminScheduleManagement = () => {
                         <TableBody>
                           {(signups[game.id] || []).map((signup, index) => {
                             const pitchCapacity = game.pitch_size === 'small' ? 12 : game.pitch_size === 'big' ? 14 : 14;
-                            const isWaitlisted = index >= pitchCapacity;
+                            const isWaitlisted = computeWaitlisted((signups[game.id] || []), pitchCapacity)[index];
                             const isLastMinuteDropout = signup.last_minute_dropout === true;
                             
                             return (
@@ -902,7 +903,7 @@ const AdminScheduleManagement = () => {
                                 <TableCell className="font-medium">
                                   <div className="flex items-center gap-2">
                                     <Badge variant="outline" className="text-xs shrink-0">
-                                      {isWaitlisted ? `W${index - pitchCapacity + 1}` : `#${index + 1}`}
+                                      {slotLabels((signups[game.id] || []), pitchCapacity)[index]}
                                     </Badge>
                                     <span className={isLastMinuteDropout ? 'line-through text-destructive' : ''}>
                                       {signup.is_guest ? signup.guest_name : (signup.player?.name || 'Unknown Player')}
