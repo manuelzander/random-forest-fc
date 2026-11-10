@@ -86,6 +86,7 @@ const HomepageStatsCards = ({
               .from('games_schedule_signups')
               .select('id')
               .eq('game_schedule_id', game.id)
+              .or('last_minute_dropout.is.null,last_minute_dropout.eq.false')
               .range(from, to),
           );
           signupCount = signups.length;

@@ -414,7 +414,7 @@ const GameSignup = () => {
       });
       if (error) throw error;
       
-      const newSignupCount = signups.length + 1;
+      const newSignupCount = signups.filter(s => !s.last_minute_dropout).length + 1;
       const pitchCapacity = game!.pitch_size === 'small' ? 12 : 14;
       
       // Send regular signup notification
@@ -581,7 +581,7 @@ const GameSignup = () => {
 
       console.log('Guest signup successful:', signupResult);
       
-      const newSignupCount = signups.length + 1;
+      const newSignupCount = signups.filter(s => !s.last_minute_dropout).length + 1;
       const pitchCapacity = game!.pitch_size === 'small' ? 12 : 14;
       
       // Get current user's player name for context
@@ -627,9 +627,10 @@ const GameSignup = () => {
       if (!userSignup) return;
 
       // Determine player's position in the signup list
-      const signupPosition = signups.findIndex(s => s.id === userSignup.id) + 1;
+      const signupIndex = signups.findIndex(s => s.id === userSignup.id);
       const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
-      const isInTopPositions = signupPosition <= pitchCapacity;
+      // Playing roster = first N non-dropouts, so a player promoted from the waitlist counts too
+      const isInTopPositions = !userSignup.last_minute_dropout && !computeWaitlisted(signups, pitchCapacity)[signupIndex];
 
       // Check if within 24 hours and in top positions - confirmation required
       if (isWithin24Hours && isInTopPositions && !confirmReplacement) {
@@ -750,9 +751,9 @@ const GameSignup = () => {
       if (!guestSignup) return;
 
       // Determine guest's position in the signup list
-      const signupPosition = signups.findIndex(s => s.id === signupId) + 1;
+      const signupIndex = signups.findIndex(s => s.id === signupId);
       const pitchCapacity = game?.pitch_size === 'small' ? 12 : 14;
-      const isInTopPositions = signupPosition <= pitchCapacity;
+      const isInTopPositions = !guestSignup.last_minute_dropout && !computeWaitlisted(signups, pitchCapacity)[signupIndex];
 
       // For guests in top positions within 24h, show a browser confirm dialog
       if (isWithin24Hours && isInTopPositions) {
@@ -906,9 +907,9 @@ const GameSignup = () => {
 
   // MVP candidates: the playing roster only — within pitch capacity by signup order,
   // excluding waitlisted signups and dropouts (matches can_vote_mvp in the database)
+  const rosterWaitlisted = computeWaitlisted(signups, pitchCapacity);
   const mvpCandidates: MvpCandidate[] = signups
-    .slice(0, pitchCapacity)
-    .filter(s => !s.last_minute_dropout && s.player?.id)
+    .filter((s, i) => !s.last_minute_dropout && !rosterWaitlisted[i] && s.player?.id)
     .map(s => ({
       playerId: s.player!.id,
       name: s.player!.name,
@@ -972,9 +973,10 @@ const GameSignup = () => {
               {!isPastGame && <div className="space-y-6">
                   {user ? (() => {
                       const userSignup = signups.find(signup => signup.player?.user_id === user.id);
-                      const userPosition = userSignup ? signups.findIndex(s => s.id === userSignup.id) + 1 : 0;
-                      const isUserInTopPositions = userPosition > 0 && userPosition <= pitchCapacity;
-                      const isUserWaitlisted = userPosition > pitchCapacity;
+                      const userIndex = userSignup ? signups.findIndex(s => s.id === userSignup.id) : -1;
+                      const isUserWaitlisted = userIndex >= 0 && rosterWaitlisted[userIndex];
+                      const isUserInTopPositions = userIndex >= 0 && !isUserWaitlisted && !userSignup?.last_minute_dropout;
+                      const waitlistNumber = isUserWaitlisted ? rosterWaitlisted.slice(0, userIndex + 1).filter(Boolean).length : 0;
 
                       return <div className="space-y-3">
                         {isDropout ? (
@@ -1011,7 +1013,7 @@ const GameSignup = () => {
                                 <span className="text-primary font-medium text-sm sm:text-base">
                                   You're signed up for this game!
                                   {isUserWaitlisted && <Badge variant="outline" className="ml-2 text-xs">
-                                      Waitlist Position {userPosition - pitchCapacity}
+                                      Waitlist Position {waitlistNumber}
                                     </Badge>}
                                 </span>
                               </div>
@@ -1112,7 +1114,7 @@ const GameSignup = () => {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
                   )}
                   <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold">
-                    {signups.length} / {pitchCapacity}
+                    {signups.filter(s => !s.last_minute_dropout).length} / {pitchCapacity}
                   </span>
                 </span>
               </div>

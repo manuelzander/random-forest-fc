@@ -289,7 +289,7 @@ const ScheduleDisplay = ({ archiveSeasonId = null }: ScheduleDisplayProps) => {
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-20" />
                       )}
                       <span className="relative bg-primary/10 text-primary text-[10px] px-2 py-1 rounded border border-primary/20 font-bold">
-                        {gameSignups.length} / {pitchCapacity}
+                        {gameSignups.filter(s => !s.last_minute_dropout).length} / {pitchCapacity}
                       </span>
                     </span>
                   </div>

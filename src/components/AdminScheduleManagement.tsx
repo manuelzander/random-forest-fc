@@ -148,9 +148,9 @@ const getMvpStatus = (
 
   // Playing roster only: first 12/14 signups by signup order, no dropouts, account required
   const pitchCapacity = game.pitch_size === 'small' ? 12 : 14;
+  const waitlisted = computeWaitlisted(gameSignups, pitchCapacity);
   const eligibleVoters = gameSignups
-    .slice(0, pitchCapacity)
-    .filter(s => !s.last_minute_dropout && s.player?.user_id).length;
+    .filter((s, i) => !s.last_minute_dropout && !waitlisted[i] && s.player?.user_id).length;
 
   if (now < closesAt) {
     return {

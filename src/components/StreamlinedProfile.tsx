@@ -14,6 +14,7 @@ import { useDefaultAvatar } from '@/hooks/useDefaultAvatar';
 import ProfileSkillsEditor from '@/components/ProfileSkillsEditor';
 import AccountDetailsEditor from '@/components/AccountDetailsEditor';
 import { Player } from '@/types';
+import { fetchAllPages } from '@/lib/fetchAllPages';
 import { calculatePlayerDebt, GameScheduleForDebt, SignupForDebt } from '@/utils/debtCalculation';
 
 interface StreamlinedProfileProps {
@@ -91,15 +92,17 @@ export const StreamlinedProfile = ({ user, onDataRefresh }: StreamlinedProfilePr
       if (scheduledError) throw scheduledError;
 
       // Fetch all signups for debt calculation
-      const { data: signupsData, error: signupsError } = await supabase
-        .from('games_schedule_signups')
-        .select(`
-          *,
-          players:player_id (id, user_id)
-        `)
-        .order('signed_up_at', { ascending: true });
-
-      if (signupsError) throw signupsError;
+      const signupsData = await fetchAllPages<any>((from, to) =>
+        supabase
+          .from('games_schedule_signups')
+          .select(`
+            *,
+            players:player_id (id, user_id)
+          `)
+          .order('signed_up_at', { ascending: true })
+          .order('id', { ascending: true })
+          .range(from, to),
+      );
       
       const formattedPlayers: Player[] = (playersData || []).map(player => {
         // Calculate stats for this player

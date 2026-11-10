@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
       // Eligible voters: non-dropout, registered players inside the playing roster
       const { data: signups, error: signupsError } = await supabase
         .from('games_schedule_signups')
-        .select('player_id, is_guest, signed_up_at, last_minute_dropout')
+        .select('player_id, is_guest, signed_up_at, last_minute_dropout, players:player_id (user_id)')
         .eq('game_schedule_id', fixture.id)
         .or('last_minute_dropout.is.null,last_minute_dropout.eq.false')
         .order('signed_up_at', { ascending: true });
@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
       }
 
       const roster = (signups || []).slice(0, capacity);
-      const eligible = roster.filter((s: any) => !s.is_guest && s.player_id);
+      const eligible = roster.filter((s: any) => !s.is_guest && s.player_id && s.players?.user_id);
       if (eligible.length === 0) {
         console.log(`Skipping ${fixture.id}: no eligible voters`);
         continue;
