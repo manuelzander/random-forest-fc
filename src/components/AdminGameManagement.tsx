@@ -128,8 +128,8 @@ const AdminGameManagement = () => {
             team2_goals: gameData.team2Goals,
             team1_players: gameData.team1Players,
             team2_players: gameData.team2Players,
-            team1_captain: gameData.team1Captain,
-            team2_captain: gameData.team2Captain,
+            team1_captain: null,
+            team2_captain: null,
             mvp_players: gameData.mvpPlayers ?? [],
             mvp_player: gameData.mvpPlayers?.[0] ?? null,
             bibs_player: gameData.bibsPlayer ?? null,
@@ -150,8 +150,8 @@ const AdminGameManagement = () => {
             team2_goals: gameData.team2Goals,
             team1_players: gameData.team1Players,
             team2_players: gameData.team2Players,
-            team1_captain: gameData.team1Captain,
-            team2_captain: gameData.team2Captain,
+            team1_captain: null,
+            team2_captain: null,
             mvp_players: gameData.mvpPlayers ?? [],
             mvp_player: gameData.mvpPlayers?.[0] ?? null,
             bibs_player: gameData.bibsPlayer ?? null,
@@ -165,8 +165,8 @@ const AdminGameManagement = () => {
         // Send Telegram notification for new game result
         const team1PlayerNames = gameData.team1Players.map((id: string) => getPlayerName(id));
         const team2PlayerNames = gameData.team2Players.map((id: string) => getPlayerName(id));
-        const team1CaptainName = gameData.team1Captain ? getPlayerName(gameData.team1Captain) : undefined;
-        const team2CaptainName = gameData.team2Captain ? getPlayerName(gameData.team2Captain) : undefined;
+        const team1CaptainName = undefined;
+        const team2CaptainName = undefined;
         const mvpName = gameData.mvpPlayers?.length
           ? gameData.mvpPlayers.map((id: string) => getPlayerName(id)).join(' & ')
           : undefined;
@@ -250,8 +250,6 @@ const AdminGameManagement = () => {
                   team2Goals: editingGame.team2_goals,
                   team1Players: editingGame.team1_players,
                   team2Players: editingGame.team2_players,
-                  team1Captain: editingGame.team1_captain || '',
-                  team2Captain: editingGame.team2_captain || '',
                   mvpPlayers: editingGame.mvp_players?.length
                     ? editingGame.mvp_players
                     : editingGame.mvp_player

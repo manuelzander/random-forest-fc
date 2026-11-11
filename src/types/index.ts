@@ -32,8 +32,6 @@ export interface GameInput {
   team2Players: string[];
   team1Goals: number;
   team2Goals: number;
-  team1Captain: string;
-  team2Captain: string;
   /** Up to two joint MVPs. Empty when no MVP was awarded. */
   mvpPlayers: string[];
   bibsPlayer?: string | null;
